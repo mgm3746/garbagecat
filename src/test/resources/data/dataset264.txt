@@ -1,0 +1,44 @@
+2023-01-30T14:54:56.534-0500: 1394.755: [GC pause (G1 Evacuation Pause) (mixed)
+Desired survivor size 100663296 bytes, new threshold 2 (max 15)
+- age   1:   96199136 bytes,   96199136 total
+- age   2:   43651944 bytes,  139851080 total
+- age   3:   54009304 bytes,  193860384 total
+- age   4:    1821072 bytes,  195681456 total
+- age   5:    1705952 bytes,  197387408 total
+- age   6:   35846136 bytes,  233233544 total
+- age   7:   59227640 bytes,  292461184 total
+- age   8:   18516448 bytes,  310977632 total
+- age   9:    3167888 bytes,  314145520 total
+- age  10:     676456 bytes,  314821976 total
+- age  11:     774864 bytes,  315596840 total
+- age  12:     455264 bytes,  316052104 total
+- age  13:    5482456 bytes,  321534560 total
+- age  14:    5448488 bytes,  326983048 total
+- age  15:    1036064 bytes,  328019112 total
+2023-01-30T14:54:56.603-0500: 1394.823: [SoftReference, 0 refs, 0.0017812 secs]2023-01-30T14:54:56.604-0500: 1394.825: [WeakReference, 617 refs, 0.0009224 secs]2023-01-30T14:54:56.605-0500: 1394.826: [FinalReference, 2059 refs, 0.0013233 secs]2023-01-30T14:54:56.607-0500: 1394.827: [PhantomReference, 103 refs, 909 refs, 0.0045834 secs]2023-01-30T14:54:56.611-0500: 1394.832: [JNI Weak Reference, 0.0001317 secs], 0.0847598 secs]
+   [Parallel Time: 66.2 ms, GC Workers: 18]
+      [GC Worker Start (ms): Min: 1394756.4, Avg: 1394756.6, Max: 1394756.8, Diff: 0.4]
+      [Ext Root Scanning (ms): Min: 9.6, Avg: 12.5, Max: 35.9, Diff: 26.3, Sum: 225.9]
+      [Update RS (ms): Min: 0.0, Avg: 5.0, Max: 5.8, Diff: 5.8, Sum: 90.6]
+         [Processed Buffers: Min: 0, Avg: 18.2, Max: 30, Diff: 30, Sum: 328]
+      [Scan RS (ms): Min: 0.1, Avg: 2.7, Max: 6.1, Diff: 6.0, Sum: 48.6]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.0, Max: 0.2, Diff: 0.2, Sum: 0.9]
+      [Object Copy (ms): Min: 29.5, Avg: 45.3, Max: 48.1, Diff: 18.6, Sum: 815.9]
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+         [Termination Attempts: Min: 1, Avg: 1.2, Max: 2, Diff: 1, Sum: 21]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.1, Max: 0.3, Diff: 0.2, Sum: 2.0]
+      [GC Worker Total (ms): Min: 65.5, Avg: 65.8, Max: 66.1, Diff: 0.6, Sum: 1183.9]
+      [GC Worker End (ms): Min: 1394822.2, Avg: 1394822.3, Max: 1394822.5, Diff: 0.2]
+   [Code Root Fixup: 0.1 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 1.4 ms]
+   [Other: 17.0 ms]
+      [Choose CSet: 0.4 ms]
+      [Ref Proc: 9.5 ms]
+      [Ref Enq: 0.5 ms]
+      [Redirty Cards: 1.2 ms]
+      [Humongous Register: 0.2 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 2.8 ms]
+   [Eden: 1040.0M(1040.0M)->0.0B(1344.0M) Survivors: 496.0M->192.0M Heap: 14.4G(30.0G)->11.7G(30.0G)]
+ [Times: user=1.17 sys=0.02, real=0.09 secs]

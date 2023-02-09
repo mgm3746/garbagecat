@@ -16,13 +16,6 @@ import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,6 +73,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.OomeMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
+import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
@@ -306,6 +300,7 @@ public class GcManager {
         jvmRun.setWorstInvertedSerialismEvent(jvmDao.getWorstInvertedSerialismEvent());
         jvmRun.setWorstSysGtUserEvent(jvmDao.getWorstSysGtUserEvent());
         jvmRun.setPreprocessed(this.preprocessed);
+        jvmRun.setPreprocessEvents(jvmDao.getPreprocessEvents());
 
         if (!jvmRun.hasDatestamps() && jvmStartDate == null && jvmRun.getLogFileDate() != null
                 && jvmRun.getFirstEvent() != null && jvmRun.getFirstEvent().getLogEntry() != null) {
@@ -356,6 +351,12 @@ public class GcManager {
 
         if (currentLogLine != null) {
 
+            // Record preprocessing events for later analysis.
+            if (!jvmDao.getPreprocessEvents().contains(PreprocessEvent.REFERENCE_GC)
+                    && currentLogLine.matches(JdkRegEx.PRINT_REFERENCE_GC)) {
+                jvmDao.getPreprocessEvents().add(PreprocessEvent.REFERENCE_GC);
+            }
+
             /*
              * Other preprocessing.
              * 
@@ -364,7 +365,6 @@ public class GcManager {
              * 
              * , 0.0209631 secs]
              */
-
             if (isThrowawayEvent(currentLogLine)) {
                 // Analysis
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_HEAP_AT_GC)) {
@@ -378,10 +378,9 @@ public class GcManager {
                         jvmDao.getAnalysis().add(Analysis.WARN_CLASS_HISTOGRAM);
                     }
                 }
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_TENURING_DISTRIBUTION)) {
-                    if (TenuringDistributionEvent.match(currentLogLine)) {
-                        jvmDao.getAnalysis().add(Analysis.WARN_PRINT_TENURING_DISTRIBUTION);
-                    }
+                if (!jvmDao.getPreprocessEvents().contains(PreprocessEvent.PRINT_TENURING_DISTRIBUTION)
+                        && TenuringDistributionEvent.match(currentLogLine)) {
+                    jvmDao.getPreprocessEvents().add(PreprocessEvent.PRINT_TENURING_DISTRIBUTION);
                 }
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_APPLICATION_LOGGING)) {
                     if (ApplicationLoggingEvent.match(currentLogLine)) {
@@ -507,6 +506,7 @@ public class GcManager {
             }
         }
         return preprocessedLogLine;
+
     }
 
     /**
@@ -580,128 +580,6 @@ public class GcManager {
      */
     private boolean isThrowawayEvent(String logLine) {
         return JdkUtil.parseLogLine(logLine) instanceof ThrowAwayEvent;
-    }
-
-    /**
-     * <p>
-     * Preprocess the log file:
-     * </p>
-     * 
-     * <ul>
-     * <li>Compose events logged to multiple lines into a single line (removing extraneous information).</li>
-     * <li>Datafixing (e.g. JDK8 multiple and mixed date/time stamps.</li>
-     * <li>Throw away logging not used for analysis.</li>
-     * </ul>
-     * 
-     * @param logFile
-     *            Raw garbage collection log file.
-     * @param jvmStartDate
-     *            The date and time the JVM was started.
-     * @return Preprocessed garbage collection log file.
-     */
-    public File preprocess(File logFile, Date jvmStartDate) {
-        if (logFile == null)
-            throw new IllegalArgumentException("logFile == null!!");
-
-        File preprocessFile = new File(logFile.getPath() + ".pp");
-
-        BufferedReader bufferedReader = null;
-        BufferedWriter bufferedWriter = null;
-
-        try {
-            String currentLogLine = "";
-            String priorLogLine = "";
-            String preprocessedLogLine = "";
-
-            bufferedReader = new BufferedReader(new FileReader(logFile));
-            bufferedWriter = new BufferedWriter(new FileWriter(preprocessFile));
-
-            /*
-             * Used for de-tangling intermingled logging events that span multiple lines. It follows the convention that
-             * the previous entry determines the current entry is a single-line event or the end of a multi-line event
-             * (the previous entry ends with a newline), or the current entry is part of a multi-line event (the
-             * previous entry does not end with a newline).
-             */
-            List<String> entangledLogLines = new ArrayList<String>();
-
-            // Used to provide context for preprocessing decisions
-            Set<String> context = new HashSet<String>();
-
-            String priorLogEntry = Constants.LINE_SEPARATOR;
-
-            String nextLogLine = bufferedReader.readLine();
-            while (nextLogLine != null) {
-                preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
-                        entangledLogLines, context);
-                if (preprocessedLogLine != null) {
-                    if (priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
-                        System.out.println("here!!!");
-                    }
-                    if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
-                            && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
-                        bufferedWriter.write(Constants.LINE_SEPARATOR + preprocessedLogLine);
-                    } else {
-                        bufferedWriter.write(preprocessedLogLine);
-                    }
-                    priorLogEntry = preprocessedLogLine;
-                }
-
-                priorLogLine = currentLogLine;
-                currentLogLine = nextLogLine;
-                nextLogLine = bufferedReader.readLine();
-
-                if (nextLogLine == null) {
-                    lastLogLineUnprocessed = currentLogLine;
-                }
-            }
-
-            // Process last line
-            preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogLine, nextLogLine, jvmStartDate,
-                    entangledLogLines, context);
-            if (preprocessedLogLine != null) {
-                if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
-                        && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
-                    bufferedWriter.write(Constants.LINE_SEPARATOR + preprocessedLogLine);
-                } else {
-                    bufferedWriter.write(preprocessedLogLine);
-                }
-            }
-
-            // output entangled log lines
-            if (!entangledLogLines.isEmpty()) {
-                for (String logLine : entangledLogLines) {
-                    bufferedWriter.write(Constants.LINE_SEPARATOR + logLine);
-                }
-                // Reset entangled log lines
-                entangledLogLines.clear();
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-
-            // Close streams
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (bufferedWriter != null) {
-                try {
-                    bufferedWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            preprocessed = true;
-        }
-
-        return preprocessFile;
     }
 
     /**

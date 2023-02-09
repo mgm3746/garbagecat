@@ -438,8 +438,12 @@ public class G1PreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_REMARK = "^(" + JdkRegEx.DECORATOR + " \\[GC remark) "
             + JdkRegEx.DECORATOR + " (\\[Finalize Marking, " + JdkRegEx.DURATION + "\\] " + JdkRegEx.DECORATOR
-            + " )?\\[GC ref-proc, " + JdkRegEx.DURATION + "\\]( " + JdkRegEx.DECORATOR + " \\[Unloading, "
-            + JdkRegEx.DURATION + "\\])?(, " + JdkRegEx.DURATION + "\\])[ ]*$";
+            + " )?\\[GC ref-proc(" + JdkRegEx.DECORATOR + " \\[SoftReference, \\d{1,} refs, " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.DECORATOR + " \\[WeakReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]"
+            + JdkRegEx.DECORATOR + " \\[FinalReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[PhantomReference, \\d{1,} refs, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[JNI Weak Reference, " + JdkRegEx.DURATION + "\\])?, " + JdkRegEx.DURATION + "\\]( "
+            + JdkRegEx.DECORATOR + " \\[Unloading, " + JdkRegEx.DURATION + "\\])?(, " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_REMARK_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_REMARK);
 
@@ -564,9 +568,19 @@ public class G1PreprocessAction implements PreprocessAction {
      * (to-space exhausted), 0.3857580 secs]
      * 
      * (to-space overflow), 0.77121400 secs]
+     * 
+     * 2023-01-30T14:54:56.603-0500: 1394.823: [SoftReference, 0 refs, 0.0017812 secs]2023-01-30T14:54:56.604-0500:
+     * 1394.825: [WeakReference, 617 refs, 0.0009224 secs]2023-01-30T14:54:56.605-0500: 1394.826: [FinalReference, 2059
+     * refs, 0.0013233 secs]2023-01-30T14:54:56.607-0500: 1394.827: [PhantomReference, 103 refs, 909 refs, 0.0045834
+     * secs]2023-01-30T14:54:56.611-0500: 1394.832: [JNI Weak Reference, 0.0001317 secs], 0.0847598 secs]
      */
-    private static final String REGEX_RETAIN_MIDDLE_DURATION = "^(( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|"
-            + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION + "\\])[ ]*$";
+    private static final String REGEX_RETAIN_MIDDLE_DURATION = "^(" + JdkRegEx.DECORATOR
+            + " \\[SoftReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[WeakReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[FinalReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[PhantomReference, \\d{1,} refs, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[JNI Weak Reference, " + JdkRegEx.DURATION + "\\])?(( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED
+            + "|" + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION + "\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_DURATION_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE_DURATION);
 
@@ -980,7 +994,7 @@ public class G1PreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_BEGINNING_REMARK_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1) + matcher.group(65);
+                this.logEntry = matcher.group(1) + matcher.group(146);
             }
             context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.add(TOKEN);
@@ -1034,7 +1048,7 @@ public class G1PreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_DURATION_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
+                this.logEntry = matcher.group(82);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logEntry)).matches()) {

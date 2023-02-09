@@ -56,7 +56,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelScavengeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ReferenceGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCancellingGcEvent;
@@ -138,27 +137,27 @@ public final class JdkUtil {
         //
         HEADER_MEMORY, HEADER_VERSION, HEAP_ADDRESS, HEAP_AT_GC, HEAP_REGION_SIZE, LOG_FILE, METASPACE_UTILS_REPORT,
         //
-        OOME_METASPACE, PAR_NEW, PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, REFERENCE_GC,
+        OOME_METASPACE, PAR_NEW, PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, SERIAL_NEW,
         //
-        SERIAL_NEW, SERIAL_OLD, SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT,
+        SERIAL_OLD, SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
         //
-        SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC,
+        SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE,
         //
-        SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE, SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK,
+        SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS,
         //
-        SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION,
+        SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK,
         //
-        THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP,
+        UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
         //
-        UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE,
+        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER,
         //
-        UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
+        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
         //
-        UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD,
+        UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1,
         //
-        UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z,
+        USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING,
         //
-        VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
+        Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
     };
 
     /**
@@ -236,7 +235,6 @@ public final class JdkUtil {
         return null;
     }
 
-  
     /**
      * Get log line decorator.
      * 
@@ -565,8 +563,6 @@ public final class JdkUtil {
             return LogEventType.HEADER_MEMORY;
         if (HeaderVersionEvent.match(logLine))
             return LogEventType.HEADER_VERSION;
-        if (ReferenceGcEvent.match(logLine))
-            return LogEventType.REFERENCE_GC;
         if (VmWarningEvent.match(logLine))
             return LogEventType.VM_WARNING;
 
@@ -600,7 +596,6 @@ public final class JdkUtil {
         case HEAP_AT_GC:
         case HEAP_REGION_SIZE:
         case LOG_FILE:
-        case REFERENCE_GC:
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONCURRENT:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
@@ -734,7 +729,6 @@ public final class JdkUtil {
         case LOG_FILE:
         case METASPACE_UTILS_REPORT:
         case OOME_METASPACE:
-        case REFERENCE_GC:
         case UNIFIED_SAFEPOINT:
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
@@ -937,8 +931,6 @@ public final class JdkUtil {
             return new MetaspaceUtilsReportEvent();
         case OOME_METASPACE:
             return new OomeMetaspaceEvent();
-        case REFERENCE_GC:
-            return new ReferenceGcEvent(logLine);
         case TENURING_DISTRIBUTION:
             return new TenuringDistributionEvent(logLine);
         case THREAD_DUMP:

@@ -27,6 +27,13 @@ public interface PreprocessAction {
     public static final String TOKEN_BEGINNING_OF_EVENT = "TOKEN_BEGINNING_OF_EVENT";
 
     /**
+     * Defined preprocessing events.
+     */
+    public enum PreprocessEvent {
+        PRINT_TENURING_DISTRIBUTION, REFERENCE_GC
+    }
+
+    /**
      * @return The log entry for the action.
      */
     String getLogEntry();

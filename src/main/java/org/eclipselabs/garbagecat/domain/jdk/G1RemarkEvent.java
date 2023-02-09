@@ -68,8 +68,8 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC remark( " + JdkRegEx.DECORATOR
-            + " \\[Finalize Marking, 0.0012914 secs\\] " + JdkRegEx.DECORATOR + " \\[GC ref-proc" + JdkRegEx.DECORATOR
-            + " \\[SoftReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
+            + " \\[Finalize Marking, " + JdkRegEx.DURATION + "\\] " + JdkRegEx.DECORATOR + " \\[GC ref-proc"
+            + JdkRegEx.DECORATOR + " \\[SoftReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[WeakReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[FinalReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[PhantomReference, \\d{1,} refs, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
@@ -136,11 +136,11 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
                 // Datestamp only.
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            duration = JdkMath.convertSecsToMicros(matcher.group(140)).intValue();
-            if (matcher.group(143) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(144)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(145)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(146)).intValue();
+            duration = JdkMath.convertSecsToMicros(matcher.group(143)).intValue();
+            if (matcher.group(146) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(147)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(148)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(149)).intValue();
             }
         }
     }

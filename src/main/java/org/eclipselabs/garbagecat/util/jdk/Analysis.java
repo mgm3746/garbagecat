@@ -316,11 +316,6 @@ public enum Analysis {
     WARN_PRINT_HEAP_AT_GC("warn.print.heap.at.gc"),
 
     /**
-     * Property key for outputting tenuring distribution information (-XX:+PrintTenuringDistribution).
-     */
-    WARN_PRINT_TENURING_DISTRIBUTION("warn.print.tenuring.distribution"),
-
-    /**
      * Property key for inverted serialism.
      */
     WARN_SERIALISM_INVERTED("warn.serialism.inverted"),

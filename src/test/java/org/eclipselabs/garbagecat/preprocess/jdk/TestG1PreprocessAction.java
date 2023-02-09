@@ -2250,6 +2250,44 @@ class TestG1PreprocessAction {
     }
 
     @Test
+    void testPrintReferenceGcDuration() {
+        String priorLogLine = "";
+        String logLine = "2023-01-30T14:54:56.603-0500: 1394.823: [SoftReference, 0 refs, 0.0017812 secs]"
+                + "2023-01-30T14:54:56.604-0500: 1394.825: [WeakReference, 617 refs, 0.0009224 secs]"
+                + "2023-01-30T14:54:56.605-0500: 1394.826: [FinalReference, 2059 refs, 0.0013233 secs]"
+                + "2023-01-30T14:54:56.607-0500: 1394.827: [PhantomReference, 103 refs, 909 refs, 0.0045834 secs]"
+                + "2023-01-30T14:54:56.611-0500: 1394.832: [JNI Weak Reference, 0.0001317 secs], 0.0847598 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        assertEquals(", 0.0847598 secs]", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testPrintReferenceGcRemark() {
+        String priorLogLine = "";
+        String logLine = "2023-01-30T14:31:47.254-0500: 5.075: [GC remark 2023-01-30T14:31:47.254-0500: 5.075: "
+                + "[Finalize Marking, 0.0013331 secs] 2021-08-20T11:53:44.350+0100: 2377830.400: [GC ref-proc"
+                + "2021-08-20T11:53:44.350+0100: 2377830.400: [SoftReference, 18076174 refs, 2.6283514 secs]"
+                + "2021-08-20T11:53:46.978+0100: 2377833.028: [WeakReference, 18636 refs, 0.0029750 secs]"
+                + "2021-08-20T11:53:46.981+0100: 2377833.031: [FinalReference, 17387271 refs, 2.5263032 secs]"
+                + "2021-08-20T11:53:49.507+0100: 2377835.558: [PhantomReference, 0 refs, 2136 refs, 0.0012040 secs]"
+                + "2021-08-20T11:53:49.509+0100: 2377835.559: [JNI Weak Reference, 0.0001679 secs], 14.8775199 secs] "
+                + "2021-08-20T11:53:59.227+0100: 2377845.278: [Unloading, 0.0178265 secs], 14.9383332 secs]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context);
+        assertEquals("2023-01-30T14:31:47.254-0500: 5.075: [GC remark, 14.9383332 secs]", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
     void testProcessedBuffers() {
         String logLine = "         [Processed Buffers : 2 1 0 0";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
@@ -2296,6 +2334,24 @@ class TestG1PreprocessAction {
         String logLine = "      [Rehash Count: 0, Rehash Threshold: 120, Hash Seed: 0x0]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    @Test
+    void testRemarkPreprocessing() throws IOException {
+        File testFile = TestUtil.getFile("dataset263.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_REMARK),
+                JdkUtil.LogEventType.G1_REMARK.toString() + " collector not identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED.getKey()),
+                "-XX:+PrintReferenceGC not identified.");
     }
 
     @Test

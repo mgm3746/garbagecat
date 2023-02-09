@@ -293,8 +293,8 @@ class TestParallelPreprocessAction {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE),
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_PRINT_TENURING_DISTRIBUTION.getKey()),
-                Analysis.WARN_PRINT_TENURING_DISTRIBUTION + " analysis not identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_TENURING_DISTRIBUTION.getKey()),
+                org.github.joa.util.Analysis.INFO_JDK8_PRINT_TENURING_DISTRIBUTION + " analysis not identified.");
     }
 
     /**

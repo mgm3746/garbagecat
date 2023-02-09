@@ -27,7 +27,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
@@ -430,22 +429,6 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME.getKey()),
                 org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME + " analysis not identified.");
-    }
-
-    /**
-     * Test if -XX:+PrintReferenceGC enabled by inspecting logging events.
-     */
-    @Test
-    void testPrintReferenceGCByLogging() {
-        String jvmOptions = null;
-        GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.REFERENCE_GC);
-        jvmRun.setEventTypes(eventTypes);
-        jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED.getKey()),
-                org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED + " analysis not identified.");
     }
 
     /**

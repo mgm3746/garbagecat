@@ -195,6 +195,11 @@ public final class JdkRegEx {
     public static final String PRINT_PROMOTION_FAILURE = "( \\(\\d{1,2}: promotion failure size = \\d{1,10}\\) ){1,64}";
 
     /**
+     * Logging with -XX:+PrintReferenceGC.
+     */
+    public static final String PRINT_REFERENCE_GC = "^" + JdkRegEx.DECORATOR + ".+(Soft|Weak|Phantom)Reference.+$";
+
+    /**
      * <p>
      * Regular expression for a JDK release string.
      * </p>

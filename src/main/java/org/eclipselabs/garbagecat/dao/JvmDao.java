@@ -44,6 +44,7 @@ import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
+import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -70,7 +71,7 @@ public class JvmDao {
     private static Connection connection;
 
     private static boolean created;
-    
+
     /**
      * SQL statement(s) to create table.
      */
@@ -118,7 +119,7 @@ public class JvmDao {
     private long durationGtRealCount;
 
     /**
-     * List of all event types associate with JVM run.
+     * List of all event types associate with the JVM run.
      */
     List<LogEventType> eventTypes = new ArrayList<>();
 
@@ -196,6 +197,11 @@ public class JvmDao {
      * Physical memory free (bytes).
      */
     private long physicalMemoryFree;
+
+    /**
+     * List of all preparsing events associate with the JVM run.
+     */
+    List<PreprocessEvent> preprocessEvents = new ArrayList<>();
 
     /**
      * Number of <code>SerialCollection</code> events.
@@ -664,6 +670,10 @@ public class JvmDao {
      */
     public long getPhysicalMemoryFree() {
         return physicalMemoryFree;
+    }
+
+    public List<PreprocessEvent> getPreprocessEvents() {
+        return preprocessEvents;
     }
 
     /**

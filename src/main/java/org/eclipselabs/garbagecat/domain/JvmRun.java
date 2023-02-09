@@ -56,6 +56,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
+import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
@@ -262,6 +263,11 @@ public class JvmRun {
     private boolean preprocessed;
 
     /**
+     * List of all preparsing events associate with the JVM run.
+     */
+    List<PreprocessEvent> preprocessEvents = new ArrayList<>();
+
+    /**
      * <code>SafepointEvent</code>s where throughput does not meet the throughput goal.
      */
     private List<String> safepointBottlenecks;
@@ -464,13 +470,6 @@ public class JvmRun {
             }
         }
 
-        // Check for -XX:+PrintReferenceGC by event type
-        if (!hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED.getKey())) {
-            if (getEventTypes().contains(LogEventType.REFERENCE_GC)) {
-                jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED);
-            }
-        }
-
         // Check for PAR_NEW disabled.
         if (getEventTypes().contains(LogEventType.SERIAL_NEW)
                 && jvmOptions.getJvmContext().getGarbageCollectors().contains(GarbageCollector.CMS)) {
@@ -595,6 +594,16 @@ public class JvmRun {
                 && getEventTypes().contains(LogEventType.FLS_STATISTICS)) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_FLS_STATISTICS);
         }
+        // -XX:+PrintReferenceGC
+        if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED)
+                && getPreprocessEvents().contains(PreprocessEvent.REFERENCE_GC)) {
+            jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED);
+        }
+        // -XX:+PrintTenuringDistribution
+        if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_TENURING_DISTRIBUTION)
+                && getPreprocessEvents().contains(PreprocessEvent.PRINT_TENURING_DISTRIBUTION)) {
+            jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_TENURING_DISTRIBUTION);
+        }
     }
 
     /**
@@ -611,9 +620,9 @@ public class JvmRun {
      */
     public List<String[]> getAnalysis() {
         List<String[]> a = new ArrayList<String[]>();
-        Iterator<Analysis> itFelAnalysis = analysis.iterator();
-        while (itFelAnalysis.hasNext()) {
-            Analysis item = itFelAnalysis.next();
+        Iterator<Analysis> itGcAnalysis = analysis.iterator();
+        while (itGcAnalysis.hasNext()) {
+            Analysis item = itGcAnalysis.next();
             a.add(new String[] { item.getKey(), item.getValue() });
         }
         if (jvmOptions != null) {
@@ -997,6 +1006,10 @@ public class JvmRun {
         return physicalMemoryFree;
     }
 
+    public List<PreprocessEvent> getPreprocessEvents() {
+        return preprocessEvents;
+    }
+
     public List<String> getSafepointBottlenecks() {
         return safepointBottlenecks;
     }
@@ -1308,6 +1321,10 @@ public class JvmRun {
 
     public void setPreprocessed(boolean preprocessed) {
         this.preprocessed = preprocessed;
+    }
+
+    public void setPreprocessEvents(List<PreprocessEvent> preprocessEvents) {
+        this.preprocessEvents = preprocessEvents;
     }
 
     public void setSafepointBottlenecks(List<String> safepointBottlenecks) {
