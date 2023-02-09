@@ -129,7 +129,7 @@ public class JvmDao {
     private long extRootScanningTimeMax;
 
     /**
-     * Total external root scanning time (microseconds).
+     * Total external root scanning time (microseconds).o
      */
     private long extRootScanningTimeTotal;
 

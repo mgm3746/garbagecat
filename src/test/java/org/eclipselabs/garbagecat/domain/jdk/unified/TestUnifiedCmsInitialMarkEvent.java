@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -51,8 +52,8 @@ class TestUnifiedCmsInitialMarkEvent {
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         assertEquals((long) (178 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(157, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 

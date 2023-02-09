@@ -21,17 +21,17 @@ package org.eclipselabs.garbagecat.preprocess;
 public interface PreprocessAction {
 
     /**
-     * Indicates the current log entry is either the beginning of an event that spans multiple logging lines, or it is a
-     * single line logging event.
-     */
-    public static final String TOKEN_BEGINNING_OF_EVENT = "TOKEN_BEGINNING_OF_EVENT";
-
-    /**
      * Defined preprocessing events.
      */
     public enum PreprocessEvent {
         PRINT_TENURING_DISTRIBUTION, REFERENCE_GC
     }
+
+    /**
+     * Indicates the current log entry is either the beginning of an event that spans multiple logging lines, or it is a
+     * single line logging event.
+     */
+    public static final String TOKEN_BEGINNING_OF_EVENT = "TOKEN_BEGINNING_OF_EVENT";
 
     /**
      * @return The log entry for the action.

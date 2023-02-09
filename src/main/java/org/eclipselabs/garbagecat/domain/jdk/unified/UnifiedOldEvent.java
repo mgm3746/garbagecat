@@ -144,7 +144,7 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
     /**
      * The wall (clock) time in centiseconds.
      */
-    private int timeReal;
+    private int timeReal = TimesData.NO_DATA;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
@@ -154,12 +154,12 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
     /**
      * The time of all system (kernel) threads added together in centiseconds.
      */
-    private int timeSys;
+    private int timeSys = TimesData.NO_DATA;
 
     /**
      * The time of all user (non-kernel) threads added together in centiseconds.
      */
-    private int timeUser;
+    private int timeUser = TimesData.NO_DATA;
 
     /**
      * The trigger for the GC event.

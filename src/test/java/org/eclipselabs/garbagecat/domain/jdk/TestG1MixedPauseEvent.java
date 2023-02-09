@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
@@ -76,9 +77,9 @@ class TestG1MixedPauseEvent {
         assertEquals(kilobytes(949 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(4096 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(24550, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
@@ -360,9 +361,9 @@ class TestG1MixedPauseEvent {
                 "Combined end size not parsed correctly.");
         assertEquals(kilobytes(8192 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(147288, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
@@ -380,9 +381,9 @@ class TestG1MixedPauseEvent {
                 "Combined end size not parsed correctly.");
         assertEquals(kilobytes(8192 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(89084, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 

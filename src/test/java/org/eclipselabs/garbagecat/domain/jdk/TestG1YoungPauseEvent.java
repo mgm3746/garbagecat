@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
@@ -48,6 +49,23 @@ class TestG1YoungPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + ".");
         G1YoungPauseEvent event = new G1YoungPauseEvent(logLine);
         assertEquals(569947413359L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testDurationGtReal() throws IOException {
+        File testFile = TestUtil.getFile("dataset265.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
+        assertEquals(0, jvmRun.getDurationGtRealCount(), "Duration > real time count not correct.");
     }
 
     @Test
@@ -271,9 +289,9 @@ class TestG1YoungPauseEvent {
         assertEquals(kilobytes(2581), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(6144), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(6328, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
@@ -423,6 +441,7 @@ class TestG1YoungPauseEvent {
                 JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
+        assertEquals(1, jvmRun.getDurationGtRealCount(), "Duration > real time count not correct.");
     }
 
     @Test
@@ -439,9 +458,9 @@ class TestG1YoungPauseEvent {
                 "Combined end size not parsed correctly.");
         assertEquals(kilobytes(8192 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(458973, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
@@ -460,9 +479,9 @@ class TestG1YoungPauseEvent {
         assertEquals(kilobytes(10 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
         assertEquals(134397, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
@@ -486,9 +505,9 @@ class TestG1YoungPauseEvent {
         assertEquals(kilobytes(198 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(8192 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(50011, event.getDuration(), "Duration not parsed correctly.");
-        assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
-        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
-        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
