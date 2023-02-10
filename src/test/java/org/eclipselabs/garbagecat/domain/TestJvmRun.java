@@ -27,6 +27,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
@@ -134,6 +135,36 @@ class TestJvmRun {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+    }
+
+    @Test
+    void testDuration10CentisecondsGtRea() {
+        String logLine = "2023-02-10T11:47:06.266+0000: [GC pause (G1 Humongous Allocation) (young), 0.0831454 secs]"
+                + "[Ext Root Scanning (ms): 7.2][Other: 104.3 ms][Eden: 380.0M(2426.0M)->0.0B(144.0M) Survivors: "
+                + "30.0M->60.0M Heap: 3253.4M(4096.0M)->566.2M(4096.0M)] [Times: user=0.12 sys=0.00, real=0.08 secs]";
+        List<String> logLines = new ArrayList<String>();
+        logLines.add(logLine);
+        GcManager gcManager = new GcManager();
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(0, jvmRun.getDurationGtRealCount(), "Duration > real not correct.");
+    }
+
+    @Test
+    void testDuration11CentisecondsGtRea() {
+        String logLine = "2023-02-10T11:47:06.266+0000: [GC pause (G1 Humongous Allocation) (young), 0.0831454 secs]"
+                + "[Ext Root Scanning (ms): 7.2][Other: 114.3 ms][Eden: 380.0M(2426.0M)->0.0B(144.0M) Survivors: "
+                + "30.0M->60.0M Heap: 3253.4M(4096.0M)->566.2M(4096.0M)] [Times: user=0.12 sys=0.00, real=0.08 secs]";
+        List<String> logLines = new ArrayList<String>();
+        logLines.add(logLine);
+        GcManager gcManager = new GcManager();
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(1, jvmRun.getDurationGtRealCount(), "Duration > real not correct.");
     }
 
     /**
