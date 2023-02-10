@@ -1096,6 +1096,7 @@ public class GcManager {
                     jvmDao.getJvmContext().setBit(Bit.BIT32);
                 }
                 jvmDao.setJdkVersion(((HeaderVersionEvent) event).getLogEntry());
+                jvmDao.getJvmContext().setOs(((HeaderVersionEvent) event).getOs());
             } else if (event instanceof LogFileEvent) {
                 if (((LogFileEvent) event).isCreated()) {
                     Matcher matcher = LogFileEvent.pattern.matcher(((LogFileEvent) event).getLogEntry());

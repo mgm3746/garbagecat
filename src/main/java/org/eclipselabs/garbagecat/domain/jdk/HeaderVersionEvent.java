@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.Os;
 
 /**
  * <p>
@@ -152,5 +153,24 @@ public class HeaderVersionEvent implements LogEvent {
             is32Bit = logEntry.matches("^.+32-Bit.+$");
         }
         return is32Bit;
+    }
+    
+    /**
+     * @return The OS type.
+     */
+    public Os getOs() {
+        Os osType = Os.UNIDENTIFIED;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            int indexOs = 3;
+            if (matcher.group(indexOs).equals("linux")) {
+                osType = Os.LINUX;
+            } else if (matcher.group(indexOs).equals("windows")) {
+                osType = Os.WINDOWS;
+            } else if (matcher.group(indexOs).equals("solaris")) {
+                osType = Os.SOLARIS;
+            }
+        }
+        return osType;
     }
 }

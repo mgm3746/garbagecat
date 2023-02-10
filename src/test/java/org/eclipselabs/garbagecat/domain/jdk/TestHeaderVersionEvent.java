@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.Os;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,6 +37,7 @@ class TestHeaderVersionEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".");
         HeaderVersionEvent event = new HeaderVersionEvent(logLine);
         assertEquals(7, event.getJdkVersionMajor(), "JDK7 not identified");
+        assertEquals(Os.WINDOWS, event.getOs(), "OS not identified");
     }
 
     /**
@@ -49,6 +51,7 @@ class TestHeaderVersionEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".");
         HeaderVersionEvent event = new HeaderVersionEvent(logLine);
         assertEquals(8, event.getJdkVersionMajor(), "JDK8 not identified");
+        assertEquals(Os.LINUX, event.getOs(), "OS not identified");
     }
 
     /**
@@ -62,6 +65,7 @@ class TestHeaderVersionEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".");
         HeaderVersionEvent event = new HeaderVersionEvent(logLine);
         assertEquals(91, event.getJdkVersionMinor(), "Update 91 not identified");
+        assertEquals(Os.WINDOWS, event.getOs(), "OS not identified");
     }
 
     /**
@@ -75,6 +79,7 @@ class TestHeaderVersionEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VERSION.toString() + ".");
         HeaderVersionEvent event = new HeaderVersionEvent(logLine);
         assertEquals(73, event.getJdkVersionMinor(), "Update 73 not identified");
+        assertEquals(Os.LINUX, event.getOs(), "OS not identified");
     }
 
     @Test
