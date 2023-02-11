@@ -341,18 +341,6 @@ public class Main {
                     }
                     printWriter.write(LINE_SEPARATOR);
                 }
-                // duration > real
-                if (jvmRun.getDurationGtRealCount() > 0) {
-                    printWriter.write("# Duration > real: " + jvmRun.getDurationGtRealCount() + LINE_SEPARATOR);
-                    printWriter.write("Duration > real Max: ");
-                    if (jvmRun.getStartDate() != null) {
-                        printWriter.write(JdkUtil.convertLogEntryTimestampsToDateStamp(
-                                jvmRun.getWorstDurationGtRealTimeEvent().getLogEntry(), jvmRun.getStartDate()));
-                    } else {
-                        printWriter.write(jvmRun.getWorstDurationGtRealTimeEvent().getLogEntry());
-                    }
-                    printWriter.write(LINE_SEPARATOR);
-                }
                 // NewRatio
                 if (jvmRun.getMaxYoungSpace() != null && jvmRun.getMaxOldSpace() != null
                         && jvmRun.getMaxYoungSpace().getValue(KILOBYTES) > 0) {
@@ -451,6 +439,17 @@ public class Main {
                 }
                 printWriter.write(maxGcPause.toString());
                 printWriter.write(" secs" + LINE_SEPARATOR);
+                // G1 external root scanning max
+                if (jvmRun.getExtRootScanningTimeMax() > 0) {
+                    BigDecimal extRootScanningMax = JdkMath.convertMicrosToSecs(jvmRun.getExtRootScanningTimeMax());
+                    printWriter.write("|--Ext Root Scanning: ");
+                    if (extRootScanningMax.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
+                        // Provide rounding clue
+                        printWriter.write("~");
+                    }
+                    printWriter.write(extRootScanningMax.toString());
+                    printWriter.write(" secs" + LINE_SEPARATOR);
+                }
                 // GC total pause time
                 BigDecimal totalGcPause = JdkMath.convertMicrosToSecs(jvmRun.getDurationTotal());
                 printWriter.write("GC Pause Total: ");
@@ -460,26 +459,36 @@ public class Main {
                 }
                 printWriter.write(totalGcPause.toString());
                 printWriter.write(" secs" + LINE_SEPARATOR);
-
-                // G1 external root scanning
+                // G1 external root scanning total
                 if (jvmRun.getExtRootScanningTimeTotal() > 0) {
-                    // max
-                    BigDecimal extRootScanningMax = JdkMath.convertMicrosToSecs(jvmRun.getExtRootScanningTimeMax());
-                    printWriter.write("Ext Root Scanning Max: ");
-                    if (extRootScanningMax.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
-                        // Provide rounding clue
-                        printWriter.write("~");
-                    }
-                    printWriter.write(extRootScanningMax.toString());
-                    printWriter.write(" secs" + LINE_SEPARATOR);
-                    // total
                     BigDecimal extRootScanningTotal = JdkMath.convertMicrosToSecs(jvmRun.getExtRootScanningTimeTotal());
-                    printWriter.write("Ext Root Scanning Total: ");
+                    printWriter.write("|--Ext Root Scanning: ");
                     if (extRootScanningTotal.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
                         // Provide rounding clue
                         printWriter.write("~");
                     }
                     printWriter.write(extRootScanningTotal.toString());
+                    printWriter.write(" secs" + LINE_SEPARATOR);
+                }
+                // G1 "Other"
+                if (jvmRun.getOtherTimeTotal() > 0) {
+                    // max
+                    BigDecimal otherMax = JdkMath.convertMicrosToSecs(jvmRun.getOtherTimeMax());
+                    printWriter.write("Other Max: ");
+                    if (otherMax.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
+                        // Provide rounding clue
+                        printWriter.write("~");
+                    }
+                    printWriter.write(otherMax.toString());
+                    printWriter.write(" secs" + LINE_SEPARATOR);
+                    // total
+                    BigDecimal otherTotal = JdkMath.convertMicrosToSecs(jvmRun.getOtherTimeTotal());
+                    printWriter.write("Other Total: ");
+                    if (otherTotal.compareTo(BigDecimal.ZERO) == 0 && jvmRun.getBlockingEventCount() > 0) {
+                        // Provide rounding clue
+                        printWriter.write("~");
+                    }
+                    printWriter.write(otherTotal.toString());
                     printWriter.write(" secs" + LINE_SEPARATOR);
                 }
             }

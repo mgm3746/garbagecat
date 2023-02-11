@@ -114,11 +114,6 @@ public class JvmDao {
     private List<BlockingEvent> blockingEvents = new ArrayList<>();
 
     /**
-     * Number of <code>BlockingEvent</code>s where duration &gt; <code>TimesData</code> "real" time.
-     */
-    private long durationGtRealCount;
-
-    /**
      * List of all event types associate with the JVM run.
      */
     List<LogEventType> eventTypes = new ArrayList<>();
@@ -129,7 +124,7 @@ public class JvmDao {
     private long extRootScanningTimeMax;
 
     /**
-     * Total external root scanning time (microseconds).o
+     * Total external root scanning time (microseconds).
      */
     private long extRootScanningTimeTotal;
 
@@ -182,6 +177,16 @@ public class JvmDao {
      * JVM memory information.
      */
     private String memory;
+
+    /**
+     * Maximum "Other" time (microseconds).
+     */
+    private long otherTimeMax;
+
+    /**
+     * Total "Other" time (microseconds).
+     */
+    private long otherTimeTotal;
 
     /**
      * Number of <code>ParallelCollection</code> events.
@@ -239,12 +244,6 @@ public class JvmDao {
      * Safepoint events.
      */
     private List<UnifiedSafepointEvent> unifiedSafepointEvents = new ArrayList<>();
-
-    /**
-     * The <code>BlockingEvent</code> with the greatest difference between the <code>BlockingEvent</code> duration and
-     * the <code>TimesData</code> "other" time.
-     */
-    private LogEvent worstDurationGtRealTimeEvent;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
@@ -365,10 +364,6 @@ public class JvmDao {
     public synchronized List<BlockingEvent> getBlockingEvents(LogEventType eventType) {
         return this.blockingEvents.stream().filter(e -> e.getName().equals(eventType.toString()))
                 .map(JvmDao::toBlockingEvent).collect(toList());
-    }
-
-    public long getDurationGtRealCount() {
-        return durationGtRealCount;
     }
 
     /**
@@ -651,6 +646,14 @@ public class JvmDao {
         return memory;
     }
 
+    public long getOtherTimeMax() {
+        return otherTimeMax;
+    }
+
+    public long getOtherTimeTotal() {
+        return otherTimeTotal;
+    }
+
     /**
      * @return The number of <code>ParallelCollection</code> events.
      */
@@ -856,10 +859,6 @@ public class JvmDao {
                 .collect(summingLong(Long::valueOf));
     }
 
-    public LogEvent getWorstDurationGtRealTimeEvent() {
-        return worstDurationGtRealTimeEvent;
-    }
-
     /**
      * @return The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
@@ -897,10 +896,6 @@ public class JvmDao {
                 .map(clazz::cast).map(func) //
                 .filter(Objects::nonNull) //
                 .mapToLong(m -> m.getValue(KILOBYTES));
-    }
-
-    public void setDurationGtRealCount(long durationGtRealCount) {
-        this.durationGtRealCount = durationGtRealCount;
     }
 
     public void setExtRootScanningTimeMax(long extRootScanningTimeMax) {
@@ -975,6 +970,14 @@ public class JvmDao {
         this.memory = memory;
     }
 
+    public void setOtherTimeMax(long otherTimeMax) {
+        this.otherTimeMax = otherTimeMax;
+    }
+
+    public void setOtherTimeTotal(long otherTimeTotal) {
+        this.otherTimeTotal = otherTimeTotal;
+    }
+
     /**
      * @param parallelCount
      *            The number of <code>ParallelCollection</code> events.
@@ -1029,10 +1032,6 @@ public class JvmDao {
      */
     public void setSysGtUserCount(long sysGtUserCount) {
         this.sysGtUserCount = sysGtUserCount;
-    }
-
-    public void setWorstDurationGtRealTimeEvent(LogEvent worstDurationGtRealTimeEvent) {
-        this.worstDurationGtRealTimeEvent = worstDurationGtRealTimeEvent;
     }
 
     /**

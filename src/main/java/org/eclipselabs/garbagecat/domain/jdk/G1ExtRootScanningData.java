@@ -39,7 +39,7 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 public interface G1ExtRootScanningData extends LogEvent {
 
     /**
-     * Use for logging events that do not include times data.
+     * Use for logging events that do not include external root scanning data.
      */
     public static final int NO_DATA = 0;
 

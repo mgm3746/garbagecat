@@ -26,13 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
-import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.JvmRun;
-import org.eclipselabs.garbagecat.domain.LogEvent;
-import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -109,13 +105,6 @@ class TestUnifiedG1YoungPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
-        assertEquals(1, jvmRun.getDurationGtRealCount(), "Duration > real time count not correct.");
-        LogEvent worstEvent = jvmRun.getWorstDurationGtRealTimeEvent();
-        // 969
-        int duration = JdkMath.convertMicrosToCentis(((BlockingEvent) worstEvent).getDuration()).intValue();
-        assertEquals(958, duration, "Duration not correct.");
-        int real = ((TimesData) worstEvent).getTimeReal();
-        assertEquals(1, real, "Real time not correct.");
     }
 
     @Test

@@ -254,7 +254,6 @@ public class GcManager {
         jvmRun.setAllocationRate(getAllocationRate());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());
-        jvmRun.setDurationGtRealCount(jvmDao.getDurationGtRealCount());
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setExtRootScanningTimeMax(jvmDao.getExtRootScanningTimeMax());
         jvmRun.setExtRootScanningTimeTotal(jvmDao.getExtRootScanningTimeTotal());
@@ -283,6 +282,8 @@ public class GcManager {
         jvmRun.setMaxPermSpaceNonBlocking(kilobytes(jvmDao.getMaxPermSpaceNonBlocking()));
         jvmRun.setMaxYoungSpace(kilobytes(jvmDao.getMaxYoungSpace()));
         jvmRun.setMemory(jvmDao.getMemory());
+        jvmRun.setOtherTimeMax(jvmDao.getOtherTimeMax());
+        jvmRun.setOtherTimeTotal(jvmDao.getOtherTimeTotal());
         jvmRun.setParallelCount(jvmDao.getParallelCount());
         jvmRun.setPhysicalMemory(new Memory(jvmDao.getPhysicalMemory(), BYTES));
         jvmRun.setPhysicalMemoryFree(new Memory(jvmDao.getPhysicalMemoryFree(), BYTES));
@@ -299,7 +300,6 @@ public class GcManager {
         jvmRun.setUnifiedSafepointEventCount(jvmDao.getUnifiedSafepointEventCount());
         jvmRun.setUnifiedSafepointTimeMax(jvmDao.getUnifiedSafepointTimeMax());
         jvmRun.setUnifiedSafepointTimeTotal(jvmDao.getUnifiedSafepointTimeTotal());
-        jvmRun.setWorstDurationGtRealTimeEvent(jvmDao.getWorstDurationGtRealTimeEvent());
         jvmRun.setWorstInvertedParallelismEvent(jvmDao.getWorstInvertedParallelismEvent());
         jvmRun.setWorstInvertedSerialismEvent(jvmDao.getWorstInvertedSerialismEvent());
         jvmRun.setWorstSysGtUserEvent(jvmDao.getWorstSysGtUserEvent());
@@ -1035,32 +1035,7 @@ public class GcManager {
                     }
                 }
 
-                // 22) <code>BlockingEvent</code> duration &gt; <code>TimesData</code> "real" time.
-                if (event instanceof OtherTime && event instanceof TimesData
-                        && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
-                    long duration = ((BlockingEvent) event).getDuration();
-                    if (duration > 0) {
-                        duration = JdkMath.convertMicrosToCentis(duration).intValue();
-                        int real = ((TimesData) event).getTimeReal();
-                        // 10 centisecond margin of error to avoid false reporting
-                        if (real != TimesData.NO_DATA && duration - real > 10) {
-                            jvmDao.setDurationGtRealCount(jvmDao.getDurationGtRealCount() + 1);
-                            LogEvent worstEvent = jvmDao.getWorstDurationGtRealTimeEvent();
-                            if (worstEvent == null) {
-                                jvmDao.setWorstDurationGtRealTimeEvent(event);
-                            } else {
-                                long worstDifference = ((BlockingEvent) worstEvent).getDuration()
-                                        - ((TimesData) worstEvent).getTimeReal();
-                                if (((BlockingEvent) event).getDuration()
-                                        - ((TimesData) event).getTimeReal() > worstDifference) {
-                                    jvmDao.setWorstDurationGtRealTimeEvent(event);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // 23 <code>G1ExtRootScanningData</code>
+                // 22 <code>G1ExtRootScanningData</code>
                 if (event instanceof G1ExtRootScanningData
                         && ((G1ExtRootScanningData) event).getExtRootScanningTime() != G1ExtRootScanningData.NO_DATA) {
                     long extRootScanningTime = ((G1ExtRootScanningData) event).getExtRootScanningTime();
@@ -1069,6 +1044,17 @@ public class GcManager {
                             jvmDao.setExtRootScanningTimeMax(extRootScanningTime);
                         }
                         jvmDao.setExtRootScanningTimeTotal(jvmDao.getExtRootScanningTimeTotal() + extRootScanningTime);
+                    }
+                }
+
+                // 23 "Other" time
+                if (event instanceof OtherTime && ((OtherTime) event).getOtherTime() != OtherTime.NO_DATA) {
+                    long otherTime = ((OtherTime) event).getOtherTime();
+                    if (otherTime > 0) {
+                        if (otherTime > jvmDao.getOtherTimeMax()) {
+                            jvmDao.setOtherTimeMax(otherTime);
+                        }
+                        jvmDao.setOtherTimeTotal(jvmDao.getOtherTimeTotal() + otherTime);
                     }
                 }
 

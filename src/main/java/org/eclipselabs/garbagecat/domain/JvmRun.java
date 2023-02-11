@@ -94,11 +94,6 @@ public class JvmRun {
     private int blockingEventCount;
 
     /**
-     * Number of <code>BlockingEvent</code>s where duration &gt; <code>TimesData</code> "real" time.
-     */
-    private long durationGtRealCount;
-
-    /**
      * Maximum GC pause duration (microseconds).
      */
     private long durationMax;
@@ -244,6 +239,16 @@ public class JvmRun {
     private String memory;
 
     /**
+     * Maximum "Other" time (microseconds).
+     */
+    private long otherTimeMax;
+
+    /**
+     * Total "Other" time (microseconds).
+     */
+    private long otherTimeTotal;
+
+    /**
      * Number of <code>ParallelCollection</code> events.
      */
     private long parallelCount;
@@ -343,12 +348,6 @@ public class JvmRun {
      * Total unified safepoint time duration (nanoseconds).
      */
     private long unifiedSafepointTimeTotal;
-
-    /**
-     * The <code>BlockingEvent</code> with the greatest difference between the <code>BlockingEvent</code> duration and
-     * the <code>TimesData</code> "other" time.
-     */
-    private LogEvent worstDurationGtRealTimeEvent;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
@@ -686,10 +685,6 @@ public class JvmRun {
                         org.github.joa.util.JdkUtil.getByteOptionValue(jvmOptions.getCompressedClassSpaceSize()));
     }
 
-    public long getDurationGtRealCount() {
-        return durationGtRealCount;
-    }
-
     public long getDurationMax() {
         return durationMax;
     }
@@ -1009,6 +1004,14 @@ public class JvmRun {
         return ratio.intValue();
     }
 
+    public long getOtherTimeMax() {
+        return otherTimeMax;
+    }
+
+    public long getOtherTimeTotal() {
+        return otherTimeTotal;
+    }
+
     public long getParallelCount() {
         return parallelCount;
     }
@@ -1138,10 +1141,6 @@ public class JvmRun {
         return unifiedSafepointTimeTotal;
     }
 
-    public LogEvent getWorstDurationGtRealTimeEvent() {
-        return worstDurationGtRealTimeEvent;
-    }
-
     public LogEvent getWorstInvertedParallelismEvent() {
         return worstInvertedParallelismEvent;
     }
@@ -1209,10 +1208,6 @@ public class JvmRun {
 
     public void setBlockingEventCount(int blockingEventCount) {
         this.blockingEventCount = blockingEventCount;
-    }
-
-    public void setDurationGtRealCount(long durationGtRealCount) {
-        this.durationGtRealCount = durationGtRealCount;
     }
 
     public void setEventTypes(List<LogEventType> eventTypes) {
@@ -1335,6 +1330,14 @@ public class JvmRun {
         this.memory = memory;
     }
 
+    public void setOtherTimeMax(long otherTimeMax) {
+        this.otherTimeMax = otherTimeMax;
+    }
+
+    public void setOtherTimeTotal(long otherTimeTotal) {
+        this.otherTimeTotal = otherTimeTotal;
+    }
+
     public void setParallelCount(long parallelCount) {
         this.parallelCount = parallelCount;
     }
@@ -1413,10 +1416,6 @@ public class JvmRun {
 
     public void setUnifiedSafepointTimeTotal(long unifiedSafepointTimeTotal) {
         this.unifiedSafepointTimeTotal = unifiedSafepointTimeTotal;
-    }
-
-    public void setWorstDurationGtRealTimeEvent(LogEvent worstDurationGtRealTimeEvent) {
-        this.worstDurationGtRealTimeEvent = worstDurationGtRealTimeEvent;
     }
 
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {
