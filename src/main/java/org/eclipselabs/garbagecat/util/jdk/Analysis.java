@@ -66,6 +66,11 @@ public enum Analysis {
     ERROR_G1_HUMONGOUS_JDK_OLD("error.g1.humongous.jdk.old"),
 
     /**
+     * Property key for GCLocker retry.
+     */
+    ERROR_GC_LOCKER_RETRY("error.gc.locker.retry"),
+
+    /**
      * Property key for the garbage collection overhead limit being reached.
      */
     ERROR_GC_TIME_LIMIT_EXCEEEDED("error.gc.time.limit.exceeded"),

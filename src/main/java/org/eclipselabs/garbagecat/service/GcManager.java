@@ -52,7 +52,7 @@ import org.eclipselabs.garbagecat.domain.jdk.G1FullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.GcLockerEvent;
+import org.eclipselabs.garbagecat.domain.jdk.GcLockerScavengeFailedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
@@ -374,7 +374,7 @@ public class GcManager {
             } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
                     && UnifiedPreprocessAction.match(currentLogLine)) {
-                // UnifiedPreprocessAction is used by UnifiedPreprocessAction
+                // UnifiedPreprocessAction is used by ShenandoahPreprocessAction
                 UnifiedPreprocessAction action = new UnifiedPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                         entangledLogLines, context);
                 if (action.getLogEntry() != null) {
@@ -1094,7 +1094,7 @@ public class GcManager {
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED)) {
                     jvmDao.getAnalysis().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
                 }
-            } else if (event instanceof GcLockerEvent) {
+            } else if (event instanceof GcLockerScavengeFailedEvent) {
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED)) {
                     jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
                 }

@@ -176,6 +176,11 @@ public final class JdkRegEx {
     public static final String PERCENT = "\\d{1,3}\\.\\d%";
 
     /**
+     * -XX:+PrintHeapAtGC output.
+     */
+    public static final String PRINT_HEAP_AT_GC = "{Heap before gc invocations=146:";
+
+    /**
      * <code>-XX:+PrintPromotionFailure</code> output.
      * 
      * For example:
@@ -202,11 +207,6 @@ public final class JdkRegEx {
             + "\\]" + JdkRegEx.DECORATOR + " \\[FinalReference, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.DECORATOR + " \\[PhantomReference, \\d{1,} refs, \\d{1,} refs, " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.DECORATOR + " \\[JNI Weak Reference, " + JdkRegEx.DURATION + "\\]";
-
-    /**
-     * -XX:+PrintHeapAtGC output.
-     */
-    public static final String PRINT_HEAP_AT_GC = "{Heap before gc invocations=146:";
 
     /**
      * <p>
@@ -405,9 +405,24 @@ public final class JdkRegEx {
     public static final String TRIGGER_G1_PREVENTIVE_COLLECTION = "G1 Preventive Collection";
 
     /**
-     * GCLocker Initiated GC trigger. A GC initiated after the JNI critical region is released. This is caused when a GC
-     * is requested when a thread is in the JNI critical region. GC is blocked until all threads exit the JNI critical
-     * region.
+     * The GC triggered after the GCLocker has been released.
+     * 
+     * The GCLocker is used to prevent GC while JNI (native) code is running in a "critical region."
+     * 
+     * Certain JNI function pairs are classified as "critical" because a Java object is passed into the JNI code. While
+     * the code is running inside the "critical region" it is necessary to prevent GC from happening to prevent
+     * compaction from changing the Java object memory address (and cause a crash due to the JNI code accessing a bad
+     * memory address).
+     * 
+     * For example, any code running between <code>GetPrimitiveArrayCritical</code> and
+     * <code>ReleasePrimitiveArrayCritical</code> is a "critical region".
+     * 
+     * If a thread cannot find a free area of heap large enough to allocate an object, it triggers a GC. If another
+     * thread is running JNI code in a "critical region", the GC cannot happen, so the the JVM requests a "GCLocker
+     * Initiated GC" and waits.
+     * 
+     * The expectation is that the GCLocker will not be held for a long time (there will not be long running code in a
+     * "critical region").
      */
     public static final String TRIGGER_GCLOCKER_INITIATED_GC = "GCLocker Initiated GC";
 

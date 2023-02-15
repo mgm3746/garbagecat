@@ -44,7 +44,8 @@ import org.eclipselabs.garbagecat.domain.jdk.G1RemarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcInfoEvent;
-import org.eclipselabs.garbagecat.domain.jdk.GcLockerEvent;
+import org.eclipselabs.garbagecat.domain.jdk.GcLockerRetryEvent;
+import org.eclipselabs.garbagecat.domain.jdk.GcLockerScavengeFailedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
@@ -133,31 +134,33 @@ public final class JdkUtil {
         //
         G1_CLEANUP, G1_CONCURRENT, G1_FULL_GC_PARALLEL, G1_FULL_GC_SERIAL, G1_MIXED_PAUSE, G1_REMARK,
         //
-        G1_YOUNG_INITIAL_MARK, G1_YOUNG_PAUSE, GC_INFO, GC_LOCKER, GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS,
+        G1_YOUNG_INITIAL_MARK, G1_YOUNG_PAUSE, GC_INFO, GC_LOCKER_RETRY, GC_LOCKER_RETRY_LIMIT,
         //
-        HEADER_MEMORY, HEADER_VERSION, HEAP, HEAP_ADDRESS, HEAP_AT_GC, HEAP_REGION_SIZE, LOG_FILE,
+        GC_LOCKER_SCAVENGE_FAILED, GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, HEAP,
         //
-        METASPACE_UTILS_REPORT, OOME_METASPACE, PAR_NEW, PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE,
+        HEAP_ADDRESS, HEAP_AT_GC, HEAP_REGION_SIZE, LOG_FILE, METASPACE_UTILS_REPORT, OOME_METASPACE, PAR_NEW,
         //
-        PARALLEL_SERIAL_OLD, SERIAL_NEW, SERIAL_OLD, SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT,
+        PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, SERIAL_NEW, SERIAL_OLD,
         //
-        SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK, SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC,
+        SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
         //
-        SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE, SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK,
+        SHENANDOAH_DEGENERATED_GC_MARK, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE,
         //
-        SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION,
+        SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS,
         //
-        THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP,
+        SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK,
         //
-        UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE,
+        UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
         //
-        UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
+        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER,
         //
-        UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD,
+        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
         //
-        UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z,
+        UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1,
         //
-        VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
+        USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING,
+        //
+        Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
     };
 
     /**
@@ -391,6 +394,8 @@ public final class JdkUtil {
             return LogEventType.UNIFIED_CONCURRENT;
         if (UnifiedG1CleanupEvent.match(logLine))
             return LogEventType.UNIFIED_G1_CLEANUP;
+        if (GcLockerRetryEvent.match(logLine))
+            return LogEventType.GC_LOCKER_RETRY;
         if (UnifiedG1FullGcEvent.match(logLine))
             return LogEventType.G1_FULL_GC_PARALLEL;
         if (UnifiedG1InfoEvent.match(logLine))
@@ -555,8 +560,8 @@ public final class JdkUtil {
             return LogEventType.GC_OVERHEAD_LIMIT;
         if (FlsStatisticsEvent.match(logLine))
             return LogEventType.FLS_STATISTICS;
-        if (GcLockerEvent.match(logLine))
-            return LogEventType.GC_LOCKER;
+        if (GcLockerScavengeFailedEvent.match(logLine))
+            return LogEventType.GC_LOCKER_SCAVENGE_FAILED;
         if (HeaderCommandLineFlagsEvent.match(logLine))
             return LogEventType.HEADER_COMMAND_LINE_FLAGS;
         if (HeaderMemoryEvent.match(logLine))
@@ -586,7 +591,7 @@ public final class JdkUtil {
         case HEAP:
         case FOOTER_STATS:
         case GC_INFO:
-        case GC_LOCKER:
+        case GC_LOCKER_SCAVENGE_FAILED:
         case GC_OVERHEAD_LIMIT:
         case G1_CONCURRENT:
         case HEADER_COMMAND_LINE_FLAGS:
@@ -606,6 +611,7 @@ public final class JdkUtil {
         case TENURING_DISTRIBUTION:
         case UNIFIED_SAFEPOINT:
         case UNIFIED_CONCURRENT:
+        case GC_LOCKER_RETRY:
         case UNIFIED_G1_INFO:
         case UNIFIED_HEADER:
         case UNKNOWN:
@@ -718,7 +724,7 @@ public final class JdkUtil {
         case HEAP:
         case FOOTER_STATS:
         case GC_INFO:
-        case GC_LOCKER:
+        case GC_LOCKER_SCAVENGE_FAILED:
         case GC_OVERHEAD_LIMIT:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
@@ -771,6 +777,8 @@ public final class JdkUtil {
             return new UnifiedCmsInitialMarkEvent(logLine);
         case UNIFIED_G1_CLEANUP:
             return new UnifiedG1CleanupEvent(logLine);
+        case GC_LOCKER_RETRY:
+            return new GcLockerRetryEvent(logLine);
         case G1_FULL_GC_PARALLEL:
             return new UnifiedG1FullGcEvent(logLine);
         case UNIFIED_G1_INFO:
@@ -913,8 +921,8 @@ public final class JdkUtil {
             return new FlsStatisticsEvent(logLine);
         case GC_INFO:
             return new GcInfoEvent(logLine);
-        case GC_LOCKER:
-            return new GcLockerEvent(logLine);
+        case GC_LOCKER_SCAVENGE_FAILED:
+            return new GcLockerScavengeFailedEvent(logLine);
         case GC_OVERHEAD_LIMIT:
             return new GcOverheadLimitEvent(logLine);
         case HEADER_COMMAND_LINE_FLAGS:

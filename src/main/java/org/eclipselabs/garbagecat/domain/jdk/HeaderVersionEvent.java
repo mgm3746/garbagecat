@@ -140,21 +140,6 @@ public class HeaderVersionEvent implements LogEvent {
         return JdkUtil.LogEventType.HEADER_VERSION.toString();
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    /**
-     * @return True if 32 bit, false otherwise.
-     */
-    public boolean is32Bit() {
-        boolean is32Bit = false;
-        if (logEntry != null) {
-            is32Bit = logEntry.matches("^.+32-Bit.+$");
-        }
-        return is32Bit;
-    }
-    
     /**
      * @return The OS type.
      */
@@ -172,5 +157,20 @@ public class HeaderVersionEvent implements LogEvent {
             }
         }
         return osType;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * @return True if 32 bit, false otherwise.
+     */
+    public boolean is32Bit() {
+        boolean is32Bit = false;
+        if (logEntry != null) {
+            is32Bit = logEntry.matches("^.+32-Bit.+$");
+        }
+        return is32Bit;
     }
 }

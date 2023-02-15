@@ -631,6 +631,10 @@ public class JvmRun {
         if (getEventTypes().contains(LogEventType.THREAD_DUMP)) {
             analysis.add(Analysis.INFO_THREAD_DUMP);
         }
+        // GCLocker retry failed
+        if (getEventTypes().contains(LogEventType.GC_LOCKER_RETRY)) {
+            analysis.add(Analysis.ERROR_GC_LOCKER_RETRY);
+        }
     }
 
     /**

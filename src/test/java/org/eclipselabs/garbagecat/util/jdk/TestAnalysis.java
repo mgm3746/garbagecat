@@ -574,6 +574,19 @@ class TestAnalysis {
     }
 
     @Test
+    void testOomeGcLockerRetryFailed() {
+        GcManager gcManager = new GcManager();
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.GC_LOCKER_RETRY);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.getAnalysis().clear();
+        jvmRun.doAnalysis();
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_LOCKER_RETRY.getKey()),
+                Analysis.ERROR_GC_LOCKER_RETRY + " analysis not identified.");
+    }
+
+    @Test
     void testOomeMetaspace() throws IOException {
         File testFile = TestUtil.getFile("dataset244.txt");
         GcManager gcManager = new GcManager();
@@ -736,19 +749,6 @@ class TestAnalysis {
      * Test PrintCommandLineFlags missing.
      */
     @Test
-    void testPrintCommandlineFlagsNoGcLogging() {
-        String jvmOptions = "MGM";
-        GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS.getKey()),
-                Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis incorrectly identified.");
-    }
-
-    /**
-     * Test PrintCommandLineFlags missing.
-     */
-    @Test
     void testPrintCommandlineFlagsGcLogging() {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
@@ -757,6 +757,19 @@ class TestAnalysis {
         jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS.getKey()),
                 Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis not identified.");
+    }
+
+    /**
+     * Test PrintCommandLineFlags missing.
+     */
+    @Test
+    void testPrintCommandlineFlagsNoGcLogging() {
+        String jvmOptions = "MGM";
+        GcManager gcManager = new GcManager();
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        jvmRun.doAnalysis();
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS.getKey()),
+                Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis incorrectly identified.");
     }
 
     /**

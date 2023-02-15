@@ -1217,8 +1217,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                if (entangledLogLines.size() == 1 && entangledLogLines.get(0) != null
-                        && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(entangledLogLines.get(0)).matches()) {
+                boolean haveBeginningSafepointLogging = false;
+                for (String logLine : entangledLogLines) {
+                    if (logLine.matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
+                        haveBeginningSafepointLogging = true;
+                    }
+                }
+                if (haveBeginningSafepointLogging) {
                     entangledLogLines.add(matcher.group(1));
                 } else {
                     this.logEntry = matcher.group(1);
@@ -1228,13 +1233,20 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                if (entangledLogLines.size() == 2 && entangledLogLines.get(0) != null
-                        && REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(entangledLogLines.get(0)).matches()
-                        && entangledLogLines.get(1) != null
-                        && REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(entangledLogLines.get(1)).matches()) {
-                    this.logEntry = entangledLogLines.get(0) + entangledLogLines.get(1) + matcher.group(1);
+                String beginningSafepointLogging = null;
+                String middleSafepointLogging = null;
+                for (String logLine : entangledLogLines) {
+                    if (logLine.matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
+                        beginningSafepointLogging = logLine;
+                    } else if (logLine.matches(REGEX_RETAIN_MIDDLE_SAFEPOINT)) {
+                        middleSafepointLogging = logLine;
+                    }
+                }
+                if (beginningSafepointLogging != null && middleSafepointLogging != null) {
+                    this.logEntry = beginningSafepointLogging + middleSafepointLogging + matcher.group(1);
+                    entangledLogLines.remove(beginningSafepointLogging);
+                    entangledLogLines.remove(middleSafepointLogging);
                     context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-                    entangledLogLines.clear();
                 } else {
                     this.logEntry = logEntry;
                 }

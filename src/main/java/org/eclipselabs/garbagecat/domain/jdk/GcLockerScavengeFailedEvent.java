@@ -19,7 +19,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
 /**
  * <p>
- * GC_LOCKER
+ * GC_LOCKER_SCAVENGE_FAILED
  * </p>
  * 
  * <p>
@@ -42,9 +42,9 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class GcLockerEvent implements LogEvent {
+public class GcLockerScavengeFailedEvent implements LogEvent {
 
-    private static final Pattern PATTERN = Pattern.compile(GcLockerEvent.REGEX);
+    private static final Pattern PATTERN = Pattern.compile(GcLockerScavengeFailedEvent.REGEX);
 
     /**
      * Regular expression defining the logging.
@@ -78,7 +78,7 @@ public class GcLockerEvent implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public GcLockerEvent(String logEntry) {
+    public GcLockerScavengeFailedEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
     }
@@ -88,7 +88,7 @@ public class GcLockerEvent implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.GC_LOCKER.toString();
+        return JdkUtil.LogEventType.GC_LOCKER_SCAVENGE_FAILED.toString();
     }
 
     public long getTimestamp() {

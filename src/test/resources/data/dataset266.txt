@@ -1,0 +1,44 @@
+[2023-02-12T01:16:20.171+0200][info][safepoint      ] Entering safepoint region: G1CollectForAllocation
+[2023-02-12T01:16:20.175+0200][info][gc,start       ] GC(3296) Pause Young (Concurrent Start) (GCLocker Initiated GC)
+[2023-02-12T01:16:20.175+0200][info][gc,task        ] GC(3296) Using 163 workers of 163 for evacuation
+[2023-02-12T01:16:20.227+0200][info][gc             ] GC(3296) To-space exhausted
+[2023-02-12T01:16:20.227+0200][info][gc,phases      ] GC(3296)   Pre Evacuate Collection Set: 10.5ms
+[2023-02-12T01:16:20.227+0200][info][gc,phases      ] GC(3296)   Evacuate Collection Set: 28.9ms
+[2023-02-12T01:16:20.227+0200][info][gc,phases      ] GC(3296)   Post Evacuate Collection Set: 8.3ms
+[2023-02-12T01:16:20.227+0200][info][gc,phases      ] GC(3296)   Other: 4.9ms
+[2023-02-12T01:16:20.227+0200][info][gc,heap        ] GC(3296) Eden regions: 3->0(960)
+[2023-02-12T01:16:20.227+0200][info][gc,heap        ] GC(3296) Survivor regions: 12->0(960)
+[2023-02-12T01:16:20.227+0200][info][gc,heap        ] GC(3296) Old regions: 12533->12548
+[2023-02-12T01:16:20.227+0200][info][gc,heap        ] GC(3296) Humongous regions: 6652->6652
+[2023-02-12T01:16:20.227+0200][info][gc,metaspace   ] GC(3296) Metaspace: 262592K(292864K)->262592K(292864K)
+[2023-02-12T01:16:20.227+0200][info][gc             ] GC(3296) Pause Young (Concurrent Start) (GCLocker Initiated GC) 614121M->614121M(614400M) 52.062ms
+[2023-02-12T01:16:20.228+0200][info][gc,cpu         ] GC(3296) User=3.24s Sys=0.03s Real=0.05s
+[2023-02-12T01:16:20.228+0200][info][gc,ergo        ] Attempting maximally compacting collection
+[2023-02-12T01:16:20.228+0200][info][gc             ] GC(3298) Concurrent Cycle
+[2023-02-12T01:16:20.228+0200][info][gc,marking     ] GC(3298) Concurrent Clear Claimed Marks
+[2023-02-12T01:16:20.228+0200][info][gc,task        ] GC(3297) Using 163 workers of 163 for full compaction
+[2023-02-12T01:16:20.229+0200][info][gc,start       ] GC(3297) Pause Full (GCLocker Initiated GC)
+[2023-02-12T01:16:20.238+0200][info][gc,marking     ] GC(3298) Concurrent Clear Claimed Marks 10.358ms
+[2023-02-12T01:16:20.239+0200][info][gc,marking     ] GC(3298) Concurrent Scan Root Regions
+[2023-02-12T01:16:20.239+0200][info][gc,marking     ] GC(3298) Concurrent Scan Root Regions 0.150ms
+[2023-02-12T01:16:20.239+0200][info][gc,marking     ] GC(3298) Concurrent Mark (4475.172s)
+[2023-02-12T01:16:20.239+0200][info][gc,marking     ] GC(3298) Concurrent Mark From Roots
+[2023-02-12T01:16:20.239+0200][info][gc,task        ] GC(3298) Using 41 workers of 41 for marking
+[2023-02-12T01:16:20.342+0200][info][gc,phases,start] GC(3297) Phase 1: Mark live objects
+[2023-02-12T01:16:21.888+0200][info][gc,stringtable ] GC(3297) Cleaned string and symbol table, strings: 153049 processed, 122 removed, symbols: 483097 processed, 145 removed
+[2023-02-12T01:16:21.889+0200][info][gc,phases      ] GC(3297) Phase 1: Mark live objects 1546.802ms
+[2023-02-12T01:16:21.889+0200][info][gc,phases,start] GC(3297) Phase 2: Prepare for compaction
+[2023-02-12T01:16:22.016+0200][info][gc,phases      ] GC(3297) Phase 2: Prepare for compaction 127.282ms
+[2023-02-12T01:16:22.016+0200][info][gc,phases,start] GC(3297) Phase 3: Adjust pointers
+[2023-02-12T01:16:22.176+0200][info][gc,phases      ] GC(3297) Phase 3: Adjust pointers 160.358ms
+[2023-02-12T01:16:22.176+0200][info][gc,phases,start] GC(3297) Phase 4: Compact heap
+[2023-02-12T01:16:25.026+0200][info][gc,phases      ] GC(3297) Phase 4: Compact heap 2849.590ms
+[2023-02-12T01:16:25.159+0200][info][gc,heap        ] GC(3297) Eden regions: 0->0(4580)
+[2023-02-12T01:16:25.159+0200][info][gc,heap        ] GC(3297) Survivor regions: 0->0(960)
+[2023-02-12T01:16:25.159+0200][info][gc,heap        ] GC(3297) Old regions: 12548->5663
+[2023-02-12T01:16:25.159+0200][info][gc,heap        ] GC(3297) Humongous regions: 6652->1205
+[2023-02-12T01:16:25.159+0200][info][gc,metaspace   ] GC(3297) Metaspace: 262592K(292864K)->262322K(292864K)
+[2023-02-12T01:16:25.160+0200][info][gc             ] GC(3297) Pause Full (GCLocker Initiated GC) 614121M->209781M(614400M) 4930.898ms
+[2023-02-12T01:16:25.161+0200][info][gc,cpu         ] GC(3297) User=413.34s Sys=0.60s Real=4.93s
+[2023-02-12T01:16:25.161+0200][info][safepoint      ] Leaving safepoint region
+[2023-02-12T01:16:25.161+0200][info][safepoint      ] Total time for which application threads were stopped: 4.9916775 seconds, Stopping threads took: 0.0011847 seconds
