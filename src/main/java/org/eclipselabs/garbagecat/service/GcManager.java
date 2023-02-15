@@ -296,6 +296,7 @@ public class GcManager {
         jvmRun.setSwap(new Memory(jvmDao.getSwap(), BYTES));
         jvmRun.setSwapFree(new Memory(jvmDao.getSwapFree(), BYTES));
         jvmRun.setSysGtUserCount(jvmDao.getSysGtUserCount());
+        jvmRun.setTriggers(jvmDao.getTriggers());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setUnifiedSafepointEventCount(jvmDao.getUnifiedSafepointEventCount());
         jvmRun.setUnifiedSafepointTimeMax(jvmDao.getUnifiedSafepointTimeMax());
@@ -1133,6 +1134,14 @@ public class GcManager {
             if (!jvmDao.getEventTypes().contains(eventType)) {
                 jvmDao.getEventTypes().add(eventType);
             }
+
+            // Populate triggers list.
+            if (event instanceof TriggerData) {
+                if (!jvmDao.getTriggers().contains(((TriggerData) event).getTrigger())) {
+                    jvmDao.getTriggers().add(((TriggerData) event).getTrigger());
+                }
+            }
+
             // Populate collector list.
             if (event instanceof GcEvent) {
                 if (!jvmDao.getJvmContext().getGarbageCollectors().contains(((GcEvent) event).getGarbageCollector())) {

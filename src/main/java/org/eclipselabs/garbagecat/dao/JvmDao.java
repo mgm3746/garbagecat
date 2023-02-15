@@ -236,6 +236,11 @@ public class JvmDao {
     private long sysGtUserCount;
 
     /**
+     * List of all GC triggers associate with the JVM run.
+     */
+    List<String> triggers = new ArrayList<>();
+
+    /**
      * Logging lines that do not match any known GC events.
      */
     private List<String> unidentifiedLogLines = new ArrayList<>();
@@ -824,6 +829,10 @@ public class JvmDao {
      */
     public long getSysGtUserCount() {
         return sysGtUserCount;
+    }
+
+    public List<String> getTriggers() {
+        return triggers;
     }
 
     public List<String> getUnidentifiedLogLines() {

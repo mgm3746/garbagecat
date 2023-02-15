@@ -259,6 +259,11 @@ public enum Analysis {
     WARN_EXPLICIT_GC_UNKNOWN("warn.explicit.gc.unknown"),
 
     /**
+     * Property a thread running in the JNI "critical region" preventing GC.
+     */
+    WARN_GC_LOCKER("warn.gc.locker"),
+
+    /**
      * Property key for the ratio of gc time vs. safepoint time showing a significant amount of safepoint time (&gt;20%)
      * is not GC related.
      */

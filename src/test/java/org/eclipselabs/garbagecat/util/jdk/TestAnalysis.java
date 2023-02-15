@@ -374,6 +374,34 @@ class TestAnalysis {
                 org.github.joa.util.Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT + " analysis incorrectly identified.");
     }
 
+    @Test
+    void testGcLocker() {
+        GcManager gcManager = new GcManager();
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<String> triggers = new ArrayList<String>();
+        triggers.add(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC);
+        jvmRun.setTriggers(triggers);
+        jvmRun.doAnalysis();
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_LOCKER.getKey()),
+                Analysis.WARN_GC_LOCKER + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_GC_LOCKER_RETRY.getKey()),
+                Analysis.ERROR_GC_LOCKER_RETRY + " analysis incorrectly identified.");
+    }
+
+    @Test
+    void testGcLockerRetry() {
+        GcManager gcManager = new GcManager();
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        eventTypes.add(LogEventType.GC_LOCKER_RETRY);
+        jvmRun.setEventTypes(eventTypes);
+        jvmRun.doAnalysis();
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_LOCKER_RETRY.getKey()),
+                Analysis.ERROR_GC_LOCKER_RETRY + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_LOCKER.getKey()),
+                Analysis.WARN_GC_LOCKER + " analysis incorrectly identified.");
+    }
+
     /**
      * Test small gc log file size.
      * 
@@ -571,19 +599,6 @@ class TestAnalysis {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-    }
-
-    @Test
-    void testOomeGcLockerRetryFailed() {
-        GcManager gcManager = new GcManager();
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.GC_LOCKER_RETRY);
-        jvmRun.setEventTypes(eventTypes);
-        jvmRun.getAnalysis().clear();
-        jvmRun.doAnalysis();
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_LOCKER_RETRY.getKey()),
-                Analysis.ERROR_GC_LOCKER_RETRY + " analysis not identified.");
     }
 
     @Test

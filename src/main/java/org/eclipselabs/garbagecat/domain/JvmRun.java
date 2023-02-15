@@ -330,6 +330,11 @@ public class JvmRun {
     private int throughputThreshold;
 
     /**
+     * GC triggers.
+     */
+    private List<String> triggers;
+
+    /**
      * Log lines that do not match any existing logging patterns.
      */
     private List<String> unidentifiedLogLines;
@@ -634,6 +639,8 @@ public class JvmRun {
         // GCLocker retry failed
         if (getEventTypes().contains(LogEventType.GC_LOCKER_RETRY)) {
             analysis.add(Analysis.ERROR_GC_LOCKER_RETRY);
+        } else if (getTriggers().contains(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC)) {
+            analysis.add(Analysis.WARN_GC_LOCKER);
         }
     }
 
@@ -1110,6 +1117,10 @@ public class JvmRun {
         return throughputThreshold;
     }
 
+    public List<String> getTriggers() {
+        return triggers;
+    }
+
     public List<String> getUnidentifiedLogLines() {
         return unidentifiedLogLines;
     }
@@ -1404,6 +1415,10 @@ public class JvmRun {
 
     public void setThroughputThreshold(int throughputThreshold) {
         this.throughputThreshold = throughputThreshold;
+    }
+
+    public void setTriggers(List<String> triggers) {
+        this.triggers = triggers;
     }
 
     public void setUnidentifiedLogLines(List<String> unidentifiedLogLines) {
