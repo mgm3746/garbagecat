@@ -470,6 +470,13 @@ class TestHeapEvent {
     }
 
     @Test
+    void testRegionSize4Digit() {
+        String logLine = "  region size 8192K, 1702 young (13942784K), 10 survivors (81920K)";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
     void testRegionUnified() {
         String logLine = "[25.016s][info][gc,heap,exit  ]   region size 1024K, 13 young (13312K), 1 survivors (1024K)";
         assertTrue(HeapEvent.match(logLine),

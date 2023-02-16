@@ -187,8 +187,8 @@ public class HeapEvent implements ThrowAwayEvent {
                     + JdkRegEx.SIZE + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "(, " + JdkRegEx.ADDRESS
                     + ")?\\)[ ]*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  region size " + JdkRegEx.SIZE + ", \\d{1,3} young \\(" + JdkRegEx.SIZE
-                    + "\\), \\d{1,2} survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  region size " + JdkRegEx.SIZE + ", \\d{1,} young \\(" + JdkRegEx.SIZE
+                    + "\\), \\d{1,} survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
@@ -201,7 +201,7 @@ public class HeapEvent implements ThrowAwayEvent {
                     + "(, capacity " + JdkRegEx.SIZE + ")?, committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE
                     + "$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )? \\d{1,4} x " + JdkRegEx.SIZE + " regions$",
+            "^(" + UnifiedRegEx.DECORATOR + " )? \\d{1,} x " + JdkRegEx.SIZE + " regions$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " |" + JdkRegEx.DECORATOR + " )?  class space    used " + JdkRegEx.SIZE
                     + "(, capacity " + JdkRegEx.SIZE + ")?, " + "committed " + JdkRegEx.SIZE + ", reserved "
