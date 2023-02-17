@@ -31,6 +31,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
@@ -233,7 +234,7 @@ class TestCmsPreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED.getKey()),
-                JdkUtil.TriggerType.CMS_CONCURRENT_MODE_INTERRUPTED.toString() + " trigger not identified.");
+                GcTrigger.Type.CONCURRENT_MODE_INTERRUPTED.toString() + " trigger not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
     }
@@ -1767,7 +1768,7 @@ class TestCmsPreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE.getKey()),
-                JdkUtil.TriggerType.CMS_CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.");
+                GcTrigger.Type.CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
     }
@@ -1792,7 +1793,7 @@ class TestCmsPreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE.getKey()),
-                JdkUtil.TriggerType.CMS_CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.");
+                GcTrigger.Type.CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
     }

@@ -28,9 +28,12 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -184,27 +187,27 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     /**
      * Trigger(s) after "CMS".
      */
-    private static final String TRIGGER_CMS = "(" + JdkRegEx.TRIGGER_CONCURRENT_MODE_FAILURE + "|"
-            + JdkRegEx.TRIGGER_CONCURRENT_MODE_INTERRUPTED + ")";
+    private static final String TRIGGER_CMS = "(" + GcTrigger.CONCURRENT_MODE_FAILURE + "|"
+            + GcTrigger.CONCURRENT_MODE_INTERRUPTED + ")";
 
     /**
      * Trigger(s) after "Full GC".
      */
-    private static final String TRIGGER_FULL_GC = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
-            + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+    private static final String TRIGGER_FULL_GC = "(" + GcTrigger.SYSTEM_GC + "|"
+            + GcTrigger.HEAP_INSPECTION_INITIATED_GC + "|" + GcTrigger.ALLOCATION_FAILURE + "|"
+            + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.LAST_DITCH_COLLECTION + "|"
+            + GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Trigger(s) after "GC".
      */
-    private static final String TRIGGER_GC = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
+    private static final String TRIGGER_GC = "(" + GcTrigger.ALLOCATION_FAILURE + ")";
 
     /**
      * Trigger(s) after "ParNew".
      */
-    private static final String TRIGGER_PAR_NEW = "(" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")";
+    private static final String TRIGGER_PAR_NEW = "(" + GcTrigger.PROMOTION_FAILED + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -324,7 +327,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
                 } else if (matcher.group(52) != null) {
                     this.trigger = matcher.group(52);
                 } else if (matcher.group(17) != null) {
-                    this.trigger = JdkRegEx.TRIGGER_CLASS_HISTOGRAM;
+                    this.trigger = GcTrigger.CLASS_HISTOGRAM;
                 } else if (matcher.group(15) != null) {
                     this.trigger = matcher.group(15);
                 }
@@ -368,7 +371,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
                     this.trigger = matcher.group(15);
                 } else {
                     // assume promotion failure
-                    this.trigger = JdkRegEx.TRIGGER_PROMOTION_FAILED;
+                    this.trigger = GcTrigger.PROMOTION_FAILED;
                 }
                 this.young = kilobytes(matcher.group(33));
                 // No data to determine young end size.
@@ -437,6 +440,11 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
         return duration;
     }
 
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SERIAL_OLD;
+    }
+
     public String getLogEntry() {
         return logEntry;
     }
@@ -489,8 +497,8 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

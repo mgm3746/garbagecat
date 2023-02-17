@@ -93,11 +93,6 @@ public enum Analysis {
     ERROR_PHYSICAL_MEMORY("error.physical.memory"),
 
     /**
-     * Property key for the SERIAL_OLD collector being invoked for reasons other than explicit gc.
-     */
-    ERROR_SERIAL_GC("error.serial.gc"),
-
-    /**
      * Property key for the CMS collector invoking a serial collection for reasons other than explicit gc.
      */
     ERROR_SERIAL_GC_CMS("error.serial.gc.cms"),
@@ -324,6 +319,11 @@ public enum Analysis {
      * Property key for -XX:_PrintGCCause not enabled.
      */
     WARN_PRINT_GC_CAUSE_NOT_ENABLED("warn.print.gc.cause.not.enabled"),
+
+    /**
+     * Property key for the SERIAL_OLD collector being invoked for reasons other than explicit gc.
+     */
+    WARN_SERIAL_GC("warn.serial.gc"),
 
     /**
      * Property key for inverted serialism.

@@ -29,6 +29,8 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCollector;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -96,9 +98,9 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_METADATE_GC_CLEAR_SOFT_REFERENCES + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
+    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.GCLOCKER_INITIATED_GC
+            + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES + "|"
+            + GcTrigger.METADATA_GC_THRESHOLD + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -318,8 +320,8 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

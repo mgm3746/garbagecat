@@ -16,7 +16,7 @@ import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.junit.jupiter.api.Test;
 
@@ -46,8 +46,8 @@ class TestParallelScavengeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals((long) 1025076327, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE),
-                "Trigger not recognized as " + JdkUtil.TriggerType.ALLOCATION_FAILURE.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE,
+                "Trigger not recognized as " + GcTrigger.Type.ALLOCATION_FAILURE.toString() + ".");
         assertEquals(kilobytes(385537), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(385537), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(397824), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -70,8 +70,8 @@ class TestParallelScavengeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals((long) 1029482045, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC),
-                "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_DUMP_INITIATED_GC.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.Type.HEAP_DUMP_INITIATED_GC,
+                "Trigger not recognized as " + GcTrigger.Type.HEAP_DUMP_INITIATED_GC.toString() + ".");
         assertEquals(kilobytes(335699), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(33192), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(397312), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -93,8 +93,8 @@ class TestParallelScavengeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals((long) 285196842, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC),
-                "Trigger not recognized as " + JdkUtil.TriggerType.HEAP_INSPECTION_INITIATED_GC.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.Type.HEAP_INSPECTION_INITIATED_GC,
+                "Trigger not recognized as " + GcTrigger.Type.HEAP_INSPECTION_INITIATED_GC.toString() + ".");
         assertEquals(kilobytes(1475708), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(47669), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1514496), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -124,7 +124,7 @@ class TestParallelScavengeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals((long) 7682, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1048576), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(131690), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1223168), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -146,7 +146,7 @@ class TestParallelScavengeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals((long) 4172, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(649034), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(114285), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1223168), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -168,7 +168,7 @@ class TestParallelScavengeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals((long) 1219, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1226834), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(17779), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1835008), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -190,7 +190,7 @@ class TestParallelScavengeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals((long) 372405495, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1569280), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -276,8 +276,8 @@ class TestParallelScavengeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         ParallelScavengeEvent event = new ParallelScavengeEvent(logLine);
         assertEquals((long) 180069616, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_SYSTEM_GC),
-                "Trigger not recognized as " + JdkUtil.TriggerType.SYSTEM_GC.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.Type.SYSTEM_GC,
+                "Trigger not recognized as " + GcTrigger.Type.SYSTEM_GC.toString() + ".");
         assertEquals(kilobytes(553672), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(22188), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1472512), event.getYoungSpace(), "Young available size not parsed correctly.");

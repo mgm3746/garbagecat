@@ -25,6 +25,8 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -51,7 +53,7 @@ import org.github.joa.domain.GarbageCollector;
  * </pre>
  * 
  * <p>
- * 2) With 2 dashes after the GC indicates a <code>JdkRegEx.Promotion.TRIGGER_PROMOTION_FAILED</code>. See <a href=
+ * 2) With 2 dashes after the GC indicates a <code>JdkRegEx.Promotion.PROMOTION_FAILED</code>. See <a href=
  * "http://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file/de8045923ad2/src/share/vm/gc_implementation/parallelScavenge/psScavenge.cpp">psScavenge.cpp</a>.
  * This seems to happen when the JVM is stressed out doing continuous full GCs.
  * </p>
@@ -96,10 +98,10 @@ public class ParallelScavengeEvent extends ParallelCollector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")";
+    private static final String TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.GCLOCKER_INITIATED_GC
+            + "|" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.LAST_DITCH_COLLECTION + "|"
+            + GcTrigger.HEAP_INSPECTION_INITIATED_GC + "|" + GcTrigger.SYSTEM_GC + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -277,8 +279,8 @@ public class ParallelScavengeEvent extends ParallelCollector
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

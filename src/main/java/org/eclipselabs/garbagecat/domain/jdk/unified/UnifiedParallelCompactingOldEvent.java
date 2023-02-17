@@ -30,6 +30,8 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCollector;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -91,9 +93,8 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ERGONOMICS + "|"
-            + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "|" + JdkRegEx.TRIGGER_METADATE_GC_CLEAR_SOFT_REFERENCES + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + ")";
+    private static final String TRIGGER = "(" + GcTrigger.ERGONOMICS + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|"
+            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES + "|" + GcTrigger.METADATA_GC_THRESHOLD + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -314,8 +315,8 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

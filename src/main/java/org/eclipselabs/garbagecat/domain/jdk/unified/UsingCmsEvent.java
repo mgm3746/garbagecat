@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -99,6 +100,11 @@ public class UsingCmsEvent extends CmsCollector implements UnifiedLogging {
                 }
             }
         }
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.CMS;
     }
 
     public String getLogEntry() {

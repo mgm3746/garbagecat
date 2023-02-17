@@ -19,6 +19,8 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -123,7 +125,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     /**
      * Regular expression defining standard logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\((" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\((" + GcTrigger.CMS_FINAL_REMARK
             + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\])?"
             + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DECORATOR
@@ -148,7 +150,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * TODO: Combine with REGEX.
      */
     private static final String REGEX_CLASS_UNLOADING = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(("
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
+            + GcTrigger.CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
             + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\((non-)?parallel\\) ("
             + JdkRegEx.DECORATOR + " \\[grey object rescan, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[root rescan, " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR + " \\[visit unhandled CLDs, "
@@ -168,9 +170,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     /**
      * Regular expression defining truncated logging due to -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC:
      */
-    private static final String REGEX_TRUNCATED = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(("
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
-            + JdkRegEx.SIZE_K + "\\)\\]$";
+    private static final String REGEX_TRUNCATED = "^" + JdkRegEx.DECORATOR + " \\[GC( \\((" + GcTrigger.CMS_FINAL_REMARK
+            + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\]$";
 
     private static final Pattern REGEX_TRUNCATED_PATTERN = Pattern.compile(REGEX_TRUNCATED);
 
@@ -372,8 +373,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public boolean isClassUnloading() {

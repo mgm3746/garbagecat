@@ -393,7 +393,7 @@ public class UnifiedSafepoint {
     public static final String Z_RELOCATE_START = "ZRelocateStart";
 
     /**
-     * Get <code>Trigger</code> from vm log literal.
+     * Get <code>Trigger</code> from log literal.
      * 
      * @param triggerLiteral
      *            The trigger literal.
@@ -491,11 +491,11 @@ public class UnifiedSafepoint {
     }
 
     /**
-     * Get <code>Trigger</code> vm log literal.
+     * Get <code>Trigger</code> log literal.
      * 
      * @param trigger
      *            The trigger.
-     * @return The trigger literal in the vm log line.
+     * @return The trigger literal in the log line.
      */
     public static final String getTriggerLiteral(Trigger trigger) {
         String triggerLiteral = null;

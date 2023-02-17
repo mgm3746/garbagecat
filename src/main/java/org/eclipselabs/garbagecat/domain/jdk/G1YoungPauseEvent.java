@@ -27,6 +27,8 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -101,10 +103,10 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
      *
      * 1.234: [GC pause (young) 102M-&gt;24M(512M), 0.0254200 secs]
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")\\) )?\\(young\\)(--)?[ ]{0,1}" + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\((" + GcTrigger.G1_EVACUATION_PAUSE
+            + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|" + GcTrigger.GCLOCKER_INITIATED_GC
+            + ")\\) )?\\(young\\)(--)?[ ]{0,1}" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
@@ -126,13 +128,13 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
      * [Times: user=1.51 sys=0.14, real=0.77 secs]
      */
     private static final String REGEX_PREPROCESSED_DETAILS = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\) )?\\(young\\)( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, "
-            + JdkRegEx.DURATION + "\\]" + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "?" + OtherTime.REGEX
-            + "?\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
+            + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.GCLOCKER_INITIATED_GC + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION + ")\\) )?\\(young\\)( \\((" + GcTrigger.TO_SPACE_EXHAUSTED + "|"
+            + GcTrigger.TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION + "\\]"
+            + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "?" + OtherTime.REGEX + "?\\[Eden: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_DETAILS_PATTERN = Pattern.compile(REGEX_PREPROCESSED_DETAILS);
 
@@ -146,10 +148,10 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
      * user=0.22 sys=0.00, real=0.11 secs]
      */
     private static final String REGEX_PREPROCESSED_NO_DURATION = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")\\) )?\\(young\\)\\[Eden: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "[ ]*$";
+            + GcTrigger.G1_EVACUATION_PAUSE + ")\\) )?\\(young\\)\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\]" + TimesData.REGEX + "[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_NO_DURATION_PATTERN = Pattern
             .compile(REGEX_PREPROCESSED_NO_DURATION);
@@ -438,7 +440,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 }

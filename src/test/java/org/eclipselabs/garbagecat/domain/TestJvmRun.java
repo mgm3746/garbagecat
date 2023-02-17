@@ -158,8 +158,8 @@ class TestJvmRun {
                 JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " collector not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL.getKey()),
                 Analysis.WARN_EXPLICIT_GC_SERIAL_PARALLEL + " analysis not identified.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL.getKey()),
-                Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_PARALLEL.getKey()),
+                Analysis.ERROR_SERIAL_GC_PARALLEL + " analysis incorrectly identified.");
     }
 
     /**

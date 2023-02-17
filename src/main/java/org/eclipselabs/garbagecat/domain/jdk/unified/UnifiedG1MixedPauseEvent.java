@@ -29,6 +29,8 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -79,8 +81,8 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+    private static final String TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION
+            + "|" + GcTrigger.GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -296,8 +298,8 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     protected void setPermOccupancyEnd(Memory permGenEnd) {

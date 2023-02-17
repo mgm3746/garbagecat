@@ -12,18 +12,12 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.github.joa.domain.GarbageCollector;
-
 /**
  * Serial collector.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class SerialCollector extends GcEvent {
+public abstract class SerialCollector extends GcEvent {
 
-    @Override
-    public GarbageCollector getGarbageCollector() {
-        return GarbageCollector.SERIAL;
-    }
 }

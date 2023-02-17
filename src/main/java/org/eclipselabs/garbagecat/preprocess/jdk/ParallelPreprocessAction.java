@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -129,7 +130,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * 51216232 promoted: 106256 overflow: false
      */
     private static final String REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY = "^(" + JdkRegEx.DECORATOR
-            + " \\[GC \\((" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
+            + " \\[GC \\((" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.GCLOCKER_INITIATED_GC
             + ")\\) )AdaptiveSizePolicy::update_averages:  survived: \\d{1,}  promoted: "
             + "\\d{1,}  overflow: (false|true)$";
 

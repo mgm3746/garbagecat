@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -83,7 +83,7 @@ class TestUnifiedG1MixedPauseEvent {
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 16629, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(3801), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(3801), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1056768), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");

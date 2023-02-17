@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.github.joa.domain.Bit;
 import org.github.joa.domain.GarbageCollector;
@@ -223,8 +224,8 @@ class TestAnalysis {
                 Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED + " analysis not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED.getKey()),
                 Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED + " analysis incorrectly identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT.getKey()),
-                org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT.getKey()),
+                org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT + " analysis incorrectly identified.");
         assertFalse(
                 jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED
@@ -378,8 +379,8 @@ class TestAnalysis {
     void testGcLocker() {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        List<String> triggers = new ArrayList<String>();
-        triggers.add(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC);
+        List<Type> triggers = new ArrayList<Type>();
+        triggers.add(GcTrigger.Type.GCLOCKER_INITIATED_GC);
         jvmRun.setTriggers(triggers);
         jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_LOCKER.getKey()),
@@ -668,10 +669,10 @@ class TestAnalysis {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_CMS_PAR_NEW_DISABLED.getKey()),
-                org.github.joa.util.Analysis.WARN_JDK8_CMS_PAR_NEW_DISABLED + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC.getKey()),
-                Analysis.ERROR_SERIAL_GC + " analysis incorrectly identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED.getKey()),
+                org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_SERIAL_GC.getKey()),
+                Analysis.WARN_SERIAL_GC + " analysis incorrectly identified.");
         assertFalse(
                 jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_GC_LOG_FILE_ROTATION_NOT_ENABLED

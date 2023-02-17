@@ -28,6 +28,8 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -97,7 +99,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_ERGONOMICS + ")";
+    private static final String TRIGGER = "(" + GcTrigger.SYSTEM_GC + "|" + GcTrigger.ERGONOMICS + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -253,7 +255,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
 
     @Override
     public GarbageCollector getGarbageCollector() {
-        return GarbageCollector.PARALLEL_OLD;
+        return GarbageCollector.PARALLEL_SERIAL_OLD;
     }
 
     public String getLogEntry() {
@@ -308,8 +310,8 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

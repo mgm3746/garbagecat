@@ -171,19 +171,6 @@ public final class JdkUtil {
     };
 
     /**
-     * Defined triggers.
-     */
-    public enum TriggerType {
-        ALLOCATION_FAILURE, CLASS_HISTOGRAM, CMS_CONCURRENT_MODE_FAILURE, CMS_CONCURRENT_MODE_INTERRUPTED,
-        //
-        CMS_FINAL_REMARK, CMS_INITIAL_MARK, ERGONOMICS, G1_EVACUATION_PAUSE, GCLOCATER_INITIATED_GC,
-        //
-        HEAP_DUMP_INITIATED_GC, HEAP_INSPECTION_INITIATED_GC, JVMTI_FORCED_GARBAGE_COLLECTION, LAST_DITCH_COLLECTION,
-        //
-        METADATA_GC_THRESHOLD, SYSTEM_GC, TO_SPACE_EXHAUSTED, UNDEFINED, UNKNOWN;
-    };
-
-    /**
      * The number of regex patterns in <code>UnifiedRegEx.DECORATOR</code>. Convenience field to make the code resilient
      * to decorator pattern changes.
      */

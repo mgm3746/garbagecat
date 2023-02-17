@@ -19,9 +19,12 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -61,7 +64,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     /**
      * Regular expressions defining the logging JDK8 and prior.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC (\\((" + JdkRegEx.TRIGGER_CMS_INITIAL_MARK
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC (\\((" + GcTrigger.CMS_INITIAL_MARK
             + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K
             + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
@@ -161,6 +164,11 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         return duration;
     }
 
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.CMS;
+    }
+
     public String getLogEntry() {
         return logEntry;
     }
@@ -189,7 +197,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 }

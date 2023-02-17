@@ -25,9 +25,12 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -92,7 +95,7 @@ public class SerialNewEvent extends SerialCollector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
+    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -225,6 +228,11 @@ public class SerialNewEvent extends SerialCollector
         return duration;
     }
 
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SERIAL_NEW;
+    }
+
     public String getLogEntry() {
         return logEntry;
     }
@@ -273,8 +281,8 @@ public class SerialNewEvent extends SerialCollector
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

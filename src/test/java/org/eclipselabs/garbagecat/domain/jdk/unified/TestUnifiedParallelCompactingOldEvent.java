@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -101,7 +101,7 @@ class TestUnifiedParallelCompactingOldEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString(), event.getName(),
                 "Event name incorrect.");
         assertEquals((long) 83, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ERGONOMICS), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.ERGONOMICS, "Trigger not parsed correctly.");
         assertEquals(kilobytes(502), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(496), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1536), event.getYoungSpace(), "Young available size not parsed correctly.");

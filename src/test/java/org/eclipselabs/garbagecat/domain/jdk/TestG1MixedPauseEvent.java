@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.junit.jupiter.api.Test;
@@ -91,7 +91,7 @@ class TestG1MixedPauseEvent {
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
         assertEquals((long) 506146808, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(29045555), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
@@ -122,7 +122,7 @@ class TestG1MixedPauseEvent {
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
         assertEquals((long) 615375044, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(18559795), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
@@ -226,7 +226,7 @@ class TestG1MixedPauseEvent {
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals((long) 2973338, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(13526630), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
@@ -243,7 +243,7 @@ class TestG1MixedPauseEvent {
     }
 
     /**
-     * Test preprocessing TRIGGER_G1_EVACUATION_PAUSE before "mixed" and TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
+     * Test preprocessing G1_EVACUATION_PAUSE before "mixed" and TO_SPACE_EXHAUSTED after "mixed".
      * 
      * @throws IOException
      * 
@@ -267,7 +267,7 @@ class TestG1MixedPauseEvent {
     }
 
     /**
-     * Test preprocessing TRIGGER_G1_HUMONGOUS_ALLOCATION before "mixed" and TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
+     * Test preprocessing G1_HUMONGOUS_ALLOCATION before "mixed" and TO_SPACE_EXHAUSTED after "mixed".
      * 
      * @throws IOException
      * 
@@ -309,7 +309,7 @@ class TestG1MixedPauseEvent {
     }
 
     /**
-     * Test preprocessing TRIGGER_TO_SPACE_EXHAUSTED after "mixed".
+     * Test preprocessing TO_SPACE_EXHAUSTED after "mixed".
      * 
      * @throws IOException
      * 
@@ -354,7 +354,7 @@ class TestG1MixedPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 81757, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1584 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(1390 * 1024), event.getCombinedOccupancyEnd(),
@@ -374,7 +374,7 @@ class TestG1MixedPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 424692063, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(8129 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(7812 * 1024), event.getCombinedOccupancyEnd(),
@@ -395,7 +395,7 @@ class TestG1MixedPauseEvent {
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals((long) 55647, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1141 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");

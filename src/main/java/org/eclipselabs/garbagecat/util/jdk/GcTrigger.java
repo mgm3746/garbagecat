@@ -1,0 +1,376 @@
+/**********************************************************************************************************************
+ * garbagecat                                                                                                         *
+ *                                                                                                                    *
+ * Copyright (c) 2008-2023 Mike Millson                                                                               *
+ *                                                                                                                    * 
+ * All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse *
+ * Public License v1.0 which accompanies this distribution, and is available at                                       *
+ * http://www.eclipse.org/legal/epl-v10.html.                                                                         *
+ *                                                                                                                    *
+ * Contributors:                                                                                                      *
+ *    Mike Millson - initial API and implementation                                                                   *
+ *********************************************************************************************************************/
+package org.eclipselabs.garbagecat.util.jdk;
+
+/**
+ * Garbage collection trigger utility methods and constants for OpenJDK and Oracle JDK.
+ * 
+ * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
+ * 
+ */
+public final class GcTrigger {
+
+    /**
+     * Defined triggers.
+     */
+    public enum Type {
+        ALLOCATION_FAILURE, CLASS_HISTOGRAM, CMS_FINAL_REMARK, CMS_INITIAL_MARK, CONCURRENT_MODE_FAILURE,
+        //
+        CONCURRENT_MODE_INTERRUPTED, DIAGNOSTIC_COMMAND, ERGONOMICS, G1_EVACUATION_PAUSE, G1_HUMONGOUS_ALLOCATION,
+        //
+        GCLOCKER_INITIATED_GC, HEAP_DUMP_INITIATED_GC, HEAP_INSPECTION_INITIATED_GC, JVMTI_FORCED_GARBAGE_COLLECTION,
+        //
+        LAST_DITCH_COLLECTION, METADATA_GC_THRESHOLD, NONE, PROMOTION_FAILED, SYSTEM_GC, TO_SPACE_EXHAUSTED,
+        //
+        TO_SPACE_OVERFLOW, UNKNOWN;
+    }
+
+    /**
+     * Allocation Failure trigger.
+     */
+    public static final String ALLOCATION_FAILURE = "Allocation Failure";;
+
+    /**
+     * Ctrl-Break with -XX:+PrintClassHistogram trigger causes a full GC.
+     */
+    public static final String CLASS_HISTOGRAM = "Class Histogram";
+
+    /**
+     * CMS Final Remark trigger
+     */
+    public static final String CMS_FINAL_REMARK = "CMS Final Remark";
+
+    /**
+     * CMS Initial Mark trigger
+     */
+    public static final String CMS_INITIAL_MARK = "CMS Initial Mark";
+
+    /**
+     * <p>
+     * CMS concurrent mode failure trigger.
+     * </p>
+     * 
+     * <p>
+     * The concurrent collection of the old generation did not finish before the old generation became full. There is
+     * not enough space in the old generation to support the rate of promotion from the young generation. The JVM
+     * initiates a full GC using a slow (single threaded) serial collector in an attempt to free space. The concurrent
+     * low pause collector measures the rate at which the the old generation is filling and the amount of time between
+     * collections and uses this historical data to calculate when to start the concurrent collection (plus adds some
+     * padding) so that it will finish just in time before the old generation becomes full.
+     * </p>
+     * 
+     * <p>
+     * Possible causes:
+     * </p>
+     * 
+     * <ol>
+     * <li>The heap is too small.</li>
+     * <li>There is a change in application behavior (e.g. a load increase) that causes the young promotion rate to
+     * exceed historical data. If this is the case, the concurrent mode failures will happen near the change in
+     * behavior, then after a few collections the CMS collector will adjust based on the new promotion rate. Performance
+     * will suffer for a short period until the CMS collector recalibrates. Use -XX:CMSInitiatingOccupancyFraction=NN
+     * (default 92) to handle changes in application behavior; however, the tradeoff is that there will be more
+     * collections.</li>
+     * <li>The application has large variances in object allocation rates, causing large variances in young generation
+     * promotion rates, leading to the CMS collector not being able to accurately predict the time between collections.
+     * Use -XX:CMSIncrementalSafetyFactor=NN (default 10) to start the concurrent collection NN% sooner than the
+     * calculated time.</li>
+     * <li>There is premature promotion from the young to the old generation, causing the old generation to fill up with
+     * short-lived objects. The default value for -XX:MaxTenuringThreshold for the CMS collector is 0, meaning that
+     * objects surviving a young collection are immediately promoted to the old generation. Use
+     * -XX:MaxTenuringThreshold=32 to allow more time for objects to expire in the young generation.</li>
+     * <li>If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by
+     * increasing the heap size.</li>
+     * <li>The Perm/Metaspace fills up during the CMS cycle. The CMS collector does not collect Perm/Metaspace by
+     * default. Add -XX:+CMSClassUnloadingEnabled to collect Perm/Metaspace in the CMS concurrent cycle. If the
+     * concurrent mode failure is not able to reclaim Perm/Metaspace, also increase the size. For example:
+     * -XX:PermSize=256M -XX:MaxPermSize=256M (Perm) or -XX:MetaspaceSize=2G -XX:MaxMetaspaceSize=2G (Metaspace).</li>
+     * </ol>
+     */
+    public static final String CONCURRENT_MODE_FAILURE = "concurrent mode failure";
+
+    /**
+     * <p>
+     * CMS concurrent mode interrupted trigger.
+     * </p>
+     * 
+     * <p>
+     * Caused by the following user or serviceability requested gc.
+     * </p>
+     * 
+     * <p>
+     * User requested gc:
+     * </p>
+     * <ol>
+     * <li>System.gc()</li>
+     * <li>JVMTI ForceGarbageCollection</li>
+     * </ol>
+     * 
+     * <p>
+     * Serviceability requested gc:
+     * </p>
+     * <ol>
+     * <li>JVMTI ForceGarbageCollection</li>
+     * <li>Heap Inspection</li>
+     * <li>Heap Dump</li>
+     * </ol>
+     */
+    public static final String CONCURRENT_MODE_INTERRUPTED = "concurrent mode interrupted";
+
+    /**
+     * <p>
+     * Explicit garbage collection trigger (e.g. Distributed Garbage Collection (DGC), jcmd &lt;pid&gt; GC.run).
+     * </p>
+     */
+    public static final String DIAGNOSTIC_COMMAND = "Diagnostic Command";
+
+    /**
+     * <p>
+     * Ergonomics trigger. GC happens for a heuristics reason. A heuristic is a rule of thumb or pattern the JVM uses to
+     * achieve a performance goal or improve performance.
+     * </p>
+     * 
+     * <p>
+     * For example:
+     * </p>
+     * 
+     * <ol>
+     * <li>There is not enough old space to handle a young collection, based on promotion statistics. A full collection
+     * is done in an attempt to free space.</li>
+     * <li>The young and/or old spaces need to be resized in an effort to meet a maximum pause time or throughput goal.
+     * A full collection is needed to do the resizing.
+     * </ol>
+     */
+    public static final String ERGONOMICS = "Ergonomics";
+
+    /**
+     * G1 Evacuation Pause trigger. Live objects are copied out of one region (evacuated) to another region to free
+     * contiguous space. For both young and mixed collections.
+     */
+    public static final String G1_EVACUATION_PAUSE = "G1 Evacuation Pause";
+
+    /**
+     * Humongous object allocation trigger.
+     * 
+     * If it triggers a {@link org.eclipselabs.garbagecat.domain.YoungCollection}, it means the humongous allocation
+     * failed.
+     * 
+     * If it triggers a {@link org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent} or
+     * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent}, it means the Initiating
+     * Heap Occupancy Percent (IHOP) check performed with every humongous allocation failed. The old generation
+     * occupancy as a percent of the total heap size reached (&gt;=) IHOP. IHOP is initially set to
+     * <code>InitiatingHeapOccupancyPercent</code> (default 45) and adaptive based on ergonomics. If adaptive IHOP is
+     * disabled with <code>-XX:-G1UseAdaptiveIHOP</code>, IHOP is fixed at <code>InitiatingHeapOccupancyPercent</code>.
+     */
+    public static final String G1_HUMONGOUS_ALLOCATION = "G1 Humongous Allocation";
+
+    /**
+     * G1 preventive collection trigger.
+     */
+    public static final String G1_PREVENTIVE_COLLECTION = "G1 Preventive Collection";
+
+    /**
+     * The GC triggered after the GCLocker has been released.
+     * 
+     * The GCLocker is used to prevent GC while JNI (native) code is running in a "critical region."
+     * 
+     * Certain JNI function pairs are classified as "critical" because a Java object is passed into the JNI code. While
+     * the code is running inside the "critical region" it is necessary to prevent GC from happening to prevent
+     * compaction from changing the Java object memory address (and cause a crash due to the JNI code accessing a bad
+     * memory address).
+     * 
+     * For example, any code running between <code>GetPrimitiveArrayCritical</code> and
+     * <code>ReleasePrimitiveArrayCritical</code> is a "critical region".
+     * 
+     * If a thread cannot find a free area of heap large enough to allocate an object, it triggers a GC. If another
+     * thread is running JNI code in a "critical region", the GC cannot happen, so the the JVM requests a "GCLocker
+     * Initiated GC" and waits.
+     * 
+     * The expectation is that the GCLocker will not be held for a long time (there will not be long running code in a
+     * "critical region").
+     */
+    public static final String GCLOCKER_INITIATED_GC = "GCLocker Initiated GC";
+
+    /**
+     * Heap dump initiated gc trigger.
+     */
+    public static final String HEAP_DUMP_INITIATED_GC = "Heap Dump Initiated GC";
+
+    /**
+     * Heap inspection initiated gc trigger.
+     */
+    public static final String HEAP_INSPECTION_INITIATED_GC = "Heap Inspection Initiated GC";
+
+    /**
+     * JVM Tool Interface explicit GC trigger
+     */
+    public static final String JVMTI_FORCED_GARBAGE_COLLECTION = "JvmtiEnv ForceGarbageCollection";
+
+    /**
+     * Run after METADATA_GC_THRESHOLD fails to resize the Metaspace. A full collection is run to clean up soft
+     * references and free Metaspace. If this fails to free space, OutOfMemoryError is thrown.
+     */
+    public static final String LAST_DITCH_COLLECTION = "Last ditch collection";
+
+    /**
+     * Metadata GC Threshold trigger. When the Metaspace is resized. The JVM has failed to allocate memory for something
+     * that should be stored in Metaspace and does a full collection before attempting to resize the Metaspace.
+     */
+    public static final String METADATA_GC_THRESHOLD = "Metadata GC Threshold";
+
+    /**
+     * Metadata GC Clear Soft References.
+     */
+    public static final String METADATE_GC_CLEAR_SOFT_REFERENCES = "Metadata GC Clear Soft References";
+
+    /**
+     * <p>
+     * Promotion failed trigger.
+     * </p>
+     * 
+     * <p>
+     * Occurs when objects cannot be moved from the young to the old generation due to lack of space or fragmentation.
+     * The young generation collection backs out of the young collection and initiates a
+     * {@link org.eclipselabs.garbagecat.domain.jdk.CmsSerialOldEvent} full collection in an attempt to free up and
+     * compact space. This is an expensive operation that typically results in large pause times.
+     * </p>
+     * 
+     * <p>
+     * The CMS collector is not a compacting collector. It discovers garbage and adds the memory to free lists of
+     * available space that it maintains based on popular object sizes. If many objects of varying sizes are allocated,
+     * the free lists will be split. This can lead to many free lists whose total size is large enough to satisfy the
+     * calculated free space needed for promotions; however, there is not enough contiguous space for one of the objects
+     * being promoted.
+     * </p>
+     * 
+     * <p>
+     * Prior to Java 5.0 the space requirement was the worst-case scenario that all young generation objects get
+     * promoted to the old generation (the young generation guarantee). Starting in Java 5.0 the space requirement is an
+     * estimate based on recent promotion history and is usually much less than the young generation guarantee.
+     * </p>
+     * 
+     */
+    public static final String PROMOTION_FAILED = "promotion failed";
+
+    /**
+     * System.gc() trigger. Explicit garbage collection invoked.
+     */
+    public static final String SYSTEM_GC = "System(.gc\\(\\))?";
+
+    /**
+     * <p>
+     * To Space Exhausted trigger. A G1_YOUNG_PAUSE, G1_MIXED_PAUSE, or G1_YOUNG_INITIAL_MARK collection cannot happen
+     * due to "to-space exhausted". There is not enough free space in the heap for survived and/or promoted objects, and
+     * the heap cannot be expanded. This is a very expensive operation. Sometimes the collector's ergonomics can resolve
+     * the issue by dynamically re-sizing heap regions. If it cannot, it invokes a G1_FULL_GC in an attempt to reclaim
+     * enough space to continue. All of the following are possible resolutions:
+     * </p>
+     * 
+     * <ol>
+     * 
+     * <li>Increase the heap size.</li>
+     * <li>Increase <code>-XX:G1ReservePercent</code> and the heap size to increase the amount of to-space reserve
+     * memory.</li>
+     * <li>Reduce the <code>-XX:InitiatingHeapOccupancyPercent</code> (default 45) to start the marking cycle earlier.
+     * </li>
+     * <li>Increase the number of parallel marking threads with <code>-XX:ConcGCThreads</code>. For example:
+     * <code>-XX:ConcGCThreads=16</code>.
+     * </ol>
+     */
+    public static final String TO_SPACE_EXHAUSTED = "to-space exhausted";
+
+    /**
+     * <p>
+     * To Space Overflow trigger. A G1_YOUNG_PAUSE, G1_MIXED_PAUSE, or G1_YOUNG_INITIAL_MARK collection cannot happen
+     * due to "to-space oeverflow". There is not enough free space in the heap for survived and/or promoted objects, and
+     * the heap cannot be expanded. This is a very expensive operation. Sometimes the collector's ergonomics can resolve
+     * the issue by dynamically re-sizing heap regions. If it cannot, it invokes a G1_FULL_GC in an attempt to reclaim
+     * enough space to continue. All of the following are possible resolutions:
+     * </p>
+     * 
+     * <ol>
+     * 
+     * <li>Increase the heap size.</li>
+     * <li>Increase <code>-XX:G1ReservePercent</code> and the heap size to increase the amount of to-space reserve
+     * memory.</li>
+     * <li>Reduce the <code>-XX:InitiatingHeapOccupancyPercent</code> (default 45) to start the marking cycle earlier.
+     * </li>
+     * <li>Increase the number of parallel marking threads with <code>-XX:ConcGCThreads</code>. For example:
+     * <code>-XX:ConcGCThreads=16</code>.
+     * </ol>
+     */
+    public static final String TO_SPACE_OVERFLOW = "to-space overflow";
+
+    /**
+     * Get <code>Trigger</code> from log literal.
+     * 
+     * @param triggerLiteral
+     *            The trigger literal.
+     * @return The <code>Trigger</code>.
+     */
+    public static Type getTrigger(String triggerLiteral) {
+        if (triggerLiteral != null) {
+            if (triggerLiteral.matches(ALLOCATION_FAILURE))
+                return Type.ALLOCATION_FAILURE;
+            if (triggerLiteral.matches(CLASS_HISTOGRAM))
+                return Type.CLASS_HISTOGRAM;
+            if (triggerLiteral.matches(CMS_FINAL_REMARK))
+                return Type.CMS_FINAL_REMARK;
+            if (triggerLiteral.matches(CMS_INITIAL_MARK))
+                return Type.CMS_INITIAL_MARK;
+            if (triggerLiteral.matches(CONCURRENT_MODE_FAILURE))
+                return Type.CONCURRENT_MODE_FAILURE;
+            if (triggerLiteral.matches(CONCURRENT_MODE_INTERRUPTED))
+                return Type.CONCURRENT_MODE_INTERRUPTED;
+            if (triggerLiteral.matches(DIAGNOSTIC_COMMAND))
+                return Type.DIAGNOSTIC_COMMAND;
+            if (triggerLiteral.matches(ERGONOMICS))
+                return Type.ERGONOMICS;
+            if (triggerLiteral.matches(G1_EVACUATION_PAUSE))
+                return Type.G1_EVACUATION_PAUSE;
+            if (triggerLiteral.matches(G1_HUMONGOUS_ALLOCATION))
+                return Type.G1_HUMONGOUS_ALLOCATION;
+            if (triggerLiteral.matches(GCLOCKER_INITIATED_GC))
+                return Type.GCLOCKER_INITIATED_GC;
+            if (triggerLiteral.matches(HEAP_DUMP_INITIATED_GC))
+                return Type.HEAP_DUMP_INITIATED_GC;
+            if (triggerLiteral.matches(HEAP_INSPECTION_INITIATED_GC))
+                return Type.HEAP_INSPECTION_INITIATED_GC;
+            if (triggerLiteral.matches(JVMTI_FORCED_GARBAGE_COLLECTION))
+                return Type.JVMTI_FORCED_GARBAGE_COLLECTION;
+            if (triggerLiteral.matches(LAST_DITCH_COLLECTION))
+                return Type.LAST_DITCH_COLLECTION;
+            if (triggerLiteral.matches(METADATA_GC_THRESHOLD))
+                return Type.METADATA_GC_THRESHOLD;
+            if (triggerLiteral.matches(PROMOTION_FAILED))
+                return Type.PROMOTION_FAILED;
+            if (triggerLiteral.matches(SYSTEM_GC))
+                return Type.SYSTEM_GC;
+            if (triggerLiteral.matches(TO_SPACE_EXHAUSTED))
+                return Type.TO_SPACE_EXHAUSTED;
+            if (triggerLiteral.matches(TO_SPACE_OVERFLOW))
+                return Type.TO_SPACE_OVERFLOW;
+            return Type.UNKNOWN;
+        } else {
+            return Type.NONE;
+        }
+    }
+
+    /**
+     * Make default constructor private so the class cannot be instantiated.
+     */
+    private GcTrigger() {
+        super();
+    }
+
+}

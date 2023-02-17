@@ -12,18 +12,12 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.github.joa.domain.GarbageCollector;
-
 /**
  * Concurrent Mark Sweep (CMS) collector.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class CmsCollector extends GcEvent {
+public abstract class CmsCollector extends GcEvent {
 
-    @Override
-    public GarbageCollector getGarbageCollector() {
-        return GarbageCollector.CMS;
-    }
 }

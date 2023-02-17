@@ -29,6 +29,8 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.CmsCollector;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -79,8 +81,8 @@ public class UnifiedParNewEvent extends CmsCollector implements UnifiedLogging, 
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + ")";
+    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.GCLOCKER_INITIATED_GC
+            + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -301,8 +303,8 @@ public class UnifiedParNewEvent extends CmsCollector implements UnifiedLogging, 
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

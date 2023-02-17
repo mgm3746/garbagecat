@@ -22,6 +22,7 @@ import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 
@@ -381,7 +382,7 @@ public class G1PreprocessAction implements PreprocessAction {
      * [GC concurrent-root-region-scan-end, 0.0127300 secs]
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_CONCURRENT = "^(" + JdkRegEx.DECORATOR
-            + ")?( \\[Full GC \\((" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE
+            + ")?( \\[Full GC \\((" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.ALLOCATION_FAILURE
             + ")\\)[ ]{0,1})(: )?((" + JdkRegEx.DECORATOR
             + ")?( \\[GC concurrent-(root-region-scan|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\]))("
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
@@ -397,16 +398,16 @@ public class G1PreprocessAction implements PreprocessAction {
      * Regular expression for retained beginning G1_FULL_GC collection.
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_GC = "^(" + JdkRegEx.DECORATOR + " \\[Full GC (\\(("
-            + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_JVM_TI_FORCED_GAREBAGE_COLLECTION + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD
-            + ")\\))?[ ]{0,2}(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
-            + JdkRegEx.DURATION + "\\])?)( Before GC RS summary)?[ ]*$";
+            + GcTrigger.SYSTEM_GC + "|" + GcTrigger.LAST_DITCH_COLLECTION + "|"
+            + GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION + "|" + GcTrigger.METADATA_GC_THRESHOLD + ")\\))?[ ]{0,2}("
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
+            + "\\])?)( Before GC RS summary)?[ ]*$";
 
     /**
      * Regular expression for retained beginning G1_FULL_GC collection with PRINT_CLASS_HISTOGRAM.
      */
     private static final String REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM = "^(" + JdkRegEx.DECORATOR
-            + " \\[Full GC( \\(" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + "\\) )?" + JdkRegEx.DECORATOR
+            + " \\[Full GC( \\(" + GcTrigger.HEAP_DUMP_INITIATED_GC + "\\) )?" + JdkRegEx.DECORATOR
             + " \\[Class Histogram \\(before full gc\\):)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM_PATTERN = Pattern
@@ -426,9 +427,9 @@ public class G1PreprocessAction implements PreprocessAction {
      * ms, target pause time: 500.00 ms]
      */
     private static final String REGEX_RETAIN_BEGINNING_MIXED = "^(" + JdkRegEx.DECORATOR + " \\[GC pause( \\(("
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(mixed\\)( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.DECORATOR
+            + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.G1_EVACUATION_PAUSE + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION + ")\\))? \\(mixed\\)( \\((" + GcTrigger.TO_SPACE_EXHAUSTED
+            + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.DECORATOR
             + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_MIXED_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_MIXED);
@@ -458,8 +459,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * 537.122: [GC pause (G1 Evacuation Pause) (young)537.123: [GC concurrent-root-region-scan-start]
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT = "^(" + JdkRegEx.DECORATOR
-            + " \\[GC pause( \\((" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC
-            + "|" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(young\\))(" + JdkRegEx.DECORATOR
+            + " \\[GC pause( \\((" + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.GCLOCKER_INITIATED_GC + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION + ")\\))? \\(young\\))(" + JdkRegEx.DECORATOR
             + " \\[GC concurrent-(root-region-scan|cleanup|mark)-(start|end)(, " + JdkRegEx.DURATION + ")?\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT_PATTERN = Pattern
@@ -471,11 +472,10 @@ public class G1PreprocessAction implements PreprocessAction {
      * 2017-01-20T23:18:29.561-0500: 1513296.434: [GC pause (young) (initial-mark), 0.0225230 secs]
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK = "^(" + JdkRegEx.DECORATOR
-            + " \\[GC pause( \\((" + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE
-            + "|" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_SYSTEM_GC
-            + ")\\))? \\(young\\) \\(initial-mark\\)(, " + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.DECORATOR
-            + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
+            + " \\[GC pause( \\((" + GcTrigger.TO_SPACE_EXHAUSTED + "|" + GcTrigger.G1_EVACUATION_PAUSE + "|"
+            + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.GCLOCKER_INITIATED_GC + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|" + GcTrigger.SYSTEM_GC + ")\\))? \\(young\\) \\(initial-mark\\)(, "
+            + JdkRegEx.DURATION + "\\])?)( " + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK);
@@ -495,11 +495,11 @@ public class G1PreprocessAction implements PreprocessAction {
      * 0.449: [GC pause (G1 Evacuation Pause) (young)Before GC RS summary
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG_PAUSE = "^(" + JdkRegEx.DECORATOR + " \\[GC pause( \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")\\))? \\(young\\)( \\(("
-            + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION + "\\])?)((" + JdkRegEx.DECORATOR
-            + " )?( )?" + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
+            + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.GCLOCKER_INITIATED_GC + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION + ")\\))? \\(young\\)( \\((" + GcTrigger.G1_EVACUATION_PAUSE + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.TO_SPACE_EXHAUSTED + ")\\))?(, " + JdkRegEx.DURATION
+            + "\\])?)((" + JdkRegEx.DECORATOR + " )?( )?" + JdkRegEx.DECORATOR
+            + " \\[G1Ergonomics.+)?(Before GC RS summary)?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PAUSE_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_YOUNG_PAUSE);
@@ -520,10 +520,10 @@ public class G1PreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_END_CONCURRENT_YOUNG = "^(" + JdkRegEx.DECORATOR
             + " \\[GC concurrent-root-region-scan-end, " + JdkRegEx.DURATION + "\\])(( \\("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + ")( )?[ ]*$";
+            + GcTrigger.TO_SPACE_EXHAUSTED + "\\))?, " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + ")( )?[ ]*$";
 
     private static final Pattern REGEX_RETAIN_END_CONCURRENT_YOUNG_PATTERN = Pattern
             .compile(REGEX_RETAIN_END_CONCURRENT_YOUNG);
@@ -571,8 +571,8 @@ public class G1PreprocessAction implements PreprocessAction {
      * secs]2023-01-30T14:54:56.611-0500: 1394.832: [JNI Weak Reference, 0.0001317 secs], 0.0847598 secs]
      */
     private static final String REGEX_RETAIN_MIDDLE_DURATION = "^(" + JdkRegEx.PRINT_REFERENCE_GC_BLOCK + ")?(( \\(("
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_TO_SPACE_OVERFLOW + ")\\))?, "
-            + JdkRegEx.DURATION + "\\])[ ]*$";
+            + GcTrigger.TO_SPACE_EXHAUSTED + "|" + GcTrigger.TO_SPACE_OVERFLOW + ")\\))?, " + JdkRegEx.DURATION
+            + "\\])[ ]*$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_DURATION_PATTERN = Pattern.compile(REGEX_RETAIN_MIDDLE_DURATION);
 

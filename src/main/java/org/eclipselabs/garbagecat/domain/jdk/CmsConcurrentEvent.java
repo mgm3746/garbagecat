@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -97,6 +98,11 @@ public class CmsConcurrentEvent extends CmsCollector implements LogEvent, Parall
      */
     public static final boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.CMS;
     }
 
     public String getLogEntry() {

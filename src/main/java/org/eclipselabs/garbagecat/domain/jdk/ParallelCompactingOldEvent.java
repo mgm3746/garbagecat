@@ -27,6 +27,8 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -103,10 +105,10 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_SYSTEM_GC + "|" + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|"
-            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_HEAP_INSPECTION_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|" + JdkRegEx.TRIGGER_HEAP_DUMP_INITIATED_GC + ")";
+    private static final String TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.SYSTEM_GC + "|"
+            + GcTrigger.LAST_DITCH_COLLECTION + "|" + GcTrigger.ERGONOMICS + "|"
+            + GcTrigger.HEAP_INSPECTION_INITIATED_GC + "|" + GcTrigger.ALLOCATION_FAILURE + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -316,8 +318,8 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

@@ -47,6 +47,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
@@ -238,7 +239,7 @@ public class JvmDao {
     /**
      * List of all GC triggers associate with the JVM run.
      */
-    List<String> triggers = new ArrayList<>();
+    List<Type> triggers = new ArrayList<>();
 
     /**
      * Logging lines that do not match any known GC events.
@@ -831,7 +832,7 @@ public class JvmDao {
         return sysGtUserCount;
     }
 
-    public List<String> getTriggers() {
+    public List<Type> getTriggers() {
         return triggers;
     }
 

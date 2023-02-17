@@ -25,6 +25,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -171,6 +172,11 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
 
     public long getDuration() {
         return duration;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.CMS;
     }
 
     public String getLogEntry() {

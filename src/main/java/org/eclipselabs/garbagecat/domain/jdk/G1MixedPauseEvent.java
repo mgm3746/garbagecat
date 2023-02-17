@@ -26,6 +26,8 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -103,9 +105,9 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + "|"
-            + JdkRegEx.TRIGGER_TO_SPACE_EXHAUSTED + "|" + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|"
-            + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + "|" + JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE + ")";
+    private static final String TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.TO_SPACE_EXHAUSTED + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|"
+            + GcTrigger.G1_EVACUATION_PAUSE + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -320,7 +322,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 }

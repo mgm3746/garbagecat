@@ -29,6 +29,8 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -87,9 +89,8 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|"
-            + JdkRegEx.TRIGGER_LAST_DITCH_COLLECTION + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_ERGONOMICS + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + ")";
+    private static final String TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.LAST_DITCH_COLLECTION
+            + "|" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.ERGONOMICS + "|" + GcTrigger.SYSTEM_GC + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -290,8 +291,8 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     protected void setPermOccupancyEnd(Memory permGenEnd) {

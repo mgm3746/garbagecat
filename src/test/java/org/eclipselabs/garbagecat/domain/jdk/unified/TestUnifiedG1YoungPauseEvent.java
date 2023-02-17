@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -117,7 +117,7 @@ class TestUnifiedG1YoungPauseEvent {
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (15086 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(3771), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(3771), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1056768), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
@@ -139,7 +139,7 @@ class TestUnifiedG1YoungPauseEvent {
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 58671, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
         assertEquals(kilobytes(88802), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(88802), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1134592), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
@@ -190,7 +190,7 @@ class TestUnifiedG1YoungPauseEvent {
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 5355, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_G1_EVACUATION_PAUSE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(26116), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(26116), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(278528), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
@@ -229,7 +229,7 @@ class TestUnifiedG1YoungPauseEvent {
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 11728, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(35318), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(35318), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(288768), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");

@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.jdk.SerialCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -101,6 +102,11 @@ public class UsingSerialEvent extends SerialCollector implements UnifiedLogging 
                 }
             }
         }
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SERIAL_NEW;
     }
 
     public String getLogEntry() {

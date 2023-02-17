@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -126,7 +126,7 @@ class TestUnifiedSerialNewEvent {
         UnifiedSerialNewEvent event = new UnifiedSerialNewEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 41, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(983), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(128), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1152), event.getYoungSpace(), "Young available size not parsed correctly.");

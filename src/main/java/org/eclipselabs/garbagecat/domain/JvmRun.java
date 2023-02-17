@@ -19,7 +19,6 @@ import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_EXPLICIT_GC_SER
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_EXPLICIT_GC_SERIAL_G1;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_G1_HUMONGOUS_JDK_OLD;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_PHYSICAL_MEMORY;
-import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_SERIAL_GC;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_G1_HUMONGOUS_ALLOCATION;
@@ -43,6 +42,7 @@ import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PRINT_GC_CAUSE_D
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PRINT_GC_CAUSE_MISSING;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_SERIALISM_INVERTED;
+import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_SERIAL_GC;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_SYS_GT_USER;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT;
 
@@ -62,6 +62,8 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -332,7 +334,7 @@ public class JvmRun {
     /**
      * GC triggers.
      */
-    private List<String> triggers;
+    private List<Type> triggers;
 
     /**
      * Log lines that do not match any existing logging patterns.
@@ -418,9 +420,9 @@ public class JvmRun {
                         getEventTypes().add(LogEventType.G1_FULL_GC_SERIAL);
                         getEventTypes().remove(LogEventType.VERBOSE_GC_OLD);
                     }
-                    if (!hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey())) {
-                        analysis.add(Analysis.ERROR_SERIAL_GC_G1);
-                    }
+                    // if (!hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey())) {
+                    // analysis.add(Analysis.ERROR_SERIAL_GC_G1);
+                    // }
                 }
             }
         }
@@ -445,27 +447,23 @@ public class JvmRun {
                 analysis.add(INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
             }
         }
-
         // Check to see if application stopped time enabled
         if (getBlockingEventCount() > 0 && !(eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
                 || eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT))) {
             analysis.add(WARN_APPLICATION_STOPPED_TIME_MISSING);
         }
-
         // Check for significant stopped time unrelated to GC
         if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
                 && getGcStoppedRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD
                 && getStoppedTimeThroughput() != getGcThroughput()) {
             analysis.add(WARN_GC_STOPPED_RATIO);
         }
-
         // Check for significant safepoint time unrelated to GC
         if (eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT)
                 && getGcUnifiedSafepointRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD && getJvmRunDuration() > 0
                 && getUnifiedSafepointThroughput() != getGcThroughput()) {
             analysis.add(WARN_GC_SAFEPOINT_RATIO);
         }
-
         // Check if logging indicates gc details missing
         if (!hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING.getKey())
                 && !hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED.getKey())) {
@@ -474,19 +472,6 @@ public class JvmRun {
                 jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING);
             }
         }
-
-        // Check for PAR_NEW disabled.
-        if (getEventTypes().contains(LogEventType.SERIAL_NEW)
-                && jvmOptions.getJvmContext().getGarbageCollectors().contains(GarbageCollector.CMS)) {
-            // Replace general gc.serial analysis
-            if (analysis.contains(ERROR_SERIAL_GC)) {
-                analysis.remove(ERROR_SERIAL_GC);
-            }
-            if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_CMS_PAR_NEW_DISABLED)) {
-                jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_JDK8_CMS_PAR_NEW_DISABLED);
-            }
-        }
-
         // Check for swappiness
         if (getPercentSwapFree() < 95) {
             analysis.add(INFO_SWAPPING);
@@ -495,7 +480,6 @@ public class JvmRun {
         if (getSwap().isZero()) {
             analysis.add(INFO_SWAP_DISABLED);
         }
-
         // Check for insufficient physical memory
         if (!getPhysicalMemory().isZero()) {
             Memory jvmMemory;
@@ -513,7 +497,6 @@ public class JvmRun {
                 analysis.add(ERROR_PHYSICAL_MEMORY);
             }
         }
-
         // Check for humongous allocations on old JDK not able to fully reclaim them in a young collection
         if (jvmOptions.getJvmContext().getGarbageCollectors().contains(GarbageCollector.G1)
                 && analysis.contains(INFO_G1_HUMONGOUS_ALLOCATION)
@@ -639,8 +622,48 @@ public class JvmRun {
         // GCLocker retry failed
         if (getEventTypes().contains(LogEventType.GC_LOCKER_RETRY)) {
             analysis.add(Analysis.ERROR_GC_LOCKER_RETRY);
-        } else if (getTriggers().contains(JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC)) {
+        } else if (!getTriggers().isEmpty() && getTriggers().contains(GcTrigger.Type.GCLOCKER_INITIATED_GC)) {
             analysis.add(Analysis.WARN_GC_LOCKER);
+        }
+        // Check for PAR_NEW disabled.
+        if (getEventTypes().contains(LogEventType.SERIAL_NEW)
+                && jvmOptions.getJvmContext().getGarbageCollectors().contains(GarbageCollector.CMS)) {
+            // Replace general gc.serial analysis
+            if (analysis.contains(WARN_SERIAL_GC)) {
+                analysis.remove(WARN_SERIAL_GC);
+            }
+            if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED)) {
+                jvmOptions.addAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED);
+            }
+        }
+        // Serial collections not caused by explicit GC
+        if (!getTriggers().isEmpty() && !getEventTypes().isEmpty()) {
+            if (!getTriggers().contains(GcTrigger.Type.SYSTEM_GC)
+                    && !getTriggers().contains(GcTrigger.Type.CLASS_HISTOGRAM)
+                    && !getTriggers().contains(GcTrigger.Type.HEAP_INSPECTION_INITIATED_GC)
+                    && !getTriggers().contains(GcTrigger.Type.HEAP_DUMP_INITIATED_GC)) {
+                if (getEventTypes().contains(LogEventType.SERIAL_NEW)) {
+                    if (jvmOptions.getJvmContext().getGarbageCollectors().contains(GarbageCollector.CMS)) {
+                        // Replace general gc.serial analysis
+                        if (analysis.contains(WARN_SERIAL_GC)) {
+                            analysis.remove(WARN_SERIAL_GC);
+                        }
+                        if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED)) {
+                            jvmOptions.addAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED);
+                        }
+                    } else {
+                        analysis.add(Analysis.WARN_SERIAL_GC);
+                    }
+                } else if (getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD) && !jvmOptions
+                        .hasAnalysis(org.github.joa.util.Analysis.ERROR_PARALLEL_SCAVENGE_PARALLEL_SERIAL_OLD)) {
+                    analysis.add(Analysis.ERROR_SERIAL_GC_PARALLEL);
+                } else if (getEventTypes().contains(LogEventType.CMS_SERIAL_OLD)
+                        && !jvmOptions.hasAnalysis(org.github.joa.util.Analysis.ERROR_PAR_NEW_SERIAL_OLD)) {
+                    analysis.add(Analysis.ERROR_SERIAL_GC_CMS);
+                } else if (getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL)) {
+                    analysis.add(Analysis.ERROR_SERIAL_GC_G1);
+                }
+            }
         }
     }
 
@@ -668,11 +691,9 @@ public class JvmRun {
             while (itJvmOptionsAnalysis.hasNext()) {
                 String[] item = itJvmOptionsAnalysis.next();
                 if (item[0].equals(org.github.joa.util.Analysis.INFO_GC_LOG_STDOUT.toString())) {
-                    // JDK8 GC logging "CommandLine flags" header will not include the -Xloggc option. It's not possible
-                    // to distinguish between logging to stdout and -Xloggc with no other logging options, so assume if
-                    // there are log file options (e.g. size, rotation), the logging is sent to a file.
-                    if (jvmOptions.getUseGcLogFileRotation() == null && jvmOptions.getGcLogFileSize() == null
-                            && jvmOptions.getNumberOfGcLogFiles() == null) {
+                    // JDK8 GC logging "CommandLine flags" header will not include any logging options, so JDK8 gc
+                    // logging is not very accurate for determining if the logging is being sent to std out.
+                    if (jvmOptions.getJvmContext().getVersionMajor() > 8) {
                         a.add(item);
                     }
                 } else {
@@ -1117,7 +1138,7 @@ public class JvmRun {
         return throughputThreshold;
     }
 
-    public List<String> getTriggers() {
+    public List<Type> getTriggers() {
         return triggers;
     }
 
@@ -1417,7 +1438,7 @@ public class JvmRun {
         this.throughputThreshold = throughputThreshold;
     }
 
-    public void setTriggers(List<String> triggers) {
+    public void setTriggers(List<Type> triggers) {
         this.triggers = triggers;
     }
 

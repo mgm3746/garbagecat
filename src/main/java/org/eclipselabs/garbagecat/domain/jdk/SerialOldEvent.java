@@ -28,9 +28,12 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -104,15 +107,15 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
     /**
      * Regular expression for SERIAL_NEW block in some events.
      */
-    public static final String SERIAL_NEW_BLOCK = JdkRegEx.DECORATOR + " \\[DefNew( \\(("
-            + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\) )?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]";
+    public static final String SERIAL_NEW_BLOCK = JdkRegEx.DECORATOR + " \\[DefNew( \\((" + GcTrigger.PROMOTION_FAILED
+            + ")\\) )?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+            + JdkRegEx.DURATION + "\\]";
 
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
-            + JdkRegEx.TRIGGER_METADATA_GC_THRESHOLD + "|" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + ")";
+    private static final String TRIGGER = "(" + GcTrigger.SYSTEM_GC + "|" + GcTrigger.METADATA_GC_THRESHOLD + "|"
+            + GcTrigger.ALLOCATION_FAILURE + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -271,6 +274,11 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         return duration;
     }
 
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SERIAL_OLD;
+    }
+
     public String getLogEntry() {
         return logEntry;
     }
@@ -323,8 +331,8 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {

@@ -27,6 +27,8 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -70,7 +72,7 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     /**
      * Trigger(s) regular expression(s).
      */
-    static final String TRIGGER = "(" + JdkRegEx.TRIGGER_G1_HUMONGOUS_ALLOCATION + ")";
+    static final String TRIGGER = "(" + GcTrigger.G1_HUMONGOUS_ALLOCATION + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -237,7 +239,7 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 }

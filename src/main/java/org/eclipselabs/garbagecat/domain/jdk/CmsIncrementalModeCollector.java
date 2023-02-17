@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import org.github.joa.domain.GarbageCollector;
+
 /**
  * CMS collector with incremental mode capability.
  * 
@@ -45,6 +47,11 @@ public class CmsIncrementalModeCollector extends CmsCollector {
      */
     private boolean incrementalMode = false;
 
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.CMS;
+    }
+
     /**
      * @return True if running in Incremental Mode, false otherwise.
      */
@@ -59,5 +66,4 @@ public class CmsIncrementalModeCollector extends CmsCollector {
     public void setIncrementalMode(boolean incrementalMode) {
         this.incrementalMode = incrementalMode;
     }
-
 }

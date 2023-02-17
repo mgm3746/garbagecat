@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -110,7 +110,7 @@ class TestUnifiedParallelScavengeEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString(), event.getName(),
                 "Event name incorrect.");
         assertEquals((long) 31, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(512), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(464), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1024), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -137,7 +137,7 @@ class TestUnifiedParallelScavengeEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString(), event.getName(),
                 "Event name incorrect.");
         assertEquals((long) 29, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger().matches(JdkRegEx.TRIGGER_ALLOCATION_FAILURE), "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(512), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(432), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1024), event.getYoungSpace(), "Young available size not parsed correctly.");

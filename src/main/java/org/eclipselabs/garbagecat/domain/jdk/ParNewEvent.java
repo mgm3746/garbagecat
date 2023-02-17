@@ -25,9 +25,12 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -119,20 +122,19 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(" + JdkRegEx.TRIGGER_CMS_FINAL_REMARK
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(" + GcTrigger.CMS_FINAL_REMARK
             + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\])?)?"
             + JdkRegEx.DECORATOR + " \\[(Full)?[ ]{0,1}GC( )?(\\(" + ParNewEvent.TRIGGER + "\\))?( )?(("
-            + JdkRegEx.DECORATOR + " )?\\[ParNew( \\((" + JdkRegEx.TRIGGER_PROMOTION_FAILED + ")\\))?:)? "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] ("
-            + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)" + JdkRegEx.ICMS_DC_BLOCK
-            + "?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.DECORATOR + " )?\\[ParNew( \\((" + GcTrigger.PROMOTION_FAILED + ")\\))?:)? " + JdkRegEx.SIZE_K
+            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE_K
+            + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + JdkRegEx.TRIGGER_ALLOCATION_FAILURE + "|"
-            + JdkRegEx.TRIGGER_GCLOCKER_INITIATED_GC + "|" + JdkRegEx.TRIGGER_SYSTEM_GC + "|"
-            + JdkRegEx.TRIGGER_CMS_FINAL_REMARK + ")";
+    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.GCLOCKER_INITIATED_GC
+            + "|" + GcTrigger.SYSTEM_GC + "|" + GcTrigger.CMS_FINAL_REMARK + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -284,6 +286,11 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         return duration;
     }
 
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.PAR_NEW;
+    }
+
     public String getLogEntry() {
         return logEntry;
     }
@@ -324,8 +331,8 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         return timeUser;
     }
 
-    public String getTrigger() {
-        return trigger;
+    public Type getTrigger() {
+        return GcTrigger.getTrigger(trigger);
     }
 
     public Memory getYoungOccupancyEnd() {
