@@ -420,9 +420,9 @@ public class JvmRun {
                         getEventTypes().add(LogEventType.G1_FULL_GC_SERIAL);
                         getEventTypes().remove(LogEventType.VERBOSE_GC_OLD);
                     }
-                    // if (!hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey())) {
-                    // analysis.add(Analysis.ERROR_SERIAL_GC_G1);
-                    // }
+                    if (!hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey())) {
+                        analysis.add(Analysis.ERROR_SERIAL_GC_G1);
+                    }
                 }
             }
         }
@@ -634,35 +634,6 @@ public class JvmRun {
             }
             if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED)) {
                 jvmOptions.addAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED);
-            }
-        }
-        // Serial collections not caused by explicit GC
-        if (!getTriggers().isEmpty() && !getEventTypes().isEmpty()) {
-            if (!getTriggers().contains(GcTrigger.Type.SYSTEM_GC)
-                    && !getTriggers().contains(GcTrigger.Type.CLASS_HISTOGRAM)
-                    && !getTriggers().contains(GcTrigger.Type.HEAP_INSPECTION_INITIATED_GC)
-                    && !getTriggers().contains(GcTrigger.Type.HEAP_DUMP_INITIATED_GC)) {
-                if (getEventTypes().contains(LogEventType.SERIAL_NEW)) {
-                    if (jvmOptions.getJvmContext().getGarbageCollectors().contains(GarbageCollector.CMS)) {
-                        // Replace general gc.serial analysis
-                        if (analysis.contains(WARN_SERIAL_GC)) {
-                            analysis.remove(WARN_SERIAL_GC);
-                        }
-                        if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED)) {
-                            jvmOptions.addAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED);
-                        }
-                    } else {
-                        analysis.add(Analysis.WARN_SERIAL_GC);
-                    }
-                } else if (getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD) && !jvmOptions
-                        .hasAnalysis(org.github.joa.util.Analysis.ERROR_PARALLEL_SCAVENGE_PARALLEL_SERIAL_OLD)) {
-                    analysis.add(Analysis.ERROR_SERIAL_GC_PARALLEL);
-                } else if (getEventTypes().contains(LogEventType.CMS_SERIAL_OLD)
-                        && !jvmOptions.hasAnalysis(org.github.joa.util.Analysis.ERROR_PAR_NEW_SERIAL_OLD)) {
-                    analysis.add(Analysis.ERROR_SERIAL_GC_CMS);
-                } else if (getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL)) {
-                    analysis.add(Analysis.ERROR_SERIAL_GC_G1);
-                }
             }
         }
     }

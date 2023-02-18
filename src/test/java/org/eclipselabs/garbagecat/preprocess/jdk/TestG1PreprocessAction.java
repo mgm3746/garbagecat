@@ -1016,7 +1016,6 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1.getKey()),
                 Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis not identified.");
-
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }
