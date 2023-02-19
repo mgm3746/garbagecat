@@ -29,6 +29,10 @@ $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par
 
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-date.log -XX:+UseParNewGC -XX:-UseParallelOldGC -XX:+PrintGCDetails -XX:-PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
+$JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-foreground-date.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:-PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
+
+$JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-date.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:+PrintGCDetails -XX:-PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
+
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-date.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:-PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-details-date.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -XX:-PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
@@ -63,6 +67,10 @@ $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par
 
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-time.log -XX:+UseParNewGC -XX:-UseParallelOldGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:-PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
+$JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-foreground-time.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:+PrintGCTimeStamps -XX:-PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
+
+$JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-time.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:-PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
+
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-time.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+PrintGCTimeStamps -XX:-PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-details-time.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:-PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
@@ -96,6 +104,10 @@ $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-date-time.log -XX:+UseParNewGC -XX:-UseParallelOldGC -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-date-time.log -XX:+UseParNewGC -XX:-UseParallelOldGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
+
+$JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-foreground-date-time.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
+
+$JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-date-time.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
 $JAVA_HOME/bin/java -Xms1m -Xmx64m -verbose:gc -Xloggc:$GARBAGECAT_HOME/jdk8-par-new-cms-date-time.log -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o /dev/null ./gc.log
 
@@ -133,6 +145,10 @@ $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-date.txt $GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-date.log
 
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-date.txt $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-date.log
+
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-date.txt $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-date.log
+
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-date.txt $GARBAGECAT_HOME/jdk8-par-new-cms-date.log
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-details-date.txt $GARBAGECAT_HOME/jdk8-par-new-cms-details-date.log
@@ -167,6 +183,10 @@ $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-time.txt $GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-time.log
 
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-time.txt $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-time.log
+
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-time.txt $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-time.log
+
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-time.txt $GARBAGECAT_HOME/jdk8-par-new-cms-time.log
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-details-time.txt $GARBAGECAT_HOME/jdk8-par-new-cms-details-time.log
@@ -200,6 +220,10 @@ $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-date-time.txt $GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-date-time.log
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-date-time.txt $GARBAGECAT_HOME/jdk8-par-new-parallel-serial-old-details-date-time.log
+
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-date-time.txt $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-date-time.log
+
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-date-time.txt $GARBAGECAT_HOME/jdk8-par-new-cms-foreground-details-date-time.log
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -o $GARBAGECAT_HOME/jdk8-par-new-cms-date-time.txt $GARBAGECAT_HOME/jdk8-par-new-cms-date-time.log
 
