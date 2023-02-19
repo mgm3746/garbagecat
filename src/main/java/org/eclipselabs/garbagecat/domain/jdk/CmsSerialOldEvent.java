@@ -42,13 +42,15 @@ import org.github.joa.domain.GarbageCollector;
  * 
  * <p>
  * The concurrent low pause collector does not compact. When fragmentation becomes an issue a
- * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent} compacts the heap. Made a separate event for tracking
- * purposes.
+ * {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent} (default) or CMS collection running in foreground mode
+ * (-XX:+UseCMSCompactAtFullCollection) compacts the heap.
  * </p>
  * 
+ * TODO: Separate this into 2 events: (1) CMS foreground mode. (2) SERIAL_OLD.
+ * 
  * <p>
- * It also happens for undetermined reasons, possibly the JVM requires a certain amount of heap or combination of
- * resources that is not being met, and consequently the concurrent low pause collector is not used despite being
+ * It also seems to happen for undetermined reasons, possibly the JVM requires a certain amount of heap or combination
+ * of resources that is not being met, and consequently the concurrent low pause collector is not used despite being
  * specified with the <code>-XX:+UseConcMarkSweepGC</code> JVM option.
  * </p>
  * 
