@@ -213,6 +213,14 @@ class TestHeapEvent {
     }
 
     @Test
+    void testGarbageFirstHeapUnifiedHuge() {
+        String logLine = "[2023-02-20T18:09:02.299+0200][info][gc,heap,exit  ]  garbage-first heap   total "
+                + "4823449600K, used 4285038591K [0x00007ae490000000, 0x00007f6290000000)";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
     void testHeap() {
         String logLine = "Heap";
         assertTrue(HeapEvent.match(logLine),
@@ -487,6 +495,14 @@ class TestHeapEvent {
     void testRegionUnified3DigitYoung2DigutSurvivors() {
         String logLine = "[2020-03-12T13:13:49.821-0400][26578ms]   region size 1024K, 260 young (266240K), 26 "
                 + "survivors (26624K)";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testRegionUnifiedHuge() {
+        String logLine = "[2023-02-20T18:09:02.299+0200][info][gc,heap,exit  ]   region size 32768K, 3212 young "
+                + "(105250816K), 61 survivors (1998848K)";
         assertTrue(HeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
     }

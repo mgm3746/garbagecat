@@ -237,7 +237,7 @@ public final class JdkRegEx {
      * 
      * With comma: 306,0M
      */
-    public static final String SIZE = "(\\d{1,8}([\\.,]\\d)?)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES + "])";
+    public static final String SIZE = "(\\d{1,10}([\\.,]\\d)?)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES + "])";
 
     /**
      * The size of memory in bytes. No units.
