@@ -150,6 +150,11 @@ public class JvmDao {
     private JvmContext jvmContext = new JvmContext(null);
 
     /**
+     * Whether or not the logging ends with <code>UnknownEvent</code>s (e.g. it's truncated).
+     */
+    private boolean logEndingUnidentified = false;
+
+    /**
      * The date and time the log file was created.
      */
     private Date logFileDate;
@@ -900,6 +905,10 @@ public class JvmDao {
         return -binarySearch(blockingEvents, event, COMPARE_BY_TIMESTAMP) - 1;
     }
 
+    public boolean isLogEndingUnidentified() {
+        return logEndingUnidentified;
+    }
+
     private <T> LongStream kilobytes(Class<T> clazz, Function<T, Memory> func) {
         return this.blockingEvents.stream() //
                 .filter(clazz::isInstance) //
@@ -934,6 +943,10 @@ public class JvmDao {
 
     public void setJdkVersion(String jdkVersion) {
         this.jdkVersion = jdkVersion;
+    }
+
+    public void setLogEndingUnidentified(boolean logEndingUnidentified) {
+        this.logEndingUnidentified = logEndingUnidentified;
     }
 
     public void setLogFileDate(Date logFileDate) {

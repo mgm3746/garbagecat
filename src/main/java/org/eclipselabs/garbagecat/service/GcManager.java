@@ -263,6 +263,7 @@ public class GcManager {
         jvmRun.setGcPauseTotal(jvmDao.getDurationTotal());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
         jvmRun.setInvertedSerialismCount(jvmDao.getInvertedSerialismCount());
+        jvmRun.setLogEndingUnidentified(jvmDao.isLogEndingUnidentified());
         jvmRun.setJdkVersion(jvmDao.getJdkVersion());
         jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
         jvmRun.setLastLogLineUnprocessed(lastLogLineUnprocessed);
@@ -690,6 +691,7 @@ public class GcManager {
             // If event has no timestamp, use most recent blocking timestamp.
             LogEvent event = JdkUtil.parseLogLine(logLine);
             if (event instanceof BlockingEvent) {
+                jvmDao.setLogEndingUnidentified(false);
 
                 // Verify logging in correct order. If overridden, logging will be stored and reordered by timestamp
                 // for analysis.
@@ -1053,12 +1055,16 @@ public class GcManager {
                 priorEvent = (BlockingEvent) event;
 
             } else if (event instanceof ApplicationStoppedTimeEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
             } else if (event instanceof UnifiedSafepointEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 jvmDao.addSafepointEvent((UnifiedSafepointEvent) event);
             } else if (event instanceof HeaderCommandLineFlagsEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 jvmDao.getJvmContext().setOptions(((HeaderCommandLineFlagsEvent) event).getJvmOptions());
             } else if (event instanceof HeaderMemoryEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 jvmDao.setMemory(((HeaderMemoryEvent) event).getLogEntry());
                 jvmDao.setPhysicalMemory((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemory()));
                 jvmDao.getJvmContext().setMemory(org.github.joa.util.JdkUtil.convertSize(jvmDao.getPhysicalMemory(),
@@ -1068,6 +1074,7 @@ public class GcManager {
                 jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
                 jvmDao.setSwapFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwapFree()));
             } else if (event instanceof HeaderVersionEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 jvmDao.getJvmContext().setVersionMajor(((HeaderVersionEvent) event).getJdkVersionMajor());
                 jvmDao.getJvmContext().setVersionMinor(((HeaderVersionEvent) event).getJdkVersionMinor());
                 if (((HeaderVersionEvent) event).is32Bit()) {
@@ -1076,6 +1083,7 @@ public class GcManager {
                 jvmDao.setJdkVersion(((HeaderVersionEvent) event).getLogEntry());
                 jvmDao.getJvmContext().setOs(((HeaderVersionEvent) event).getOs());
             } else if (event instanceof LogFileEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 if (((LogFileEvent) event).isCreated()) {
                     Matcher matcher = LogFileEvent.pattern.matcher(((LogFileEvent) event).getLogEntry());
                     if (matcher.find()) {
@@ -1083,14 +1091,17 @@ public class GcManager {
                     }
                 }
             } else if (event instanceof GcOverheadLimitEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED)) {
                     jvmDao.getAnalysis().add(Analysis.ERROR_GC_TIME_LIMIT_EXCEEEDED);
                 }
             } else if (event instanceof GcLockerScavengeFailedEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED)) {
                     jvmDao.addAnalysis(Analysis.ERROR_CMS_PAR_NEW_GC_LOCKER_FAILED);
                 }
             } else if (event instanceof ShenandoahConcurrentEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 if (greater(((CombinedData) event).getCombinedOccupancyInit(),
                         jvmDao.getMaxHeapOccupancyNonBlocking())) {
                     jvmDao.setMaxHeapOccupancyNonBlocking(
@@ -1110,12 +1121,14 @@ public class GcManager {
                             (int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
                 }
             } else if (event instanceof VmWarningEvent) {
+                jvmDao.setLogEndingUnidentified(false);
                 if (((VmWarningEvent) event).getErrNo().equals("12")) {
                     if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SHARED_MEMORY_12)) {
                         jvmDao.addAnalysis(Analysis.ERROR_SHARED_MEMORY_12);
                     }
                 }
             } else if (event instanceof UnknownEvent) {
+                jvmDao.setLogEndingUnidentified(true);
                 if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
                     jvmDao.getUnidentifiedLogLines().add(logLine);
                 }
@@ -1137,12 +1150,6 @@ public class GcManager {
             if (event instanceof GcEvent) {
                 if (!jvmDao.getJvmContext().getGarbageCollectors().contains(((GcEvent) event).getGarbageCollector())) {
                     jvmDao.getJvmContext().getGarbageCollectors().add(((GcEvent) event).getGarbageCollector());
-                }
-            }
-            // Check for partial last line
-            if (!iterator.hasNext()) {
-                if (event instanceof UnknownEvent && jvmDao.getUnidentifiedLogLines().size() == 1) {
-                    jvmDao.addAnalysis(Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST);
                 }
             }
         }

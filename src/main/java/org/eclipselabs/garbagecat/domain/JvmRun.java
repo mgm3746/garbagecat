@@ -171,6 +171,11 @@ public class JvmRun {
     private SafepointEvent lastSafepointEvent;
 
     /**
+     * Whether or not the logging ends with <code>UnknownEvent</code>s (e.g. it's truncated).
+     */
+    private boolean logEndingUnidentified = false;
+
+    /**
      * The date and time the log file was created.
      */
     private Date logFileDate;
@@ -393,23 +398,10 @@ public class JvmRun {
         if (!getUnidentifiedLogLines().isEmpty()) {
             if (!preprocessed) {
                 analysis.add(ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
-                // Don't double report
-                if (analysis.contains(INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
-                    analysis.remove(INFO_UNIDENTIFIED_LOG_LINE_LAST);
-                }
-            } else if (getUnidentifiedLogLines().size() == 1) {
-                // Check if the unidentified line is not the last preprocessed line but it is the beginning of the last
-                // unpreprocessed line (the line was split).
-                if (!analysis.contains(INFO_UNIDENTIFIED_LOG_LINE_LAST)
-                        && lastLogLineUnprocessed.startsWith(getUnidentifiedLogLines().get(0))) {
-                    analysis.add(INFO_UNIDENTIFIED_LOG_LINE_LAST);
-                }
+            } else if (isLogEndingUnidentified()) {
+                analysis.add(INFO_UNIDENTIFIED_LOG_LINE_LAST);
             } else {
                 analysis.add(0, WARN_UNIDENTIFIED_LOG_LINE_REPORT);
-                // Don't double report
-                if (analysis.contains(INFO_UNIDENTIFIED_LOG_LINE_LAST)) {
-                    analysis.remove(INFO_UNIDENTIFIED_LOG_LINE_LAST);
-                }
             }
         }
         // Try to infer event types when gc details are missing
@@ -1201,6 +1193,10 @@ public class JvmRun {
         return getEventTypes().size() >= 2 || !getEventTypes().contains(LogEventType.UNKNOWN);
     }
 
+    public boolean isLogEndingUnidentified() {
+        return logEndingUnidentified;
+    }
+
     public boolean isPreprocessed() {
         return preprocessed;
     }
@@ -1275,6 +1271,10 @@ public class JvmRun {
 
     public void setLastSafepointEvent(SafepointEvent lastSafepointEvent) {
         this.lastSafepointEvent = lastSafepointEvent;
+    }
+
+    public void setLogEndingUnidentified(boolean logEndingUnidentified) {
+        this.logEndingUnidentified = logEndingUnidentified;
     }
 
     public void setLogFileDate(Date logFileDate) {
