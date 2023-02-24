@@ -151,7 +151,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 2480, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1228800), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(30695), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1382400), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -183,7 +183,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 1948, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(136576), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(17023), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(153600), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -206,7 +206,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 6703, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(886080), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(11485), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(996800), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -231,7 +231,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 78251, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
         assertEquals(kilobytes(2619547), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(569438), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(8388608), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -279,7 +279,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 27880710, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.SYSTEM_GC, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(925502), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(58125), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(996800), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -304,7 +304,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 4506, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
         assertEquals(kilobytes(100369), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(10116), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(153344), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -330,7 +330,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 66504, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
         assertEquals(kilobytes(4266790), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(922990), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(8388608), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -356,7 +356,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 58427547, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals(kilobytes(5117539), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(5001473), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(8388608), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -381,7 +381,7 @@ class TestParNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 30385, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
         assertEquals(kilobytes(890910), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(620060), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(7992832), event.getYoungSpace(), "Young available size not parsed correctly.");

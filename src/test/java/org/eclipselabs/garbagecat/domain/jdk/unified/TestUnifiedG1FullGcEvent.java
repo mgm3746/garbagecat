@@ -83,7 +83,7 @@ class TestUnifiedG1FullGcEvent {
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
         assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 79853119, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(214096), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(214096), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(739328), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");

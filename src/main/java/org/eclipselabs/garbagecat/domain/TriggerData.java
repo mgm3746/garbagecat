@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 
 /**
  * Trigger data.
@@ -23,7 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 public interface TriggerData {
 
     /**
-     * @return The trigger for the event.
+     * @return The <code>GcTrigger</code> for the event.
      */
-    Type getTrigger();
+    GcTrigger getTrigger();
 }

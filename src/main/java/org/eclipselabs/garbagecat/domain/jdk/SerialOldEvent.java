@@ -29,7 +29,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -92,30 +91,30 @@ import org.github.joa.domain.GarbageCollector;
 public class SerialOldEvent extends SerialCollector implements BlockingEvent, YoungCollection, OldCollection,
         PermMetaspaceCollection, YoungData, OldData, PermMetaspaceData, TriggerData, SerialCollection, TimesData {
 
-    private static Pattern pattern = Pattern.compile(SerialOldEvent.REGEX);
-
-    /**
-     * Regular expressions defining the logging.
-     */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[(Full )?GC( \\(" + SerialOldEvent.TRIGGER
-            + "\\))?([ ]{0,1}" + SerialOldEvent.SERIAL_NEW_BLOCK + ")?( )?" + JdkRegEx.DECORATOR + " \\[Tenured: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), \\[(Perm |Metaspace): "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?[ ]*$";
-
     /**
      * Regular expression for SERIAL_NEW block in some events.
      */
-    public static final String SERIAL_NEW_BLOCK = JdkRegEx.DECORATOR + " \\[DefNew( \\((" + GcTrigger.PROMOTION_FAILED
-            + ")\\) )?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
-            + JdkRegEx.DURATION + "\\]";
+    public static final String __SERIAL_NEW_BLOCK = JdkRegEx.DECORATOR + " \\[DefNew( \\(("
+            + GcTrigger.PROMOTION_FAILED.getRegex() + ")\\) )?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + GcTrigger.SYSTEM_GC + "|" + GcTrigger.METADATA_GC_THRESHOLD + "|"
-            + GcTrigger.ALLOCATION_FAILURE + ")";
+    private static final String __TRIGGER = "(" + GcTrigger.SYSTEM_GC.getRegex() + "|"
+            + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.ALLOCATION_FAILURE.getRegex() + ")";
+
+    /**
+     * Regular expressions defining the logging.
+     */
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[(Full )?GC( \\(" + __TRIGGER + "\\))?([ ]{0,1}"
+            + __SERIAL_NEW_BLOCK + ")?( )?" + JdkRegEx.DECORATOR + " \\[Tenured: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), \\[(Perm |Metaspace): " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
+            + "?[ ]*$";
+
+    private static Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -189,7 +188,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Young generation size at beginning of GC event.
@@ -231,9 +230,11 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
             }
             // Use last trigger
             if (matcher.group(33) != null) {
-                trigger = matcher.group(33);
+                trigger = GcTrigger.getTrigger(matcher.group(33));
             } else if (matcher.group(16) != null) {
-                trigger = matcher.group(16);
+                trigger = GcTrigger.getTrigger(matcher.group(16));
+            } else {
+                trigger = GcTrigger.NONE;
             }
             old = kilobytes(matcher.group(54));
             oldEnd = kilobytes(matcher.group(55));
@@ -331,8 +332,8 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public Memory getYoungOccupancyEnd() {
@@ -383,7 +384,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         this.timestamp = timestamp;
     }
 
-    protected void setTrigger(String trigger) {
+    protected void setTrigger(GcTrigger trigger) {
         this.trigger = trigger;
     }
 

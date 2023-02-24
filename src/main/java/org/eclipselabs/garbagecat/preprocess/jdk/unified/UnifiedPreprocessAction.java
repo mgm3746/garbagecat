@@ -269,7 +269,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_G1_FULL_GC = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
-            + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.GCLOCKER_INITIATED_GC + ")\\))$";
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + ")\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_G1_FULL_GC_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_G1_FULL_GC);
@@ -296,10 +296,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_OLD = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
-            + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.DIAGNOSTIC_COMMAND + "|" + GcTrigger.ERGONOMICS + "|"
-            + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|"
-            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES + "|" + GcTrigger.METADATA_GC_THRESHOLD + "|"
-            + GcTrigger.SYSTEM_GC + ")\\))$";
+            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.DIAGNOSTIC_COMMAND.getRegex() + "|"
+            + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_OLD_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_OLD);
 
@@ -311,7 +311,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_PAUSE_YOUNG = "^(" + UnifiedRegEx.DECORATOR + " Pause Young \\("
-            + GcTrigger.ALLOCATION_FAILURE + "\\))$";
+            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
@@ -389,10 +389,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG = "^(" + UnifiedRegEx.DECORATOR
-            + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\((" + GcTrigger.G1_EVACUATION_PAUSE
-            + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|" + GcTrigger.G1_PREVENTIVE_COLLECTION + "|"
-            + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|"
-            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES + "|" + GcTrigger.METADATA_GC_THRESHOLD + ")\\))$";
+            + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
+            + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG);
 
@@ -475,10 +476,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^" + UnifiedRegEx.DECORATOR
-            + " Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\((" + GcTrigger.G1_EVACUATION_PAUSE
-            + "|" + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|"
-            + GcTrigger.G1_PREVENTIVE_COLLECTION + "|" + GcTrigger.METADATA_GC_THRESHOLD + ")\\)( " + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + ")$";
+            + " Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|"
+            + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
@@ -556,12 +558,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
-            + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.DIAGNOSTIC_COMMAND + "|" + GcTrigger.ERGONOMICS + "|"
-            + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|"
-            + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|"
-            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES + "|" + GcTrigger.METADATA_GC_THRESHOLD + "|"
-            + GcTrigger.SYSTEM_GC + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + JdkRegEx.DURATION_MS + ")$";
+            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.DIAGNOSTIC_COMMAND.getRegex() + "|"
+            + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")\\)( "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
@@ -577,9 +579,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^" + UnifiedRegEx.DECORATOR
-            + " Pause Young \\((" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|"
-            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + ")$";
+            + " Pause Young \\((" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
+            + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA);

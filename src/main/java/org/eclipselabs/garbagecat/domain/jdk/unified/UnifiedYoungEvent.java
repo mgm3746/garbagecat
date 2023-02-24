@@ -27,7 +27,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -72,20 +71,21 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class UnifiedYoungEvent extends UnknownCollector
         implements UnifiedLogging, BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
-    private static final Pattern pattern = Pattern.compile(UnifiedYoungEvent.REGEX);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.SYSTEM_GC.getRegex() + ")";
 
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + UnifiedYoungEvent.TRIGGER
-            + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + __TRIGGER + "\\) "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
             + TimesData.REGEX_JDK9 + "?[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.GCLOCKER_INITIATED_GC
-            + "|" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.SYSTEM_GC + ")";
+    private static final Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -131,7 +131,7 @@ public class UnifiedYoungEvent extends UnknownCollector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * 
@@ -159,7 +159,7 @@ public class UnifiedYoungEvent extends UnknownCollector
                     endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(DECORATOR_SIZE + 1);
+            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
             combinedBegin = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
                     .convertTo(KILOBYTES);
             combinedEnd = memory(matcher.group(DECORATOR_SIZE + 6), matcher.group(DECORATOR_SIZE + 8).charAt(0))
@@ -215,7 +215,7 @@ public class UnifiedYoungEvent extends UnknownCollector
         return timestamp;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 }

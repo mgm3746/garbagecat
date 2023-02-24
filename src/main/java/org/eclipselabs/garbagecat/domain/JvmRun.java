@@ -63,7 +63,6 @@ import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -134,6 +133,11 @@ public class JvmRun {
      * <code>BlockingEvent</code>s where throughput does not meet the throughput goal.
      */
     private List<String> gcBottlenecks;
+
+    /**
+     * GC triggers.
+     */
+    private List<GcTrigger> gcTriggers;
 
     /**
      * Number of <code>ParallelCollection</code> with "inverted" parallelism.
@@ -335,11 +339,6 @@ public class JvmRun {
      * flagged a bottleneck.
      */
     private int throughputThreshold;
-
-    /**
-     * GC triggers.
-     */
-    private List<Type> triggers;
 
     /**
      * Log lines that do not match any existing logging patterns.
@@ -614,7 +613,7 @@ public class JvmRun {
         // GCLocker retry failed
         if (getEventTypes().contains(LogEventType.GC_LOCKER_RETRY)) {
             analysis.add(Analysis.ERROR_GC_LOCKER_RETRY);
-        } else if (!getTriggers().isEmpty() && getTriggers().contains(GcTrigger.Type.GCLOCKER_INITIATED_GC)) {
+        } else if (!getGcTriggers().isEmpty() && getGcTriggers().contains(GcTrigger.GCLOCKER_INITIATED_GC)) {
             analysis.add(Analysis.WARN_GC_LOCKER);
         }
         // Check for PAR_NEW disabled.
@@ -795,6 +794,10 @@ public class JvmRun {
         BigDecimal throughput = new BigDecimal(timeNotGc);
         throughput = throughput.divide(new BigDecimal(getJvmRunDuration()), 2, HALF_EVEN);
         return throughput.movePointRight(2).longValue();
+    }
+
+    public List<GcTrigger> getGcTriggers() {
+        return gcTriggers;
     }
 
     /**
@@ -1101,10 +1104,6 @@ public class JvmRun {
         return throughputThreshold;
     }
 
-    public List<Type> getTriggers() {
-        return triggers;
-    }
-
     public List<String> getUnidentifiedLogLines() {
         return unidentifiedLogLines;
     }
@@ -1243,6 +1242,10 @@ public class JvmRun {
 
     public void setGcPauseTotal(long gcPauseTotal) {
         this.durationTotal = gcPauseTotal;
+    }
+
+    public void setGcTriggers(List<GcTrigger> gcTriggers) {
+        this.gcTriggers = gcTriggers;
     }
 
     public void setInvertedParallelismCount(long invertedParallelismCount) {
@@ -1407,10 +1410,6 @@ public class JvmRun {
 
     public void setThroughputThreshold(int throughputThreshold) {
         this.throughputThreshold = throughputThreshold;
-    }
-
-    public void setTriggers(List<Type> triggers) {
-        this.triggers = triggers;
     }
 
     public void setUnidentifiedLogLines(List<String> unidentifiedLogLines) {

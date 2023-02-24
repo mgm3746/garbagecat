@@ -30,7 +30,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -68,21 +67,20 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         ParallelEvent, PermMetaspaceData, CombinedData, TriggerData, TimesData, OtherTime {
 
     /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String _TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + ")";
+
+    /**
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(Mixed\\) \\("
-            + UnifiedG1MixedPauseEvent.TRIGGER + "\\) " + OtherTime.REGEX
-            + " Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
+            + _TRIGGER + "\\) " + OtherTime.REGEX + " Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE
+            + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
-
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION
-            + "|" + GcTrigger.GCLOCKER_INITIATED_GC + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -162,7 +160,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -191,7 +189,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(DECORATOR_SIZE + 1);
+            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
             if (matcher.group(DECORATOR_SIZE + 3) != null) {
                 otherTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 3)).intValue();
             } else {
@@ -298,8 +296,8 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     protected void setPermOccupancyEnd(Memory permGenEnd) {

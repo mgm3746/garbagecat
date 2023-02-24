@@ -36,8 +36,8 @@ class TestParallelCompactingOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
         ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         assertEquals(Long.parseLong("3203650654"), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE,
-                "Trigger not recognized as " + GcTrigger.Type.ALLOCATION_FAILURE.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE,
+                "Trigger not recognized as " + GcTrigger.ALLOCATION_FAILURE.toString() + ".");
         assertEquals(kilobytes(393482), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(393073), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(532992), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -76,8 +76,8 @@ class TestParallelCompactingOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
         ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         assertEquals(Long.parseLong("1029482070"), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.HEAP_DUMP_INITIATED_GC,
-                "Trigger not recognized as " + GcTrigger.Type.HEAP_DUMP_INITIATED_GC.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.HEAP_DUMP_INITIATED_GC,
+                "Trigger not recognized as " + GcTrigger.HEAP_DUMP_INITIATED_GC.toString() + ".");
         assertEquals(kilobytes(33192), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(397312), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -104,8 +104,8 @@ class TestParallelCompactingOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
         ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         assertEquals((long) 285197105, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.HEAP_INSPECTION_INITIATED_GC,
-                "Trigger not recognized as " + GcTrigger.Type.HEAP_INSPECTION_INITIATED_GC.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.HEAP_INSPECTION_INITIATED_GC,
+                "Trigger not recognized as " + GcTrigger.HEAP_INSPECTION_INITIATED_GC.toString() + ".");
         assertEquals(kilobytes(47669), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1514496), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -162,8 +162,8 @@ class TestParallelCompactingOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
         ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         assertEquals((long) 21415385, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ERGONOMICS,
-                "Trigger not recognized as " + GcTrigger.Type.ERGONOMICS.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.ERGONOMICS,
+                "Trigger not recognized as " + GcTrigger.ERGONOMICS.toString() + ".");
         assertEquals(kilobytes(105768), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(547840), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -189,8 +189,8 @@ class TestParallelCompactingOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
         ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         assertEquals((long) 2417, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.SYSTEM_GC,
-                "Trigger not recognized as " + GcTrigger.Type.SYSTEM_GC.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC,
+                "Trigger not recognized as " + GcTrigger.SYSTEM_GC.toString() + ".");
         assertEquals(kilobytes(1788), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(12736), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -212,8 +212,8 @@ class TestParallelCompactingOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
         ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         assertEquals((long) 1234, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.METADATA_GC_THRESHOLD,
-                "Trigger not recognized as " + GcTrigger.Type.METADATA_GC_THRESHOLD.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD,
+                "Trigger not recognized as " + GcTrigger.METADATA_GC_THRESHOLD.toString() + ".");
         assertEquals(kilobytes(17779), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1835008), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -240,8 +240,8 @@ class TestParallelCompactingOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + ".");
         ParallelCompactingOldEvent event = new ParallelCompactingOldEvent(logLine);
         assertEquals((long) 372405718, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.LAST_DITCH_COLLECTION,
-                "Trigger not recognized as " + GcTrigger.Type.LAST_DITCH_COLLECTION.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.LAST_DITCH_COLLECTION,
+                "Trigger not recognized as " + GcTrigger.LAST_DITCH_COLLECTION.toString() + ".");
         assertEquals(kilobytes(0), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1569280), event.getYoungSpace(), "Young available size not parsed correctly.");

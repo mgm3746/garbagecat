@@ -27,7 +27,6 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -82,8 +81,8 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
      * 1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]
      */
     private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
-            + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.GCLOCKER_INITIATED_GC + "|"
-            + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|" + GcTrigger.G1_EVACUATION_PAUSE
+            + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex()
             + ")\\) )?\\(young\\) \\(initial-mark\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
@@ -99,13 +98,14 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
      * secs]
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
-            + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.METADATA_GC_THRESHOLD + "|"
-            + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|" + GcTrigger.SYSTEM_GC
-            + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\((" + GcTrigger.TO_SPACE_EXHAUSTED + ")\\))?(, "
-            + JdkRegEx.DURATION + "\\])?" + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "?" + OtherTime.REGEX
-            + "?(\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?)?[ ]*$";
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
+            + GcTrigger.SYSTEM_GC.getRegex() + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
+            + GcTrigger.TO_SPACE_EXHAUSTED.getRegex() + ")\\))?(, " + JdkRegEx.DURATION + "\\])?"
+            + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "?" + OtherTime.REGEX + "?(\\[Eden: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?)?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
@@ -177,7 +177,7 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -202,7 +202,7 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                     // Datestamp only.
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
-                trigger = matcher.group(15);
+                trigger = GcTrigger.getTrigger(matcher.group(15));
                 combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
                 combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
                 combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
@@ -226,9 +226,11 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
                 if (matcher.group(15) != null) {
-                    trigger = matcher.group(15);
+                    trigger = GcTrigger.getTrigger(matcher.group(15));
                 } else if (matcher.group(19) != null) {
-                    trigger = matcher.group(19);
+                    trigger = GcTrigger.getTrigger(matcher.group(19));
+                } else {
+                    trigger = GcTrigger.NONE;
                 }
                 if (matcher.group(24) != null) {
                     extRootScanningTime = JdkMath.convertMillisToMicros(matcher.group(25)).intValue();
@@ -331,7 +333,7 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 }

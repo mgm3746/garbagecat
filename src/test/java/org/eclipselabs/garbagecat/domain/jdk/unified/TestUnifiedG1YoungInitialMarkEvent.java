@@ -57,7 +57,7 @@ class TestUnifiedG1YoungInitialMarkEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString(), event.getName(),
                 "Event name incorrect.");
         assertEquals((long) (2752 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.G1_HUMONGOUS_ALLOCATION, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_HUMONGOUS_ALLOCATION, "Trigger not parsed correctly.");
         assertEquals(kilobytes(562 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(5 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");

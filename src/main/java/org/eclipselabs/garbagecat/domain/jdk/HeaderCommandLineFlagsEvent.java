@@ -24,8 +24,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Flags header that displays a combination of the following: (1) Options passed to the JVM. (2) Options/settings
- * triggered by the options passed in. It is not just the options passed to the JVM.
+ * Flags header that displays a combination and/or subset of the following: (1) Options passed to the JVM. (2)
+ * Options/settings triggered by the options passed in. It is not just the options passed to the JVM.
  * </p>
  * 
  * <p>
@@ -63,12 +63,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class HeaderCommandLineFlagsEvent implements LogEvent {
 
-    private static Pattern pattern = Pattern.compile(HeaderCommandLineFlagsEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(CommandLine flags:|  JAVA_OPTS:)[ ]{1,2}(.+)$";
+    private static final String _REGEX = "^(CommandLine flags:|  JAVA_OPTS:)[ ]{1,2}(.+)$";
+
+    private static Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

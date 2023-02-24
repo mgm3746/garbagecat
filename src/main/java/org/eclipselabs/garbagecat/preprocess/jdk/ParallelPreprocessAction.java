@@ -130,7 +130,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * 51216232 promoted: 106256 overflow: false
      */
     private static final String REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY = "^(" + JdkRegEx.DECORATOR
-            + " \\[GC \\((" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.GCLOCKER_INITIATED_GC
+            + " \\[GC \\((" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex()
             + ")\\) )AdaptiveSizePolicy::update_averages:  survived: \\d{1,}  promoted: "
             + "\\d{1,}  overflow: (false|true)$";
 

@@ -30,7 +30,6 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -76,21 +75,22 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging, BlockingEvent, OldCollection,
         PermMetaspaceCollection, PermMetaspaceData, CombinedData, TriggerData, ParallelEvent, TimesData {
 
-    private static final Pattern pattern = Pattern.compile(UnifiedOldEvent.REGEX);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + UnifiedOldEvent.TRIGGER
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + __TRIGGER
             + "\\)( Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))? "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
             + TimesData.REGEX_JDK9 + "?[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.LAST_DITCH_COLLECTION
-            + "|" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.ERGONOMICS + "|" + GcTrigger.SYSTEM_GC + ")";
+    private static final Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -165,7 +165,7 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -194,7 +194,7 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
                     endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(DECORATOR_SIZE + 1);
+            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
             if (matcher.group(DECORATOR_SIZE + 3) != null) {
                 permGen = memory(matcher.group(DECORATOR_SIZE + 4), matcher.group(DECORATOR_SIZE + 6).charAt(0))
                         .convertTo(KILOBYTES);
@@ -291,8 +291,8 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     protected void setPermOccupancyEnd(Memory permGenEnd) {

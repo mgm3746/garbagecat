@@ -99,7 +99,7 @@ class TestUnifiedSerialOldEvent {
         UnifiedSerialOldEvent event = new UnifiedSerialOldEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 75, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1152), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1152), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -122,7 +122,7 @@ class TestUnifiedSerialOldEvent {
         UnifiedSerialOldEvent event = new UnifiedSerialOldEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 91, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ERGONOMICS, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ERGONOMICS, "Trigger not parsed correctly.");
         assertEquals(kilobytes(502), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(436), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1536), event.getYoungSpace(), "Young available size not parsed correctly.");

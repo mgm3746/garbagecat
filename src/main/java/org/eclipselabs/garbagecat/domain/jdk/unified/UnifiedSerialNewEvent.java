@@ -30,7 +30,6 @@ import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.SerialCollector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -70,21 +69,22 @@ import org.github.joa.domain.GarbageCollector;
 public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLogging, BlockingEvent, YoungCollection,
         SerialCollection, YoungData, OldData, PermMetaspaceData, TriggerData, TimesData {
 
-    private static final Pattern pattern = Pattern.compile(UnifiedSerialNewEvent.REGEX_PREPROCESSED);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + ")";
 
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Young \\("
-            + UnifiedSerialNewEvent.TRIGGER + "\\) \\DefNew: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Tenured: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
-            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\("
-            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + ")";
+    private static final String _REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + __TRIGGER
+            + "\\) \\DefNew: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) Tenured: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
+
+    private static final Pattern pattern = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -160,7 +160,7 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Young generation size at beginning of GC event.
@@ -202,7 +202,7 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(DECORATOR_SIZE + 1);
+            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
             young = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
                     .convertTo(KILOBYTES);
             youngEnd = memory(matcher.group(DECORATOR_SIZE + 9), matcher.group(DECORATOR_SIZE + 11).charAt(0))
@@ -307,8 +307,8 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public Memory getYoungOccupancyEnd() {
@@ -335,7 +335,7 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
         this.permGenAllocation = permGenAllocation;
     }
 
-    protected void setTrigger(String trigger) {
+    protected void setTrigger(GcTrigger trigger) {
         this.trigger = trigger;
     }
 }

@@ -31,7 +31,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -64,21 +63,22 @@ public class UnifiedG1FullGcEvent extends G1Collector
         PermMetaspaceCollection, CombinedData, PermMetaspaceData, TriggerData, TimesData {
 
     /**
-     * Regular expression defining preprocessed logging.
-     */
-    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\("
-            + UnifiedG1FullGcEvent.TRIGGER + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE
-            + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
-
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
-
-    /**
      * Trigger(s) regular expression(s).
      */
-    private static final String TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION
-            + "|" + GcTrigger.DIAGNOSTIC_COMMAND + "|" + GcTrigger.GCLOCKER_INITIATED_GC + "|"
-            + GcTrigger.HEAP_DUMP_INITIATED_GC + "|" + GcTrigger.SYSTEM_GC + ")";
+    private static final String _TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.DIAGNOSTIC_COMMAND.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.SYSTEM_GC.getRegex() + ")";
+
+    /**
+     * Regular expression defining preprocessed logging.
+     */
+    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + _TRIGGER
+            + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -154,7 +154,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -183,7 +183,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(DECORATOR_SIZE + 1);
+            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
             permGen = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
                     .convertTo(KILOBYTES);
             permGenEnd = memory(matcher.group(DECORATOR_SIZE + 10), matcher.group(DECORATOR_SIZE + 12).charAt(0))
@@ -280,8 +280,8 @@ public class UnifiedG1FullGcEvent extends G1Collector
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     protected void setPermOccupancyEnd(Memory permGenEnd) {

@@ -28,7 +28,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -61,18 +60,18 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
         implements UnifiedLogging, BlockingEvent, YoungCollection, ParallelEvent, CombinedData, TriggerData, TimesData {
 
     /**
-     * Regular expression defining standard logging (no details).
-     */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\("
-            + UnifiedG1YoungInitialMarkEvent.TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
-
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
-
-    /**
      * Trigger(s) regular expression(s).
      */
-    static final String TRIGGER = "(" + GcTrigger.G1_HUMONGOUS_ALLOCATION + ")";
+    static final String _TRIGGER = "(" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + ")";
+
+    /**
+     * Regular expression defining standard logging (no details).
+     */
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + _TRIGGER + "\\) "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
+            + TimesData.REGEX_JDK9 + "[ ]*$";
+
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -132,7 +131,7 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -163,7 +162,7 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
                         endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                trigger = matcher.group(DECORATOR_SIZE + 1);
+                trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
                 combinedBegin = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
                         .convertTo(KILOBYTES);
                 combinedEnd = memory(matcher.group(DECORATOR_SIZE + 5), matcher.group(DECORATOR_SIZE + 7).charAt(0))
@@ -239,7 +238,7 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 }

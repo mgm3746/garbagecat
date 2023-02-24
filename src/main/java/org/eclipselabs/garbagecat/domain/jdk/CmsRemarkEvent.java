@@ -20,7 +20,6 @@ import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -125,13 +124,13 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     /**
      * Regular expression defining standard logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\((" + GcTrigger.CMS_FINAL_REMARK
-            + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\])?"
-            + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\](" + JdkRegEx.DECORATOR
-            + " \\[scrub string table, " + JdkRegEx.DURATION + "\\])?[ ]{0,1}\\[1 CMS-remark: " + JdkRegEx.SIZE_K
-            + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(("
+            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
+            + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
+            + "\\]" + JdkRegEx.DECORATOR + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\]("
+            + JdkRegEx.DECORATOR + " \\[scrub string table, " + JdkRegEx.DURATION + "\\])?[ ]{0,1}\\[1 CMS-remark: "
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code> (default JDK8
@@ -150,7 +149,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * TODO: Combine with REGEX.
      */
     private static final String REGEX_CLASS_UNLOADING = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(("
-            + GcTrigger.CMS_FINAL_REMARK + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
+            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
             + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\((non-)?parallel\\) ("
             + JdkRegEx.DECORATOR + " \\[grey object rescan, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[root rescan, " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR + " \\[visit unhandled CLDs, "
@@ -170,8 +169,9 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     /**
      * Regular expression defining truncated logging due to -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC:
      */
-    private static final String REGEX_TRUNCATED = "^" + JdkRegEx.DECORATOR + " \\[GC( \\((" + GcTrigger.CMS_FINAL_REMARK
-            + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\]$";
+    private static final String REGEX_TRUNCATED = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(("
+            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
+            + JdkRegEx.SIZE_K + "\\)\\]$";
 
     private static final Pattern REGEX_TRUNCATED_PATTERN = Pattern.compile(REGEX_TRUNCATED);
 
@@ -226,7 +226,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -251,7 +251,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                         // Datestamp only.
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
-                    trigger = matcher.group(16);
+                    trigger = GcTrigger.getTrigger(matcher.group(16));
                 } else {
                     // Initial GC[YG block missing
                     if (matcher.group(31) != null && matcher.group(31).matches(JdkRegEx.TIMESTAMP)) {
@@ -286,7 +286,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                         // Datestamp only.
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
-                    trigger = matcher.group(16);
+                    trigger = GcTrigger.getTrigger(matcher.group(16));
                 } else {
                     // Initial GC[YG block missing
                     if (matcher.group(31) != null && matcher.group(31).matches(JdkRegEx.TIMESTAMP)) {
@@ -319,7 +319,7 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                     // Datestamp only.
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
-                trigger = matcher.group(15);
+                trigger = GcTrigger.getTrigger(matcher.group(15));
             }
             classUnloading = false;
         }
@@ -373,8 +373,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public boolean isClassUnloading() {

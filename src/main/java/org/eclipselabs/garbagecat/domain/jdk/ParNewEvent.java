@@ -26,7 +26,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -117,24 +116,25 @@ import org.github.joa.domain.GarbageCollector;
 public class ParNewEvent extends CmsIncrementalModeCollector
         implements BlockingEvent, YoungCollection, ParallelEvent, YoungData, OldData, TriggerData, TimesData {
 
-    private static final Pattern pattern = Pattern.compile(ParNewEvent.REGEX);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + "|"
+            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(" + GcTrigger.CMS_FINAL_REMARK
-            + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K + "\\)\\])?)?"
-            + JdkRegEx.DECORATOR + " \\[(Full)?[ ]{0,1}GC( )?(\\(" + ParNewEvent.TRIGGER + "\\))?( )?(("
-            + JdkRegEx.DECORATOR + " )?\\[ParNew( \\((" + GcTrigger.PROMOTION_FAILED + ")\\))?:)? " + JdkRegEx.SIZE_K
-            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE_K
-            + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String _REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\("
+            + GcTrigger.CMS_FINAL_REMARK.getRegex() + "\\)[ ]{0,1})?(\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
+            + JdkRegEx.SIZE_K + "\\)\\])?)?" + JdkRegEx.DECORATOR + " \\[(Full)?[ ]{0,1}GC( )?(\\(" + __TRIGGER
+            + "\\))?( )?((" + JdkRegEx.DECORATOR + " )?\\[ParNew( \\((" + GcTrigger.PROMOTION_FAILED.getRegex()
+            + ")\\))?:)? " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+            + JdkRegEx.DURATION + "\\] (" + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)"
+            + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.GCLOCKER_INITIATED_GC
-            + "|" + GcTrigger.SYSTEM_GC + "|" + GcTrigger.CMS_FINAL_REMARK + ")";
+    private static final Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -195,7 +195,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Young generation size at beginning of GC event.
@@ -243,9 +243,9 @@ public class ParNewEvent extends CmsIncrementalModeCollector
             }
         }
         if (matcher.group(54) != null) {
-            trigger = matcher.group(54);
+            trigger = GcTrigger.getTrigger(matcher.group(54));
         } else {
-            trigger = matcher.group(35);
+            trigger = GcTrigger.getTrigger(matcher.group(35));
         }
         young = kilobytes(matcher.group(55));
         youngEnd = kilobytes(matcher.group(56));
@@ -331,8 +331,8 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public Memory getYoungOccupancyEnd() {

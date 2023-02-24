@@ -30,7 +30,6 @@ import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCollector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -82,25 +81,25 @@ import org.github.joa.domain.GarbageCollector;
 public class UnifiedParallelScavengeEvent extends ParallelCollector implements UnifiedLogging, BlockingEvent,
         YoungCollection, ParallelEvent, YoungData, OldData, PermMetaspaceData, TriggerData, TimesData {
 
-    private static final Pattern pattern = Pattern.compile(UnifiedParallelScavengeEvent.REGEX_PREPROCESSED);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
+            + ")";
 
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Young \\("
-            + UnifiedParallelScavengeEvent.TRIGGER + "\\)( Promotion failed)? PSYoungGen: " + JdkRegEx.SIZE + "(\\("
-            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) (PS|Par)OldGen: " + JdkRegEx.SIZE
-            + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: "
-            + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
-            + TimesData.REGEX_JDK9 + "[ ]*$";
+    private static final String _REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + __TRIGGER
+            + "\\)( Promotion failed)? PSYoungGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) (PS|Par)OldGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
+            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\("
+            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.GCLOCKER_INITIATED_GC
-            + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES + "|"
-            + GcTrigger.METADATA_GC_THRESHOLD + ")";
+    private static final Pattern pattern = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -175,7 +174,7 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Young generation size at beginning of GC event.
@@ -217,7 +216,7 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(DECORATOR_SIZE + 1);
+            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
             young = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
                     .convertTo(KILOBYTES);
             youngEnd = memory(matcher.group(DECORATOR_SIZE + 10), matcher.group(DECORATOR_SIZE + 12).charAt(0))
@@ -320,8 +319,8 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public Memory getYoungOccupancyEnd() {
@@ -348,7 +347,7 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
         this.permGenAllocation = permGenAllocation;
     }
 
-    protected void setTrigger(String trigger) {
+    protected void setTrigger(GcTrigger trigger) {
         this.trigger = trigger;
     }
 }

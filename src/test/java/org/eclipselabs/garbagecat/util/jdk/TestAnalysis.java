@@ -30,7 +30,6 @@ import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.github.joa.domain.Bit;
 import org.github.joa.domain.GarbageCollector;
@@ -379,9 +378,9 @@ class TestAnalysis {
     void testGcLocker() {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        List<Type> triggers = new ArrayList<Type>();
-        triggers.add(GcTrigger.Type.GCLOCKER_INITIATED_GC);
-        jvmRun.setTriggers(triggers);
+        List<GcTrigger> triggers = new ArrayList<GcTrigger>();
+        triggers.add(GcTrigger.GCLOCKER_INITIATED_GC);
+        jvmRun.setGcTriggers(triggers);
         jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_GC_LOCKER.getKey()),
                 Analysis.WARN_GC_LOCKER + " analysis not identified.");

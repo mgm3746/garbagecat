@@ -29,7 +29,6 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -91,10 +90,10 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
     /**
      * Regular expression standard format.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC (\\((" + GcTrigger.ALLOCATION_FAILURE
-            + "|" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.SYSTEM_GC + ")\\))?[ ]{0,2}" + JdkRegEx.SIZE
-            + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
-            + "?[ ]*$";
+    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC (\\(("
+            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.SYSTEM_GC.getRegex() + ")\\))?[ ]{0,2}" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
@@ -102,15 +101,16 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
      * Regular expression preprocessed with G1 details.
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[Full GC[ ]{0,1}(\\(("
-            + GcTrigger.SYSTEM_GC + "|" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.LAST_DITCH_COLLECTION + "|"
-            + GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION + "|" + GcTrigger.ALLOCATION_FAILURE + "|"
-            + GcTrigger.HEAP_INSPECTION_INITIATED_GC + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + ")\\)[ ]{0,2})?("
-            + ClassHistogramEvent.REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + GcTrigger.SYSTEM_GC.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|" + GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION.getRegex()
+            + "|" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.HEAP_INSPECTION_INITIATED_GC.getRegex()
+            + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + ")\\)[ ]{0,2})?("
+            + ClassHistogramEvent._REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\](, \\[(Perm|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\)\\])?(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?" + TimesData.REGEX + "?[ ]*$";
+            + "\\)\\])?(" + ClassHistogramEvent._REGEX_PREPROCESSED + ")?" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
 
@@ -188,7 +188,7 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -210,9 +210,7 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
                     // Datestamp only.
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
-                if (matcher.group(15) != null) {
-                    trigger = matcher.group(15);
-                }
+                trigger = GcTrigger.getTrigger(matcher.group(15));
                 combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
                 combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
                 combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
@@ -235,10 +233,12 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
                 if (matcher.group(15) != null) {
-                    trigger = matcher.group(15);
+                    trigger = GcTrigger.getTrigger(matcher.group(15));
                 } else if (matcher.group(17) != null
-                        && matcher.group(17).matches(ClassHistogramEvent.REGEX_PREPROCESSED)) {
+                        && matcher.group(17).matches(ClassHistogramEvent._REGEX_PREPROCESSED)) {
                     trigger = GcTrigger.CLASS_HISTOGRAM;
+                } else {
+                    trigger = GcTrigger.NONE;
                 }
             }
             combined = JdkMath.convertSizeToKilobytes(matcher.group(67), matcher.group(69).charAt(0));
@@ -330,8 +330,8 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     protected void setDuration(int duration) {

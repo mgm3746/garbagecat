@@ -72,6 +72,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class ClassHistogramEvent implements ThrowAwayEvent {
 
     /**
+     * Regular expression for cruft left after class histogram preprocessing.
+     * 
+     * 2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 secs]
+     */
+    public static final String _REGEX_PREPROCESSED = "" + JdkRegEx.DECORATOR
+            + " \\[Class Histogram( \\((before|after) full gc\\))?(:)?[ ]{0,1}?, " + JdkRegEx.DURATION + "\\]";
+
+    /**
      * Regular expressions defining the logging.
      */
     private static final String[] REGEX = {
@@ -94,17 +102,9 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
             /*
              * Preprocessed block as a single line
              */
-            "^" + ClassHistogramEvent.REGEX_PREPROCESSED + TimesData.REGEX + "?[ ]*$" };
+            "^" + _REGEX_PREPROCESSED + TimesData.REGEX + "?[ ]*$" };
 
     private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
-
-    /**
-     * Regular expression for cruft left after class histogram preprocessing.
-     * 
-     * 2021-10-07T10:05:34.135+0100: 69302.241: [Class Histogram (before full gc):, 4.7148918 secs]
-     */
-    public static final String REGEX_PREPROCESSED = "" + JdkRegEx.DECORATOR
-            + " \\[Class Histogram( \\((before|after) full gc\\))?(:)?[ ]{0,1}?, " + JdkRegEx.DURATION + "\\]";
 
     static {
         for (String regex : REGEX) {

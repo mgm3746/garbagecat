@@ -13,48 +13,20 @@
 package org.eclipselabs.garbagecat.util.jdk;
 
 /**
- * Garbage collection trigger utility methods and constants for OpenJDK and Oracle JDK.
+ * Garbage collection triggers for OpenJDK and Oracle JDK.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public final class GcTrigger {
-
-    /**
-     * Defined triggers.
-     */
-    public enum Type {
-        ALLOCATION_FAILURE, CLASS_HISTOGRAM, CMS_FINAL_REMARK, CMS_INITIAL_MARK, CONCURRENT_MODE_FAILURE,
-        //
-        CONCURRENT_MODE_INTERRUPTED, DIAGNOSTIC_COMMAND, ERGONOMICS, G1_EVACUATION_PAUSE, G1_HUMONGOUS_ALLOCATION,
-        //
-        GCLOCKER_INITIATED_GC, HEAP_DUMP_INITIATED_GC, HEAP_INSPECTION_INITIATED_GC, JVMTI_FORCED_GARBAGE_COLLECTION,
-        //
-        LAST_DITCH_COLLECTION, METADATA_GC_THRESHOLD, NONE, PROMOTION_FAILED, SYSTEM_GC, TO_SPACE_EXHAUSTED,
-        //
-        TO_SPACE_OVERFLOW, UNKNOWN;
-    }
-
-    /**
-     * Allocation Failure trigger.
-     */
-    public static final String ALLOCATION_FAILURE = "Allocation Failure";;
-
-    /**
-     * Ctrl-Break with -XX:+PrintClassHistogram trigger causes a full GC.
-     */
-    public static final String CLASS_HISTOGRAM = "Class Histogram";
-
-    /**
-     * CMS Final Remark trigger
-     */
-    public static final String CMS_FINAL_REMARK = "CMS Final Remark";
-
-    /**
-     * CMS Initial Mark trigger
-     */
-    public static final String CMS_INITIAL_MARK = "CMS Initial Mark";
-
+public enum GcTrigger {
+    //
+    ALLOCATION_FAILURE("Allocation Failure"),
+    // Ctrl-Break with -XX:+PrintClassHistogram trigger causes a full GC.
+    CLASS_HISTOGRAM("Class Histogram"),
+    //
+    CMS_FINAL_REMARK("CMS Final Remark"),
+    //
+    CMS_INITIAL_MARK("CMS Initial Mark"),
     /**
      * <p>
      * CMS concurrent mode failure trigger.
@@ -97,8 +69,7 @@ public final class GcTrigger {
      * -XX:PermSize=256M -XX:MaxPermSize=256M (Perm) or -XX:MetaspaceSize=2G -XX:MaxMetaspaceSize=2G (Metaspace).</li>
      * </ol>
      */
-    public static final String CONCURRENT_MODE_FAILURE = "concurrent mode failure";
-
+    CONCURRENT_MODE_FAILURE("concurrent mode failure"),
     /**
      * <p>
      * CMS concurrent mode interrupted trigger.
@@ -125,15 +96,13 @@ public final class GcTrigger {
      * <li>Heap Dump</li>
      * </ol>
      */
-    public static final String CONCURRENT_MODE_INTERRUPTED = "concurrent mode interrupted";
-
+    CONCURRENT_MODE_INTERRUPTED("concurrent mode interrupted"),
     /**
      * <p>
      * Explicit garbage collection trigger (e.g. Distributed Garbage Collection (DGC), jcmd &lt;pid&gt; GC.run).
      * </p>
      */
-    public static final String DIAGNOSTIC_COMMAND = "Diagnostic Command";
-
+    DIAGNOSTIC_COMMAND("Diagnostic Command"),
     /**
      * <p>
      * Ergonomics trigger. GC happens for a heuristics reason. A heuristic is a rule of thumb or pattern the JVM uses to
@@ -151,14 +120,12 @@ public final class GcTrigger {
      * A full collection is needed to do the resizing.
      * </ol>
      */
-    public static final String ERGONOMICS = "Ergonomics";
-
+    ERGONOMICS("Ergonomics"),
     /**
      * G1 Evacuation Pause trigger. Live objects are copied out of one region (evacuated) to another region to free
      * contiguous space. For both young and mixed collections.
      */
-    public static final String G1_EVACUATION_PAUSE = "G1 Evacuation Pause";
-
+    G1_EVACUATION_PAUSE("G1 Evacuation Pause"),
     /**
      * Humongous object allocation trigger.
      * 
@@ -172,13 +139,9 @@ public final class GcTrigger {
      * <code>InitiatingHeapOccupancyPercent</code> (default 45) and adaptive based on ergonomics. If adaptive IHOP is
      * disabled with <code>-XX:-G1UseAdaptiveIHOP</code>, IHOP is fixed at <code>InitiatingHeapOccupancyPercent</code>.
      */
-    public static final String G1_HUMONGOUS_ALLOCATION = "G1 Humongous Allocation";
-
-    /**
-     * G1 preventive collection trigger.
-     */
-    public static final String G1_PREVENTIVE_COLLECTION = "G1 Preventive Collection";
-
+    G1_HUMONGOUS_ALLOCATION("G1 Humongous Allocation"),
+    //
+    G1_PREVENTIVE_COLLECTION("G1 Preventive Collection"),
     /**
      * The GC triggered after the GCLocker has been released.
      * 
@@ -199,40 +162,27 @@ public final class GcTrigger {
      * The expectation is that the GCLocker will not be held for a long time (there will not be long running code in a
      * "critical region").
      */
-    public static final String GCLOCKER_INITIATED_GC = "GCLocker Initiated GC";
-
-    /**
-     * Heap dump initiated gc trigger.
-     */
-    public static final String HEAP_DUMP_INITIATED_GC = "Heap Dump Initiated GC";
-
-    /**
-     * Heap inspection initiated gc trigger.
-     */
-    public static final String HEAP_INSPECTION_INITIATED_GC = "Heap Inspection Initiated GC";
-
-    /**
-     * JVM Tool Interface explicit GC trigger
-     */
-    public static final String JVMTI_FORCED_GARBAGE_COLLECTION = "JvmtiEnv ForceGarbageCollection";
-
+    GCLOCKER_INITIATED_GC("GCLocker Initiated GC"),
+    //
+    HEAP_DUMP_INITIATED_GC("Heap Dump Initiated GC"),
+    //
+    HEAP_INSPECTION_INITIATED_GC("Heap Inspection Initiated GC"),
+    // JVM Tool Interface explicit GC trigger
+    JVMTI_FORCED_GARBAGE_COLLECTION("JvmtiEnv ForceGarbageCollection"),
     /**
      * Run after METADATA_GC_THRESHOLD fails to resize the Metaspace. A full collection is run to clean up soft
      * references and free Metaspace. If this fails to free space, OutOfMemoryError is thrown.
      */
-    public static final String LAST_DITCH_COLLECTION = "Last ditch collection";
-
+    LAST_DITCH_COLLECTION("Last ditch collection"),
     /**
      * Metadata GC Threshold trigger. When the Metaspace is resized. The JVM has failed to allocate memory for something
      * that should be stored in Metaspace and does a full collection before attempting to resize the Metaspace.
      */
-    public static final String METADATA_GC_THRESHOLD = "Metadata GC Threshold";
-
-    /**
-     * Metadata GC Clear Soft References.
-     */
-    public static final String METADATE_GC_CLEAR_SOFT_REFERENCES = "Metadata GC Clear Soft References";
-
+    METADATA_GC_THRESHOLD("Metadata GC Threshold"),
+    //
+    METADATE_GC_CLEAR_SOFT_REFERENCES("Metadata GC Clear Soft References"),
+    //
+    NONE("NONE"),
     /**
      * <p>
      * Promotion failed trigger.
@@ -258,15 +208,10 @@ public final class GcTrigger {
      * promoted to the old generation (the young generation guarantee). Starting in Java 5.0 the space requirement is an
      * estimate based on recent promotion history and is usually much less than the young generation guarantee.
      * </p>
-     * 
      */
-    public static final String PROMOTION_FAILED = "promotion failed";
-
-    /**
-     * System.gc() trigger. Explicit garbage collection invoked.
-     */
-    public static final String SYSTEM_GC = "System(.gc\\(\\))?";
-
+    PROMOTION_FAILED("promotion failed"),
+    // Explicit garbage collection invoked.
+    SYSTEM_GC("System(.gc\\(\\))?"),
     /**
      * <p>
      * To Space Exhausted trigger. A G1_YOUNG_PAUSE, G1_MIXED_PAUSE, or G1_YOUNG_INITIAL_MARK collection cannot happen
@@ -281,14 +226,13 @@ public final class GcTrigger {
      * <li>Increase the heap size.</li>
      * <li>Increase <code>-XX:G1ReservePercent</code> and the heap size to increase the amount of to-space reserve
      * memory.</li>
-     * <li>Reduce the <code>-XX:InitiatingHeapOccupancyPercent</code> (default 45) to start the marking cycle earlier.
-     * </li>
+     * <li>Reduce the <code>-XX:InitiatingHeapOccupancyPercent</code> (default 45) to start the marking cycle
+     * earlier.</li>
      * <li>Increase the number of parallel marking threads with <code>-XX:ConcGCThreads</code>. For example:
      * <code>-XX:ConcGCThreads=16</code>.
      * </ol>
      */
-    public static final String TO_SPACE_EXHAUSTED = "to-space exhausted";
-
+    TO_SPACE_EXHAUSTED("to-space exhausted"),
     /**
      * <p>
      * To Space Overflow trigger. A G1_YOUNG_PAUSE, G1_MIXED_PAUSE, or G1_YOUNG_INITIAL_MARK collection cannot happen
@@ -303,74 +247,81 @@ public final class GcTrigger {
      * <li>Increase the heap size.</li>
      * <li>Increase <code>-XX:G1ReservePercent</code> and the heap size to increase the amount of to-space reserve
      * memory.</li>
-     * <li>Reduce the <code>-XX:InitiatingHeapOccupancyPercent</code> (default 45) to start the marking cycle earlier.
-     * </li>
+     * <li>Reduce the <code>-XX:InitiatingHeapOccupancyPercent</code> (default 45) to start the marking cycle
+     * earlier.</li>
      * <li>Increase the number of parallel marking threads with <code>-XX:ConcGCThreads</code>. For example:
      * <code>-XX:ConcGCThreads=16</code>.
      * </ol>
      */
-    public static final String TO_SPACE_OVERFLOW = "to-space overflow";
+    TO_SPACE_OVERFLOW("to-space overflow"),
+    //
+    UNKNOWN("UNKNOWN");
 
     /**
-     * Get <code>Trigger</code> from log literal.
+     * Get <code>GcTrigger</code> from log literal.
      * 
-     * @param triggerLiteral
+     * @param literal
      *            The trigger literal.
-     * @return The <code>Trigger</code>.
+     * @return The <code>GcTrigger</code>.
      */
-    public static Type getTrigger(String triggerLiteral) {
-        if (triggerLiteral != null) {
-            if (triggerLiteral.matches(ALLOCATION_FAILURE))
-                return Type.ALLOCATION_FAILURE;
-            if (triggerLiteral.matches(CLASS_HISTOGRAM))
-                return Type.CLASS_HISTOGRAM;
-            if (triggerLiteral.matches(CMS_FINAL_REMARK))
-                return Type.CMS_FINAL_REMARK;
-            if (triggerLiteral.matches(CMS_INITIAL_MARK))
-                return Type.CMS_INITIAL_MARK;
-            if (triggerLiteral.matches(CONCURRENT_MODE_FAILURE))
-                return Type.CONCURRENT_MODE_FAILURE;
-            if (triggerLiteral.matches(CONCURRENT_MODE_INTERRUPTED))
-                return Type.CONCURRENT_MODE_INTERRUPTED;
-            if (triggerLiteral.matches(DIAGNOSTIC_COMMAND))
-                return Type.DIAGNOSTIC_COMMAND;
-            if (triggerLiteral.matches(ERGONOMICS))
-                return Type.ERGONOMICS;
-            if (triggerLiteral.matches(G1_EVACUATION_PAUSE))
-                return Type.G1_EVACUATION_PAUSE;
-            if (triggerLiteral.matches(G1_HUMONGOUS_ALLOCATION))
-                return Type.G1_HUMONGOUS_ALLOCATION;
-            if (triggerLiteral.matches(GCLOCKER_INITIATED_GC))
-                return Type.GCLOCKER_INITIATED_GC;
-            if (triggerLiteral.matches(HEAP_DUMP_INITIATED_GC))
-                return Type.HEAP_DUMP_INITIATED_GC;
-            if (triggerLiteral.matches(HEAP_INSPECTION_INITIATED_GC))
-                return Type.HEAP_INSPECTION_INITIATED_GC;
-            if (triggerLiteral.matches(JVMTI_FORCED_GARBAGE_COLLECTION))
-                return Type.JVMTI_FORCED_GARBAGE_COLLECTION;
-            if (triggerLiteral.matches(LAST_DITCH_COLLECTION))
-                return Type.LAST_DITCH_COLLECTION;
-            if (triggerLiteral.matches(METADATA_GC_THRESHOLD))
-                return Type.METADATA_GC_THRESHOLD;
-            if (triggerLiteral.matches(PROMOTION_FAILED))
-                return Type.PROMOTION_FAILED;
-            if (triggerLiteral.matches(SYSTEM_GC))
-                return Type.SYSTEM_GC;
-            if (triggerLiteral.matches(TO_SPACE_EXHAUSTED))
-                return Type.TO_SPACE_EXHAUSTED;
-            if (triggerLiteral.matches(TO_SPACE_OVERFLOW))
-                return Type.TO_SPACE_OVERFLOW;
-            return Type.UNKNOWN;
-        } else {
-            return Type.NONE;
+    public static GcTrigger getTrigger(final String literal) {
+        if (literal != null) {
+            if (literal.matches(ALLOCATION_FAILURE.regex))
+                return ALLOCATION_FAILURE;
+            if (literal.matches(CLASS_HISTOGRAM.regex))
+                return CLASS_HISTOGRAM;
+            if (literal.matches(CMS_FINAL_REMARK.regex))
+                return CMS_FINAL_REMARK;
+            if (literal.matches(CMS_INITIAL_MARK.regex))
+                return CMS_INITIAL_MARK;
+            if (literal.matches(CONCURRENT_MODE_FAILURE.regex))
+                return CONCURRENT_MODE_FAILURE;
+            if (literal.matches(CONCURRENT_MODE_INTERRUPTED.regex))
+                return CONCURRENT_MODE_INTERRUPTED;
+            if (literal.matches(DIAGNOSTIC_COMMAND.regex))
+                return DIAGNOSTIC_COMMAND;
+            if (literal.matches(ERGONOMICS.regex))
+                return ERGONOMICS;
+            if (literal.matches(G1_EVACUATION_PAUSE.regex))
+                return G1_EVACUATION_PAUSE;
+            if (literal.matches(G1_HUMONGOUS_ALLOCATION.regex))
+                return G1_HUMONGOUS_ALLOCATION;
+            if (literal.matches(G1_PREVENTIVE_COLLECTION.regex))
+                return G1_PREVENTIVE_COLLECTION;
+            if (literal.matches(GCLOCKER_INITIATED_GC.regex))
+                return GCLOCKER_INITIATED_GC;
+            if (literal.matches(HEAP_DUMP_INITIATED_GC.regex))
+                return HEAP_DUMP_INITIATED_GC;
+            if (literal.matches(HEAP_INSPECTION_INITIATED_GC.regex))
+                return HEAP_INSPECTION_INITIATED_GC;
+            if (literal.matches(JVMTI_FORCED_GARBAGE_COLLECTION.regex))
+                return JVMTI_FORCED_GARBAGE_COLLECTION;
+            if (literal.matches(LAST_DITCH_COLLECTION.regex))
+                return LAST_DITCH_COLLECTION;
+            if (literal.matches(METADATE_GC_CLEAR_SOFT_REFERENCES.regex))
+                return METADATE_GC_CLEAR_SOFT_REFERENCES;
+            if (literal.matches(METADATA_GC_THRESHOLD.regex))
+                return METADATA_GC_THRESHOLD;
+            if (literal.matches(PROMOTION_FAILED.regex))
+                return PROMOTION_FAILED;
+            if (literal.matches(SYSTEM_GC.regex))
+                return SYSTEM_GC;
+            if (literal.matches(TO_SPACE_EXHAUSTED.regex))
+                return TO_SPACE_EXHAUSTED;
+            if (literal.matches(TO_SPACE_OVERFLOW.regex))
+                return TO_SPACE_OVERFLOW;
+            return UNKNOWN;
         }
+        return NONE;
     }
 
-    /**
-     * Make default constructor private so the class cannot be instantiated.
-     */
-    private GcTrigger() {
-        super();
+    private final String regex;
+
+    private GcTrigger(final String regex) {
+        this.regex = regex;
     }
 
+    public String getRegex() {
+        return regex;
+    }
 }

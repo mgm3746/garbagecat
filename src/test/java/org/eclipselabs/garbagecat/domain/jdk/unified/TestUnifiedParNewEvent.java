@@ -98,7 +98,7 @@ class TestUnifiedParNewEvent {
         UnifiedParNewEvent event = new UnifiedParNewEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) 49, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(974), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(128), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1152), event.getYoungSpace(), "Young available size not parsed correctly.");

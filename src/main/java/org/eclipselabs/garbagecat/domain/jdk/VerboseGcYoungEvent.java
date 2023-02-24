@@ -23,7 +23,6 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -72,21 +71,22 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class VerboseGcYoungEvent extends UnknownCollector
         implements BlockingEvent, YoungCollection, CombinedData, TriggerData {
 
-    private static Pattern pattern = Pattern.compile(VerboseGcYoungEvent.REGEX);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.CMS_INITIAL_MARK.getRegex() + "|" + GcTrigger.CMS_FINAL_REMARK.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.SYSTEM_GC.getRegex() + ")";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + VerboseGcYoungEvent.TRIGGER
-            + "\\) )?(--)? (" + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
-            + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + __TRIGGER + "\\) )?(--)? ("
+            + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
+            + "\\]?[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.CMS_INITIAL_MARK + "|"
-            + GcTrigger.CMS_FINAL_REMARK + "|" + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.METADATA_GC_THRESHOLD
-            + "|" + GcTrigger.SYSTEM_GC + ")";
+    private static Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -132,7 +132,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -152,7 +152,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
                 // Datestamp only.
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            trigger = matcher.group(15);
+            trigger = GcTrigger.getTrigger(matcher.group(15));
             if (matcher.group(18) != null) {
                 combinedBegin = kilobytes(matcher.group(19));
             } else {
@@ -209,7 +209,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
         return timestamp;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 }

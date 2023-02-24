@@ -48,7 +48,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  * <p>
  * The expectation is that the GCLocker will not be held for a long time (there will not be long running code in a
- * "critical region").
+ * "critical region"). Also, native code must not call other JNI functions inside a critical region.
  * </p>
  * 
  * <p>
@@ -84,13 +84,13 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class GcLockerRetryEvent extends G1Collector implements LogEvent {
 
-    private static final Pattern pattern = Pattern.compile(GcLockerRetryEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    public static final String REGEX = "^" + UnifiedRegEx.DECORATOR
+    public static final String _REGEX = "^" + UnifiedRegEx.DECORATOR
             + ".+Retried waiting for GCLocker too often allocating \\d{1,} words[ ]*$";
+
+    private static final Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

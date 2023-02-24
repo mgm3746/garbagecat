@@ -25,7 +25,6 @@ import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -66,20 +65,21 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class VerboseGcOldEvent extends UnknownCollector
         implements BlockingEvent, OldCollection, CombinedData, TriggerData {
 
-    private static Pattern pattern = Pattern.compile(VerboseGcOldEvent.REGEX);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + VerboseGcOldEvent.TRIGGER
-            + "\\) )? (" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")->(" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE
-            + ")\\((" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + __TRIGGER + "\\) )? ("
+            + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")->(" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\(("
+            + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.LAST_DITCH_COLLECTION
-            + "|" + GcTrigger.ALLOCATION_FAILURE + "|" + GcTrigger.ERGONOMICS + "|" + GcTrigger.SYSTEM_GC + ")";
+    private static Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -125,7 +125,7 @@ public class VerboseGcOldEvent extends UnknownCollector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -145,7 +145,7 @@ public class VerboseGcOldEvent extends UnknownCollector
                 // Datestamp only.
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            trigger = matcher.group(15);
+            trigger = GcTrigger.getTrigger(matcher.group(15));
             if (matcher.group(17).matches(JdkRegEx.SIZE_K)) {
                 combinedBegin = kilobytes(matcher.group(18));
             } else {
@@ -209,7 +209,7 @@ public class VerboseGcOldEvent extends UnknownCollector
         return timestamp;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 }

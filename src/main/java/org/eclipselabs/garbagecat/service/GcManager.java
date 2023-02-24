@@ -75,7 +75,6 @@ import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -237,7 +236,9 @@ public class GcManager {
      * Get JVM run data.
      * 
      * @param jvmOptions
-     *            The JVM options for the JVM run.
+     *            The JVM options passed in on the command line. Is is assumed command line options are more definitive
+     *            than options found in <code>HeaderCommandLineFlagsEvent</code>, which is only summary of some options
+     *            (e.g. it does not include log file name, rotation details, etc.).
      * @param throughputThreshold
      *            The throughput threshold for bottleneck reporting.
      * @return The JVM run data.
@@ -245,6 +246,8 @@ public class GcManager {
     public JvmRun getJvmRun(String jvmOptions, int throughputThreshold) {
         JvmRun jvmRun = new JvmRun(throughputThreshold, jvmStartDate);
         // Use jvm options passed in on the command line if none found in the logging
+        // TODO: jvm options passed on the command line should override options found in the logging header because the
+        // logging header doesn't include every option (e.g. log file, rotation).
         if (jvmOptions != null && jvmDao.getJvmContext().getOptions() == null) {
             jvmDao.getJvmContext().setOptions(jvmOptions);
         }
@@ -261,6 +264,7 @@ public class GcManager {
         jvmRun.setGcBottlenecks(getGcBottlenecks(throughputThreshold));
         jvmRun.setGcPauseMax(jvmDao.getDurationMax());
         jvmRun.setGcPauseTotal(jvmDao.getDurationTotal());
+        jvmRun.setGcTriggers(jvmDao.getGcTriggers());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
         jvmRun.setInvertedSerialismCount(jvmDao.getInvertedSerialismCount());
         jvmRun.setLogEndingUnidentified(jvmDao.isLogEndingUnidentified());
@@ -296,7 +300,6 @@ public class GcManager {
         jvmRun.setSwap(new Memory(jvmDao.getSwap(), BYTES));
         jvmRun.setSwapFree(new Memory(jvmDao.getSwapFree(), BYTES));
         jvmRun.setSysGtUserCount(jvmDao.getSysGtUserCount());
-        jvmRun.setTriggers(jvmDao.getTriggers());
         jvmRun.setUnidentifiedLogLines(jvmDao.getUnidentifiedLogLines());
         jvmRun.setUnifiedSafepointEventCount(jvmDao.getUnifiedSafepointEventCount());
         jvmRun.setUnifiedSafepointTimeMax(jvmDao.getUnifiedSafepointTimeMax());
@@ -706,8 +709,8 @@ public class GcManager {
 
                 // 1) Explicit GC
                 if (event instanceof TriggerData) {
-                    Type trigger = ((TriggerData) event).getTrigger();
-                    if (trigger == GcTrigger.Type.SYSTEM_GC) {
+                    GcTrigger trigger = ((TriggerData) event).getTrigger();
+                    if (trigger == GcTrigger.SYSTEM_GC) {
                         GarbageCollector garbageCollector = ((GcEvent) event).getGarbageCollector();
                         switch (garbageCollector) {
                         case G1:
@@ -755,13 +758,13 @@ public class GcManager {
 
                 // 2) Serial collections not caused by explicit GC
                 if (event instanceof SerialCollection) {
-                    Type trigger = null;
+                    GcTrigger trigger = null;
                     if (event instanceof TriggerData) {
                         trigger = ((TriggerData) event).getTrigger();
                     }
-                    if (trigger == null || !(trigger == Type.SYSTEM_GC || trigger == Type.CLASS_HISTOGRAM
-                            || trigger == Type.HEAP_INSPECTION_INITIATED_GC
-                            || trigger == Type.HEAP_DUMP_INITIATED_GC)) {
+                    if (trigger == null || !(trigger == GcTrigger.SYSTEM_GC || trigger == GcTrigger.CLASS_HISTOGRAM
+                            || trigger == GcTrigger.HEAP_INSPECTION_INITIATED_GC
+                            || trigger == GcTrigger.HEAP_DUMP_INITIATED_GC)) {
                         JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
                         switch (eventType) {
                         case G1_FULL_GC_SERIAL:
@@ -795,8 +798,8 @@ public class GcManager {
                 // 3) CMS concurrent mode failure
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE)) {
                     if (event instanceof CmsSerialOldEvent) {
-                        Type trigger = ((TriggerData) event).getTrigger();
-                        if (trigger == GcTrigger.Type.CONCURRENT_MODE_FAILURE) {
+                        GcTrigger trigger = ((TriggerData) event).getTrigger();
+                        if (trigger == GcTrigger.CONCURRENT_MODE_FAILURE) {
                             jvmDao.addAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE);
                         }
                     }
@@ -805,8 +808,8 @@ public class GcManager {
                 // 4) CMS concurrent mode interrupted
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED)) {
                     if (event instanceof CmsSerialOldEvent) {
-                        Type trigger = ((TriggerData) event).getTrigger();
-                        if (trigger == GcTrigger.Type.CONCURRENT_MODE_INTERRUPTED) {
+                        GcTrigger trigger = ((TriggerData) event).getTrigger();
+                        if (trigger == GcTrigger.CONCURRENT_MODE_INTERRUPTED) {
                             jvmDao.addAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED);
                         }
                     }
@@ -824,8 +827,8 @@ public class GcManager {
                 // 6) Heap dump initiated gc
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC)) {
                     if (event instanceof TriggerData) {
-                        Type trigger = ((TriggerData) event).getTrigger();
-                        if (trigger == GcTrigger.Type.HEAP_DUMP_INITIATED_GC) {
+                        GcTrigger trigger = ((TriggerData) event).getTrigger();
+                        if (trigger == GcTrigger.HEAP_DUMP_INITIATED_GC) {
                             jvmDao.addAnalysis(Analysis.WARN_HEAP_DUMP_INITIATED_GC);
                         }
                     }
@@ -834,8 +837,8 @@ public class GcManager {
                 // 7) Heap inspection initiated gc
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC)) {
                     if (event instanceof TriggerData) {
-                        Type trigger = ((TriggerData) event).getTrigger();
-                        if (trigger == GcTrigger.Type.HEAP_INSPECTION_INITIATED_GC) {
+                        GcTrigger trigger = ((TriggerData) event).getTrigger();
+                        if (trigger == GcTrigger.HEAP_INSPECTION_INITIATED_GC) {
                             jvmDao.addAnalysis(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC);
                         }
                     }
@@ -844,8 +847,8 @@ public class GcManager {
                 // 8) Metaspace allocation failure
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE)) {
                     if (event instanceof TriggerData) {
-                        Type trigger = ((TriggerData) event).getTrigger();
-                        if (trigger == GcTrigger.Type.LAST_DITCH_COLLECTION) {
+                        GcTrigger trigger = ((TriggerData) event).getTrigger();
+                        if (trigger == GcTrigger.LAST_DITCH_COLLECTION) {
                             jvmDao.addAnalysis(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE);
                         }
                     }
@@ -854,8 +857,8 @@ public class GcManager {
                 // 9) JV TI explicit gc
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_JVMTI)) {
                     if (event instanceof TriggerData) {
-                        Type trigger = ((TriggerData) event).getTrigger();
-                        if (trigger == GcTrigger.Type.JVMTI_FORCED_GARBAGE_COLLECTION) {
+                        GcTrigger trigger = ((TriggerData) event).getTrigger();
+                        if (trigger == GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION) {
                             jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_JVMTI);
                         }
                     }
@@ -863,8 +866,8 @@ public class GcManager {
 
                 // 10) G1 evacuation failure
                 if (event instanceof TriggerData) {
-                    Type trigger = ((TriggerData) event).getTrigger();
-                    if ((trigger == GcTrigger.Type.TO_SPACE_EXHAUSTED || trigger == GcTrigger.Type.TO_SPACE_OVERFLOW)) {
+                    GcTrigger trigger = ((TriggerData) event).getTrigger();
+                    if ((trigger == GcTrigger.TO_SPACE_EXHAUSTED || trigger == GcTrigger.TO_SPACE_OVERFLOW)) {
                         if (!jvmDao.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
                             jvmDao.addAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE);
                         }
@@ -873,8 +876,8 @@ public class GcManager {
 
                 // 11) CMS promotion failure
                 if (event instanceof TriggerData) {
-                    Type trigger = ((TriggerData) event).getTrigger();
-                    if (trigger == GcTrigger.Type.PROMOTION_FAILED) {
+                    GcTrigger trigger = ((TriggerData) event).getTrigger();
+                    if (trigger == GcTrigger.PROMOTION_FAILED) {
                         if (!jvmDao.getAnalysis().contains(Analysis.ERROR_CMS_PROMOTION_FAILED)
                                 && event instanceof CmsSerialOldEvent) {
                             jvmDao.addAnalysis(Analysis.ERROR_CMS_PROMOTION_FAILED);
@@ -884,8 +887,8 @@ public class GcManager {
 
                 // 12) -XX:+PrintGCCause is essential for troubleshooting G1 full GCs
                 if (event instanceof G1FullGcEvent) {
-                    Type trigger = ((TriggerData) event).getTrigger();
-                    if (trigger == GcTrigger.Type.NONE) {
+                    GcTrigger trigger = ((TriggerData) event).getTrigger();
+                    if (trigger == GcTrigger.NONE) {
                         if (!jvmDao.getAnalysis().contains(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED)) {
                             jvmDao.addAnalysis(Analysis.WARN_PRINT_GC_CAUSE_NOT_ENABLED);
                         }
@@ -901,8 +904,8 @@ public class GcManager {
                 // 14) Humongous allocation
                 if (event instanceof G1Collector && event instanceof TriggerData
                         && !jvmDao.getAnalysis().contains(Analysis.INFO_G1_HUMONGOUS_ALLOCATION)) {
-                    Type trigger = ((TriggerData) event).getTrigger();
-                    if (trigger == GcTrigger.Type.G1_HUMONGOUS_ALLOCATION) {
+                    GcTrigger trigger = ((TriggerData) event).getTrigger();
+                    if (trigger == GcTrigger.G1_HUMONGOUS_ALLOCATION) {
                         jvmDao.addAnalysis(Analysis.INFO_G1_HUMONGOUS_ALLOCATION);
                     }
                 }
@@ -981,8 +984,8 @@ public class GcManager {
                 // 20) Diagnostic explicit gc
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC)) {
                     if (event instanceof TriggerData) {
-                        Type trigger = ((TriggerData) event).getTrigger();
-                        if (trigger == GcTrigger.Type.DIAGNOSTIC_COMMAND) {
+                        GcTrigger trigger = ((TriggerData) event).getTrigger();
+                        if (trigger == GcTrigger.DIAGNOSTIC_COMMAND) {
                             jvmDao.addAnalysis(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC);
                         }
                     }
@@ -1141,8 +1144,8 @@ public class GcManager {
 
             // Populate triggers list.
             if (event instanceof TriggerData) {
-                if (!jvmDao.getTriggers().contains(((TriggerData) event).getTrigger())) {
-                    jvmDao.getTriggers().add(((TriggerData) event).getTrigger());
+                if (!jvmDao.getGcTriggers().contains(((TriggerData) event).getTrigger())) {
+                    jvmDao.getGcTriggers().add(((TriggerData) event).getTrigger());
                 }
             }
 

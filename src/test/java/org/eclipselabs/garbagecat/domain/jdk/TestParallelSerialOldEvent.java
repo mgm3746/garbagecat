@@ -76,8 +76,8 @@ class TestParallelSerialOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         assertEquals((long) 4165, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.SYSTEM_GC,
-                "Trigger not recognized as " + GcTrigger.Type.SYSTEM_GC.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC,
+                "Trigger not recognized as " + GcTrigger.SYSTEM_GC.toString() + ".");
         assertEquals(kilobytes(1784), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(12736), event.getYoungSpace(), "Young available size not parsed correctly.");
@@ -110,8 +110,8 @@ class TestParallelSerialOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         assertEquals((long) 122, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ERGONOMICS,
-                "Trigger not recognized as " + GcTrigger.Type.ERGONOMICS.toString() + ".");
+        assertTrue(event.getTrigger() == GcTrigger.ERGONOMICS,
+                "Trigger not recognized as " + GcTrigger.ERGONOMICS.toString() + ".");
         assertEquals(kilobytes(508), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(385), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
         assertEquals(kilobytes(1536), event.getYoungSpace(), "Young available size not parsed correctly.");

@@ -64,7 +64,7 @@ class TestUnifiedOldEvent {
         UnifiedOldEvent event = new UnifiedOldEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_OLD.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (231 - 2), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ERGONOMICS, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ERGONOMICS, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
@@ -95,7 +95,7 @@ class TestUnifiedOldEvent {
         UnifiedOldEvent event = new UnifiedOldEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_OLD.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (173690 - 3460), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.SYSTEM_GC, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(260211), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(260197), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1290240), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");

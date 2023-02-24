@@ -833,7 +833,7 @@ class TestG1PreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_JVMTI.getKey()),
-                GcTrigger.Type.JVMTI_FORCED_GARBAGE_COLLECTION.toString() + " trigger not identified.");
+                GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION.toString() + " trigger not identified.");
     }
 
     /**
@@ -857,7 +857,7 @@ class TestG1PreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_SERIAL),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE.getKey()),
-                GcTrigger.Type.LAST_DITCH_COLLECTION.toString() + " trigger not identified.");
+                GcTrigger.LAST_DITCH_COLLECTION.toString() + " trigger not identified.");
     }
 
     @Test
@@ -1010,8 +1010,8 @@ class TestG1PreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getTriggers().contains(GcTrigger.Type.SYSTEM_GC),
-                GcTrigger.Type.SYSTEM_GC + " trigger not identified.");
+        assertTrue(jvmRun.getGcTriggers().contains(GcTrigger.SYSTEM_GC),
+                GcTrigger.SYSTEM_GC + " trigger not identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_SERIAL),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1.getKey()),

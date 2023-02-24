@@ -316,7 +316,7 @@ public enum Analysis {
     WARN_PRINT_GC_CAUSE_MISSING("warn.print.gc.cause.missing"),
 
     /**
-     * Property key for -XX:_PrintGCCause not enabled.
+     * Property key for -XX:+PrintGCCause not enabled.
      */
     WARN_PRINT_GC_CAUSE_NOT_ENABLED("warn.print.gc.cause.not.enabled"),
 

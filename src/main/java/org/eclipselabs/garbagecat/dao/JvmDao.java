@@ -47,7 +47,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
@@ -128,6 +128,11 @@ public class JvmDao {
      * Total external root scanning time (microseconds).
      */
     private long extRootScanningTimeTotal;
+
+    /**
+     * List of all GC triggers associate with the JVM run.
+     */
+    List<GcTrigger> gcTriggers = new ArrayList<>();
 
     /**
      * Number of <code>ParallelCollection</code> with "inverted" parallelism.
@@ -240,11 +245,6 @@ public class JvmDao {
      * Number of<code>ParallelCollection</code> or <code>Serial Collection</code> where sys exceeds user time.
      */
     private long sysGtUserCount;
-
-    /**
-     * List of all GC triggers associate with the JVM run.
-     */
-    List<Type> triggers = new ArrayList<>();
 
     /**
      * Logging lines that do not match any known GC events.
@@ -450,6 +450,10 @@ public class JvmDao {
      */
     private synchronized UnifiedSafepointEvent getFirstUnifiedSafepointEvent() {
         return unifiedSafepointEvents.isEmpty() ? null : unifiedSafepointEvents.get(0);
+    }
+
+    public List<GcTrigger> getGcTriggers() {
+        return gcTriggers;
     }
 
     /**
@@ -835,10 +839,6 @@ public class JvmDao {
      */
     public long getSysGtUserCount() {
         return sysGtUserCount;
-    }
-
-    public List<Type> getTriggers() {
-        return triggers;
     }
 
     public List<String> getUnidentifiedLogLines() {

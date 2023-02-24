@@ -91,7 +91,7 @@ class TestG1MixedPauseEvent {
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
         assertEquals((long) 506146808, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(29045555), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
@@ -122,7 +122,7 @@ class TestG1MixedPauseEvent {
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
         assertEquals((long) 615375044, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(18559795), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
@@ -226,7 +226,7 @@ class TestG1MixedPauseEvent {
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals((long) 2973338, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(13526630), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
@@ -354,7 +354,7 @@ class TestG1MixedPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 81757, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1584 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(1390 * 1024), event.getCombinedOccupancyEnd(),
@@ -374,7 +374,7 @@ class TestG1MixedPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 424692063, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(8129 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(7812 * 1024), event.getCombinedOccupancyEnd(),
@@ -395,7 +395,7 @@ class TestG1MixedPauseEvent {
         assertTrue(G1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals((long) 55647, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1141 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");

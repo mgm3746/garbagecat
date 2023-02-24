@@ -64,7 +64,7 @@ class TestUnifiedYoungEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
         UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG.toString(), event.getName(), "Event name incorrect.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) (70 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
@@ -80,7 +80,7 @@ class TestUnifiedYoungEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
         UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG.toString(), event.getName(), "Event name incorrect.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) (9602 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(32 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
@@ -124,7 +124,7 @@ class TestUnifiedYoungEvent {
         UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (7487 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.Type.SYSTEM_GC, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(16 * 1024), event.getCombinedOccupancyInit(),
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(10 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");

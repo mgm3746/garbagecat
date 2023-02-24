@@ -234,7 +234,7 @@ class TestCmsPreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_INTERRUPTED.getKey()),
-                GcTrigger.Type.CONCURRENT_MODE_INTERRUPTED.toString() + " trigger not identified.");
+                GcTrigger.CONCURRENT_MODE_INTERRUPTED.toString() + " trigger not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
     }
@@ -1768,7 +1768,7 @@ class TestCmsPreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE.getKey()),
-                GcTrigger.Type.CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.");
+                GcTrigger.CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
     }
@@ -1793,7 +1793,7 @@ class TestCmsPreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_CMS_CONCURRENT_MODE_FAILURE.getKey()),
-                GcTrigger.Type.CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.");
+                GcTrigger.CONCURRENT_MODE_FAILURE.toString() + " trigger not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
     }

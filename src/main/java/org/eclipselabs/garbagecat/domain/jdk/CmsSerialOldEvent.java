@@ -29,7 +29,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -39,6 +38,12 @@ import org.github.joa.domain.GarbageCollector;
  * <p>
  * CMS_SERIAL_OLD
  * </p>
+ * 
+ * <p>
+ * When a concurrent collection of the old or permanent generation does not finish before the old or permanent
+ * generation becomes full, the {@link GcTrigger#CONCURRENT_MODE_FAILURE} initiates a full GC using a slow
+ * (single-threaded) serial collector in an attempt to free space.
+ * 
  * 
  * <p>
  * The concurrent low pause collector does not compact. When fragmentation becomes an issue a
@@ -146,41 +151,9 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
         PermMetaspaceData, TriggerData, SerialCollection, TimesData {
 
     /**
-     * Regular expression defining the logging beginning with "Full GC".
-     */
-    private static final String REGEX_FULL_GC = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\("
-            + CmsSerialOldEvent.TRIGGER_FULL_GC + "\\))?[ ]{0,1}(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?"
-            + JdkRegEx.DECORATOR + " " + "\\[CMS(bailing out to foreground collection)?( \\("
-            + CmsSerialOldEvent.TRIGGER_CMS + "\\))?( \\(" + CmsSerialOldEvent.TRIGGER_CMS + "\\))?("
-            + CmsSerialOldEvent.REMARK_BLOCK + ")?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")? "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
-            + "\\[(CMS Perm |Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_FULL_GC_PATTERN = Pattern.compile(REGEX_FULL_GC);
-
-    /**
-     * Regular expression defining the logging beginning with "GC".
-     */
-    private static final String REGEX_GC = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + CmsSerialOldEvent.TRIGGER_GC
-            + "\\))?[ ]{0,1}" + JdkRegEx.DECORATOR + " \\[ParNew(" + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\("
-            + CmsSerialOldEvent.TRIGGER_PAR_NEW + "\\))?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?(("
-            + JdkRegEx.DECORATOR + " \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
-            + "(bailing out to foreground collection)?( \\(" + CmsSerialOldEvent.TRIGGER_CMS + "\\))?(: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
-            + "\\])?)?(" + ClassHistogramEvent.REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
-            + "\\(" + JdkRegEx.SIZE_K + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, "
-            + JdkRegEx.DURATION + "\\])?" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_GC_PATTERN = Pattern.compile(REGEX_GC);
-
-    /**
      * Regular expression for CMS_REMARK block in some events.
      */
-    private static final String REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
+    private static final String _REMARK_BLOCK = "\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\(" + JdkRegEx.SIZE_K
             + "\\)\\]" + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.DECORATOR + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[class unloading, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
@@ -189,27 +162,58 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     /**
      * Trigger(s) after "CMS".
      */
-    private static final String TRIGGER_CMS = "(" + GcTrigger.CONCURRENT_MODE_FAILURE + "|"
-            + GcTrigger.CONCURRENT_MODE_INTERRUPTED + ")";
+    private static final String _TRIGGER_CMS = "(" + GcTrigger.CONCURRENT_MODE_FAILURE.getRegex() + "|"
+            + GcTrigger.CONCURRENT_MODE_INTERRUPTED.getRegex() + ")";
 
     /**
      * Trigger(s) after "Full GC".
      */
-    private static final String TRIGGER_FULL_GC = "(" + GcTrigger.SYSTEM_GC + "|"
-            + GcTrigger.HEAP_INSPECTION_INITIATED_GC + "|" + GcTrigger.ALLOCATION_FAILURE + "|"
-            + GcTrigger.METADATA_GC_THRESHOLD + "|" + GcTrigger.LAST_DITCH_COLLECTION + "|"
-            + GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|"
-            + GcTrigger.GCLOCKER_INITIATED_GC + ")";
+    private static final String _TRIGGER_FULL_GC = "(" + GcTrigger.SYSTEM_GC.getRegex() + "|"
+            + GcTrigger.HEAP_INSPECTION_INITIATED_GC.getRegex() + "|" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|"
+            + GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex()
+            + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + ")";
 
     /**
      * Trigger(s) after "GC".
      */
-    private static final String TRIGGER_GC = "(" + GcTrigger.ALLOCATION_FAILURE + ")";
+    private static final String _TRIGGER_GC = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + ")";
 
     /**
      * Trigger(s) after "ParNew".
      */
-    private static final String TRIGGER_PAR_NEW = "(" + GcTrigger.PROMOTION_FAILED + ")";
+    private static final String _TRIGGER_PAR_NEW = "(" + GcTrigger.PROMOTION_FAILED.getRegex() + ")";
+
+    /**
+     * Regular expression defining the logging beginning with "Full GC".
+     */
+    private static final String REGEX_FULL_GC = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + _TRIGGER_FULL_GC
+            + "\\))?[ ]{0,1}(" + ClassHistogramEvent._REGEX_PREPROCESSED + ")?" + JdkRegEx.DECORATOR + " "
+            + "\\[CMS(bailing out to foreground collection)?( \\(" + _TRIGGER_CMS + "\\))?( \\(" + _TRIGGER_CMS
+            + "\\))?(" + _REMARK_BLOCK + ")?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent._REGEX_PREPROCESSED + ")? " + JdkRegEx.SIZE_K
+            + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + "\\[(CMS Perm |Metaspace): "
+            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\]" + JdkRegEx.ICMS_DC_BLOCK
+            + "?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_FULL_GC_PATTERN = Pattern.compile(REGEX_FULL_GC);
+
+    /**
+     * Regular expression defining the logging beginning with "GC".
+     */
+    private static final String REGEX_GC = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + _TRIGGER_GC + "\\))?[ ]{0,1}"
+            + JdkRegEx.DECORATOR + " \\[ParNew(" + JdkRegEx.PRINT_PROMOTION_FAILURE + ")?( \\(" + _TRIGGER_PAR_NEW
+            + "\\))?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), "
+            + JdkRegEx.DURATION + "\\](" + ClassHistogramEvent._REGEX_PREPROCESSED + ")?((" + JdkRegEx.DECORATOR
+            + " \\[(CMS|Tenured))?(Java HotSpot\\(TM\\) Server VM warning: )?"
+            + "(bailing out to foreground collection)?( \\(" + _TRIGGER_CMS + "\\))?(: " + JdkRegEx.SIZE_K + "->"
+            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])?)?("
+            + ClassHistogramEvent._REGEX_PREPROCESSED + ")?( " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)(, \\[(CMS Perm |Perm |Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
+            + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.ICMS_DC_BLOCK + "?, " + JdkRegEx.DURATION + "\\])?"
+            + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern REGEX_GC_PATTERN = Pattern.compile(REGEX_GC);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -285,7 +289,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Young generation size at beginning of GC event.
@@ -325,13 +329,13 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
                 }
                 // If multiple triggers, use last one.
                 if (matcher.group(54) != null) {
-                    this.trigger = matcher.group(54);
+                    this.trigger = GcTrigger.getTrigger(matcher.group(54));
                 } else if (matcher.group(52) != null) {
-                    this.trigger = matcher.group(52);
+                    this.trigger = GcTrigger.getTrigger(matcher.group(52));
                 } else if (matcher.group(17) != null) {
                     this.trigger = GcTrigger.CLASS_HISTOGRAM;
                 } else if (matcher.group(15) != null) {
-                    this.trigger = matcher.group(15);
+                    this.trigger = GcTrigger.getTrigger(matcher.group(15));
                 }
                 this.old = kilobytes(matcher.group(122));
                 this.oldEnd = kilobytes(matcher.group(123));
@@ -366,11 +370,11 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
                 }
                 // If multiple triggers, use last one.
                 if (matcher.group(78) != null) {
-                    this.trigger = matcher.group(78);
+                    this.trigger = GcTrigger.getTrigger(matcher.group(78));
                 } else if (matcher.group(32) != null) {
-                    this.trigger = matcher.group(32);
+                    this.trigger = GcTrigger.getTrigger(matcher.group(32));
                 } else if (matcher.group(15) != null) {
-                    this.trigger = matcher.group(15);
+                    this.trigger = GcTrigger.getTrigger(matcher.group(15));
                 } else {
                     // assume promotion failure
                     this.trigger = GcTrigger.PROMOTION_FAILED;
@@ -499,8 +503,8 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public Memory getYoungOccupancyEnd() {
@@ -551,7 +555,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
         this.timestamp = timestamp;
     }
 
-    protected void setTrigger(String trigger) {
+    protected void setTrigger(GcTrigger trigger) {
         this.trigger = trigger;
     }
 

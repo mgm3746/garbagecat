@@ -27,7 +27,6 @@ import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.preprocess.jdk.G1PreprocessAction;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -82,32 +81,32 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
         TimesData, OtherTime, G1ExtRootScanningData {
 
     /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
+            + GcTrigger.TO_SPACE_EXHAUSTED.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + ")";
+
+    /**
      * Regular expression standard format.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + G1MixedPauseEvent.TRIGGER
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + __TRIGGER
             + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
             + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+    private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Regular expression preprocessed.
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\("
-            + G1MixedPauseEvent.TRIGGER + "\\))? \\(mixed\\)( \\(" + G1MixedPauseEvent.TRIGGER + "\\))?, "
-            + JdkRegEx.DURATION + "\\]" + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + OtherTime.REGEX + "\\[Eden: "
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + __TRIGGER
+            + "\\))? \\(mixed\\)( \\(" + __TRIGGER + "\\))?, " + JdkRegEx.DURATION + "\\]"
+            + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + OtherTime.REGEX + "\\[Eden: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
-
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE + "|" + GcTrigger.TO_SPACE_EXHAUSTED + "|"
-            + GcTrigger.GCLOCKER_INITIATED_GC + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION + "|"
-            + GcTrigger.G1_EVACUATION_PAUSE + ")";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -178,7 +177,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -201,7 +200,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
                     // Datestamp only.
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
-                trigger = matcher.group(15);
+                trigger = GcTrigger.getTrigger(matcher.group(15));
                 combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
                 combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
                 combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
@@ -226,9 +225,11 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
                 }
                 // use last trigger
                 if (matcher.group(17) != null) {
-                    trigger = matcher.group(17);
+                    trigger = GcTrigger.getTrigger(matcher.group(17));
                 } else if (matcher.group(15) != null) {
-                    trigger = matcher.group(15);
+                    trigger = GcTrigger.getTrigger(matcher.group(15));
+                } else {
+                    trigger = GcTrigger.NONE;
                 }
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(18)).intValue();
                 if (matcher.group(21) != null) {
@@ -322,7 +323,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 }

@@ -29,7 +29,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -84,22 +83,23 @@ import org.github.joa.domain.GarbageCollector;
 public class ParallelSerialOldEvent extends ParallelCollector implements BlockingEvent, YoungCollection, OldCollection,
         PermMetaspaceCollection, YoungData, OldData, PermMetaspaceData, TriggerData, SerialCollection, TimesData {
 
-    private static Pattern pattern = Pattern.compile(ParallelSerialOldEvent.REGEX);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.SYSTEM_GC.getRegex() + "|" + GcTrigger.ERGONOMICS.getRegex()
+            + ")";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC (\\(" + ParallelSerialOldEvent.TRIGGER
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC (\\(" + __TRIGGER
             + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] "
             + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
             + "\\)[,]{0,1} \\[(PSPermGen|Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
             + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.SYSTEM_GC + "|" + GcTrigger.ERGONOMICS + ")";
+    private static Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -175,7 +175,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Young generation size at beginning of GC event.
@@ -213,7 +213,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
                 }
             }
             if (matcher.group(15) != null) {
-                this.trigger = matcher.group(15);
+                this.trigger = GcTrigger.getTrigger(matcher.group(15));
             }
             this.young = kilobytes(matcher.group(17));
             this.youngEnd = kilobytes(matcher.group(18));
@@ -310,8 +310,8 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public Memory getYoungOccupancyEnd() {
@@ -362,7 +362,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         this.timestamp = timestamp;
     }
 
-    protected void setTrigger(String trigger) {
+    protected void setTrigger(GcTrigger trigger) {
         this.trigger = trigger;
     }
 

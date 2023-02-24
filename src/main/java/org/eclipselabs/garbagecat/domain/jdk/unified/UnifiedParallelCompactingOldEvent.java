@@ -31,7 +31,6 @@ import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ParallelCollector;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -78,23 +77,24 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         implements UnifiedLogging, BlockingEvent, OldCollection, PermMetaspaceCollection, ParallelEvent, YoungData,
         OldData, PermMetaspaceData, TriggerData, TimesData {
 
-    private static final Pattern pattern = Pattern.compile(UnifiedParallelCompactingOldEvent.REGEX_PREPROCESSED);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.ERGONOMICS.getRegex() + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")";
 
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Full \\("
-            + UnifiedParallelCompactingOldEvent.TRIGGER + "\\) PSYoungGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
-            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) ParOldGen: " + JdkRegEx.SIZE + "(\\("
-            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE
-            + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
+    private static final String _REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + __TRIGGER
+            + "\\) PSYoungGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) ParOldGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.ERGONOMICS + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC + "|"
-            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES + "|" + GcTrigger.METADATA_GC_THRESHOLD + ")";
+    private static final Pattern pattern = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -170,7 +170,7 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Young generation size at beginning of GC event.
@@ -212,7 +212,7 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
             }
-            trigger = matcher.group(DECORATOR_SIZE + 1);
+            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
             young = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
                     .convertTo(KILOBYTES);
             youngEnd = memory(matcher.group(DECORATOR_SIZE + 9), matcher.group(DECORATOR_SIZE + 11).charAt(0))
@@ -315,8 +315,8 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public Memory getYoungOccupancyEnd() {
@@ -343,7 +343,7 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         this.permGenAllocation = permGenAllocation;
     }
 
-    protected void setTrigger(String trigger) {
+    protected void setTrigger(GcTrigger trigger) {
         this.trigger = trigger;
     }
 }

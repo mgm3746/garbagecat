@@ -72,7 +72,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 4300825, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(6256895 - 6014591), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -98,7 +98,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1901217, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes((2056175 - 1794415)), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -156,7 +156,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 471391741, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(1290167 - 1290167), event.getYoungOccupancyEnd(),
@@ -243,7 +243,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 706707, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(3973407 - 2655937), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -268,7 +268,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.SYSTEM_GC, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals((long) 2425, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(7562), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -290,7 +290,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 144501626, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(680066), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -313,7 +313,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 3546690, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(532480), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -336,7 +336,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 289985117, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(144192), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(978341 - 978341), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -356,7 +356,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 1181943, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(145542), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(548489 - 548489), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -381,7 +381,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CLASS_HISTOGRAM, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CLASS_HISTOGRAM, "Trigger not parsed correctly.");
         assertEquals((long) 11662232, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(3198859 - 2844387), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -407,7 +407,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CLASS_HISTOGRAM, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CLASS_HISTOGRAM, "Trigger not parsed correctly.");
         assertEquals((long) 11662232, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(3198859 - 2844387), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -435,7 +435,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 85217903, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(457349 - 423728), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -459,7 +459,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 44684, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1229657 - 1218548), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -484,7 +484,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_INTERRUPTED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_INTERRUPTED, "Trigger not parsed correctly.");
         assertEquals((long) 85030389, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1045947 - 861863), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -532,7 +532,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.HEAP_INSPECTION_INITIATED_GC, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.HEAP_INSPECTION_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals((long) 2854464, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1432148 - 945496), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -557,7 +557,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_INTERRUPTED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_INTERRUPTED, "Trigger not parsed correctly.");
         assertEquals((long) 262372344, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(49392 - 49392), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(48780 - 48780), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -580,7 +580,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
         assertEquals((long) 262372130, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(49512 - 49512), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(49392 - 49392), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -603,7 +603,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
         assertEquals((long) 262371895, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(176820 - 42863), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -636,7 +636,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 42782086, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(254464), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -657,7 +657,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1817644, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1382383), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(2873414 - 2658303), event.getYoungOccupancyEnd(),
@@ -681,7 +681,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 6102, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(19648), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes(25946 - 25946), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
@@ -704,7 +704,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 26683209, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes((1403308 - 1141548)), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -750,7 +750,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 3070289, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes((6217865 - 6010121)), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -777,7 +777,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 719519, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1382400), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((2702358 - 2658278)), event.getYoungOccupancyEnd(),
@@ -803,7 +803,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1202526, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1355422), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((2725109 - 2658289)), event.getYoungOccupancyEnd(),
@@ -831,7 +831,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 572264304, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((891234 - 891234)), event.getYoungOccupancyEnd(),
@@ -859,7 +859,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 576460444, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((905970 - 905970)), event.getYoungOccupancyEnd(),
@@ -885,7 +885,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 395950370, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(53094), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((317110 - 317110)), event.getYoungOccupancyEnd(),
@@ -910,7 +910,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 4595651, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1304576), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((684015 - 684015)), event.getYoungOccupancyEnd(),
@@ -936,7 +936,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 182314858, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((756393 - 756393)), event.getYoungOccupancyEnd(),
@@ -984,7 +984,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 25281015, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(261760), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((1015603 - 1015603)), event.getYoungOccupancyEnd(),
@@ -1008,7 +1008,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 2057323, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(13363199 - 9216000), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");
@@ -1034,7 +1034,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 159275552, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(4339851, event.getDuration(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
@@ -1049,7 +1049,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 108537519, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1409215), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((4554003 - 4554003)), event.getYoungOccupancyEnd(),
@@ -1075,7 +1075,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 36843783, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(2304000), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
         assertEquals(kilobytes((2769354 - 2769354)), event.getYoungOccupancyEnd(),
@@ -1095,7 +1095,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 5881424, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(214385, event.getDuration(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
@@ -1243,7 +1243,7 @@ class TestCmsSerialOldEvent {
         assertTrue(CmsSerialOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
-        assertTrue(event.getTrigger() == GcTrigger.Type.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 58626878, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(19349630 - 13441202), event.getYoungOccupancyInit(),
                 "Young begin size not parsed correctly.");

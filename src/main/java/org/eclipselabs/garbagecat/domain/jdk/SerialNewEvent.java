@@ -26,7 +26,6 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -82,20 +81,20 @@ import org.github.joa.domain.GarbageCollector;
 public class SerialNewEvent extends SerialCollector
         implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData, SerialCollection, TimesData {
 
-    private static final Pattern pattern = Pattern.compile(SerialNewEvent.REGEX);
+    /**
+     * Trigger(s) regular expression(s).
+     */
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + ")";
 
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[(Full )?GC( \\(" + SerialNewEvent.TRIGGER
-            + "\\))?( )?" + JdkRegEx.DECORATOR + " \\[DefNew: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[(Full )?GC( \\(" + __TRIGGER + "\\))?( )?"
+            + JdkRegEx.DECORATOR + " \\[DefNew: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-    /**
-     * Trigger(s) regular expression(s).
-     */
-    private static final String TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE + ")";
+    private static final Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -156,7 +155,7 @@ public class SerialNewEvent extends SerialCollector
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Young generation size at beginning of GC event.
@@ -190,9 +189,7 @@ public class SerialNewEvent extends SerialCollector
                 // Datestamp only.
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            if (matcher.group(18) != null) {
-                trigger = matcher.group(18);
-            }
+            trigger = GcTrigger.getTrigger(matcher.group(18));
             young = kilobytes(matcher.group(31));
             youngEnd = kilobytes(matcher.group(32));
             youngAvailable = kilobytes(matcher.group(33));
@@ -281,8 +278,8 @@ public class SerialNewEvent extends SerialCollector
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 
     public Memory getYoungOccupancyEnd() {
@@ -297,7 +294,7 @@ public class SerialNewEvent extends SerialCollector
         return youngAvailable;
     }
 
-    protected void setTrigger(String trigger) {
+    protected void setTrigger(GcTrigger trigger) {
         this.trigger = trigger;
     }
 }

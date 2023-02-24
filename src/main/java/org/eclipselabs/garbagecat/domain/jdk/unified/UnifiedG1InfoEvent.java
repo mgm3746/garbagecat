@@ -45,7 +45,7 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
      */
     private static final String REGEX[] = {
             //
-            "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + UnifiedG1YoungInitialMarkEvent.TRIGGER + "\\)$",
+            "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + UnifiedG1YoungInitialMarkEvent._TRIGGER + "\\)$",
             //
     };
 

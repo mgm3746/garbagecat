@@ -20,7 +20,6 @@ import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.GcTrigger.Type;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -59,14 +58,15 @@ import org.github.joa.domain.GarbageCollector;
  */
 public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, TriggerData, ParallelEvent, TimesData {
 
-    private static final Pattern pattern = Pattern.compile(CmsInitialMarkEvent.REGEX);
-
     /**
      * Regular expressions defining the logging JDK8 and prior.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC (\\((" + GcTrigger.CMS_INITIAL_MARK
-            + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K
-            + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC (\\(("
+            + GcTrigger.CMS_INITIAL_MARK.getRegex() + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE_K + "\\("
+            + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
+            + "\\]" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -112,7 +112,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     /**
      * The trigger for the GC event.
      */
-    private String trigger;
+    private GcTrigger trigger;
 
     /**
      * Create event from log entry.
@@ -133,7 +133,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
                     // Datestamp only.
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                 }
-                trigger = matcher.group(15);
+                trigger = GcTrigger.getTrigger(matcher.group(15));
                 duration = JdkMath.convertSecsToMicros(matcher.group(20)).intValue();
                 if (matcher.group(23) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
@@ -197,7 +197,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         return timeUser;
     }
 
-    public Type getTrigger() {
-        return GcTrigger.getTrigger(trigger);
+    public GcTrigger getTrigger() {
+        return trigger;
     }
 }
