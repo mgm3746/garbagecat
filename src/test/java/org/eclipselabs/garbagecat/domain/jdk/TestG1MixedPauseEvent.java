@@ -110,7 +110,7 @@ class TestG1MixedPauseEvent {
     @Test
     void testIsBlocking() {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " not indentified as blocking.");
     }
 

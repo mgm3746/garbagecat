@@ -33,14 +33,14 @@ class TestUnifiedG1InfoEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_INFO, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_INFO, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_G1_INFO + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " indentified as blocking.");
     }
 
@@ -61,7 +61,7 @@ class TestUnifiedG1InfoEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1InfoEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedG1InfoEvent,
                 JdkUtil.LogEventType.UNIFIED_G1_INFO.toString() + " not parsed.");
     }
 

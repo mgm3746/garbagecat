@@ -33,7 +33,7 @@ class TestShenandoahTriggerEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.448s][info][gc] Trigger: Learning 1 of 5. Free (44M) is below initial threshold (44M)";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_TRIGGER, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_TRIGGER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_TRIGGER + "not identified.");
     }
 
@@ -47,14 +47,14 @@ class TestShenandoahTriggerEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[0.448s][info][gc] Trigger: Learning 1 of 5. Free (44M) is below initial threshold (44M)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.448s][info][gc] Trigger: Learning 1 of 5. Free (44M) is below initial threshold (44M)";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahTriggerEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahTriggerEvent,
                 JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + " not parsed.");
     }
 

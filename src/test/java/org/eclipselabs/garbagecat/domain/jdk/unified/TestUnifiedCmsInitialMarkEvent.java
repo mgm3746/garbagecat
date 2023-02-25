@@ -33,14 +33,14 @@ class TestUnifiedCmsInitialMarkEvent {
     @Test
     void testBlocking() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK + "not identified.");
     }
 
@@ -81,7 +81,7 @@ class TestUnifiedCmsInitialMarkEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedCmsInitialMarkEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedCmsInitialMarkEvent,
                 JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.");
     }
 

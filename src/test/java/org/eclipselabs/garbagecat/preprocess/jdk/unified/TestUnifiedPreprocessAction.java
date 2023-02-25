@@ -1761,7 +1761,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(Constants.LINE_SEPARATOR + logLine, event.getLogEntry(), "Log line not parsed correctly.");
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -2693,7 +2693,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(Constants.LINE_SEPARATOR + logLine, event.getLogEntry(), "Log line not parsed correctly.");
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test

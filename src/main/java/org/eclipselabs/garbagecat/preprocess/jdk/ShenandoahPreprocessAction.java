@@ -405,13 +405,13 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_METASPACE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()
-                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahConcurrentEvent
-                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahDegeneratedGcMarkEvent
-                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitUpdateEvent
-                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitMarkEvent
-                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalMarkEvent
-                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalUpdateEvent
-                || JdkUtil.parseLogLine(logLine) instanceof ShenandoahMetaspaceEvent) {
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahConcurrentEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahDegeneratedGcMarkEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitUpdateEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitMarkEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalMarkEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalUpdateEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahMetaspaceEvent) {
             match = true;
         } else if (isThrowaway(logLine)) {
             match = true;
@@ -462,7 +462,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            if (matcher.matches() && !(JdkUtil.parseLogLine(logEntry) instanceof ShenandoahMetaspaceEvent)) {
+            if (matcher.matches() && !(JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahMetaspaceEvent)) {
                 this.logEntry = matcher.group(DECORATOR_SIZE + 1);
                 context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             } else {
@@ -496,16 +496,17 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT);
-        } else if (JdkUtil.parseLogLine(logEntry) instanceof ShenandoahInitUpdateEvent
-                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahInitMarkEvent
-                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahFinalMarkEvent
-                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahDegeneratedGcMarkEvent
-                || JdkUtil.parseLogLine(logEntry) instanceof ShenandoahFinalUpdateEvent) {
+        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitUpdateEvent
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitMarkEvent
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalMarkEvent
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahDegeneratedGcMarkEvent
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalUpdateEvent) {
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN_BEGINNING_SHENANDOAH);
             context.remove(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT);
-        } else if (JdkUtil.parseLogLine(logEntry) instanceof ShenandoahConcurrentEvent && !isThrowaway(logEntry)) {
+        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahConcurrentEvent
+                && !isThrowaway(logEntry)) {
             // Stand alone event
             if (!(context.contains(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT)
                     || context.contains(TOKEN_BEGINNING_SHENANDOAH))) {

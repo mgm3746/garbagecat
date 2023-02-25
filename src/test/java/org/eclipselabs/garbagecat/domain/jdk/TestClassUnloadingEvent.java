@@ -61,14 +61,14 @@ class TestClassUnloadingEvent {
     @Test
     void testNotBlocking() {
         String logLine = " [Unloading class $Proxy225]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
         String logLine = " [Unloading class $Proxy225]";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
     }
 

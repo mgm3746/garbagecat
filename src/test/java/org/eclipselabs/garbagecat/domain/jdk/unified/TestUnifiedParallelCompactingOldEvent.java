@@ -50,7 +50,7 @@ class TestUnifiedParallelCompactingOldEvent {
         String logLine = "[0.083s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K->496K(1536K) "
                 + "ParOldGen: 472K->432K(2048K) Metaspace: 701K->701K(1056768K) 0M->0M(3M) 4.336ms "
                 + "User=0.01s Sys=0.00s Real=0.01s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD + "not identified.");
     }
 
@@ -59,7 +59,7 @@ class TestUnifiedParallelCompactingOldEvent {
         String logLine = "[0.083s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K->496K(1536K) "
                 + "ParOldGen: 472K->432K(2048K) Metaspace: 701K->701K(1056768K) 0M->0M(3M) 4.336ms "
                 + "User=0.01s Sys=0.00s Real=0.01s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " not indentified as blocking.");
     }
 
@@ -86,7 +86,7 @@ class TestUnifiedParallelCompactingOldEvent {
         String logLine = "[0.083s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K->496K(1536K) "
                 + "ParOldGen: 472K->432K(2048K) Metaspace: 701K->701K(1056768K) 0M->0M(3M) 4.336ms "
                 + "User=0.01s Sys=0.00s Real=0.01s";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedParallelCompactingOldEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedParallelCompactingOldEvent,
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " not parsed.");
     }
 

@@ -39,7 +39,7 @@ class TestG1RemarkEvent {
     @Test
     void testIsBlocking() {
         String logLine = "106.129: [GC remark, 0.0450170 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.G1_REMARK.toString() + " not indentified as blocking.");
     }
 

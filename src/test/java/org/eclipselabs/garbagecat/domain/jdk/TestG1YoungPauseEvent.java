@@ -54,7 +54,7 @@ class TestG1YoungPauseEvent {
     @Test
     void testIsBlocking() {
         String logLine = "1113.145: [GC pause (young) 849M->583M(968M), 0.0392710 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " not indentified as blocking.");
     }
 

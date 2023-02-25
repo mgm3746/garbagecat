@@ -33,7 +33,7 @@ class TestOomeMetaspaceEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
-        assertEquals(JdkUtil.LogEventType.OOME_METASPACE, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.OOME_METASPACE, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
     }
 
@@ -54,14 +54,14 @@ class TestOomeMetaspaceEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof OomeMetaspaceEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof OomeMetaspaceEvent,
                 JdkUtil.LogEventType.OOME_METASPACE.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.OOME_METASPACE.toString() + " incorrectly indentified as reportable.");
     }
 

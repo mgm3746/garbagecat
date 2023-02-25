@@ -34,7 +34,7 @@ class TestShenandoahMetaspaceEvent {
     void testIdentityEventType() {
         String logLine = "[0.196s][info][gc,metaspace] Metaspace: 3118K(3328K)->3130K(3328K) NonClass: "
                 + "2860K(2944K)->2872K(2944K) Class: 258K(384K)->258K(384K)";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_METASPACE, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_METASPACE, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_METASPACE + "not identified.");
     }
 
@@ -58,7 +58,7 @@ class TestShenandoahMetaspaceEvent {
     void testNotBlocking() {
         String logLine = "[0.196s][info][gc,metaspace] Metaspace: 3118K(3328K)->3130K(3328K) NonClass: "
                 + "2860K(2944K)->2872K(2944K) Class: 258K(384K)->258K(384K)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_METASPACE.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -74,7 +74,7 @@ class TestShenandoahMetaspaceEvent {
     void testParseLogLine() {
         String logLine = "[0.196s][info][gc,metaspace] Metaspace: 3118K(3328K)->3130K(3328K) NonClass: "
                 + "2860K(2944K)->2872K(2944K) Class: 258K(384K)->258K(384K)";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahMetaspaceEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahMetaspaceEvent,
                 JdkUtil.LogEventType.SHENANDOAH_METASPACE.toString() + " not parsed.");
     }
 

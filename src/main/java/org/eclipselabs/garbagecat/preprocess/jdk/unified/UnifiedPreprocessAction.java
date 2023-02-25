@@ -1030,7 +1030,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logLine).matches()
-                || JdkUtil.parseLogLine(logLine) instanceof UnifiedConcurrentEvent) {
+                || JdkUtil.parseLogLine(logLine, null) instanceof UnifiedConcurrentEvent) {
             match = true;
         } else if (isThrowaway(logLine)) {
             match = true;
@@ -1149,7 +1149,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     this.logEntry = matcher.group(DECORATOR_SIZE + 2);
                 } else {
                     // Single line event
-                    if (priorLogEntry != null && priorLogEntry.equals("")) {
+                    if (priorLogEntry == null) {
                         // first line in log file
                         this.logEntry = logEntry;
                     } else {
@@ -1167,7 +1167,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
-                if (priorLogEntry != null && priorLogEntry.equals("")) {
+                if (priorLogEntry == null) {
                     // first line in log file
                     this.logEntry = logEntry;
                 } else {
@@ -1190,7 +1190,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
             } else if (!context.contains(TOKEN)) {
                 // Single line event
-                if (priorLogEntry != null && priorLogEntry.equals("")) {
+                if (priorLogEntry == null) {
                     // first line in log file
                     this.logEntry = logEntry;
                 } else {
@@ -1265,7 +1265,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC);
-        } else if (JdkUtil.parseLogLine(logEntry) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
+        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
             // Stand alone eventlogEntry
             if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC)) {
                 this.logEntry = logEntry;

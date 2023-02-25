@@ -96,7 +96,7 @@ class TestHeaderCommandLineFlagsEvent {
                 + "-XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails "
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " incorrectly indentified as blocking.");
     }
 }

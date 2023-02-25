@@ -34,7 +34,7 @@ class TestHeapAddressEvent {
     void testCompressedOops() {
         String logLine = "[0.019s][info][gc,heap,coops] Heap address: 0x00000006c2800000, size: 4056 MB, "
                 + "Compressed Oops mode: Zero based, Oop shift amount: 3";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof HeapAddressEvent,
                 JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.");
     }
 
@@ -42,7 +42,7 @@ class TestHeapAddressEvent {
     void testIdentityEventType() {
         String logLine = "[0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, "
                 + "Compressed Oops mode: 32-bit";
-        assertEquals(JdkUtil.LogEventType.HEAP_ADDRESS, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.HEAP_ADDRESS, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.HEAP_ADDRESS + "not identified.");
     }
 
@@ -58,7 +58,7 @@ class TestHeapAddressEvent {
     void testNotBlocking() {
         String logLine = "[0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, "
                 + "Compressed Oops mode: 32-bit";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -66,7 +66,7 @@ class TestHeapAddressEvent {
     void testParseLogLine() {
         String logLine = "[0.004s][info][gc,heap,coops] Heap address: 0x00000000fc000000, size: 64 MB, "
                 + "Compressed Oops mode: 32-bit";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof HeapAddressEvent,
                 JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.");
     }
 
@@ -80,7 +80,7 @@ class TestHeapAddressEvent {
     void testTimeUptimemillis() {
         String logLine = "[2019-02-05T14:47:31.092-0200][4ms] Heap address: 0x00000000ae900000, size: 1303 MB, "
                 + "Compressed Oops mode: 32-bit";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof HeapAddressEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof HeapAddressEvent,
                 JdkUtil.LogEventType.HEAP_ADDRESS.toString() + " not parsed.");
     }
 

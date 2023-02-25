@@ -42,7 +42,7 @@ class TestUsingCmsEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
-        assertEquals(JdkUtil.LogEventType.USING_CMS, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.USING_CMS, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.USING_CMS + "not identified.");
     }
 
@@ -97,14 +97,14 @@ class TestUsingCmsEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.USING_CMS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.003s][info][gc] Using Concurrent Mark Sweep";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingCmsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UsingCmsEvent,
                 JdkUtil.LogEventType.USING_CMS.toString() + " not parsed.");
     }
 

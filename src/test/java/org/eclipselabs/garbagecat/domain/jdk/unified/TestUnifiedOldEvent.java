@@ -45,14 +45,14 @@ class TestUnifiedOldEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_OLD, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_OLD, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_OLD + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as blocking.");
     }
 
@@ -82,7 +82,7 @@ class TestUnifiedOldEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedOldEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedOldEvent,
                 JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not parsed.");
     }
 

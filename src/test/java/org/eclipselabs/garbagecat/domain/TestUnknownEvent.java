@@ -26,7 +26,7 @@ class TestUnknownEvent {
     @Test
     void testLogLine() {
         String logLine = "Mike was here!!!";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnknownEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnknownEvent,
                 "Log line not recognized as " + JdkUtil.LogEventType.UNKNOWN.toString() + ".");
     }
 }

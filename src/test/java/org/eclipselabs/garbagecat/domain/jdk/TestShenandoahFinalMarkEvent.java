@@ -33,7 +33,7 @@ class TestShenandoahFinalMarkEvent {
     @Test
     void testBlocking() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " not indentified as blocking.");
     }
 
@@ -52,7 +52,7 @@ class TestShenandoahFinalMarkEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK + "not identified.");
     }
 
@@ -185,7 +185,7 @@ class TestShenandoahFinalMarkEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalMarkEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalMarkEvent,
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " not parsed.");
     }
 

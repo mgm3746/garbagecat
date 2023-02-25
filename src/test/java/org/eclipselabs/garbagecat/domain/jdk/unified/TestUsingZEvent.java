@@ -33,7 +33,7 @@ class TestUsingZEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.018s][info][gc     ] Using The Z Garbage Collector";
-        assertEquals(JdkUtil.LogEventType.USING_Z, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.USING_Z, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.USING_Z + "not identified.");
     }
 
@@ -65,14 +65,14 @@ class TestUsingZEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[0.018s][info][gc     ] Using The Z Garbage Collector";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.USING_Z.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.018s][info][gc     ] Using The Z Garbage Collector";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingZEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UsingZEvent,
                 JdkUtil.LogEventType.USING_Z.toString() + " not parsed.");
     }
 

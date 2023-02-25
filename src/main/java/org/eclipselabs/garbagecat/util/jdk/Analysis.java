@@ -147,6 +147,11 @@ public enum Analysis {
     INFO_PERM_GEN("info.perm.gen"),
 
     /**
+     * Property key for min heap equal to max heap, disabling ShenandoahUncommit.
+     */
+    INFO_SHENANDOAH_UNCOMMIT_DISABLED("info.shenandoah.uncommit.disabled"),
+
+    /**
      * Property key for swapping disabled.
      */
     INFO_SWAP_DISABLED("info.swap.disabled"),

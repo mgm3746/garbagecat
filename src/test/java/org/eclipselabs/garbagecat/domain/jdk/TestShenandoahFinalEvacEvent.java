@@ -33,7 +33,7 @@ class TestShenandoahFinalEvacEvent {
     @Test
     void testBlocking() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
     }
 
@@ -52,7 +52,7 @@ class TestShenandoahFinalEvacEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC + "not identified.");
     }
 
@@ -115,7 +115,7 @@ class TestShenandoahFinalEvacEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[10.486s][info][gc] GC(280) Pause Final Evac 0.002ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalEvacEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalEvacEvent,
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
     }
 

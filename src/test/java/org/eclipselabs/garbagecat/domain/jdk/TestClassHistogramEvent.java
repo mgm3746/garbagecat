@@ -122,7 +122,7 @@ class TestClassHistogramEvent {
     void testNotBlocking() {
         String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
                 + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -159,7 +159,7 @@ class TestClassHistogramEvent {
     void testReportable() {
         String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
                 + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as reportable.");
     }
 

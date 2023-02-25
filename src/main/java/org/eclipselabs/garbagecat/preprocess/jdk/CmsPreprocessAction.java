@@ -806,8 +806,8 @@ public class CmsPreprocessAction implements PreprocessAction {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches()
-                && !REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(priorLogEntry).matches()) {
+        } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches() && !(priorLogEntry != null
+                && REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(priorLogEntry).matches())) {
             // End of logging event
             matcher.reset();
             if (matcher.matches()) {
@@ -823,8 +823,8 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             clearEntangledLines(entangledLogLines);
-            if (context.contains(TOKEN)
-                    && !REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(priorLogEntry).matches()) {
+            if (context.contains(TOKEN) && !(priorLogEntry != null
+                    && REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(priorLogEntry).matches())) {
                 // End of multi-line event or PAR_NEW truncated
                 context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             } else {

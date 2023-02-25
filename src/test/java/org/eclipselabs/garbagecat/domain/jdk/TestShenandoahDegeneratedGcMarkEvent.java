@@ -36,7 +36,7 @@ class TestShenandoahDegeneratedGcMarkEvent {
     @Test
     void testBlocking() {
         String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 SHENANDOAH_DEGENERATED_GC_MARK + " not indentified as blocking.");
     }
 
@@ -55,7 +55,7 @@ class TestShenandoahDegeneratedGcMarkEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
-        assertEquals(SHENANDOAH_DEGENERATED_GC_MARK, JdkUtil.identifyEventType(logLine),
+        assertEquals(SHENANDOAH_DEGENERATED_GC_MARK, JdkUtil.identifyEventType(logLine, null),
                 SHENANDOAH_DEGENERATED_GC_MARK + "not identified.");
     }
 
@@ -188,7 +188,7 @@ class TestShenandoahDegeneratedGcMarkEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahDegeneratedGcMarkEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahDegeneratedGcMarkEvent,
                 SHENANDOAH_DEGENERATED_GC_MARK + " not parsed.");
     }
 

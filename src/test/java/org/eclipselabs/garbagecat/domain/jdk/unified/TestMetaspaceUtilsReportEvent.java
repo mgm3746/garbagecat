@@ -42,7 +42,7 @@ class TestMetaspaceUtilsReportEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
-        assertEquals(JdkUtil.LogEventType.METASPACE_UTILS_REPORT, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.METASPACE_UTILS_REPORT, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.METASPACE_UTILS_REPORT + "not identified.");
     }
 
@@ -76,14 +76,14 @@ class TestMetaspaceUtilsReportEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof MetaspaceUtilsReportEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof MetaspaceUtilsReportEvent,
                 JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString() + " incorrectly indentified as reportable.");
     }
 

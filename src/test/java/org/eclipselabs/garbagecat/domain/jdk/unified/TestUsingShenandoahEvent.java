@@ -42,7 +42,7 @@ class TestUsingShenandoahEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertEquals(JdkUtil.LogEventType.USING_SHENANDOAH, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.USING_SHENANDOAH, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.USING_SHENANDOAH + "not identified.");
     }
 
@@ -101,14 +101,14 @@ class TestUsingShenandoahEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingShenandoahEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UsingShenandoahEvent,
                 JdkUtil.LogEventType.USING_SHENANDOAH.toString() + " not parsed.");
     }
 

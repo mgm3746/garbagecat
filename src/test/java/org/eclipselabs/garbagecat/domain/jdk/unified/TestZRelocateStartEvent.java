@@ -32,14 +32,14 @@ class TestZRelocateStartEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
-        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.Z_RELOCATE_START + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.Z_RELOCATE_START.toString() + " not indentified as blocking.");
     }
 
@@ -57,7 +57,7 @@ class TestZRelocateStartEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ZRelocateStartEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZRelocateStartEvent,
                 JdkUtil.LogEventType.Z_RELOCATE_START.toString() + " not parsed.");
     }
 

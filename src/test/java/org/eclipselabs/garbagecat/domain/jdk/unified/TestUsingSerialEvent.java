@@ -42,7 +42,7 @@ class TestUsingSerialEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.003s][info][gc] Using Serial";
-        assertEquals(JdkUtil.LogEventType.USING_SERIAL, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.USING_SERIAL, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.USING_SERIAL + "not identified.");
     }
 
@@ -85,14 +85,14 @@ class TestUsingSerialEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[0.003s][info][gc] Using Serial";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.USING_SERIAL.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.003s][info][gc] Using Serial";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingSerialEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UsingSerialEvent,
                 JdkUtil.LogEventType.USING_SERIAL.toString() + " not parsed.");
     }
 

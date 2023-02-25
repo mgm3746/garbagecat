@@ -43,7 +43,7 @@ class TestCmsRemarkEvent {
         String logLine = "253.103: [GC[YG occupancy: 16172 K (149120 K)]253.103: "
                 + "[Rescan (parallel) , 0.0226730 secs]253.126: [weak refs processing, 0.0624566 secs] "
                 + "[1 CMS-remark: 4173470K(8218240K)] 4189643K(8367360K), 0.0857010 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.CMS_REMARK.toString() + " not indentified as blocking.");
     }
 

@@ -29,7 +29,7 @@ class TestVerboseGcYoungEvent {
     @Test
     void testIsBlocking() {
         String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " not indentified as blocking.");
     }
 

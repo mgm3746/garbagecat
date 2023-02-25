@@ -687,7 +687,7 @@ class TestShenandoahStatsEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "All times are wall-clock times, except per-root-class counters, that are sum over";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_STATS, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_STATS, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_STATS + "not identified.");
     }
 
@@ -763,14 +763,14 @@ class TestShenandoahStatsEvent {
     @Test
     void testNotBlocking() {
         String logLine = "All times are wall-clock times, except per-root-class counters, that are sum over";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "All times are wall-clock times, except per-root-class counters, that are sum over";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahStatsEvent,
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " not parsed.");
     }
 

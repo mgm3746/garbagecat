@@ -65,7 +65,7 @@ class TestParNewEvent {
     void testIsBlocking() {
         String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.PAR_NEW.toString() + " not indentified as blocking.");
     }
 

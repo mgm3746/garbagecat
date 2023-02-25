@@ -34,14 +34,14 @@ class TestBlankLineEvent {
     @Test
     void testParseLogLine() {
         String logLine = "";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof BlankLineEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof BlankLineEvent,
                 JdkUtil.LogEventType.BLANK_LINE.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
         String logLine = "";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.");
     }
 

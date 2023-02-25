@@ -33,14 +33,14 @@ class TestUnifiedG1CleanupEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_G1_CLEANUP + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " not indentified as blocking.");
     }
 
@@ -107,7 +107,7 @@ class TestUnifiedG1CleanupEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1CleanupEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedG1CleanupEvent,
                 JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " not parsed.");
     }
 

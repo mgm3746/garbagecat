@@ -42,7 +42,7 @@ class TestUsingG1Event {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.005s][info][gc] Using G1";
-        assertEquals(JdkUtil.LogEventType.USING_G1, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.USING_G1, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.USING_G1 + "not identified.");
     }
 
@@ -119,14 +119,14 @@ class TestUsingG1Event {
     @Test
     void testNotBlocking() {
         String logLine = "[0.005s][info][gc] Using G1";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.USING_G1.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.005s][info][gc] Using G1";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingG1Event,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UsingG1Event,
                 JdkUtil.LogEventType.USING_G1.toString() + " not parsed.");
     }
 

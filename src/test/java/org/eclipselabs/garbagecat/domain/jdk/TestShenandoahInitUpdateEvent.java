@@ -33,7 +33,7 @@ class TestShenandoahInitUpdateEvent {
     @Test
     void testBlocking() {
         String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not indentified as blocking.");
     }
 
@@ -52,7 +52,7 @@ class TestShenandoahInitUpdateEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE + "not identified.");
     }
 
@@ -146,7 +146,7 @@ class TestShenandoahInitUpdateEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[4.766s][info][gc] GC(97) Pause Init Update Refs 0.004ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahInitUpdateEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitUpdateEvent,
                 JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not parsed.");
     }
 

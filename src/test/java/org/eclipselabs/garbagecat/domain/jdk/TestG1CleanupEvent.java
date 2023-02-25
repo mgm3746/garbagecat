@@ -48,7 +48,7 @@ class TestG1CleanupEvent {
     @Test
     void testIsBlocking() {
         String logLine = "2972.698: [GC cleanup 13G->12G(30G), 0.0358748 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.G1_CLEANUP.toString() + " not indentified as blocking.");
     }
 

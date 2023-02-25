@@ -127,7 +127,7 @@ class TestParallelCompactingOldEvent {
         String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
                 + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
                 + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD.toString() + " not indentified as blocking.");
     }
 

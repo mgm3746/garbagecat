@@ -68,7 +68,7 @@ class TestLogFileEvent {
     void testNotBlocking() {
         String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
                 + "Saved as /path/to/gc.log.0";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -76,7 +76,7 @@ class TestLogFileEvent {
     void testNotReportable() {
         String logLine = "2016-03-24 10:28:33 GC log file has reached the maximum size. "
                 + "Saved as /path/to/gc.log.0";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.LOG_FILE.toString() + " incorrectly indentified as reportable.");
     }
 

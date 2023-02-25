@@ -47,7 +47,7 @@ class TestUnifiedSafepointEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SAFEPOINT, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SAFEPOINT, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT + "not identified.");
     }
 
@@ -255,7 +255,7 @@ class TestUnifiedSafepointEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -266,7 +266,7 @@ class TestUnifiedSafepointEvent {
                 + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
                 + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
                 + "seconds";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedSafepointEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedSafepointEvent,
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " not parsed.");
     }
 

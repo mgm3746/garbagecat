@@ -42,7 +42,7 @@ class TestUsingParallelEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.002s][info][gc] Using Parallel";
-        assertEquals(JdkUtil.LogEventType.USING_PARALLEL, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.USING_PARALLEL, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.USING_PARALLEL + "not identified.");
     }
 
@@ -94,14 +94,14 @@ class TestUsingParallelEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[0.002s][info][gc] Using Parallel";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.USING_PARALLEL.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.002s][info][gc] Using Parallel";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UsingParallelEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UsingParallelEvent,
                 JdkUtil.LogEventType.USING_PARALLEL.toString() + " not parsed.");
     }
 

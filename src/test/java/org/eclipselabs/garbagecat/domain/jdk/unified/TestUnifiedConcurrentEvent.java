@@ -270,7 +270,7 @@ class TestUnifiedConcurrentEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_CONCURRENT, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_CONCURRENT, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT + "not identified.");
     }
 
@@ -312,14 +312,14 @@ class TestUnifiedConcurrentEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedConcurrentEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedConcurrentEvent,
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " not parsed.");
     }
 

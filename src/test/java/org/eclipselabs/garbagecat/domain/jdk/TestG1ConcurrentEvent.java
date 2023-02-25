@@ -146,7 +146,7 @@ class TestG1ConcurrentEvent {
     @Test
     void testNotBlocking() {
         String logLine = "50.101: [GC concurrent-root-region-scan-start]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.G1_CONCURRENT.toString() + " incorrectly indentified as blocking.");
     }
 

@@ -112,7 +112,7 @@ class TestParallelScavengeEvent {
     void testIsBlocking() {
         String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
                 + "160183K->133159K(585088K), 0.0225213 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " not indentified as blocking.");
     }
 

@@ -28,14 +28,14 @@ class TestFlsStaticsEvent {
     @Test
     void testJdkUtilParseLogLineDoesNotReturnUnknownEvent() {
         String logLine = "Max   Chunk Size: 536870912";
-        assertFalse(JdkUtil.parseLogLine(logLine) instanceof UnknownEvent,
+        assertFalse(JdkUtil.parseLogLine(logLine, null) instanceof UnknownEvent,
                 "JdkUtil.parseLogLine() returns " + JdkUtil.LogEventType.UNKNOWN.toString() + " event.");
     }
 
     @Test
     void testJdkUtilParseLogLineReturnsFlsStatisticsEvent() {
         String logLine = "Max   Chunk Size: 536870912";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof FlsStatisticsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof FlsStatisticsEvent,
                 "JdkUtil.parseLogLine() does not return " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + " event.");
     }
 
@@ -242,14 +242,14 @@ class TestFlsStaticsEvent {
     @Test
     void testNotBlocking() {
         String logLine = "Max   Chunk Size: 536870912";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.FLS_STATISTICS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testNotReportable() {
         String logLine = "Max   Chunk Size: 536870912";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.FLS_STATISTICS.toString() + " incorrectly indentified as reportable.");
     }
 }

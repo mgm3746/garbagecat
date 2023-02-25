@@ -60,6 +60,7 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
@@ -78,6 +79,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.github.joa.JvmOptions;
 import org.github.joa.domain.Bit;
 import org.github.joa.domain.GarbageCollector;
@@ -247,7 +249,7 @@ public class GcManager {
         JvmRun jvmRun = new JvmRun(throughputThreshold, jvmStartDate);
         // Use jvm options passed in on the command line if none found in the logging
         // TODO: jvm options passed on the command line should override options found in the logging header because the
-        // logging header doesn't include every option (e.g. log file, rotation).
+        // logging header doesn't include every option (e.g. -Xloggc).
         if (jvmOptions != null && jvmDao.getJvmContext().getOptions() == null) {
             jvmDao.getJvmContext().setOptions(jvmOptions);
         }
@@ -359,8 +361,8 @@ public class GcManager {
         String preprocessedLogLine = null;
 
         if (currentLogLine != null) {
-            if (isThrowawayEvent(currentLogLine)) {
-                LogEvent throwAwayEvent = JdkUtil.parseLogLine(currentLogLine);
+            if (isThrowawayEvent(currentLogLine, priorLogLine)) {
+                LogEvent throwAwayEvent = JdkUtil.parseLogLine(currentLogLine, priorLogLine);
                 JdkUtil.LogEventType throwAwayEventType = JdkUtil.determineEventType(throwAwayEvent.getName());
                 if (!jvmDao.getEventTypes().contains(throwAwayEventType)) {
                     jvmDao.getEventTypes().add(throwAwayEventType);
@@ -521,10 +523,12 @@ public class GcManager {
      * 
      * @param logLine
      *            The log line to test.
+     * @param priorLogLine
+     *            The prior log line.
      * @return True if the logging event can be thrown away, false if it should be kept.
      */
-    private boolean isThrowawayEvent(String logLine) {
-        return JdkUtil.parseLogLine(logLine) instanceof ThrowAwayEvent;
+    private boolean isThrowawayEvent(String logLine, String priorLogLine) {
+        return JdkUtil.parseLogLine(logLine, priorLogLine) instanceof ThrowAwayEvent;
     }
 
     /**
@@ -554,7 +558,8 @@ public class GcManager {
             Iterator<String> iterator = logLines.iterator();
 
             String currentLogLine = iterator.next();
-            String priorLogLine = "";
+            // String priorLogLine = "";
+            String priorLogLine = null;
             String preprocessedLogLine = "";
             String nextLogLine = null;
 
@@ -686,21 +691,22 @@ public class GcManager {
         }
 
         String logLine = null;
-        BlockingEvent priorEvent = null;
-
+        BlockingEvent priorBlockingEvent = null;
+        String priorLogLine = null;
         Iterator<String> iterator = logLines.iterator();
         while (iterator.hasNext()) {
             logLine = iterator.next();
             // If event has no timestamp, use most recent blocking timestamp.
-            LogEvent event = JdkUtil.parseLogLine(logLine);
+            LogEvent event = JdkUtil.parseLogLine(logLine, priorLogLine);
             if (event instanceof BlockingEvent) {
                 jvmDao.setLogEndingUnidentified(false);
 
                 // Verify logging in correct order. If overridden, logging will be stored and reordered by timestamp
                 // for analysis.
-                if (!reorder && priorEvent != null && event.getTimestamp() < priorEvent.getTimestamp()) {
+                if (!reorder && priorBlockingEvent != null
+                        && event.getTimestamp() < priorBlockingEvent.getTimestamp()) {
                     throw new TimeWarpException("Logging reversed: " + Constants.LINE_SEPARATOR
-                            + priorEvent.getLogEntry() + Constants.LINE_SEPARATOR + event.getLogEntry());
+                            + priorBlockingEvent.getLogEntry() + Constants.LINE_SEPARATOR + event.getLogEntry());
                 }
 
                 jvmDao.addBlockingEvent((BlockingEvent) event);
@@ -1054,9 +1060,7 @@ public class GcManager {
                         jvmDao.setOtherTimeTotal(jvmDao.getOtherTimeTotal() + otherTime);
                     }
                 }
-
-                priorEvent = (BlockingEvent) event;
-
+                priorBlockingEvent = (BlockingEvent) event;
             } else if (event instanceof ApplicationStoppedTimeEvent) {
                 jvmDao.setLogEndingUnidentified(false);
                 jvmDao.addStoppedTimeEvent((ApplicationStoppedTimeEvent) event);
@@ -1130,6 +1134,13 @@ public class GcManager {
                         jvmDao.addAnalysis(Analysis.ERROR_SHARED_MEMORY_12);
                     }
                 }
+            } else if (event instanceof UnifiedHeaderEvent) {
+                if (event.getLogEntry().matches(
+                        "^" + UnifiedRegEx.DECORATOR + " Min heap equals to max heap, disabling ShenandoahUncommit$")) {
+                    if (!jvmDao.getAnalysis().contains(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED)) {
+                        jvmDao.addAnalysis(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED);
+                    }
+                }
             } else if (event instanceof UnknownEvent) {
                 jvmDao.setLogEndingUnidentified(true);
                 if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
@@ -1141,20 +1152,19 @@ public class GcManager {
             if (!jvmDao.getEventTypes().contains(eventType)) {
                 jvmDao.getEventTypes().add(eventType);
             }
-
             // Populate triggers list.
             if (event instanceof TriggerData) {
                 if (!jvmDao.getGcTriggers().contains(((TriggerData) event).getTrigger())) {
                     jvmDao.getGcTriggers().add(((TriggerData) event).getTrigger());
                 }
             }
-
             // Populate collector list.
             if (event instanceof GcEvent) {
                 if (!jvmDao.getJvmContext().getGarbageCollectors().contains(((GcEvent) event).getGarbageCollector())) {
                     jvmDao.getJvmContext().getGarbageCollectors().add(((GcEvent) event).getGarbageCollector());
                 }
             }
+            priorLogLine = logLine;
         }
     }
 }

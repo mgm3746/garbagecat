@@ -60,7 +60,7 @@ class TestUnifiedG1YoungPauseEvent {
         String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
                 + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "
                 + "24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE + "not identified.");
     }
 
@@ -69,7 +69,7 @@ class TestUnifiedG1YoungPauseEvent {
         String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
                 + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "
                 + "24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not indentified as blocking.");
     }
 
@@ -87,7 +87,7 @@ class TestUnifiedG1YoungPauseEvent {
         String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
                 + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "
                 + "24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedG1YoungPauseEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedG1YoungPauseEvent,
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not parsed.");
     }
 

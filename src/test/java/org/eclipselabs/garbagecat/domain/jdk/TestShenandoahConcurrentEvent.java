@@ -43,7 +43,7 @@ class TestShenandoahConcurrentEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT + "not identified.");
     }
 
@@ -178,14 +178,14 @@ class TestShenandoahConcurrentEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahConcurrentEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahConcurrentEvent,
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " not parsed.");
     }
 

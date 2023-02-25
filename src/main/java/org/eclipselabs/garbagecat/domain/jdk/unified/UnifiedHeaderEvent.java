@@ -15,7 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
@@ -124,6 +124,21 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [0.014s][info][gc,init] Concurrent Workers: 3
  * </pre>
  * 
+ * <pre>
+ * [2023-02-22T12:31:30.322+0000][2243][gc] Min heap equals to max heap, disabling ShenandoahUncommit
+ * [2023-02-22T12:31:30.329+0000][2243][gc,init] Regions: 3072 x 2048K
+ * [2023-02-22T12:31:30.329+0000][2243][gc,init] Humongous object threshold: 2048K
+ * [2023-02-22T12:31:30.329+0000][2243][gc,init] Max TLAB size: 2048K
+ * [2023-02-22T12:31:30.330+0000][2243][gc,init] GC threads: 2 parallel, 1 concurrent
+ * [2023-02-22T12:31:30.330+0000][2243][gc     ] Heuristics ergonomically sets -XX:+ExplicitGCInvokesConcurrent
+ * [2023-02-22T12:31:30.330+0000][2243][gc     ] Heuristics ergonomically sets -XX:+ShenandoahImplicitGCInvokesConcurrent
+ * [2023-02-22T12:31:30.330+0000][2243][gc,init] Shenandoah GC mode: Snapshot-At-The-Beginning (SATB)
+ * [2023-02-22T12:31:30.330+0000][2243][gc,init] Shenandoah heuristics: Adaptive
+ * [2023-02-22T12:31:32.306+0000][2243][gc,ergo] Pacer for Idle. Initial: 122M, Alloc Tax Rate: 1.0x
+ * [2023-02-22T12:31:32.306+0000][2243][gc,init] Initialize Shenandoah heap: 6144M initial, 6144M min, 6144M max
+ * [2023-02-22T12:31:32.306+0000][2243][gc,init] Safepointing mechanism: global-page poll
+ * </pre>
+ * 
  * <p>
  * 5) Z:
  * </p>
@@ -157,7 +172,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedHeaderEvent extends G1Collector implements UnifiedLogging {
+public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
 
     private static Pattern pattern = Pattern.compile(UnifiedHeaderEvent.REGEX);
 
@@ -170,8 +185,9 @@ public class UnifiedHeaderEvent extends G1Collector implements UnifiedLogging {
             + "Concurrent( Refinement)? Workers|CPUs|GC Workers|Heap (Initial|Max|Min) Capacity|"
             + "Heap Backing Filesystem|Heap Backing File|Heap Region (Count|Size)|Heuristics|"
             + "Humongous Object Threshold|Initializing The Z Garbage Collector|Large Page Support|Medium Page Size|"
-            + "Memory|Mode|Narrow klass base|NUMA Support|Parallel Workers|Periodic GC|Pre-touch|Runtime Workers|"
-            + "TLAB Size Max|Uncommit( Delay)?|Version)(:)?.*$";
+            + "Memory|Mode|Narrow klass base|Min heap equals to max heap, disabling ShenandoahUncommit|NUMA Support|"
+            + "Pacer for Idle|Parallel Workers|Periodic GC|Pre-touch|Runtime Workers|TLAB Size Max|Uncommit( Delay)?|"
+            + "Version)(:)?.*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

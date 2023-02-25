@@ -109,7 +109,7 @@ class TestApplicationLoggingEvent {
     @Test
     void testReportable() {
         String logLine = "00:02:05,067 INFO  [STDOUT] log4j: setFile ended";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 APPLICATION_LOGGING + " incorrectly indentified as reportable.");
     }
 

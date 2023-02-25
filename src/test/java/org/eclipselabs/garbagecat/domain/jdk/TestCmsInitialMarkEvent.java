@@ -29,7 +29,7 @@ class TestCmsInitialMarkEvent {
     void testIsBlocking() {
         String logLine = "8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), "
                 + "0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 

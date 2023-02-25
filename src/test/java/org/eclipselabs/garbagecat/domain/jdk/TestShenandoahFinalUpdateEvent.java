@@ -33,7 +33,7 @@ class TestShenandoahFinalUpdateEvent {
     @Test
     void testBlocking() {
         String logLine = "[1.030s][info][gc] GC(10) Pause Final Update Refs 0.097ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + " not indentified as blocking.");
     }
 
@@ -52,7 +52,7 @@ class TestShenandoahFinalUpdateEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[1.030s][info][gc] GC(10) Pause Final Update Refs 0.097ms";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE + "not identified.");
     }
 
@@ -125,7 +125,7 @@ class TestShenandoahFinalUpdateEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[1.030s][info][gc] GC(10) Pause Final Update Refs 0.097ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahFinalUpdateEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalUpdateEvent,
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + " not parsed.");
     }
 

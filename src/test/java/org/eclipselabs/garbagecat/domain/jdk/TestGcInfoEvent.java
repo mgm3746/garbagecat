@@ -33,7 +33,7 @@ class TestGcInfoEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K";
-        assertEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.GC_INFO + "not identified.");
     }
 
@@ -61,7 +61,7 @@ class TestGcInfoEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.GC_INFO.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -84,7 +84,7 @@ class TestGcInfoEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof GcInfoEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof GcInfoEvent,
                 JdkUtil.LogEventType.GC_INFO.toString() + " not parsed.");
     }
 

@@ -50,7 +50,7 @@ class TestUnifiedParallelScavengeEvent {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE + "not identified.");
     }
 
@@ -59,7 +59,7 @@ class TestUnifiedParallelScavengeEvent {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as blocking.");
     }
 
@@ -95,7 +95,7 @@ class TestUnifiedParallelScavengeEvent {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedParallelScavengeEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedParallelScavengeEvent,
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not parsed.");
     }
 

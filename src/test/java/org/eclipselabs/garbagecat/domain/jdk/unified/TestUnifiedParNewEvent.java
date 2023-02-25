@@ -48,7 +48,7 @@ class TestUnifiedParNewEvent {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
                 + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
                 + "User=0.01s Sys=0.01s Real=0.01s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.");
     }
 
@@ -57,7 +57,7 @@ class TestUnifiedParNewEvent {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
                 + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
                 + "User=0.01s Sys=0.01s Real=0.01s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not indentified as blocking.");
     }
 
@@ -75,7 +75,7 @@ class TestUnifiedParNewEvent {
         String logLine = "[2022-10-25T08:41:22.776-0400] GC(0) Pause Young (Allocation Failure) ParNew: "
                 + "935K->128K(1152K) CMS: 0K->486K(960K) Metaspace: 244K(4480K)->244K(4480K) 0M->0M(2M) 1.944ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.");
     }
 
@@ -84,7 +84,7 @@ class TestUnifiedParNewEvent {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
                 + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
                 + "User=0.01s Sys=0.01s Real=0.01s";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedParNewEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedParNewEvent,
                 JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " not parsed.");
     }
 
@@ -126,7 +126,7 @@ class TestUnifiedParNewEvent {
         String logLine = "[2022-10-23T10:40:35.421+0200] GC(2) Pause Young (GCLocker Initiated GC) ParNew: "
                 + "596352K->18048K(596352K) CMS: 69520K->113365K(1482752K) Metaspace: 94138K->94138K(604160K) "
                 + "650M->128M(2030M) 102,315ms User=0,18s Sys=0,02s Real=0,10s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_PAR_NEW, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_PAR_NEW + "not identified.");
     }
 

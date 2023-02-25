@@ -42,14 +42,14 @@ class TestUnifiedRemarkEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_REMARK, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_REMARK, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_REMARK + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as blocking.");
     }
 
@@ -95,7 +95,7 @@ class TestUnifiedRemarkEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedRemarkEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedRemarkEvent,
                 JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not parsed.");
     }
 

@@ -95,7 +95,7 @@ class TestFooterStatsEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:";
-        assertEquals(JdkUtil.LogEventType.FOOTER_STATS, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.FOOTER_STATS, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.FOOTER_STATS + "not identified.");
     }
 
@@ -338,14 +338,14 @@ class TestFooterStatsEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof FooterStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof FooterStatsEvent,
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " not parsed.");
     }
 

@@ -35,7 +35,7 @@ class TestShenandoahConsiderClUnloadConcMarkEvent {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
         assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
-                JdkUtil.identifyEventType(logLine),
+                JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK + "not identified.");
     }
 
@@ -73,7 +73,7 @@ class TestShenandoahConsiderClUnloadConcMarkEvent {
     void testNotBlocking() {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString()
                         + " incorrectly indentified as blocking.");
     }
@@ -82,7 +82,7 @@ class TestShenandoahConsiderClUnloadConcMarkEvent {
     void testParseLogLine() {
         String logLine = "[0.001s][info][gc] Consider -XX:+ClassUnloadingWithConcurrentMark if large pause times are "
                 + "observed on class-unloading sensitive workloads";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof ShenandoahConsiderClassUnloadingConcMarkEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahConsiderClassUnloadingConcMarkEvent,
                 JdkUtil.LogEventType.SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK.toString() + " not parsed.");
     }
 

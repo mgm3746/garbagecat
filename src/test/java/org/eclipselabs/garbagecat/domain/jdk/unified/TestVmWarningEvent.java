@@ -35,7 +35,7 @@ class TestVmWarningEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
-        assertEquals(JdkUtil.LogEventType.VM_WARNING, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.VM_WARNING, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.VM_WARNING + "not identified.");
     }
 
@@ -49,14 +49,14 @@ class TestVmWarningEvent {
     @Test
     void testNotBlocking() {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.VM_WARNING.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof VmWarningEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof VmWarningEvent,
                 JdkUtil.LogEventType.VM_WARNING.toString() + " not parsed.");
     }
 

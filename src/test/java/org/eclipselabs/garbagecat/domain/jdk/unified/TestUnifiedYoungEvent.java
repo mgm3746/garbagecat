@@ -45,14 +45,14 @@ class TestUnifiedYoungEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_YOUNG + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as blocking.");
     }
 
@@ -99,14 +99,14 @@ class TestUnifiedYoungEvent {
     @Test
     void testNoData() {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure)";
-        assertEquals(JdkUtil.LogEventType.UNKNOWN, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNKNOWN, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNKNOWN + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof UnifiedYoungEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedYoungEvent,
                 JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not parsed.");
     }
 

@@ -355,10 +355,12 @@ public final class JdkUtil {
      * Identify the log line garbage collection event.
      * 
      * @param logLine
-     *            The log entry.
+     *            The log line.
+     * @param priorLogLine
+     *            The prior log line.
      * @return The <code>LogEventType</code> of the log entry.
      */
-    public static final LogEventType identifyEventType(String logLine) {
+    public static final LogEventType identifyEventType(String logLine, String priorLogLine) {
 
         // Unified (alphabetical)
         if (HeapEvent.match(logLine))
@@ -395,7 +397,8 @@ public final class JdkUtil {
             return LogEventType.UNIFIED_G1_YOUNG_PAUSE;
         if (UnifiedG1YoungPrepareMixedEvent.match(logLine))
             return LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
-        if (UnifiedHeaderEvent.match(logLine))
+        if (UnifiedHeaderEvent.match(logLine)
+                && (priorLogLine == null || UnifiedHeaderEvent.match(priorLogLine) || !GcInfoEvent.match(priorLogLine)))
             return LogEventType.UNIFIED_HEADER;
         if (UnifiedOldEvent.match(logLine))
             return LogEventType.UNIFIED_OLD;
@@ -527,7 +530,7 @@ public final class JdkUtil {
             return LogEventType.CLASS_UNLOADING;
         if (FooterStatsEvent.match(logLine))
             return LogEventType.FOOTER_STATS;
-        if (GcInfoEvent.match(logLine))
+        if (GcInfoEvent.match(logLine) && !(priorLogLine != null && UnifiedHeaderEvent.match(priorLogLine)))
             return LogEventType.GC_INFO;
         if (HeapAtGcEvent.match(logLine))
             return LogEventType.HEAP_AT_GC;
@@ -743,11 +746,12 @@ public final class JdkUtil {
     /**
      * @param logLine
      *            The log line.
-     * 
-     * @return <code>LogEvent</code> for the log line.
+     * @param priorLogLine
+     *            The prior log line.
+     * @return <code>LogEvent</code> for the log line
      */
-    public static final LogEvent parseLogLine(String logLine) {
-        LogEventType eventType = identifyEventType(logLine);
+    public static final LogEvent parseLogLine(String logLine, String priorLogLine) {
+        LogEventType eventType = identifyEventType(logLine, priorLogLine);
         switch (eventType) {
         // Unified (order of appearance)
         case HEAP_ADDRESS:

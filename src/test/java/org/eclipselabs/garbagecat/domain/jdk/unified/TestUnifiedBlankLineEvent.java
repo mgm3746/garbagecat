@@ -33,7 +33,7 @@ class TestUnifiedBlankLineEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[69.946s][info][gc,stats     ]";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_BLANK_LINE, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_BLANK_LINE, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_BLANK_LINE + "not identified.");
     }
 
@@ -75,7 +75,7 @@ class TestUnifiedBlankLineEvent {
     @Test
     void testReportable() {
         String logLine = "[69.946s][info][gc,stats     ]";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " incorrectly indentified as reportable.");
     }
 

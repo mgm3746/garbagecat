@@ -34,7 +34,7 @@ class TestGcLockerRetryEvent {
     void testIdentityEventType() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
-        assertEquals(JdkUtil.LogEventType.GC_LOCKER_RETRY, JdkUtil.identifyEventType(logLine),
+        assertEquals(JdkUtil.LogEventType.GC_LOCKER_RETRY, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.GC_LOCKER_RETRY + "not identified.");
     }
 
@@ -50,7 +50,7 @@ class TestGcLockerRetryEvent {
     void testNotBlocking() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.GC_LOCKER_RETRY.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -58,7 +58,7 @@ class TestGcLockerRetryEvent {
     void testParseLogLine() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
-        assertTrue(JdkUtil.parseLogLine(logLine) instanceof GcLockerRetryEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof GcLockerRetryEvent,
                 JdkUtil.LogEventType.GC_LOCKER_RETRY.toString() + " not parsed.");
     }
 
