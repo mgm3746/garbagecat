@@ -156,8 +156,9 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
      * Regular expressions defining the logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Concurrent (class unloading|cleanup|evacuation|marking( \\((unload classes|update refs)\\)|"
-            + " roots)?( \\(process weakrefs\\))?|precleaning|reset|uncommit|uncommit, start|"
+            + ") [\\[]{0,1}Concurrent (class unloading|cleanup|evacuation|"
+            + "marking( \\((process weakrefs|unload classes|update refs)\\)| roots)?"
+            + "( \\((process weakrefs|unload classes)\\))?|precleaning|reset|uncommit|uncommit, start|"
             + "(update|weak) references|(strong|thread|update thread|weak) roots)(( " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + JdkRegEx.DURATION_MS
             + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
@@ -227,9 +228,9 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 int duration = 0;
-                if (matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 19) != null) {
+                if (matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 20) != null) {
                     duration = JdkMath.convertMillisToMicros(
-                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 19)).intValue();
+                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 20)).intValue();
                 }
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;
@@ -263,20 +264,20 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                if (matcher.group(UnifiedUtil.DECORATOR_SIZE + 22) != null) {
-                    combined = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 23),
-                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 25).charAt(0)).convertTo(KILOBYTES);
-                    combinedEnd = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 26),
-                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 28).charAt(0)).convertTo(KILOBYTES);
-                    combinedAvailable = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 29),
-                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 31).charAt(0)).convertTo(KILOBYTES);
-                    if (matcher.group(UnifiedUtil.DECORATOR_SIZE + 33) != null) {
-                        permGen = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 34),
-                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 36).charAt(0)).convertTo(KILOBYTES);
-                        permGenEnd = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 41),
-                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 43).charAt(0)).convertTo(KILOBYTES);
-                        permGenAllocation = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 44),
-                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 46).charAt(0)).convertTo(KILOBYTES);
+                if (matcher.group(UnifiedUtil.DECORATOR_SIZE + 23) != null) {
+                    combined = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 24),
+                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 26).charAt(0)).convertTo(KILOBYTES);
+                    combinedEnd = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 27),
+                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 29).charAt(0)).convertTo(KILOBYTES);
+                    combinedAvailable = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 30),
+                            matcher.group(UnifiedUtil.DECORATOR_SIZE + 32).charAt(0)).convertTo(KILOBYTES);
+                    if (matcher.group(UnifiedUtil.DECORATOR_SIZE + 34) != null) {
+                        permGen = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 35),
+                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 37).charAt(0)).convertTo(KILOBYTES);
+                        permGenEnd = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 42),
+                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 44).charAt(0)).convertTo(KILOBYTES);
+                        permGenAllocation = memory(matcher.group(UnifiedUtil.DECORATOR_SIZE + 45),
+                                matcher.group(UnifiedUtil.DECORATOR_SIZE + 47).charAt(0)).convertTo(KILOBYTES);
                     }
                 }
 

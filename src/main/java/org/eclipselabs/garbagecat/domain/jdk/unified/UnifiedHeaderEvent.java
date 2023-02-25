@@ -182,12 +182,13 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
             + " (Address Space (Size|Type)|Alignments|Available space on backing filesystem|(Initial|Max|Min) Capacity|"
             + "CardTable entry size|(CDS archive\\(s\\)|Compressed class space) mapped at|Compressed Oops|"
-            + "Concurrent( Refinement)? Workers|CPUs|GC Workers|Heap (Initial|Max|Min) Capacity|"
+            + "Concurrent( Refinement)? Workers|CPUs|GC threads|GC Workers|Heap (Initial|Max|Min) Capacity|"
             + "Heap Backing Filesystem|Heap Backing File|Heap Region (Count|Size)|Heuristics|"
-            + "Humongous Object Threshold|Initializing The Z Garbage Collector|Large Page Support|Medium Page Size|"
-            + "Memory|Mode|Narrow klass base|Min heap equals to max heap, disabling ShenandoahUncommit|NUMA Support|"
-            + "Pacer for Idle|Parallel Workers|Periodic GC|Pre-touch|Runtime Workers|TLAB Size Max|Uncommit( Delay)?|"
-            + "Version)(:)?.*$";
+            + "Humongous [oO]bject [tT]hreshold|Initialize Shenandoah heap|Initializing The Z Garbage Collector|"
+            + "Large Page Support|Max TLAB size|Medium Page Size|Memory|Mode|Narrow klass base|"
+            + "Min heap equals to max heap, disabling ShenandoahUncommit|NUMA Support|Pacer for Idle|Parallel Workers|"
+            + "Periodic GC|Pre-touch|Regions|Runtime Workers|Safepointing mechanism|Shenandoah GC mode|"
+            + "Shenandoah heuristics|TLAB Size Max|Uncommit( Delay)?|Version)(:)?.*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

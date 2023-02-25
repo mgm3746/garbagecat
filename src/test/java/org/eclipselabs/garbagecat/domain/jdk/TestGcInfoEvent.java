@@ -32,7 +32,7 @@ class TestGcInfoEvent {
 
     @Test
     void testIdentityEventType() {
-        String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K";
+        String logLine = "Pacer for Idle. Initial: 122M, Alloc Tax Rate: 1.0x";
         assertEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.GC_INFO + "not identified.");
     }
@@ -83,7 +83,7 @@ class TestGcInfoEvent {
 
     @Test
     void testParseLogLine() {
-        String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K";
+        String logLine = "Pacer for Idle. Initial: 122M, Alloc Tax Rate: 1.0x";
         assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof GcInfoEvent,
                 JdkUtil.LogEventType.GC_INFO.toString() + " not parsed.");
     }

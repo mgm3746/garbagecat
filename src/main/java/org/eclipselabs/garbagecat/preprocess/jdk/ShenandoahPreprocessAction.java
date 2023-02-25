@@ -187,15 +187,26 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
      * 
      * 2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K->4701K(37888K), 0.048 ms]
      * 
+     * [2023-02-22T12:31:34.629+0000][2243][gc ] GC(0) Concurrent marking (process weakrefs) (unload classes) 24.734ms
+     * 
      * 2022-10-28T10:58:59.285-0400: [Concurrent marking, 0.506 ms]
      * 
-     * {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent} cleanup:
+     * {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent}:
      * 
      * 2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms]
+     * 
+     * {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent}:
+     * 
+     * [2023-02-22T12:31:34.605+0000][2243][gc ] GC(0) Pause Init Mark (process weakrefs) (unload classes) 0.537ms
+     * 
+     * {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent}:
+     * 
+     * [2023-02-22T12:31:34.641+0000][2243][gc ] GC(0) Pause Final Mark (process weakrefs) (unload classes) 10.861ms
      */
-    private static final String REGEX_RETAIN_BEGINNING_EVENT = "^(" + JdkRegEx.DECORATOR
-            + " \\[(Concurrent (cleanup|marking)|Pause Full)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\))?, " + JdkRegEx.DURATION_MS + "\\])$";
+    private static final String REGEX_RETAIN_BEGINNING_EVENT = "^((" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+            + ") [\\[]{0,1}(Concurrent (cleanup|marking)( \\(process weakrefs\\) \\(unload classes\\))?|Pause (Final|"
+            + "Init) Mark \\(process weakrefs\\) " + "\\(unload classes\\)|Pause Full)( " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + JdkRegEx.DURATION_MS + "[\\]]{0,1})$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_EVENT_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_EVENT);
 
@@ -258,8 +269,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitMarkEvent}
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-                    + ") (\\[)?Pause (Init|Final) Mark( \\((update refs|unload classes)\\))?( \\(process weakrefs\\))?"
-                    + "(, start\\])?$",
+                    + ") (\\[)?Pause (Init|Final) Mark( \\((process weakrefs|update refs|unload classes)\\))?"
+                    + "( \\((process weakrefs|unload classes)\\))?" + "(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcEvent}
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
                     + ") (\\[)?Pause Degenerated GC \\((Evacuation|Mark|Outside of Cycle|Update Refs)\\)"
@@ -296,7 +307,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
             "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,4}Pacer for Evacuation. Used CSet: " + JdkRegEx.SIZE + ", Free: "
                     + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (\\d{1,}\\.\\d|inf)x$",
-            // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent}
+            // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahEvent}
             "^[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for concurrent "
                     + "(reset|marking|preclean|evacuation|reference update)$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalMarkEvent}
@@ -323,7 +334,8 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             //
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
                     + ") (\\[)?Concurrent (cleanup|evacuation|marking|precleaning|reset|update references)"
-                    + "( \\((process weakrefs|unload classes|update refs)\\))?( \\(process weakrefs\\))?(, start\\])?$",
+                    + "( \\((process weakrefs|unload classes|update refs)\\))?"
+                    + "( \\((process weakrefs||unload classes)\\))?(, start\\])?$",
             // ***** Unified *****
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahConcurrentEvent}
             "^" + UnifiedRegEx.DECORATOR + "[ ]{1,4}Using \\d{1,2} of \\d{1,2} workers for [cC]oncurrent "

@@ -176,6 +176,14 @@ class TestShenandoahConcurrentEvent {
     }
 
     @Test
+    void testMarkingProcessWeakrefsUnloadClasses() {
+        String logLine = "[2023-02-22T12:31:34.629+0000][2243][gc           ] GC(0) Concurrent marking "
+                + "(process weakrefs) (unload classes) 24.734ms";
+        assertTrue(ShenandoahConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testNotBlocking() {
         String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),

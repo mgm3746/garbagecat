@@ -99,14 +99,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  */
 public class ShenandoahInitMarkEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
 
-    private static final Pattern pattern = Pattern.compile(ShenandoahInitMarkEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Init Mark( \\((update refs|unload classes)\\))?( \\(process weakrefs\\))?[,]{0,1} "
-            + JdkRegEx.DURATION_MS + "[\\]]{0,1}[ ]*$";
+    private static final String _REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+            + ") [\\[]{0,1}Pause Init Mark( \\((process weakrefs|update refs|unload classes)\\))?"
+            + "( \\((process weakrefs|unload classes)\\))?[,]{0,1} " + JdkRegEx.DURATION_MS + "[\\]]{0,1}[ ]*$";
+
+    private static final Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -142,12 +142,12 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector implements Bloc
      */
     public ShenandoahInitMarkEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
+        if (logEntry.matches(_REGEX)) {
+            Pattern pattern = Pattern.compile(_REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 duration = JdkMath
-                        .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 5))
+                        .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 6))
                         .intValue();
                 if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
                     long endTimestamp;

@@ -202,4 +202,11 @@ class TestShenandoahTriggerEvent {
         assertTrue(ShenandoahTriggerEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
     }
+
+    @Test
+    void testUnifiedTriggerMetadataGcThreshold() {
+        String logLine = "[2023-02-22T12:31:34.603+0000][2243][gc           ] Trigger: Metadata GC Threshold";
+        assertTrue(ShenandoahTriggerEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
+    }
 }

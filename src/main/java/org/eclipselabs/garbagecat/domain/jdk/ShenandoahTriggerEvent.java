@@ -93,7 +93,9 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
             "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Time since last GC \\(\\d{1,} ms\\) is larger "
                     + "than guaranteed interval \\(\\d{1,} ms\\)[ ]*$",
             // Allocation Failure
-            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Handle Allocation Failure[ ]*$"
+            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Handle Allocation Failure[ ]*$",
+            // Metadata GC Threshold
+            "^(" + UnifiedRegEx.DECORATOR + " )?Trigger: Metadata GC Threshold[ ]*$"
             //
     };
 

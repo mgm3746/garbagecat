@@ -166,6 +166,15 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testGcThreads() {
+        String logLine = "[2023-02-22T12:31:30.330+0000][2243][gc,init] GC threads: 2 parallel, 1 concurrent";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
     void testGcWorkers() {
         String logLine = "[0.014s][info][gc,init] GC Workers: 1 (dynamic)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
@@ -247,7 +256,16 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testHumongousObjectThreshold() {
+    void testHumongousObjectThresholdLowercase() {
+        String logLine = "[2023-02-22T12:31:30.329+0000][2243][gc,init] Humongous object threshold: 2048K";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testHumongousObjectThresholdUppercase() {
         String logLine = "[0.014s][info][gc,init] Humongous Object Threshold: 256K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
@@ -267,6 +285,16 @@ class TestUnifiedHeaderEvent {
     @Test
     void testInitialCapacity() {
         String logLine = "[0.015s][info][gc,init] Initial Capacity: 32M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testInitializeShenandoahHeap() {
+        String logLine = "[2023-02-22T12:31:32.306+0000][2243][gc,init] Initialize Shenandoah heap: 6144M initial, "
+                + "6144M min, 6144M max";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
@@ -314,6 +342,15 @@ class TestUnifiedHeaderEvent {
     @Test
     void testMaxCapacity() {
         String logLine = "[0.015s][info][gc,init] Max Capacity: 96M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testMaxTlabSize() {
+        String logLine = "[2023-02-22T12:31:30.329+0000][2243][gc,init] Max TLAB size: 2048K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
@@ -457,6 +494,15 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testRegions() {
+        String logLine = "[2023-02-22T12:31:30.329+0000][2243][gc,init] Regions: 3072 x 2048K";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
     void testReportable() {
         assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_HEADER),
                 JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " incorrectly indentified as reportable.");
@@ -465,6 +511,15 @@ class TestUnifiedHeaderEvent {
     @Test
     void testRuntimeWorkers() {
         String logLine = "[0.018s][info][gc,init] Runtime Workers: 1";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testSafepointMechanism() {
+        String logLine = "[2023-02-22T12:31:32.306+0000][2243][gc,init] Safepointing mechanism: global-page poll";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
@@ -510,6 +565,25 @@ class TestUnifiedHeaderEvent {
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SHENANDOAH_TRIGGER),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
         assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
+    }
+
+    @Test
+    void testShenandoahGcMode() {
+        String logLine = "[2023-02-22T12:31:30.330+0000][2243][gc,init] Shenandoah GC mode: Snapshot-At-The-Beginning "
+                + "(SATB)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testShenandoahHeuristics() {
+        String logLine = "[2023-02-22T12:31:30.330+0000][2243][gc,init] Shenandoah heuristics: Adaptive";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
     }
 
     @Test
