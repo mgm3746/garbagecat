@@ -474,6 +474,22 @@ class TestG1PreprocessAction {
     }
 
     @Test
+    void testErgonomicsCsetConstruction() {
+        String priorLogLine = "";
+        String logLine = "4295945.119: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 122401, "
+                + "predicted base time: 65.52 ms, remaining time: 134.48 ms, target pause time: 200.00 ms]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        List<PreprocessEvent> preprocessEvents = new ArrayList<>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context,
+                preprocessEvents);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testExtRootScanning() {
         String logLine = "      [Ext Root Scanning (ms): Min: 2.7, Avg: 3.0, Max: 3.5, Diff: 0.8, Sum: 18.1]";
         Set<String> context = new HashSet<String>();
@@ -2284,6 +2300,88 @@ class TestG1PreprocessAction {
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context,
                 preprocessEvents);
         assertEquals(", 0.0847598 secs]", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testPrintReferenceGcPrintAdaptiveSizePolicyContinueMixedGCs() {
+        String priorLogLine = "";
+        String logLine = "2023-02-23T13:11:23.327+0800: 4295945.631: [SoftReference, 3 refs, 0.0010842 secs]"
+                + "2023-02-23T13:11:23.328+0800: 4295945.632: [WeakReference, 1 refs, 0.0007039 secs]"
+                + "2023-02-23T13:11:23.329+0800: 4295945.633: [FinalReference, 6 refs, 0.0006505 secs]"
+                + "2023-02-23T13:11:23.330+0800: 4295945.634: [PhantomReference, 0 refs, 0 refs, 0.0014290 secs]"
+                + "2023-02-23T13:11:23.331+0800: 4295945.635: [JNI Weak Reference, 0.0001052 secs] "
+                + "4295945.642: [G1Ergonomics (Mixed GCs) continue mixed GCs, reason: candidate old regions available, "
+                + "candidate old regions: 687 regions, reclaimable: 737569024 bytes (11.45 %), threshold: 5.00 %]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        List<PreprocessEvent> preprocessEvents = new ArrayList<>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context,
+                preprocessEvents);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testPrintReferenceGcPrintAdaptiveSizePolicyDoNotContinueMixedGCs() {
+        String priorLogLine = "";
+        String logLine = "2023-02-23T13:11:23.619+0800: 4295945.923: [SoftReference, 0 refs, 0.0009424 secs]"
+                + "2023-02-23T13:11:23.620+0800: 4295945.924: [WeakReference, 3 refs, 0.0007199 secs]"
+                + "2023-02-23T13:11:23.621+0800: 4295945.924: [FinalReference, 1038 refs, 0.0008301 secs]"
+                + "2023-02-23T13:11:23.622+0800: 4295945.925: [PhantomReference, 0 refs, 0 refs, 0.0020654 secs]"
+                + "2023-02-23T13:11:23.624+0800: 4295945.927: [JNI Weak Reference, 0.0001107 secs] "
+                + "4295945.935: [G1Ergonomics (Mixed GCs) do not continue mixed GCs, reason: reclaimable percentage "
+                + "not over threshold, candidate old regions: 452 regions, reclaimable: 321143560 bytes (4.98 %), "
+                + "threshold: 5.00 %]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        List<PreprocessEvent> preprocessEvents = new ArrayList<>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context,
+                preprocessEvents);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testPrintReferenceGcPrintAdaptiveSizePolicyPreparsing() throws IOException {
+        File testFile = TestUtil.getFile("dataset267.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.TENURING_DISTRIBUTION),
+                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testPrintReferenceGcPrintAdaptiveSizePolicyStartMixedGCs() {
+        String priorLogLine = "";
+        String logLine = "2023-02-23T13:11:22.899+0800: 4295945.203: [SoftReference, 0 refs, 0.0012549 secs]"
+                + "2023-02-23T13:11:22.901+0800: 4295945.204: [WeakReference, 2 refs, 0.0012014 secs]"
+                + "2023-02-23T13:11:22.902+0800: 4295945.205: [FinalReference, 529 refs, 0.0008013 secs]"
+                + "2023-02-23T13:11:22.903+0800: 4295945.206: [PhantomReference, 0 refs, 0 refs, 0.0014646 secs]"
+                + "2023-02-23T13:11:22.904+0800: 4295945.208: [JNI Weak Reference, 0.0001060 secs] "
+                + "4295945.212: [G1Ergonomics (Mixed GCs) start mixed GCs, reason: candidate old regions available, "
+                + "candidate old regions: 995 regions, reclaimable: 1382364536 bytes (21.46 %), threshold: 5.00 %]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        List<PreprocessEvent> preprocessEvents = new ArrayList<>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context,
+                preprocessEvents);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test

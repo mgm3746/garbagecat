@@ -716,8 +716,10 @@ public class G1PreprocessAction implements PreprocessAction {
             "^(: )?\\[GC concurrent.+$",
             //
             "^       Avg:.+$",
-            // Ergonomics.
+            // Ergonomics at beginning.
             "^[ ]{0,1}" + JdkRegEx.DECORATOR + " \\[G1Ergonomics.+$",
+            // Ergonomics at end.
+            "^.+\\[G1Ergonomics \\(Mixed GCs\\) (continue|do not continue|start) mixed GCs, reason:.+$",
             // -XX:+PrintStringDeduplicationStatistics
             "^   \\[String Dedup Fixup:.+$",
             //

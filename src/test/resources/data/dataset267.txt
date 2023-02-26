@@ -1,0 +1,48 @@
+2023-02-23T13:11:22.814+0800: 4295945.118: [GC pause (G1 Evacuation Pause) (young)
+Desired survivor size 175112192 bytes, new threshold 15 (max 15)
+- age   1:   66861864 bytes,   66861864 total
+- age   2:    8829176 bytes,   75691040 total
+- age   3:    6825432 bytes,   82516472 total
+- age   4:    5656688 bytes,   88173160 total
+- age   5:    8679496 bytes,   96852656 total
+- age   6:    4823144 bytes,  101675800 total
+- age   7:    8326920 bytes,  110002720 total
+- age   8:    2905848 bytes,  112908568 total
+- age   9:    1611248 bytes,  114519816 total
+- age  10:    1509616 bytes,  116029432 total
+- age  11:    1330736 bytes,  117360168 total
+- age  12:    2244512 bytes,  119604680 total
+- age  13:     947912 bytes,  120552592 total
+- age  14:   42401296 bytes,  162953888 total
+- age  15:    4113376 bytes,  167067264 total
+ 4295945.119: [G1Ergonomics (CSet Construction) start choosing CSet, _pending_cards: 122401, predicted base time: 65.52 ms, remaining time: 134.48 ms, target pause time: 200.00 ms]
+ 4295945.119: [G1Ergonomics (CSet Construction) add young regions to CSet, eden: 1244 regions, survivors: 90 regions, predicted young region time: 70.50 ms]
+ 4295945.119: [G1Ergonomics (CSet Construction) finish choosing CSet, eden: 1244 regions, survivors: 90 regions, old: 0 regions, predicted pause time: 136.03 ms, target pause time: 200.00 ms]
+2023-02-23T13:11:22.899+0800: 4295945.203: [SoftReference, 0 refs, 0.0012549 secs]2023-02-23T13:11:22.901+0800: 4295945.204: [WeakReference, 2 refs, 0.0012014 secs]2023-02-23T13:11:22.902+0800: 4295945.205: [FinalReference, 529 refs, 0.0008013 secs]2023-02-23T13:11:22.903+0800: 4295945.206: [PhantomReference, 0 refs, 0 refs, 0.0014646 secs]2023-02-23T13:11:22.904+0800: 4295945.208: [JNI Weak Reference, 0.0001060 secs] 4295945.212: [G1Ergonomics (Mixed GCs) start mixed GCs, reason: candidate old regions available, candidate old regions: 995 regions, reclaimable: 1382364536 bytes (21.46 %), threshold: 5.00 %]
+, 0.0943015 secs]
+   [Parallel Time: 82.3 ms, GC Workers: 10]
+      [GC Worker Start (ms): Min: 4295945119.8, Avg: 4295945119.9, Max: 4295945120.0, Diff: 0.2]
+      [Ext Root Scanning (ms): Min: 2.7, Avg: 4.3, Max: 9.2, Diff: 6.5, Sum: 43.3]
+      [Update RS (ms): Min: 17.6, Avg: 22.5, Max: 24.6, Diff: 7.1, Sum: 224.6]
+         [Processed Buffers: Min: 105, Avg: 124.4, Max: 153, Diff: 48, Sum: 1244]
+      [Scan RS (ms): Min: 0.1, Avg: 0.3, Max: 0.5, Diff: 0.4, Sum: 3.5]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+      [Object Copy (ms): Min: 54.3, Avg: 54.6, Max: 54.8, Diff: 0.5, Sum: 546.2]
+      [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Termination Attempts: Min: 1, Avg: 1.3, Max: 2, Diff: 1, Sum: 13]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.1, Max: 0.3, Diff: 0.2, Sum: 1.4]
+      [GC Worker Total (ms): Min: 81.7, Avg: 81.9, Max: 82.0, Diff: 0.3, Sum: 819.1]
+      [GC Worker End (ms): Min: 4295945201.7, Avg: 4295945201.8, Max: 4295945201.9, Diff: 0.2]
+   [Code Root Fixup: 0.5 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.6 ms]
+   [Other: 11.0 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 5.4 ms]
+      [Ref Enq: 0.4 ms]
+      [Redirty Cards: 0.4 ms]
+      [Humongous Register: 0.2 ms]
+      [Humongous Reclaim: 0.2 ms]
+      [Free CSet: 1.9 ms]
+   [Eden: 2488.0M(2488.0M)->0.0B(158.0M) Survivors: 180.0M->148.0M Heap: 5027.4M(6144.0M)->2478.1M(6144.0M)]
+ [Times: user=0.83 sys=0.00, real=0.09 secs]
