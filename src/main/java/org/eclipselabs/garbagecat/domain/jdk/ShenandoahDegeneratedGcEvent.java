@@ -31,7 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * SHENANDOAH_DEGENERATED_GC_MARK
+ * SHENANDOAH_DEGENERATED_GC
  * </p>
  * 
  * <p>
@@ -43,7 +43,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) Non-Unified:
+ * 1) Non-Unified Mark:
  * </p>
  * 
  * <pre>
@@ -51,7 +51,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </pre>
  * 
  * <p>
- * 2) Unified:
+ * 2) Unified Mark:
  * </p>
  * 
  * <pre>
@@ -59,20 +59,28 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </pre>
  * 
  * <p>
- * 3) Preprocessed:
+ * 3) Preprocessed Mark:
  * </p>
  * 
  * <pre>
  * 2021-03-23T20:57:33.301+0000: 120826.585: [Pause Degenerated GC (Mark) 1572M-&gt;1136M(1690M), 1649.410 ms], [Metaspace: 282194K-&gt;282194K(1314816K)]
  * </pre>
  * 
+ * <p>
+ * 4) Preprocessed Update Refs JDK11:
+ * </p>
+ * 
+ * <pre>
+ * [2023-02-22T06:35:41.594+0000][2003][gc            ] GC(329) Pause Degenerated GC (Update Refs) 5855M-&gt;1809M(6144M) 22.221ms Metaspace: 125660K(138564K)-&gt;125660K(138564K)
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
+public class ShenandoahDegeneratedGcEvent extends ShenandoahCollector
         implements BlockingEvent, ParallelEvent, CombinedData, PermMetaspaceData {
 
-    private static final Pattern pattern = Pattern.compile(ShenandoahDegeneratedGcMarkEvent.REGEX);
+    private static final Pattern pattern = Pattern.compile(ShenandoahDegeneratedGcEvent.REGEX);
 
     /**
      * Regular expressions defining the logging.
@@ -80,8 +88,8 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
             + ") [\\[]{0,1}Pause Degenerated GC \\((Evacuation|Mark|Outside of Cycle|Update Refs)\\) " + JdkRegEx.SIZE
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} " + JdkRegEx.DURATION_MS
-            + "[]]{0,1}([,]{0,1} [\\[]{0,1}" + "Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\)[]]{0,1})?[ ]*$";
+            + "[]]{0,1}([,]{0,1} [\\[]{0,1}" + "Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[]]{0,1})?[ ]*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -145,7 +153,7 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahDegeneratedGcMarkEvent(String logEntry) {
+    public ShenandoahDegeneratedGcEvent(String logEntry) {
         this.logEntry = logEntry;
         if (logEntry.matches(REGEX)) {
             Matcher matcher = pattern.matcher(logEntry);
@@ -198,11 +206,11 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
                     permGen = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 14),
                             matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 16).charAt(0))
                                     .convertTo(KILOBYTES);
-                    permGenEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 17),
-                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 19).charAt(0))
+                    permGenEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 21),
+                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 23).charAt(0))
                                     .convertTo(KILOBYTES);
-                    permGenAllocation = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 20),
-                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 22).charAt(0))
+                    permGenAllocation = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 24),
+                            matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedUtil.DECORATOR_SIZE + 26).charAt(0))
                                     .convertTo(KILOBYTES);
                 }
             }
@@ -219,7 +227,7 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public ShenandoahDegeneratedGcMarkEvent(String logEntry, long timestamp, int duration) {
+    public ShenandoahDegeneratedGcEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.duration = duration;
@@ -246,7 +254,7 @@ public class ShenandoahDegeneratedGcMarkEvent extends ShenandoahCollector
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString();
+        return JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC.toString();
     }
 
     public Memory getPermOccupancyEnd() {

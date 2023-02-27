@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahDegeneratedGcMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahDegeneratedGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent;
@@ -418,7 +418,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_END_METASPACE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahConcurrentEvent
-                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahDegeneratedGcMarkEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahDegeneratedGcEvent
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitUpdateEvent
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitMarkEvent
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalMarkEvent
@@ -511,7 +511,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
         } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitUpdateEvent
                 || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitMarkEvent
                 || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalMarkEvent
-                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahDegeneratedGcMarkEvent
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahDegeneratedGcEvent
                 || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalUpdateEvent) {
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);

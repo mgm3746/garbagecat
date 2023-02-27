@@ -1215,8 +1215,8 @@ class TestShenandoahPreprocessAction {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_DEGENERATED_GC_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC_MARK.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_DEGENERATED_GC),
+                JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
                 JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_MARK),
