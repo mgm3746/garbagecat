@@ -2346,6 +2346,50 @@ class TestG1PreprocessAction {
     }
 
     @Test
+    void testPrintReferenceGcPrintAdaptiveSizePolicyDoNotRequestConcurrentCycleInitiation() {
+        String priorLogLine = "";
+        String logLine = "2023-02-25T18:59:48.170+0800: 103242.969: [SoftReference, 0 refs, 0.0006369 secs]"
+                + "2023-02-25T18:59:48.171+0800: 103242.969: [WeakReference, 0 refs, 0.0003788 secs]"
+                + "2023-02-25T18:59:48.171+0800: 103242.970: [FinalReference, 4948 refs, 0.0014439 secs]"
+                + "2023-02-25T18:59:48.172+0800: 103242.971: [PhantomReference, 139 refs, 0 refs, 0.0009356 secs]"
+                + "2023-02-25T18:59:48.173+0800: 103242.972: [JNI Weak Reference, 0.0001313 secs] "
+                + "103242.977: [G1Ergonomics (Concurrent Cycles) do not request concurrent cycle initiation, reason: "
+                + "still doing mixed collections, occupancy: 3080716288 bytes, allocation request: 0 bytes, threshold: "
+                + "2899102905 bytes (45.00 %), source: end of GC]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        List<PreprocessEvent> preprocessEvents = new ArrayList<>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context,
+                preprocessEvents);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testPrintReferenceGcPrintAdaptiveSizePolicyRequestConcurrentCycleInitiation() {
+        String priorLogLine = "";
+        String logLine = "2023-02-25T22:27:49.568+0800: 115724.367: [SoftReference, 0 refs, 0.0008055 secs]"
+                + "2023-02-25T22:27:49.569+0800: 115724.368: [WeakReference, 0 refs, 0.0004012 secs]"
+                + "2023-02-25T22:27:49.570+0800: 115724.368: [FinalReference, 2688 refs, 0.0009420 secs]"
+                + "2023-02-25T22:27:49.571+0800: 115724.369: [PhantomReference, 0 refs, 0 refs, 0.0009824 secs]"
+                + "2023-02-25T22:27:49.572+0800: 115724.370: [JNI Weak Reference, 0.0000928 secs] "
+                + "115724.373: [G1Ergonomics (Concurrent Cycles) request concurrent cycle initiation, reason: "
+                + "occupancy higher than threshold, occupancy: 3057647616 bytes, allocation request: 0 bytes, "
+                + "threshold: 2899102905 bytes (45.00 %), source: end of GC]";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, priorLogLine, nextLogLine),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        List<PreprocessEvent> preprocessEvents = new ArrayList<>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context,
+                preprocessEvents);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testPrintReferenceGcPrintAdaptiveSizePolicyPreparsing() throws IOException {
         File testFile = TestUtil.getFile("dataset267.txt");
         GcManager gcManager = new GcManager();
