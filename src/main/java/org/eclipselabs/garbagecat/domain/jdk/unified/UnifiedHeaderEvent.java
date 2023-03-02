@@ -36,7 +36,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)
  * [0.013s][info][gc,init] CPUs: 12 total, 12 available
  * [0.013s][info][gc,init] Memory: 31907M
  * [0.013s][info][gc,init] Large Page Support: Disabled
@@ -56,7 +55,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)
  * [0.013s][info][gc,init] CPUs: 12 total, 12 available
  * [0.013s][info][gc,init] Memory: 31907M
  * [0.013s][info][gc,init] Large Page Support: Disabled
@@ -78,7 +76,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <pre>
- * [0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)
  * [0.014s][info][gc,init] CPUs: 12 total, 12 available
  * [0.014s][info][gc,init] Memory: 31907M
  * [0.014s][info][gc,init] Large Page Support: Disabled
@@ -104,7 +101,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  * <pre>
  * [0.014s][info][gc,ergo] Pacer for Idle. Initial: 1966K, Alloc Tax Rate: 1.0x
- * [0.014s][info][gc,init] Version: 17.0.1+12-LTS (release)
  * [0.014s][info][gc,init] CPUs: 12 total, 12 available
  * [0.014s][info][gc,init] Memory: 31907M
  * [0.014s][info][gc,init] Large Page Support: Disabled
@@ -145,7 +141,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  * <pre>
  * [0.014s][info][gc,init] Initializing The Z Garbage Collector
- * [0.014s][info][gc,init] Version: 17.0.1+12-LTS (release)
  * [0.014s][info][gc,init] NUMA Support: Disabled
  * [0.014s][info][gc,init] CPUs: 12 total, 12 available
  * [0.014s][info][gc,init] Memory: 31907M 
@@ -188,7 +183,7 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "Large Page Support|Max TLAB size|Medium Page Size|Memory|Mode|Narrow klass base|"
             + "Min heap equals to max heap, disabling ShenandoahUncommit|NUMA Support|Pacer for Idle|Parallel Workers|"
             + "Periodic GC|Pre-touch|Regions|Runtime Workers|Safepointing mechanism|Shenandoah GC mode|"
-            + "Shenandoah heuristics|TLAB Size Max|Uncommit( Delay)?|Version)(:)?.*$";
+            + "Shenandoah heuristics|TLAB Size Max|Uncommit( Delay)?)(:)?.*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -197,7 +192,7 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
      *            The log line to test.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static boolean match(String logLine) {
         return pattern.matcher(logLine).matches();
     }
 
@@ -254,5 +249,9 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

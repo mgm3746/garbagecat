@@ -132,6 +132,24 @@ class TestUnifiedRegEx {
     }
 
     @Test
+    void testReleaseStringJdk11() {
+        String release = "11.0.9+11-LTS";
+        assertTrue(release.matches(UnifiedRegEx.RELEASE_STRING), "Release string " + release + " not recognized.");
+    }
+
+    @Test
+    void testReleaseStringJdk12() {
+        String release = "12.0.1+12";
+        assertTrue(release.matches(UnifiedRegEx.RELEASE_STRING), "Release string " + release + " not recognized.");
+    }
+
+    @Test
+    void testReleaseStringJdk17() {
+        String release = "17.0.1+12-LTS";
+        assertTrue(release.matches(UnifiedRegEx.RELEASE_STRING), "Release string " + release + " not recognized.");
+    }
+
+    @Test
     void testTimestampUnifiedLogging() {
         String timestamp = "0.002s";
         assertTrue(timestamp.matches(UnifiedRegEx.UPTIME), "'" + timestamp + "' is a valid timestamp.");

@@ -110,6 +110,21 @@ public class UnifiedRegEx {
     public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,}\\)";
 
     /**
+     * <p>
+     * Regular expression for a &gt;= JDK9 release string (unified).
+     * </p>
+     * 
+     * For example:
+     * 
+     * <pre>
+     * 11.0.9+11-LTS
+     * 12.0.1+12
+     * 17.0.1+12-LTS
+     * </pre>
+     */
+    public static final String RELEASE_STRING = "((9|1\\d)\\.\\d\\.(\\d)\\+\\d{2}(-LTS)?)";
+
+    /**
      * Seconds since JVM started.
      * 
      * For example: 25.016s

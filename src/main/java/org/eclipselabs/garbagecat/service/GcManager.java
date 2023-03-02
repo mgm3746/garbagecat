@@ -61,6 +61,7 @@ import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
@@ -1089,6 +1090,11 @@ public class GcManager {
                 }
                 jvmDao.setJdkVersion(((HeaderVersionEvent) event).getLogEntry());
                 jvmDao.getJvmContext().setOs(((HeaderVersionEvent) event).getOs());
+            } else if (event instanceof UnifiedHeaderVersionEvent) {
+                jvmDao.setLogEndingUnidentified(false);
+                jvmDao.getJvmContext().setVersionMajor(((UnifiedHeaderVersionEvent) event).getJdkVersionMajor());
+                jvmDao.getJvmContext().setVersionMinor(((UnifiedHeaderVersionEvent) event).getJdkVersionMinor());
+                jvmDao.setJdkVersion(((UnifiedHeaderVersionEvent) event).getLogEntry());
             } else if (event instanceof LogFileEvent) {
                 jvmDao.setLogEndingUnidentified(false);
                 if (((LogFileEvent) event).isCreated()) {

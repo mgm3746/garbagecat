@@ -124,8 +124,8 @@ class TestJdkRegEx {
     }
 
     @Test
-    void testJdk12ReleaseString() {
-        String release = "12.0.1+12";
+    void testJdkReleaseString() {
+        String release = "1.8.0_342-b07";
         assertTrue(release.matches(JdkRegEx.RELEASE_STRING), "Release not identified.");
     }
 

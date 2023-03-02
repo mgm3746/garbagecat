@@ -10,56 +10,44 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
+
+import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.LogEvent;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.github.joa.domain.Os;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * HEADER_VERSION
+ * UNIFIED_HEADER_VERSION
  * </p>
  * 
  * <p>
- * Version header.
+ * <code>UnifiedHeaderEvent</code> with JDK version information.
  * </p>
  * 
  * <h2>Example Logging</h2>
  * 
- * <p>
- * 1) OpenJDK:
- * </p>
- * 
  * <pre>
- * OpenJDK 64-Bit Server VM (24.95-b01) for linux-amd64 JRE (1.7.0_95-b00), built on Jan 18 2016 21:57:50 by "mockbuild" with gcc 4.8.5 20150623 (Red Hat 4.8.5-4)
- * </pre>
- * 
- * <p>
- * 2) Oracle JDK:
- * </p>
- * 
- * <pre>
- * Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on Sep 29 2015 08:44:21 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
+ * [0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class HeaderVersionEvent implements LogEvent {
+public class UnifiedHeaderVersionEvent extends UnifiedHeaderEvent {
 
-    private static Pattern pattern = Pattern.compile(HeaderVersionEvent.REGEX);
+    private static Pattern pattern = Pattern.compile(UnifiedHeaderVersionEvent.REGEX);
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(Java HotSpot\\(TM\\)|OpenJDK)( 64-Bit)? Server VM \\(.+\\) for "
-            + "(linux|windows|solaris)-(amd64|ppc64|ppc64le|sparc|x86) JRE (\\(Zulu.+\\) )?\\("
-            + JdkRegEx.RELEASE_STRING + "\\).+ built on " + JdkRegEx.BUILD_DATE_TIME + ".+$";
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Version: " + UnifiedRegEx.RELEASE_STRING
+            + " \\(release\\)[ ]*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -73,24 +61,35 @@ public class HeaderVersionEvent implements LogEvent {
     }
 
     /**
-     * The log entry for the event. Can be used for debugging purposes.
-     */
-    private String logEntry;
-
-    /**
-     * The time when the GC event started in milliseconds after JVM startup.
-     */
-    private long timestamp;
-
-    /**
      * Create event from log entry.
      * 
      * @param logEntry
      *            The log entry for the event.
      */
-    public HeaderVersionEvent(String logEntry) {
-        this.logEntry = logEntry;
-        this.timestamp = 0L;
+    public UnifiedHeaderVersionEvent(String logEntry) {
+        super(logEntry);
+        if (logEntry.matches(REGEX)) {
+            Pattern pattern = Pattern.compile(REGEX);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    super.setTimestamp(Long.parseLong(matcher.group(12)));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(11)).longValue());
+                } else {
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            super.setTimestamp(Long.parseLong(matcher.group(16)));
+                        } else {
+                            super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(15)).longValue());
+                        }
+                    } else {
+                        // Datestamp only.
+                        super.setTimestamp(JdkUtil.convertDatestampToMillis(matcher.group(1)));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -99,13 +98,20 @@ public class HeaderVersionEvent implements LogEvent {
      */
     public int getJdkVersionMajor() {
         int jdkVersionMajor = org.github.joa.domain.JvmContext.UNKNOWN;
-        String regex = "^.+JRE \\(1\\.(5|6|7|8|9|10).+$";
-        if (logEntry != null) {
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(logEntry);
+        if (super.getLogEntry() != null) {
+            Matcher matcher = pattern.matcher(super.getLogEntry());
             if (matcher.find()) {
-                if (matcher.group(1) != null) {
-                    jdkVersionMajor = Integer.parseInt(matcher.group(1));
+                int index = DECORATOR_SIZE + 2;
+                if (matcher.group(index) != null) {
+                    if (matcher.group(index).equals("1.6.0")) {
+                        jdkVersionMajor = 6;
+                    } else if (matcher.group(index).equals("1.7.0")) {
+                        jdkVersionMajor = 7;
+                    } else if (matcher.group(index).equals("1.8.0")) {
+                        jdkVersionMajor = 8;
+                    } else {
+                        jdkVersionMajor = Integer.parseInt(matcher.group(index));
+                    }
                 }
             }
         }
@@ -118,13 +124,12 @@ public class HeaderVersionEvent implements LogEvent {
      */
     public int getJdkVersionMinor() {
         int jdkVersionMinor = org.github.joa.domain.JvmContext.UNKNOWN;
-        String regex = "^.+JRE \\(1\\.(5|6|7|8|9|10)\\.\\d_(\\d{1,3})-.+$";
-        if (logEntry != null) {
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(logEntry);
+        if (super.getLogEntry() != null) {
+            Matcher matcher = pattern.matcher(super.getLogEntry());
             if (matcher.find()) {
-                if (matcher.group(1) != null) {
-                    jdkVersionMinor = Integer.parseInt(matcher.group(2));
+                int index = DECORATOR_SIZE + 3;
+                if (matcher.group(index) != null) {
+                    jdkVersionMinor = Integer.parseInt(matcher.group(index));
                 }
             }
         }
@@ -132,44 +137,14 @@ public class HeaderVersionEvent implements LogEvent {
     }
 
     public String getLogEntry() {
-        return logEntry;
+        return super.getLogEntry();
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.HEADER_VERSION.toString();
-    }
-
-    /**
-     * @return The OS type.
-     */
-    public Os getOs() {
-        Os osType = Os.UNIDENTIFIED;
-        Matcher matcher = pattern.matcher(logEntry);
-        if (matcher.find()) {
-            int indexOs = 3;
-            if (matcher.group(indexOs).equals("linux")) {
-                osType = Os.LINUX;
-            } else if (matcher.group(indexOs).equals("windows")) {
-                osType = Os.WINDOWS;
-            } else if (matcher.group(indexOs).equals("solaris")) {
-                osType = Os.SOLARIS;
-            }
-        }
-        return osType;
+        return JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString();
     }
 
     public long getTimestamp() {
-        return timestamp;
-    }
-
-    /**
-     * @return True if 32 bit, false otherwise.
-     */
-    public boolean is32Bit() {
-        boolean is32Bit = false;
-        if (logEntry != null) {
-            is32Bit = logEntry.matches("^.+32-Bit.+$");
-        }
-        return is32Bit;
+        return super.getTimestamp();
     }
 }

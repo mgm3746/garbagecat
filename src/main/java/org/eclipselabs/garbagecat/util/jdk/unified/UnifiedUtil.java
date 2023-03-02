@@ -65,6 +65,7 @@ public final class UnifiedUtil {
             case UNIFIED_G1_YOUNG_PAUSE:
             case UNIFIED_G1_YOUNG_PREPARE_MIXED:
             case UNIFIED_HEADER:
+            case UNIFIED_HEADER_VERSION:
             case UNIFIED_OLD:
             case UNIFIED_REMARK:
             case UNIFIED_PARALLEL_COMPACTING_OLD:

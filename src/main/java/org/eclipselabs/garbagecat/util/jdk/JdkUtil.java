@@ -91,6 +91,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEv
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent;
@@ -154,13 +155,13 @@ public final class JdkUtil {
         //
         UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER,
         //
-        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
+        UNIFIED_HEADER_VERSION, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
         //
-        UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1,
+        UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD,
         //
-        USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING,
+        UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z,
         //
-        Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
+        VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
     };
 
     /**
@@ -400,6 +401,8 @@ public final class JdkUtil {
         if (UnifiedHeaderEvent.match(logLine)
                 && (priorLogLine == null || UnifiedHeaderEvent.match(priorLogLine) || !GcInfoEvent.match(priorLogLine)))
             return LogEventType.UNIFIED_HEADER;
+        if (UnifiedHeaderVersionEvent.match(logLine))
+            return LogEventType.UNIFIED_HEADER_VERSION;
         if (UnifiedOldEvent.match(logLine))
             return LogEventType.UNIFIED_OLD;
         if (UnifiedParallelCompactingOldEvent.match(logLine))
@@ -604,6 +607,7 @@ public final class JdkUtil {
         case GC_LOCKER_RETRY:
         case UNIFIED_G1_INFO:
         case UNIFIED_HEADER:
+        case UNIFIED_HEADER_VERSION:
         case UNKNOWN:
         case USING_SERIAL:
         case USING_PARALLEL:
@@ -734,6 +738,7 @@ public final class JdkUtil {
         case UNIFIED_BLANK_LINE:
         case UNIFIED_G1_INFO:
         case UNIFIED_HEADER:
+        case UNIFIED_HEADER_VERSION:
         case UNKNOWN:
         case VM_WARNING:
             return false;
@@ -784,6 +789,8 @@ public final class JdkUtil {
             return new UnifiedG1YoungPrepareMixedEvent(logLine);
         case UNIFIED_HEADER:
             return new UnifiedHeaderEvent(logLine);
+        case UNIFIED_HEADER_VERSION:
+            return new UnifiedHeaderVersionEvent(logLine);
         case UNIFIED_OLD:
             return new UnifiedOldEvent(logLine);
         case UNIFIED_PARALLEL_COMPACTING_OLD:

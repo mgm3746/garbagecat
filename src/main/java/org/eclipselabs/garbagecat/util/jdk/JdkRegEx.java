@@ -210,18 +210,17 @@ public final class JdkRegEx {
 
     /**
      * <p>
-     * Regular expression for a JDK release string.
+     * Regular expression for a &lt;= JDK8 release string (non-unified).
      * </p>
      * 
      * For example:
      * 
      * <pre>
      * 1.8.0_131-b11
-     * 11.0.9+11-LTS
-     * 12.0.1+12
+     * 1.8.0_342-b07
      * </pre>
      */
-    public static final String RELEASE_STRING = "((1.6.0|1.7.0|1.8.0|9|10|11|12|13|14|15|16).+)";
+    public static final String RELEASE_STRING = "((1.6.0|1.7.0|1.8.0).+)";
 
     /**
      * The size of memory in bytes (B), kilobytes (K), megabytes (M), or gigabytes (G) to a whole number or to one
