@@ -432,8 +432,8 @@ class TestCmsRemarkEvent {
                 JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY),
                 JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION),
-                JdkUtil.LogEventType.HEADER_VERSION.toString() + " not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VM_INFO),
+                JdkUtil.LogEventType.HEADER_VM_INFO.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PAR_NEW),
                 JdkUtil.LogEventType.PAR_NEW.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK),

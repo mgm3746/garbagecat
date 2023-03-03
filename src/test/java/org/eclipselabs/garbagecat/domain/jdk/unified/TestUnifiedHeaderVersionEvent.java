@@ -58,6 +58,7 @@ class TestUnifiedHeaderVersionEvent {
         assertEquals((long) 13, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(17, event.getJdkVersionMajor(), "JDK major version not correct.");
         assertEquals(1, event.getJdkVersionMinor(), "JDK minor version not correct.");
+        assertEquals("17.0.1+12-LTS", event.getJdkReleaseString(), "JDK release string not correct.");
         assertNotEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
     }

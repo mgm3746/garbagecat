@@ -165,8 +165,7 @@ class TestUnifiedHeaderEvent {
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1),
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertEquals("[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)", jvmRun.getJdkVersion(),
-                "JDK version string not correct.");
+        assertEquals("17.0.1+12-LTS", jvmRun.getJvmContext().getReleaseString(), "JDK version string not correct.");
         assertEquals(17, jvmRun.getJvmOptions().getJvmContext().getVersionMajor(), "JDK major version not correct.");
         assertEquals(1, jvmRun.getJvmOptions().getJvmContext().getVersionMinor(), "JDK minor version not correct.");
     }

@@ -70,6 +70,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.github.joa.JvmOptions;
 import org.github.joa.domain.GarbageCollector;
+import org.github.joa.domain.JvmContext;
 
 /**
  * JVM run data.
@@ -78,7 +79,7 @@ import org.github.joa.domain.GarbageCollector;
  * 
  */
 public class JvmRun {
-
+    
     /**
      * Memory being allocated per second (kilobytes).
      */
@@ -150,9 +151,9 @@ public class JvmRun {
     private long invertedSerialismCount;
 
     /**
-     * Convenience field for the JDK version string.
+     * JVM context.
      */
-    private String jdkVersion;
+    private JvmContext jvmContext;
 
     /**
      * JVM options.
@@ -359,6 +360,11 @@ public class JvmRun {
      * Total unified safepoint time duration (nanoseconds).
      */
     private long unifiedSafepointTimeTotal;
+
+    /**
+     * Convenience field for vm_info.
+     */
+    private String vmInfo;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
@@ -627,6 +633,12 @@ public class JvmRun {
                 jvmOptions.addAnalysis(org.github.joa.util.Analysis.ERROR_JDK8_CMS_PAR_NEW_DISABLED);
             }
         }
+        // Check for ancient JDK
+        if (jvmContext.getBuildDate() != null) {
+            if (GcUtil.dayDiff(jvmContext.getBuildDate(), new Date()) > 365) {
+                analysis.add(Analysis.INFO_JDK_ANCIENT);
+            }
+        }
     }
 
     /**
@@ -646,7 +658,18 @@ public class JvmRun {
         Iterator<Analysis> itGcAnalysis = analysis.iterator();
         while (itGcAnalysis.hasNext()) {
             Analysis item = itGcAnalysis.next();
-            a.add(new String[] { item.getKey(), item.getValue() });
+            if (item.getKey().equals(Analysis.INFO_JDK_ANCIENT.toString())) {
+                StringBuffer s = new StringBuffer(item.getValue());
+                String replace = ">1 yr";
+                int position = s.toString().lastIndexOf(replace);
+                StringBuffer with = new StringBuffer();
+                with.append(GcUtil.dayDiff(jvmContext.getBuildDate(), new Date()));
+                with.append(" days");
+                s.replace(position, position + replace.length(), with.toString());
+                a.add(new String[] { item.getKey(), s.toString() });
+            } else {
+                a.add(new String[] { item.getKey(), item.getValue() });
+            }
         }
         if (jvmOptions != null) {
             Iterator<String[]> itJvmOptionsAnalysis = jvmOptions.getAnalysis().iterator();
@@ -664,6 +687,26 @@ public class JvmRun {
             }
         }
         return a;
+    }
+
+    /**
+     * Convenience method to get the <code>Analysis</code> literal.
+     * 
+     * @param key
+     *            The <code>Analysis</code> key.
+     * @return The <code>Analysis</code> display literal, or null if it does not exist.
+     */
+    public String getAnalysisLiteral(String key) {
+        String literal = null;
+        Iterator<String[]> i = getAnalysis().iterator();
+        while (i.hasNext()) {
+            String[] item = i.next();
+            if (item[0].equals(key)) {
+                literal = item[1];
+                break;
+            }
+        }
+        return literal;
     }
 
     public int getBlockingEventCount() {
@@ -823,8 +866,8 @@ public class JvmRun {
         return invertedSerialismCount;
     }
 
-    public String getJdkVersion() {
-        return jdkVersion;
+    public JvmContext getJvmContext() {
+        return jvmContext;
     }
 
     public JvmOptions getJvmOptions() {
@@ -1139,6 +1182,10 @@ public class JvmRun {
         return unifiedSafepointTimeTotal;
     }
 
+    public String getVmInfo() {
+        return vmInfo;
+    }
+
     public LogEvent getWorstInvertedParallelismEvent() {
         return worstInvertedParallelismEvent;
     }
@@ -1256,8 +1303,8 @@ public class JvmRun {
         this.invertedSerialismCount = invertedSerialismCount;
     }
 
-    public void setJdkVersion(String jdkVersion) {
-        this.jdkVersion = jdkVersion;
+    public void setJvmContext(JvmContext jvmContext) {
+        this.jvmContext = jvmContext;
     }
 
     public void setJvmOptions(JvmOptions jvmOptions) {
@@ -1426,6 +1473,10 @@ public class JvmRun {
 
     public void setUnifiedSafepointTimeTotal(long unifiedSafepointTimeTotal) {
         this.unifiedSafepointTimeTotal = unifiedSafepointTimeTotal;
+    }
+
+    public void setVmInfo(String vmInfo) {
+        this.vmInfo = vmInfo;
     }
 
     public void setWorstInvertedParallelismEvent(LogEvent worstInvertedParallelismEvent) {

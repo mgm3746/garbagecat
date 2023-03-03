@@ -49,7 +49,7 @@ import org.eclipselabs.garbagecat.domain.jdk.GcLockerScavengeFailedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
-import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeaderVmInfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
@@ -137,7 +137,7 @@ public final class JdkUtil {
         //
         G1_YOUNG_INITIAL_MARK, G1_YOUNG_PAUSE, GC_INFO, GC_LOCKER_RETRY, GC_LOCKER_RETRY_LIMIT,
         //
-        GC_LOCKER_SCAVENGE_FAILED, GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VERSION, HEAP,
+        GC_LOCKER_SCAVENGE_FAILED, GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VM_INFO, HEAP,
         //
         HEAP_ADDRESS, HEAP_AT_GC, HEAP_REGION_SIZE, LOG_FILE, METASPACE_UTILS_REPORT, OOME_METASPACE, PAR_NEW,
         //
@@ -162,14 +162,14 @@ public final class JdkUtil {
         UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z,
         //
         VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
-    };
+    }
 
     /**
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
         APPLICATION_STOPPED_TIME, CMS, DATE_STAMP, G1, PARALLEL, SERIAL, SHENANDOAH, UNIFIED, UNIFIED_G1
-    };
+    }
 
     /**
      * The number of regex patterns in <code>UnifiedRegEx.DECORATOR</code>. Convenience field to make the code resilient
@@ -559,8 +559,8 @@ public final class JdkUtil {
             return LogEventType.HEADER_COMMAND_LINE_FLAGS;
         if (HeaderMemoryEvent.match(logLine))
             return LogEventType.HEADER_MEMORY;
-        if (HeaderVersionEvent.match(logLine))
-            return LogEventType.HEADER_VERSION;
+        if (HeaderVmInfoEvent.match(logLine))
+            return LogEventType.HEADER_VM_INFO;
         if (VmWarningEvent.match(logLine))
             return LogEventType.VM_WARNING;
 
@@ -589,7 +589,7 @@ public final class JdkUtil {
         case G1_CONCURRENT:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
-        case HEADER_VERSION:
+        case HEADER_VM_INFO:
         case HEAP_ADDRESS:
         case HEAP_AT_GC:
         case HEAP_REGION_SIZE:
@@ -722,7 +722,7 @@ public final class JdkUtil {
         case GC_OVERHEAD_LIMIT:
         case HEADER_COMMAND_LINE_FLAGS:
         case HEADER_MEMORY:
-        case HEADER_VERSION:
+        case HEADER_VM_INFO:
         case HEAP_ADDRESS:
         case HEAP_AT_GC:
         case HEAP_REGION_SIZE:
@@ -927,8 +927,8 @@ public final class JdkUtil {
             return new HeaderCommandLineFlagsEvent(logLine);
         case HEADER_MEMORY:
             return new HeaderMemoryEvent(logLine);
-        case HEADER_VERSION:
-            return new HeaderVersionEvent(logLine);
+        case HEADER_VM_INFO:
+            return new HeaderVmInfoEvent(logLine);
         case HEAP_AT_GC:
             return new HeapAtGcEvent(logLine);
         case LOG_FILE:

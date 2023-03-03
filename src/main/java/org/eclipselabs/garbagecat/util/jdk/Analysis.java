@@ -22,7 +22,7 @@ import org.eclipselabs.garbagecat.util.GcUtil;
  * 
  */
 public enum Analysis {
-
+    
     /**
      * Property key for concurrent mode failure.
      */
@@ -135,6 +135,11 @@ public enum Analysis {
      * Property key for humongous allocations.
      */
     INFO_G1_HUMONGOUS_ALLOCATION("info.g1.humongous.allocation"),
+
+    /**
+     * Property key for a JDK that is more than 1 year older than the latest release.
+     */
+    INFO_JDK_ANCIENT("info.jdk.ancient"),
 
     /**
      * Property key for young space &gt;= old space.

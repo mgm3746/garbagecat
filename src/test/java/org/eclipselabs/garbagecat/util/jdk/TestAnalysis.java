@@ -431,8 +431,8 @@ class TestAnalysis {
                 JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " information not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY),
                 JdkUtil.LogEventType.HEADER_MEMORY.toString() + " information not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION),
-                JdkUtil.LogEventType.HEADER_VERSION.toString() + " information not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VM_INFO),
+                JdkUtil.LogEventType.HEADER_VM_INFO.toString() + " information not identified.");
         // Usually no reason to set the thread stack size on 64 bit.
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32.getKey()),
                 org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_NOT_SET_32 + " analysis incorrectly identified.");

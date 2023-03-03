@@ -12,21 +12,26 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.Arch;
+import org.github.joa.domain.BuiltBy;
 import org.github.joa.domain.Os;
 
 /**
  * <p>
- * HEADER_VERSION
+ * HEADER_VM_INFO
  * </p>
  * 
  * <p>
- * Version header.
+ * JVM environment information unique to the JDK build. A version string embedded in libjvm.so/jvm.dll. The same as the
+ * fatal error log vm_info. JDK &lt;=8.
  * </p>
  * 
  * <h2>Example Logging</h2>
@@ -50,9 +55,9 @@ import org.github.joa.domain.Os;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class HeaderVersionEvent implements LogEvent {
+public class HeaderVmInfoEvent implements LogEvent {
 
-    private static Pattern pattern = Pattern.compile(HeaderVersionEvent.REGEX);
+    private static Pattern pattern = Pattern.compile(HeaderVmInfoEvent.REGEX);
 
     /**
      * Regular expressions defining the logging.
@@ -88,9 +93,102 @@ public class HeaderVersionEvent implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public HeaderVersionEvent(String logEntry) {
+    public HeaderVmInfoEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
+    }
+
+    /**
+     * @return The chip architecture.
+     */
+    public Arch getArch() {
+        Arch arch = Arch.UNKNOWN;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            int indexArch = 4;
+            if (matcher.group(indexArch).equals("amd64") || matcher.group(indexArch).equals("linux64")) {
+                arch = Arch.X86_64;
+            } else if (matcher.group(indexArch).equals("ppc64le")) {
+                arch = Arch.PPC64LE;
+            } else if (matcher.group(indexArch).equals("ppc64")) {
+                arch = Arch.PPC64;
+            } else if (matcher.group(indexArch).equals("x86")) {
+                arch = Arch.X86;
+            }
+        }
+        return arch;
+    }
+
+    /**
+     * @return The JDK build date/time.
+     */
+    public Date getBuildDate() {
+        Date date = null;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            date = GcUtil.getDate(matcher.group(8), matcher.group(9), matcher.group(10), matcher.group(11),
+                    matcher.group(12), matcher.group(13));
+        }
+        return date;
+    }
+
+    /**
+     * @return JDK builder.
+     */
+    public BuiltBy getBuiltBy() {
+        BuiltBy builtBy = BuiltBy.UNKNOWN;
+        if (logEntry.matches(".+\"build\".+")) {
+            builtBy = BuiltBy.BUILD;
+        } else if (logEntry.matches(".+\"buildslave\".+")) {
+            builtBy = BuiltBy.BUILDSLAVE;
+        } else if (logEntry.matches(".+\"\".+")) {
+            builtBy = BuiltBy.EMPTY;
+        } else if (logEntry.matches(".+\"jenkins\".+")) {
+            // AdoptOpenJDK
+            builtBy = BuiltBy.JENKINS;
+        } else if (logEntry.matches(".+\"java_re\".+")) {
+            // Oracle current
+            builtBy = BuiltBy.JAVA_RE;
+        } else if (logEntry.matches(".+\"mach5one\".+")) {
+            // Oracle previous
+            builtBy = BuiltBy.MACH5ONE;
+        } else if (logEntry.matches(".+\"mockbuild\".+")) {
+            // Red Hat, CentOS
+            builtBy = BuiltBy.MOCKBUILD;
+        } else if (logEntry.matches(".+\"temurin\".+")) {
+            // Adoptium temurin
+            builtBy = BuiltBy.TEMURIN;
+        } else if (logEntry.matches(".+\"tester\".+")) {
+            // Azul
+            builtBy = BuiltBy.TESTER;
+        } else if (logEntry.matches(".+\"vsts\".+")) {
+            // Microsoft
+            builtBy = BuiltBy.VSTS;
+        } else if (logEntry.matches(".+\"zulu_re\".+")) {
+            // Azul
+            builtBy = BuiltBy.ZULU_RE;
+        }
+        return builtBy;
+    }
+
+    /**
+     * The Java release string. For example:
+     * 
+     * <pre>
+     * 1.8.0_332-b09-1
+     * 11.0.15+9-LTS-1
+     * 17.0.3+6-LTS-2
+     * </pre>
+     * 
+     * @return The Java release string.
+     */
+    public String getJdkReleaseString() {
+        String jdkReleaseString = null;
+        Matcher matcher = pattern.matcher(logEntry);
+        if (matcher.find()) {
+            jdkReleaseString = matcher.group(6);
+        }
+        return jdkReleaseString;
     }
 
     /**
@@ -136,7 +234,7 @@ public class HeaderVersionEvent implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.HEADER_VERSION.toString();
+        return JdkUtil.LogEventType.HEADER_VM_INFO.toString();
     }
 
     /**
@@ -172,4 +270,5 @@ public class HeaderVersionEvent implements LogEvent {
         }
         return is32Bit;
     }
+
 }

@@ -56,7 +56,7 @@ import org.eclipselabs.garbagecat.domain.jdk.GcLockerScavengeFailedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.GcOverheadLimitEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderCommandLineFlagsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeaderMemoryEvent;
-import org.eclipselabs.garbagecat.domain.jdk.HeaderVersionEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeaderVmInfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
@@ -270,8 +270,8 @@ public class GcManager {
         jvmRun.setGcTriggers(jvmDao.getGcTriggers());
         jvmRun.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount());
         jvmRun.setInvertedSerialismCount(jvmDao.getInvertedSerialismCount());
+        jvmRun.setJvmContext(jvmDao.getJvmContext());
         jvmRun.setLogEndingUnidentified(jvmDao.isLogEndingUnidentified());
-        jvmRun.setJdkVersion(jvmDao.getJdkVersion());
         jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
         jvmRun.setLastLogLineUnprocessed(lastLogLineUnprocessed);
         jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
@@ -312,6 +312,7 @@ public class GcManager {
         jvmRun.setWorstSysGtUserEvent(jvmDao.getWorstSysGtUserEvent());
         jvmRun.setPreprocessed(this.preprocessed);
         jvmRun.setPreprocessEvents(jvmDao.getPreprocessEvents());
+        jvmRun.setVmInfo(jvmDao.getVmInfo());
 
         if (!jvmRun.hasDatestamps() && jvmStartDate == null && jvmRun.getLogFileDate() != null
                 && jvmRun.getFirstEvent() != null && jvmRun.getFirstEvent().getLogEntry() != null) {
@@ -1081,20 +1082,25 @@ public class GcManager {
                         (long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getPhysicalMemoryFree()));
                 jvmDao.setSwap((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwap()));
                 jvmDao.setSwapFree((long) KILOBYTES.toBytes(((HeaderMemoryEvent) event).getSwapFree()));
-            } else if (event instanceof HeaderVersionEvent) {
+            } else if (event instanceof HeaderVmInfoEvent) {
                 jvmDao.setLogEndingUnidentified(false);
-                jvmDao.getJvmContext().setVersionMajor(((HeaderVersionEvent) event).getJdkVersionMajor());
-                jvmDao.getJvmContext().setVersionMinor(((HeaderVersionEvent) event).getJdkVersionMinor());
-                if (((HeaderVersionEvent) event).is32Bit()) {
+                jvmDao.getJvmContext().setVersionMajor(((HeaderVmInfoEvent) event).getJdkVersionMajor());
+                jvmDao.getJvmContext().setVersionMinor(((HeaderVmInfoEvent) event).getJdkVersionMinor());
+                if (((HeaderVmInfoEvent) event).is32Bit()) {
                     jvmDao.getJvmContext().setBit(Bit.BIT32);
                 }
-                jvmDao.setJdkVersion(((HeaderVersionEvent) event).getLogEntry());
-                jvmDao.getJvmContext().setOs(((HeaderVersionEvent) event).getOs());
+                jvmDao.getJvmContext().setArch(((HeaderVmInfoEvent) event).getArch());
+                jvmDao.getJvmContext().setBuiltBy(((HeaderVmInfoEvent) event).getBuiltBy());
+                jvmDao.getJvmContext().setOs(((HeaderVmInfoEvent) event).getOs());
+                jvmDao.getJvmContext().setBuildDate(((HeaderVmInfoEvent) event).getBuildDate());
+                jvmDao.getJvmContext().setReleaseString(((HeaderVmInfoEvent) event).getJdkReleaseString());
+                jvmDao.setVmInfo(((HeaderVmInfoEvent) event).getLogEntry());
             } else if (event instanceof UnifiedHeaderVersionEvent) {
                 jvmDao.setLogEndingUnidentified(false);
                 jvmDao.getJvmContext().setVersionMajor(((UnifiedHeaderVersionEvent) event).getJdkVersionMajor());
                 jvmDao.getJvmContext().setVersionMinor(((UnifiedHeaderVersionEvent) event).getJdkVersionMinor());
-                jvmDao.setJdkVersion(((UnifiedHeaderVersionEvent) event).getLogEntry());
+                jvmDao.getJvmContext().setReleaseString(((UnifiedHeaderVersionEvent) event).getJdkReleaseString());
+                jvmDao.setVmInfo(((UnifiedHeaderVersionEvent) event).getJdkReleaseString());
             } else if (event instanceof LogFileEvent) {
                 jvmDao.setLogEndingUnidentified(false);
                 if (((LogFileEvent) event).isCreated()) {

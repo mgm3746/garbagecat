@@ -232,8 +232,8 @@ public class Main {
                 printWriter.write(LINEBREAK_DOUBLE);
                 printWriter.write("JVM:" + LINE_SEPARATOR);
                 printWriter.write(LINEBREAK_SINGLE);
-                if (jvmRun.getJvmOptions().getJvmContext().getVersionMajor() > 0) {
-                    printWriter.write("Version: " + jvmRun.getJdkVersion() + LINE_SEPARATOR);
+                if (jvmRun.getVmInfo() != null) {
+                    printWriter.write("Version: " + jvmRun.getVmInfo() + LINE_SEPARATOR);
                 }
                 if (jvmRun.getJvmOptions().getJvmContext().getOptions() != null) {
                     printWriter

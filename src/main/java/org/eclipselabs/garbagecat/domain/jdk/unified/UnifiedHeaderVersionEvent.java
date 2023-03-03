@@ -93,6 +93,26 @@ public class UnifiedHeaderVersionEvent extends UnifiedHeaderEvent {
     }
 
     /**
+     * The Java release string. For example:
+     * 
+     * <pre>
+     * 1.8.0_332-b09-1
+     * 11.0.15+9-LTS-1
+     * 17.0.3+6-LTS-2
+     * </pre>
+     * 
+     * @return The Java release string.
+     */
+    public String getJdkReleaseString() {
+        String jdkReleaseString = null;
+        Matcher matcher = pattern.matcher(super.getLogEntry());
+        if (matcher.find()) {
+            jdkReleaseString = matcher.group(DECORATOR_SIZE + 1);
+        }
+        return jdkReleaseString;
+    }
+
+    /**
      * @return The JDK version (e.g. '8'), or <code>org.github.joa.domain.JvmContext.UNKNOWN</code> if it cannot be
      *         determined. Not available in unified logging (JDK11+).
      */
@@ -117,7 +137,7 @@ public class UnifiedHeaderVersionEvent extends UnifiedHeaderEvent {
         }
         return jdkVersionMajor;
     }
-
+    
     /**
      * @return The JDK update (e.g. '60'), or <code>org.github.joa.domain.JvmContext.UNKNOWN</code> if it cannot be
      *         determined.

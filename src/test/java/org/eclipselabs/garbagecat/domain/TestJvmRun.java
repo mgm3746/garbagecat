@@ -28,6 +28,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
@@ -214,10 +216,24 @@ class TestJvmRun {
                 JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY),
                 JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VERSION),
-                JdkUtil.LogEventType.HEADER_VERSION.toString() + " not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VM_INFO),
+                JdkUtil.LogEventType.HEADER_VM_INFO.toString() + " not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPLICIT_GC_DISABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_EXPLICIT_GC_DISABLED + " analysis not identified.");
+        Date buildDate = jvmRun.getJvmContext().getBuildDate();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(buildDate);
+        // Java Calendar month is 0 based
+        assertEquals(3, calendar.get(Calendar.MONTH), "Start month not parsed correctly.");
+        assertEquals(10, calendar.get(Calendar.DAY_OF_MONTH), "Start day not parsed correctly.");
+        assertEquals(2015, calendar.get(Calendar.YEAR), "Start year not parsed correctly.");
+        assertEquals(19, calendar.get(Calendar.HOUR_OF_DAY), "Start hour not parsed correctly.");
+        assertEquals(53, calendar.get(Calendar.MINUTE), "Start minute not parsed correctly.");
+        assertEquals(14, calendar.get(Calendar.SECOND), "Start second not parsed correctly.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_JDK_ANCIENT.getKey()),
+                Analysis.INFO_JDK_ANCIENT + " analysis not identified.");
+        assertTrue(jvmRun.getAnalysisLiteral(Analysis.INFO_JDK_ANCIENT.getKey())
+                .matches("^The JDK is very old \\(\\d{3,} days\\)\\.$"), Analysis.INFO_JDK_ANCIENT + " not correct.");
     }
 
     /**

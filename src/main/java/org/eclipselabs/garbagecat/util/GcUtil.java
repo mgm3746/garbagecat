@@ -16,6 +16,7 @@ import static java.util.concurrent.TimeUnit.DAYS;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -41,6 +42,18 @@ public final class GcUtil {
     }
 
     /**
+     * @param start
+     *            Start date.
+     * @param end
+     *            End date.
+     * @return The number of days between 2 dates.
+     */
+    public static final int dayDiff(Date start, Date end) {
+        long millisDiff = millisDiff(start, end);
+        return daysInMilliSeconds(millisDiff);
+    }
+
+    /**
      * Calculate the number of whole days (24 hour periods) for a given number of milliseconds
      * 
      * @param timestamp
@@ -49,6 +62,79 @@ public final class GcUtil {
      */
     public static int daysInMilliSeconds(long timestamp) {
         return (int) (timestamp / DAYS.toMillis(1));
+    }
+
+    /**
+     * Convert date parts to a <code>Date</code>.
+     * 
+     * @param MMM
+     *            The month.
+     * @param d
+     *            The day.
+     * @param yyyy
+     *            The year.
+     * @param HH
+     *            The hour.
+     * @param mm
+     *            The minute.
+     * @param ss
+     *            The seconds.
+     * @return The date part strings converted to a <code>Date</code>
+     */
+    public static final Date getDate(String MMM, String d, String yyyy, String HH, String mm, String ss) {
+        if (MMM == null || d == null || yyyy == null || HH == null || mm == null || ss == null) {
+            throw new IllegalArgumentException("One or more date parts are missing.");
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        // Java Calendar month is 0 based
+        switch (MMM) {
+        case "Jan":
+            calendar.set(Calendar.MONTH, 0);
+            break;
+        case "Feb":
+            calendar.set(Calendar.MONTH, 1);
+            break;
+        case "Mar":
+            calendar.set(Calendar.MONTH, 2);
+            break;
+        case "Apr":
+            calendar.set(Calendar.MONTH, 3);
+            break;
+        case "May":
+            calendar.set(Calendar.MONTH, 4);
+            break;
+        case "Jun":
+            calendar.set(Calendar.MONTH, 5);
+            break;
+        case "Jul":
+            calendar.set(Calendar.MONTH, 6);
+            break;
+        case "Aug":
+            calendar.set(Calendar.MONTH, 7);
+            break;
+        case "Sep":
+            calendar.set(Calendar.MONTH, 8);
+            break;
+        case "Oct":
+            calendar.set(Calendar.MONTH, 9);
+            break;
+        case "Nov":
+            calendar.set(Calendar.MONTH, 10);
+            break;
+        case "Dec":
+            calendar.set(Calendar.MONTH, 11);
+            break;
+        default:
+            throw new IllegalArgumentException("Unexpected month: " + MMM);
+        }
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.valueOf(d).intValue());
+        calendar.set(Calendar.YEAR, Integer.valueOf(yyyy));
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.valueOf(HH).intValue());
+        calendar.set(Calendar.MINUTE, Integer.valueOf(mm).intValue());
+        calendar.set(Calendar.SECOND, Integer.valueOf(ss).intValue());
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
     }
 
     /**
@@ -111,6 +197,23 @@ public final class GcUtil {
      */
     public static boolean isValidStartDateTime(String startDateTime) {
         return parseStartDateTime(startDateTime) != null;
+    }
+
+    /**
+     * Calculate the number of milliseconds between two dates.
+     * 
+     * @param start
+     *            Start <code>Date</code>.
+     * @param end
+     *            End <code>Date</code>.
+     * @return The interval between two dates in milliseconds.
+     */
+    private static final long millisDiff(Date start, Date end) {
+        long millisDiff = 0;
+        if (start != null && end != null) {
+            millisDiff = end.getTime() - start.getTime();
+        }
+        return millisDiff;
     }
 
     /**

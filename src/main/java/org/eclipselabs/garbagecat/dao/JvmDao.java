@@ -145,11 +145,6 @@ public class JvmDao {
     private long invertedSerialismCount;
 
     /**
-     * Convenience field for the JDK version string.
-     */
-    private String jdkVersion;
-
-    /**
      * The JVM context.
      */
     private JvmContext jvmContext = new JvmContext(null);
@@ -255,6 +250,11 @@ public class JvmDao {
      * Safepoint events.
      */
     private List<UnifiedSafepointEvent> unifiedSafepointEvents = new ArrayList<>();
+
+    /**
+     * Convenience field for vm_info.
+     */
+    private String vmInfo;
 
     /**
      * <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
@@ -468,10 +468,6 @@ public class JvmDao {
      */
     public long getInvertedSerialismCount() {
         return invertedSerialismCount;
-    }
-
-    public String getJdkVersion() {
-        return jdkVersion;
     }
 
     public JvmContext getJvmContext() {
@@ -874,6 +870,10 @@ public class JvmDao {
                 .collect(summingLong(Long::valueOf));
     }
 
+    public String getVmInfo() {
+        return vmInfo;
+    }
+
     /**
      * @return The <code>ParallelCollection</code> event with the lowest "inverted" parallelism.
      */
@@ -939,10 +939,6 @@ public class JvmDao {
      */
     public void setInvertedSerialismCount(long invertedSerialismCount) {
         this.invertedSerialismCount = invertedSerialismCount;
-    }
-
-    public void setJdkVersion(String jdkVersion) {
-        this.jdkVersion = jdkVersion;
     }
 
     public void setLogEndingUnidentified(boolean logEndingUnidentified) {
@@ -1055,6 +1051,10 @@ public class JvmDao {
      */
     public void setSysGtUserCount(long sysGtUserCount) {
         this.sysGtUserCount = sysGtUserCount;
+    }
+
+    public void setVmInfo(String vmInfo) {
+        this.vmInfo = vmInfo;
     }
 
     /**
