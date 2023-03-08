@@ -79,7 +79,7 @@ import org.github.joa.domain.JvmContext;
  * 
  */
 public class JvmRun {
-    
+
     /**
      * Memory being allocated per second (kilobytes).
      */
@@ -663,8 +663,10 @@ public class JvmRun {
                 String replace = ">1 yr";
                 int position = s.toString().lastIndexOf(replace);
                 StringBuffer with = new StringBuffer();
-                with.append(GcUtil.dayDiff(jvmContext.getBuildDate(), new Date()));
-                with.append(" days");
+                BigDecimal years = new BigDecimal(GcUtil.dayDiff(jvmContext.getBuildDate(), new Date()));
+                years = years.divide(new BigDecimal(365), 1, HALF_EVEN);
+                with.append(years.toString());
+                with.append(" years");
                 s.replace(position, position + replace.length(), with.toString());
                 a.add(new String[] { item.getKey(), s.toString() });
             } else {

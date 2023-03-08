@@ -232,8 +232,10 @@ class TestJvmRun {
         assertEquals(14, calendar.get(Calendar.SECOND), "Start second not parsed correctly.");
         assertTrue(jvmRun.hasAnalysis(Analysis.INFO_JDK_ANCIENT.getKey()),
                 Analysis.INFO_JDK_ANCIENT + " analysis not identified.");
-        assertTrue(jvmRun.getAnalysisLiteral(Analysis.INFO_JDK_ANCIENT.getKey())
-                .matches("^The JDK is very old \\(\\d{3,} days\\)\\.$"), Analysis.INFO_JDK_ANCIENT + " not correct.");
+        assertTrue(
+                jvmRun.getAnalysisLiteral(Analysis.INFO_JDK_ANCIENT.getKey())
+                        .matches("^The JDK is very old \\(\\d{1,}\\.\\d years\\)\\.$"),
+                Analysis.INFO_JDK_ANCIENT + " not correct.");
     }
 
     /**
