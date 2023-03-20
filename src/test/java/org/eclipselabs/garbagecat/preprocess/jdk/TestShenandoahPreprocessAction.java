@@ -367,6 +367,13 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testFinalMarkCollectableGarbageCSetRegions4Digit() {
+        String logLine = "    Collectable Garbage: 5964M (95% of total), 102031K CSet, 1516 CSet regions";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
+    }
+
+    @Test
     void testFinalMarkCollectableGarbageUptimeMillis() {
         String logLine = "[2019-02-05T14:47:34.201-0200][3113ms] GC(0) Collectable Garbage: 179M (61% of total), "
                 + "23M CSet, 407 CSet regions";
