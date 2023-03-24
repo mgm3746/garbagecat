@@ -655,7 +655,10 @@ public final class JdkUtil {
             } else {
                 priorEventDurationNanos = JdkMath.convertMicrosToNanos(priorEvent.getDuration()).longValue();
             }
-            if (eventTimestampNanos < priorEventTimestampNanos) {
+            if (eventTimestampNanos < priorEventTimestampNanos - 1000000L) {
+                // Only report if 2nd event > 1 millisecond before 1st event
+                System.out.println("eventTimestampNanos: " + eventTimestampNanos);
+                System.out.println("priorEventTimestampNanos: " + priorEventTimestampNanos);
                 throw new TimeWarpException("Bad order: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                         + Constants.LINE_SEPARATOR + event.getLogEntry());
             } else if (eventTimestampNanos < priorEventTimestampNanos + priorEventDurationNanos - 5000000000L) {
