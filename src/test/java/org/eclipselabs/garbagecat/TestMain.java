@@ -28,6 +28,8 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_LON
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERBOSE_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERBOSE_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_SHORT;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,7 +56,7 @@ class TestMain {
         String[] args = new String[] { //
                 "-o", //
                 temporaryFolder.getAbsolutePath(), //
-                "-v", //
+                "-n", //
                 "-l", //
                 // Instead of a file, use a location sure to exist.
                 temporaryFolder.getAbsolutePath() //
@@ -97,6 +99,7 @@ class TestMain {
                 "12345678.txt", //
                 "--version", //
                 "--latest", //
+                "--verbose", //
                 // Instead of a file, use a location sure to exist.
                 tmpFolder.getAbsolutePath() //
         };
@@ -111,6 +114,7 @@ class TestMain {
         assertHasOption(cmd, OPTION_OUTPUT_LONG);
         assertHasOption(cmd, OPTION_VERSION_LONG);
         assertHasOption(cmd, OPTION_LATEST_VERSION_LONG);
+        assertHasOption(cmd, OPTION_VERBOSE_LONG);
     }
 
     @Test
@@ -137,8 +141,9 @@ class TestMain {
                 "-r", //
                 "-o", //
                 "12345678.txt", //
-                "-v", //
+                "-n", //
                 "-l", //
+                "-v", //
                 // Instead of a file, use a location sure to exist.
                 temporaryFolder.getAbsolutePath() //
         };
@@ -153,7 +158,7 @@ class TestMain {
         assertHasOption(cmd, OPTION_OUTPUT_SHORT);
         assertHasOption(cmd, OPTION_VERSION_SHORT);
         assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
-        assertHasOption(cmd, OPTION_LATEST_VERSION_SHORT);
+        assertHasOption(cmd, OPTION_VERBOSE_SHORT);
     }
 
 }

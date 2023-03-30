@@ -549,7 +549,6 @@ public class GcManager {
         List<String> preprocessedLogList = new ArrayList<String>();
 
         if (!logLines.isEmpty()) {
-
             // Used for de-tangling intermingled logging events that span multiple lines
             List<String> entangledLogLines = new ArrayList<String>();
             // Used to provide context for preprocessing decisions

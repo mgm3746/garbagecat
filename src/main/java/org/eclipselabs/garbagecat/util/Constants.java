@@ -139,6 +139,16 @@ public class Constants {
     public static final String OPTION_THRESHOLD_SHORT = "t";
 
     /**
+     * Verbose command line long option.
+     */
+    public static final String OPTION_VERBOSE_LONG = "verbose";
+
+    /**
+     * Verbose command line short option.
+     */
+    public static final String OPTION_VERBOSE_SHORT = "v";
+
+    /**
      * Version command line long option.
      */
     public static final String OPTION_VERSION_LONG = "version";
@@ -146,7 +156,7 @@ public class Constants {
     /**
      * Version command line short option.
      */
-    public static final String OPTION_VERSION_SHORT = "v";
+    public static final String OPTION_VERSION_SHORT = "n";
 
     /**
      * Default output file name.

@@ -30,6 +30,8 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_LON
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERBOSE_LONG;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERBOSE_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
@@ -79,6 +81,7 @@ public class OptionsParser {
                 "output file name (default " + OUTPUT_FILE_NAME + ")");
         options.addOption(OPTION_REPORT_CONSOLE_SHORT, OPTION_REPORT_CONSOLE_LONG, false,
                 "print report to stdout instead of file");
+        options.addOption(OPTION_VERBOSE_SHORT, OPTION_VERBOSE_LONG, false, "verbose output");
     }
 
     /**

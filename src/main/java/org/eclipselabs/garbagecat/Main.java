@@ -31,6 +31,7 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_LON
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
+import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERBOSE_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
 import static org.eclipselabs.garbagecat.util.GcUtil.parseStartDateTime;
@@ -112,6 +113,11 @@ public class Main {
         String jvmOptions = cmd.hasOption(OPTION_JVMOPTIONS_LONG) ? cmd.getOptionValue(OPTION_JVMOPTIONS_SHORT) : null;
 
         URI logFileUri = logFile.toURI();
+
+        boolean verbose = cmd.hasOption(OPTION_VERBOSE_LONG);
+        if (verbose) {
+            System.out.println("reading gc logging...");
+        }
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
 
         GcManager gcManager = new GcManager(jvmStartDate);
@@ -127,6 +133,9 @@ public class Main {
              * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in the JVM
              * start date/time.
              */
+            if (verbose) {
+                System.out.println("preprocessing...");
+            }
             logLines = gcManager.preprocess(logLines, jvmStartDate);
         }
 
@@ -146,6 +155,9 @@ public class Main {
         boolean version = cmd.hasOption(OPTION_VERSION_LONG);
         boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);
         createReport(jvmRun, reportConsole, reportFile, version, latestVersion, logFileName);
+        if (verbose) {
+            System.out.println("done");
+        }
     }
 
     /**
