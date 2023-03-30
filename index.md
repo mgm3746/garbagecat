@@ -184,21 +184,22 @@ usage: garbagecat [OPTION]... [FILE]
  -h,--help                  help
  -j,--jvmoptions <arg>      JVM options used during JVM run
  -l,--latest                latest version
+ -n,--version               version
  -o,--output <arg>          output file name (default report.txt)
  -p,--preprocess            do preprocessing
  -r,--reorder               reorder logging by timestamp
  -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss.SSS)
-                            required for handling datestamp-only logging
+                            to convert uptime to datestamp
  -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
                             reporting
- -v,--version               version
+ -v,--verbose               verbose output
 ```
 
 Notes:
   1. The Fedora/RHEL install allows garbagecat to be run as an executable file. For example: `garbagecat --help`.
   1. JVM options are can be passed in if they are not present in the gc logging header. Specifying the JVM options used during the JVM run allows for more detailed analysis.
   1. By default a report called report.txt is created in the directory where the **garbagecat** tool is run. Specifying a custom name for the output file is useful when analyzing multiple gc logs.
-  1. Version information is included in the report by using the version and.or latest version options.
+  1. Version information is included in the report by using the version or latest version options.
   1. Preprocessing is sometimes required (e.g. when non-standard JVM options are used). It removes extraneous logging and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across multiple lines).
   1. When preprocessing is enabled, a preprocessed file will be created in the same location as the input file with a ".pp" file extension added.
   1. Reordering is for gc logging that has gotten out of time/date order. Very rare, but some logging management systems/processes are susceptible to this happening (e.g. logging stored in a central repository).
@@ -211,7 +212,7 @@ Notes:
 https://github.com/mgm3746/garbagecat/tree/master/src/test/gc-example.log
 
 ```
-$ java -jar garbagecat.jar -v -l /path/to/garbagecat/src/test/gc-example.log
+$ java -jar garbagecat.jar -n -l /path/to/garbagecat/src/test/gc-example.log
 ```
 
 ### Report ###
@@ -306,13 +307,13 @@ The bottom of the report shows 80 unidentified lines:
 Run with the preprocess flag:
 
 ```
-$ java -jar garbagecat.jar -p -v -l /path/to/garbagecat/src/test/gc-example.log
+$ java -jar garbagecat.jar -p -n -l /path/to/garbagecat/src/test/gc-example.log
 ```
 
 There are no unidentified log lines after preprocessing. However, there are many bottlenecks where throughput is < 90% (default). To get a better idea of bottlenecks, run with -t 50 to see stretches where more time is spent running gc/jvm threads than application threads.
 
 ```
-$ java -jar garbagecat.jar -v -l -p -t 50 ~/path/to/garbagecat/src/test/gc-example.log
+$ java -jar garbagecat.jar -n -l -p -t 50 ~/path/to/garbagecat/src/test/gc-example.log
 ```
 
 There are still a lot of bottlenecks reported; however, none are for a very long stretch. For example, the following lines show 3 gc events where more time was spent doing gc than running application threads, but it covers less than 1 second: 62339.274 --> 62339.684:
