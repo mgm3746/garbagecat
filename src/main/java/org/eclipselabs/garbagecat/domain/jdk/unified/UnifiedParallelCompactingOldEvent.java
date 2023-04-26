@@ -80,9 +80,10 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String __TRIGGER = "(" + GcTrigger.ERGONOMICS.getRegex() + "|"
-            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
-            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")";
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
+            + ")";
 
     /**
      * Regular expression defining the logging.

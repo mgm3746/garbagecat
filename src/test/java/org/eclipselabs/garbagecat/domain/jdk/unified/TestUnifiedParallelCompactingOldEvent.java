@@ -127,6 +127,15 @@ class TestUnifiedParallelCompactingOldEvent {
     }
 
     @Test
+    void testPreprocessedTriggerAllocationFailur() {
+        String logLine = "[2023-04-26T06:06:49.760+0000][7037148828ms] GC(7816404) Pause Full (Allocation Failure) "
+                + "PSYoungGen: 0K->0K(1536K) ParOldGen: 165734K->162796K(181248K) Metaspace: "
+                + "243011K(258944K)->243011K(258944K) 161M->158M(178M) 231.346ms User=5.23s Sys=0.03s Real=0.23s";
+        assertTrue(UnifiedParallelCompactingOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
+    }
+
+    @Test
     void testPreprocessedTriggerHeapDumpInitiatedGc() {
         String logLine = "[2021-11-01T20:48:05.108+0000][240210707ms] GC(951) Pause Full (Heap Dump Initiated GC) "
                 + "PSYoungGen: 17888K->0K(1538048K) ParOldGen: 152353K->163990K(180224K) "
