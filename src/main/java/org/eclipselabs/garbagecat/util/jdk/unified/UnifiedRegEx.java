@@ -122,7 +122,7 @@ public class UnifiedRegEx {
      * 17.0.1+12-LTS
      * </pre>
      */
-    public static final String RELEASE_STRING = "((9|1\\d)\\.\\d\\.(\\d)\\+\\d{2}(-LTS)?)";
+    public static final String RELEASE_STRING = "((9|1\\d)\\.\\d\\.(\\d)\\+\\d{1,}(-LTS)?)";
 
     /**
      * Seconds since JVM started.

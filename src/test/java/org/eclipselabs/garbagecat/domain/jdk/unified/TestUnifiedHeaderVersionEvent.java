@@ -86,6 +86,15 @@ class TestUnifiedHeaderVersionEvent {
     }
 
     @Test
+    void testSingleDigitAfterPlusSign() {
+        String logLine = "[2023-05-10T09:00:58.258-0400] Version: 17.0.7+7-LTS (release)";
+        assertTrue(UnifiedHeaderVersionEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString() + ".");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
     void testTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] Version: 17.0.1+12-LTS (release)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER_VERSION, JdkUtil.identifyEventType(logLine, null),
