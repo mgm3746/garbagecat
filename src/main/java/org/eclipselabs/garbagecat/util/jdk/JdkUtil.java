@@ -633,7 +633,7 @@ public final class JdkUtil {
      * @param throughputThreshold
      *            Throughput threshold (percent of time spent not doing garbage collection for a given time interval) to
      *            be considered a bottleneck. Whole number 0-100.
-     * @return True if the <code>SafepointEvent</code> pause time meets the bottleneck definition.
+     * @return True if the <code>SafepointEvent</code> meets the bottleneck definition.
      */
     public static final boolean isBottleneck(SafepointEvent event, SafepointEvent priorEvent, int throughputThreshold)
             throws TimeWarpException {
@@ -673,17 +673,16 @@ public final class JdkUtil {
                     eventDurationNanos = JdkMath.convertMicrosToNanos(event.getDuration()).longValue();
                 }
                 /*
-                 * Timestamp is the start of a vm event; therefore, the interval is from the end of the prior event to
-                 * the end of the current event.
+                 * Timestamp is the start of an event; therefore, the interval is from the prior event timestamp to the
+                 * current event endstamp.
                  */
-                long interval = eventTimestampNanos + eventDurationNanos - priorEventTimestampNanos
-                        - priorEventDurationNanos;
+                long interval = eventTimestampNanos + eventDurationNanos - priorEventTimestampNanos;
                 // Determine the maximum duration for the given interval that meets the throughput goal.
                 BigDecimal durationThresholdNanos = new BigDecimal(100 - throughputThreshold);
                 durationThresholdNanos = durationThresholdNanos.movePointLeft(2);
                 durationThresholdNanos = durationThresholdNanos.multiply(new BigDecimal(interval));
                 durationThresholdNanos.setScale(0, RoundingMode.DOWN);
-                isBottleneck = eventDurationNanos > durationThresholdNanos.longValue();
+                isBottleneck = (eventDurationNanos + priorEventDurationNanos) > durationThresholdNanos.longValue();
             }
         }
         return isBottleneck;
