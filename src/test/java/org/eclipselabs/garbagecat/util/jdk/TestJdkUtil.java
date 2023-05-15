@@ -50,13 +50,13 @@ class TestJdkUtil {
                 null);
         String logLine = "2021-10-06T13:35:28.537+0300: 401772.143: Total time for which application threads were "
                 + "stopped: 0.0076385 seconds, Stopping threads took: 0.0047232 seconds";
-        ApplicationStoppedTimeEvent currrentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine, null);
+        ApplicationStoppedTimeEvent currentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine, null);
         // Test boundary
         int throughputThreshold = 20;
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+                JdkUtil.isBottleneck(currentEvent, priorEvent, throughputThreshold);
             }
         });
     }
@@ -69,13 +69,13 @@ class TestJdkUtil {
                 null);
         String logLine = "2021-10-08T21:58:51.882+0300: 66.918: Total time for which application threads were stopped: "
                 + "0.0033266 seconds, Stopping threads took: 0.0031114 seconds";
-        ApplicationStoppedTimeEvent currrentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine, null);
+        ApplicationStoppedTimeEvent currentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine, null);
         // Test boundary
         int throughputThreshold = 20;
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+                JdkUtil.isBottleneck(currentEvent, priorEvent, throughputThreshold);
             }
         });
     }
@@ -88,13 +88,13 @@ class TestJdkUtil {
                 null);
         String logLine = "2021-10-06T00:01:22.359+0300: 352925.965: Total time for which application threads were "
                 + "stopped: 0.0030469 seconds, Stopping threads took: 0.0002072 seconds";
-        ApplicationStoppedTimeEvent currrentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine, null);
+        ApplicationStoppedTimeEvent currentEvent = (ApplicationStoppedTimeEvent) JdkUtil.parseLogLine(logLine, null);
         // Test boundary
         int throughputThreshold = 20;
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+                JdkUtil.isBottleneck(currentEvent, priorEvent, throughputThreshold);
             }
         });
     }
@@ -164,13 +164,13 @@ class TestJdkUtil {
                 + "[2021-10-05T21:41:48.937+0200][24.367s] Leaving safepoint region[2021-10-05T21:41:48.937+0200]"
                 + "[24.367s] Total time for which application threads were stopped: 0.1140265 seconds, Stopping "
                 + "threads took: 0.1135560 seconds";
-        UnifiedSafepointEvent currrentEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(logLine, null);
+        UnifiedSafepointEvent currentEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(logLine, null);
         // Test boundary
         int throughputThreshold = 20;
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+                JdkUtil.isBottleneck(currentEvent, priorEvent, throughputThreshold);
             }
         });
     }
@@ -186,13 +186,13 @@ class TestJdkUtil {
                 + "[2021-10-05T21:58:22.198+0200][1017.629s] Leaving safepoint region[2021-10-05T21:58:22.198+0200]"
                 + "[1017.629s] Total time for which application threads were stopped: 0.0007626 seconds, Stopping "
                 + "threads took: 0.0000545 seconds";
-        UnifiedSafepointEvent currrentEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(logLine, null);
+        UnifiedSafepointEvent currentEvent = (UnifiedSafepointEvent) JdkUtil.parseLogLine(logLine, null);
         // Test boundary
         int throughputThreshold = 20;
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                JdkUtil.isBottleneck(currrentEvent, priorEvent, throughputThreshold);
+                JdkUtil.isBottleneck(currentEvent, priorEvent, throughputThreshold);
             }
         });
     }
