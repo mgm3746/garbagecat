@@ -83,7 +83,11 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")";
 
     /**
-     * Regular expression defining standard logging (no details).
+     * Regular expression defining standard logging (no details). Include all triggers, as there is no overlap with
+     * <code>UnifiedYoungEvent</code>.
+     * 
+     * [89974.613s][info][gc] GC(1345) Pause Young (Concurrent Start) (G1 Evacuation Pause) 14593M->13853M(16384M)
+     * 92.109ms
      */
     private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
             + " Pause Young \\((Normal|Concurrent Start)\\) \\(" + _TRIGGER + "\\) " + JdkRegEx.SIZE + "->"
@@ -236,6 +240,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
         } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.find()) {
+                // Preparsed logging has a true timestamp (it outputs the beginning logging before the safepoint).
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                     timestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {

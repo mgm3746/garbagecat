@@ -80,7 +80,7 @@ public class UnifiedParNewEvent extends CmsCollector implements UnifiedLogging, 
             + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(_REGEX_PREPROCESSED);
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -90,7 +90,7 @@ public class UnifiedParNewEvent extends CmsCollector implements UnifiedLogging, 
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -180,8 +180,9 @@ public class UnifiedParNewEvent extends CmsCollector implements UnifiedLogging, 
      */
     public UnifiedParNewEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry);
         if (matcher.find()) {
+            // Preparsed logging has a true timestamp (it outputs the beginning logging before the safepoint).
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                 timestamp = Long.parseLong(matcher.group(12));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {

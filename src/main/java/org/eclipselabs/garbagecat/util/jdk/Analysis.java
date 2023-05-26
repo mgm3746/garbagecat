@@ -22,7 +22,7 @@ import org.eclipselabs.garbagecat.util.GcUtil;
  * 
  */
 public enum Analysis {
-    
+
     /**
      * Property key for concurrent mode failure.
      */

@@ -65,15 +65,29 @@ public class UnifiedG1FullGcEvent extends G1Collector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String _TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
+    private static final String __TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
             + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.DIAGNOSTIC_COMMAND.getRegex() + "|"
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|"
             + GcTrigger.SYSTEM_GC.getRegex() + ")";
 
     /**
+     * Regular expression defining the logging. Only included G1 specific triggers, so there is no overlap with
+     * <code>UnifiedOldEvent</code>.
+     * 
+     * [89968.517s][info][gc] GC(1344) Pause Full (G1 Evacuation Pause) 16382M->13777M(16384M) 6796.352ms
+     * 
+     * [390191.660s][info][gc] GC(1407) Pause Full (G1 Humongous Allocation) 16334M->15583M(16384M) 6561.965ms
+     */
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + ")\\) "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS;
+
+    private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
+
+    /**
      * Regular expression defining preprocessed logging.
      */
-    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + _TRIGGER
+    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + __TRIGGER
             + "\\) Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
@@ -88,7 +102,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -164,46 +178,79 @@ public class UnifiedG1FullGcEvent extends G1Collector
      */
     public UnifiedG1FullGcEvent(String logEntry) {
         this.logEntry = logEntry;
-
-        Matcher matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry);
-        if (matcher.find()) {
-            if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(12));
-            } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            } else {
-                if (matcher.group(14) != null) {
-                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(16));
-                    } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
-                    }
+        Matcher matcher;
+        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.find()) {
+                long endTimestamp;
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(12));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(16));
+                        } else {
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
+                trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
+                combinedBegin = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(DECORATOR_SIZE + 5), matcher.group(DECORATOR_SIZE + 7).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 8),
+                        matcher.group(DECORATOR_SIZE + 10).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 11)).intValue();
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
-            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
-            permGen = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
-                    .convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 10), matcher.group(DECORATOR_SIZE + 12).charAt(0))
-                    .convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 13), matcher.group(DECORATOR_SIZE + 15).charAt(0))
-                    .convertTo(KILOBYTES);
-            combinedBegin = memory(matcher.group(DECORATOR_SIZE + 16), matcher.group(DECORATOR_SIZE + 18).charAt(0))
-                    .convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(DECORATOR_SIZE + 19), matcher.group(DECORATOR_SIZE + 21).charAt(0))
-                    .convertTo(KILOBYTES);
-            combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 22),
-                    matcher.group(DECORATOR_SIZE + 24).charAt(0)).convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 25)).intValue();
-            if (matcher.group(DECORATOR_SIZE + 26) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 27)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 28)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 29)).intValue();
-            } else {
-                timeUser = TimesData.NO_DATA;
-                timeReal = TimesData.NO_DATA;
+        } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.find()) {
+                // Preparsed logging has a true timestamp (it outputs the beginning logging before the safepoint).
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(12));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                } else {
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(16));
+                        } else {
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    }
+                }
+                trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
+                permGen = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
+                        .convertTo(KILOBYTES);
+                permGenEnd = memory(matcher.group(DECORATOR_SIZE + 10), matcher.group(DECORATOR_SIZE + 12).charAt(0))
+                        .convertTo(KILOBYTES);
+                permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 13),
+                        matcher.group(DECORATOR_SIZE + 15).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(DECORATOR_SIZE + 16), matcher.group(DECORATOR_SIZE + 18).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(DECORATOR_SIZE + 19), matcher.group(DECORATOR_SIZE + 21).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 22),
+                        matcher.group(DECORATOR_SIZE + 24).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 25)).intValue();
+                if (matcher.group(DECORATOR_SIZE + 26) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 27)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 28)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 29)).intValue();
+                } else {
+                    timeUser = TimesData.NO_DATA;
+                    timeReal = TimesData.NO_DATA;
+                }
             }
         }
     }

@@ -13,6 +13,7 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -186,5 +187,30 @@ class TestUnifiedG1MixedPauseEvent {
         eventTypes.add(LogEventType.UNIFIED_G1_MIXED_PAUSE);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as unified.");
+    }
+
+    @Test
+    void testUnpreprocessedTriggerG1EvacuationPause() {
+        String logLine = "[89961.720s][info][gc] GC(1343) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "16218M->16382M(16384M) 408.985ms";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) 89961720 - 408, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertEquals(megabytes(16218), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(16382), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(16384), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getOtherTime(), "Other time not parsed correctly.");
+        assertEquals(408985, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testUnpreprocessedTriggerGcLockerInitiatedGc() {
+        String logLine = "[217230.988s][info][gc] GC(141) Pause Young (Mixed) (GCLocker Initiated GC) "
+                + "4137M->2444M(16384M) 103.899ms";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
 }

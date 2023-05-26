@@ -164,6 +164,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
             matcher.reset();
             if (matcher.find()) {
                 trigger = UnifiedSafepoint.getTrigger(matcher.group(DECORATOR_SIZE + 1));
+                // Has a true timestamp (it outputs the beginning logging before the safepoint).
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                     timestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {

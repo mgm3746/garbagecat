@@ -61,7 +61,7 @@ class TestUnifiedSafepointEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(684934853379L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(684934853379L - 0, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
         assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
@@ -162,7 +162,7 @@ class TestUnifiedSafepointEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
         assertEquals(Trigger.G1_TRY_INITIATE_CONC_MARK, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(19084729, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(19084729L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(477437, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
         assertEquals(119597295, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }

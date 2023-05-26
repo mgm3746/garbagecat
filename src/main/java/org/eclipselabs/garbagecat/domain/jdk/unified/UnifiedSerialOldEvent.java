@@ -54,7 +54,7 @@ import org.github.joa.domain.GarbageCollector;
  * </p>
  * 
  * <pre>
- * [0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: 1152K-&gt;0K(1152K) Tenured: 458K-&gt;929K(960K) Metaspace: 697K-&gt;697K(1056768K) 1M-&gt;0M(2M) 3.061ms User=0.00s Sys=0.00s Real=0.00s
+ * [[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) 0M->0M(2M) 1.699ms DefNew: 1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms User=0.00s Sys=0.00s Real=0.00s]
  * </pre>
  * 
  * <pre>
@@ -86,13 +86,14 @@ public class UnifiedSerialOldEvent extends SerialCollector
      * Regular expression defining the logging.
      */
     private static final String _REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + __TRIGGER
-            + "\\) (DefNew|PSYoungGen): " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\("
+            + "\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
+            + ")? (DefNew|PSYoungGen): " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) (Tenured|PSOldGen): " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
             + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(_REGEX_PREPROCESSED);
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -102,7 +103,7 @@ public class UnifiedSerialOldEvent extends SerialCollector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -192,8 +193,9 @@ public class UnifiedSerialOldEvent extends SerialCollector
      */
     public UnifiedSerialOldEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry);
         if (matcher.find()) {
+            // Preparsed logging has a true timestamp (it outputs the beginning logging before the safepoint).
             if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                 timestamp = Long.parseLong(matcher.group(12));
             } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
@@ -211,29 +213,29 @@ public class UnifiedSerialOldEvent extends SerialCollector
                 }
             }
             trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
-            young = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
+            young = memory(matcher.group(DECORATOR_SIZE + 14), matcher.group(DECORATOR_SIZE + 16).charAt(0))
                     .convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(DECORATOR_SIZE + 10), matcher.group(DECORATOR_SIZE + 12).charAt(0))
+            youngEnd = memory(matcher.group(DECORATOR_SIZE + 21), matcher.group(DECORATOR_SIZE + 23).charAt(0))
                     .convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(DECORATOR_SIZE + 13), matcher.group(DECORATOR_SIZE + 15).charAt(0))
+            youngAvailable = memory(matcher.group(DECORATOR_SIZE + 24), matcher.group(DECORATOR_SIZE + 26).charAt(0))
                     .convertTo(KILOBYTES);
-            old = memory(matcher.group(DECORATOR_SIZE + 17), matcher.group(DECORATOR_SIZE + 19).charAt(0))
+            old = memory(matcher.group(DECORATOR_SIZE + 28), matcher.group(DECORATOR_SIZE + 30).charAt(0))
                     .convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(DECORATOR_SIZE + 24), matcher.group(DECORATOR_SIZE + 26).charAt(0))
+            oldEnd = memory(matcher.group(DECORATOR_SIZE + 35), matcher.group(DECORATOR_SIZE + 37).charAt(0))
                     .convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(DECORATOR_SIZE + 27), matcher.group(DECORATOR_SIZE + 29).charAt(0))
+            oldAllocation = memory(matcher.group(DECORATOR_SIZE + 38), matcher.group(DECORATOR_SIZE + 40).charAt(0))
                     .convertTo(KILOBYTES);
-            permGen = memory(matcher.group(DECORATOR_SIZE + 30), matcher.group(DECORATOR_SIZE + 32).charAt(0))
+            permGen = memory(matcher.group(DECORATOR_SIZE + 41), matcher.group(DECORATOR_SIZE + 43).charAt(0))
                     .convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 37), matcher.group(DECORATOR_SIZE + 39).charAt(0))
+            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 48), matcher.group(DECORATOR_SIZE + 50).charAt(0))
                     .convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 40), matcher.group(DECORATOR_SIZE + 42).charAt(0))
+            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 51), matcher.group(DECORATOR_SIZE + 53).charAt(0))
                     .convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 52)).intValue();
-            if (matcher.group(DECORATOR_SIZE + 53) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 54)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 55)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 56)).intValue();
+            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 63)).intValue();
+            if (matcher.group(DECORATOR_SIZE + 64) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 65)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 66)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 67)).intValue();
             }
         }
     }

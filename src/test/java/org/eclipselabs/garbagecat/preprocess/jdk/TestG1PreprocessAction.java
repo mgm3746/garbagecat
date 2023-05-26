@@ -2368,6 +2368,24 @@ class TestG1PreprocessAction {
     }
 
     @Test
+    void testPrintReferenceGcPrintAdaptiveSizePolicyPreparsing() throws IOException {
+        File testFile = TestUtil.getFile("dataset267.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.TENURING_DISTRIBUTION),
+                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " collector not identified.");
+    }
+
+    @Test
     void testPrintReferenceGcPrintAdaptiveSizePolicyRequestConcurrentCycleInitiation() {
         String priorLogLine = "";
         String logLine = "2023-02-25T22:27:49.568+0800: 115724.367: [SoftReference, 0 refs, 0.0008055 secs]"
@@ -2387,24 +2405,6 @@ class TestG1PreprocessAction {
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context,
                 preprocessEvents);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
-    }
-
-    @Test
-    void testPrintReferenceGcPrintAdaptiveSizePolicyPreparsing() throws IOException {
-        File testFile = TestUtil.getFile("dataset267.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.TENURING_DISTRIBUTION),
-                JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " collector not identified.");
     }
 
     @Test

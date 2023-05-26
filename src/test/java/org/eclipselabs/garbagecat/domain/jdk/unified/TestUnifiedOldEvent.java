@@ -87,6 +87,24 @@ class TestUnifiedOldEvent {
     }
 
     @Test
+    void testPreprocessedTriggerGcLockerInitiatedGc() throws IOException {
+        File testFile = TestUtil.getFile("dataset269.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
+    }
+
+    @Test
     void testPreprocessedTriggerSystemGc() {
         String logLine = "[2020-06-24T18:13:47.695-0700][173690ms] GC(74) Pause Full (System.gc()) Metaspace: "
                 + "260211K->260197K(1290240K) 887M->583M(1223M) 3460.196ms User=1.78s Sys=0.01s Real=3.46s";
@@ -178,5 +196,13 @@ class TestUnifiedOldEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL),
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+    }
+
+    @Test
+    void testUnpreprocessedTriggerGcLockerInitiatedGc() {
+        String logLine = "[390361.491s][info][gc] GC(1474) Pause Full (GCLocker Initiated GC) 16340M->15902M(16384M) "
+                + "6628.742ms";
+        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedOldEvent,
+                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not parsed.");
     }
 }

@@ -70,7 +70,7 @@ class TestUnifiedRemarkEvent {
         assertTrue(UnifiedRemarkEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_REMARK.toString() + ".");
         UnifiedRemarkEvent event = new UnifiedRemarkEvent(logLine);
-        assertEquals((long) (16053 - 2), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals((long) 16053, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(2328, event.getDuration(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");

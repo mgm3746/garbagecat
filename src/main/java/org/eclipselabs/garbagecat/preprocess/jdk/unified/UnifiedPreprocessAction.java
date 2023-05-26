@@ -1160,12 +1160,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            if (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches()) {
+            if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
+                    || (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches())) {
                 // Middle logging
                 if (matcher.matches()) {
                     this.logEntry = matcher.group(DECORATOR_SIZE + 3);
                 }
-            } else if (!context.contains(TOKEN)) {
+            } else {
                 // Single line event
                 if (priorLogEntry == null) {
                     // first line in log file
@@ -1183,12 +1184,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            if (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches()) {
+            if (!context.contains(PreprocessAction.NEWLINE)
+                    || (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches())) {
                 // Middle logging
                 if (matcher.matches()) {
                     this.logEntry = matcher.group(DECORATOR_SIZE + 4);
                 }
-            } else if (!context.contains(TOKEN)) {
+            } else {
                 // Single line event
                 if (priorLogEntry == null) {
                     // first line in log file

@@ -155,25 +155,24 @@ public class UnifiedRemarkEvent extends UnknownCollector
         } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.find()) {
-                long endTimestamp;
+                // Preparsed logging has a true timestamp (it outputs the beginning logging before the safepoint).
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(12));
+                    timestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
                     if (matcher.group(14) != null) {
                         if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(16));
+                            timestamp = Long.parseLong(matcher.group(16));
                         } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
                         }
                     } else {
                         // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
                 duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 10)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
                 if (matcher.group(DECORATOR_SIZE + 11) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 12)).intValue();
                     timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 13)).intValue();

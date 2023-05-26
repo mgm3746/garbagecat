@@ -34,6 +34,11 @@ public interface PreprocessAction {
     public static final String TOKEN_BEGINNING_OF_EVENT = "TOKEN_BEGINNING_OF_EVENT";
 
     /**
+     * Indicates the current logging event is the start of a new line.
+     */
+    public static final String NEWLINE = "NEWLINE";
+
+    /**
      * @return The log entry for the action.
      */
     String getLogEntry();

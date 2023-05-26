@@ -1,0 +1,5 @@
+[390354.671s][info][gc] GC(1471) Pause Young (Concurrent Start) (G1 Humongous Allocation) 16113M->15932M(16384M) 36.022ms
+[390354.671s][info][gc] GC(1472) Concurrent Cycle
+[390354.862s][info][gc] GC(1473) To-space exhausted
+[390354.862s][info][gc] GC(1473) Pause Young (Normal) (GCLocker Initiated GC) 16340M->16340M(16384M) 47.840ms
+[390361.491s][info][gc] GC(1474) Pause Full (GCLocker Initiated GC) 16340M->15902M(16384M) 6628.742ms

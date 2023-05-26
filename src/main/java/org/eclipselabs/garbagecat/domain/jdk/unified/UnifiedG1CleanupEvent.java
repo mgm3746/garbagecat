@@ -181,6 +181,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
         } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.find()) {
+                // Preparsed logging has a true timestamp (it outputs the beginning logging before the safepoint).
                 if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                     timestamp = Long.parseLong(matcher.group(12));
                 } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {

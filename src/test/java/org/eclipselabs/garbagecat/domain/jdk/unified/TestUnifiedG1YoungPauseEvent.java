@@ -13,6 +13,7 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -103,6 +104,24 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+    }
+
+    @Test
+    void testPreparsingUsingG1() throws IOException {
+        File testFile = TestUtil.getFile("dataset270.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1),
+                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
     }
@@ -404,6 +423,23 @@ class TestUnifiedG1YoungPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+    }
+
+    @Test
+    void testUnpreprocessed() {
+        String logLine = "[89974.613s][info][gc] GC(1345) Pause Young (Concurrent Start) (G1 Evacuation Pause) "
+                + "14593M->13853M(16384M) 92.109ms";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) 89974613 - 92, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertEquals(megabytes(14593), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(13853), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(16384), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getOtherTime(), "Other time not parsed correctly.");
+        assertEquals(92109, event.getDuration(), "Duration not parsed correctly.");
     }
 
     @Test

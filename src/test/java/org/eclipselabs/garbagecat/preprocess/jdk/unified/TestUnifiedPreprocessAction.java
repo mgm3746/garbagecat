@@ -2637,6 +2637,26 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testUnifiedOldSingleLine() throws IOException {
+        File testFile = TestUtil.getFile("dataset268.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_MIXED_PAUSE),
+                JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
+                JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
+    }
+
+    @Test
     void testUnifiedRemarkMixedSafepoint() throws IOException {
         File testFile = TestUtil.getFile("dataset230.txt");
         GcManager gcManager = new GcManager();

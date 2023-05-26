@@ -137,7 +137,7 @@ public class UnifiedHeaderVersionEvent extends UnifiedHeaderEvent {
         }
         return jdkVersionMajor;
     }
-    
+
     /**
      * @return The JDK update (e.g. '60'), or <code>org.github.joa.domain.JvmContext.UNKNOWN</code> if it cannot be
      *         determined.

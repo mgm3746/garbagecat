@@ -68,6 +68,18 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + ")";
 
     /**
+     * Regular expression defining standard logging (no details). Include all triggers, as there is no overlap with
+     * <code>UnifiedYoungEvent</code>.
+     * 
+     * [217224.994s][info][gc] GC(137) Pause Young (Prepare Mixed) (G1 Evacuation Pause) 13840M->7940M(16384M) 44.565ms
+     */
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\((Prepare Mixed)\\) \\("
+            + _TRIGGER + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
+            + JdkRegEx.DURATION_MS + "[ ]*$";
+
+    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
+    /**
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR
@@ -86,7 +98,7 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -167,51 +179,86 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
      */
     public UnifiedG1YoungPrepareMixedEvent(String logEntry) {
         this.logEntry = logEntry;
-
-        Matcher matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry);
-        if (matcher.find()) {
-            if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(12));
-            } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
-            } else {
-                if (matcher.group(14) != null) {
-                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(16));
-                    } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
-                    }
+        Matcher matcher;
+        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.find()) {
+                long endTimestamp;
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(12));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
                 } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(16));
+                        } else {
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    }
                 }
-            }
-            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
-            if (matcher.group(DECORATOR_SIZE + 3) != null) {
-                otherTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 3)).intValue();
-            } else {
-                otherTime = OtherTime.NO_DATA;
-            }
-            permGen = memory(matcher.group(DECORATOR_SIZE + 4), matcher.group(DECORATOR_SIZE + 6).charAt(0))
-                    .convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 11), matcher.group(DECORATOR_SIZE + 13).charAt(0))
-                    .convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 14), matcher.group(DECORATOR_SIZE + 16).charAt(0))
-                    .convertTo(KILOBYTES);
-            combinedBegin = memory(matcher.group(DECORATOR_SIZE + 17), matcher.group(DECORATOR_SIZE + 19).charAt(0))
-                    .convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(DECORATOR_SIZE + 20), matcher.group(DECORATOR_SIZE + 22).charAt(0))
-                    .convertTo(KILOBYTES);
-            combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 23),
-                    matcher.group(DECORATOR_SIZE + 25).charAt(0)).convertTo(KILOBYTES);
-            eventTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 26)).intValue();
-            if (matcher.group(DECORATOR_SIZE + 27) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 28)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 29)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 30)).intValue();
-            } else {
+                trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 2));
+                combinedBegin = memory(matcher.group(DECORATOR_SIZE + 3), matcher.group(DECORATOR_SIZE + 5).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(DECORATOR_SIZE + 6), matcher.group(DECORATOR_SIZE + 8).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 9),
+                        matcher.group(DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
+                eventTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 12)).intValue();
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(eventTime).longValue();
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
+            }
+        } else if ((matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.find()) {
+                // Preparsed logging has a true timestamp (it outputs the beginning logging before the safepoint).
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(12));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                } else {
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(16));
+                        } else {
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    }
+                }
+                trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
+                if (matcher.group(DECORATOR_SIZE + 3) != null) {
+                    otherTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 3)).intValue();
+                } else {
+                    otherTime = OtherTime.NO_DATA;
+                }
+                permGen = memory(matcher.group(DECORATOR_SIZE + 4), matcher.group(DECORATOR_SIZE + 6).charAt(0))
+                        .convertTo(KILOBYTES);
+                permGenEnd = memory(matcher.group(DECORATOR_SIZE + 11), matcher.group(DECORATOR_SIZE + 13).charAt(0))
+                        .convertTo(KILOBYTES);
+                permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 14),
+                        matcher.group(DECORATOR_SIZE + 16).charAt(0)).convertTo(KILOBYTES);
+                combinedBegin = memory(matcher.group(DECORATOR_SIZE + 17), matcher.group(DECORATOR_SIZE + 19).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(DECORATOR_SIZE + 20), matcher.group(DECORATOR_SIZE + 22).charAt(0))
+                        .convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 23),
+                        matcher.group(DECORATOR_SIZE + 25).charAt(0)).convertTo(KILOBYTES);
+                eventTime = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 26)).intValue();
+                if (matcher.group(DECORATOR_SIZE + 27) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 28)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 29)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 30)).intValue();
+                } else {
+                    timeUser = TimesData.NO_DATA;
+                    timeReal = TimesData.NO_DATA;
+                }
             }
         }
     }

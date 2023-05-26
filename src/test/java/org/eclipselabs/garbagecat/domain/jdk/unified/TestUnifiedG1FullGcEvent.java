@@ -220,4 +220,28 @@ class TestUnifiedG1FullGcEvent {
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + " not indentified as unified.");
     }
+
+    @Test
+    void testUnpreprocessedTriggerG1EvacuationPause() {
+        String logLine = "[89968.517s][info][gc] GC(1344) Pause Full (G1 Evacuation Pause) 16382M->13777M(16384M) "
+                + "6796.352ms";
+        assertTrue(UnifiedG1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) 89968517 - 6796, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertEquals(megabytes(16382), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
+        assertEquals(megabytes(13777), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(megabytes(16384), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(6796352, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testUnpreprocessedTriggerG1HumongousAllocation() {
+        String logLine = "[390191.660s][info][gc] GC(1407) Pause Full (G1 Humongous Allocation) 16334M->15583M(16384M) "
+                + "6561.965ms";
+        assertTrue(UnifiedG1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+    }
 }

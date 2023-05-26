@@ -78,9 +78,10 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String __TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
-            + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
-            + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")";
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.SYSTEM_GC.getRegex() + ")";
 
     /**
      * Regular expressions defining the logging.

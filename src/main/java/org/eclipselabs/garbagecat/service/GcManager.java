@@ -553,6 +553,7 @@ public class GcManager {
             List<String> entangledLogLines = new ArrayList<String>();
             // Used to provide context for preprocessing decisions
             Set<String> context = new HashSet<String>();
+            context.add(PreprocessAction.NEWLINE);
 
             String priorLogEntry = Constants.LINE_SEPARATOR;
 
