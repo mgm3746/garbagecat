@@ -51,6 +51,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * survivor region or promoted to the old space.
  * </p>
  * 
+ * <p>
+ * There are 2 types:
+ * </p>
+ * <ul>
+ * <li>Normal: standard young generation cleanup.</li>
+ * <li>Concurrent Start: young generation with preparation for a concurrent mark.</li>
+ * </ul>
+ * 
  * <h2>Example Logging</h2>
  * 
  * <p>

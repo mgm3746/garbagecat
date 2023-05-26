@@ -41,7 +41,8 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <p>
- * Final young-only phase when it has been determined that space-reclamation will follow.
+ * Final young-only phase when it has been determined that space-reclamation will follow with a
+ * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent}.
  * </p>
  * 
  * <h2>Example Logging</h2>

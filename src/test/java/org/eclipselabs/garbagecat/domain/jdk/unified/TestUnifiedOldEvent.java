@@ -95,13 +95,15 @@ class TestUnifiedOldEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.TO_SPACE_EXHAUSTED),
+                JdkUtil.LogEventType.TO_SPACE_EXHAUSTED.toString() + " event not identified.");
     }
 
     @Test

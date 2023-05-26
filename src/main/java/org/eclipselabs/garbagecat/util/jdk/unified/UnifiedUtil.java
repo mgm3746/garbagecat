@@ -59,6 +59,7 @@ public final class UnifiedUtil {
             case UNIFIED_CMS_INITIAL_MARK:
             case UNIFIED_G1_CLEANUP:
             case G1_FULL_GC_PARALLEL:
+            case TO_SPACE_EXHAUSTED:
             case UNIFIED_G1_INFO:
             case UNIFIED_G1_MIXED_PAUSE:
             case UNIFIED_G1_YOUNG_INITIAL_MARK:

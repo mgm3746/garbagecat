@@ -80,6 +80,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.HeapAddressEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.HeapRegionSizeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.MetaspaceUtilsReportEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.OomeMetaspaceEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ToSpaceExhaustedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
@@ -149,9 +150,9 @@ public final class JdkUtil {
         //
         SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS,
         //
-        SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK,
+        SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, TO_SPACE_EXHAUSTED, UNIFIED_BLANK_LINE,
         //
-        UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
+        UNIFIED_CMS_INITIAL_MARK, UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
         //
         UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER,
         //
@@ -388,6 +389,8 @@ public final class JdkUtil {
             return LogEventType.GC_LOCKER_RETRY;
         if (UnifiedG1FullGcEvent.match(logLine))
             return LogEventType.G1_FULL_GC_PARALLEL;
+        if (ToSpaceExhaustedEvent.match(logLine))
+            return LogEventType.TO_SPACE_EXHAUSTED;
         if (UnifiedG1InfoEvent.match(logLine))
             return LogEventType.UNIFIED_G1_INFO;
         if (UnifiedG1MixedPauseEvent.match(logLine))
@@ -601,6 +604,7 @@ public final class JdkUtil {
         case SHENANDOAH_STATS:
         case SHENANDOAH_TRIGGER:
         case THREAD_DUMP:
+        case TO_SPACE_EXHAUSTED:
         case TENURING_DISTRIBUTION:
         case UNIFIED_SAFEPOINT:
         case UNIFIED_CONCURRENT:
@@ -729,6 +733,7 @@ public final class JdkUtil {
         case LOG_FILE:
         case METASPACE_UTILS_REPORT:
         case OOME_METASPACE:
+        case TO_SPACE_EXHAUSTED:
         case UNIFIED_SAFEPOINT:
         case SHENANDOAH_CANCELLING_GC:
         case SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK:
@@ -777,6 +782,8 @@ public final class JdkUtil {
             return new GcLockerRetryEvent(logLine);
         case G1_FULL_GC_PARALLEL:
             return new UnifiedG1FullGcEvent(logLine);
+        case TO_SPACE_EXHAUSTED:
+            return new ToSpaceExhaustedEvent(logLine);
         case UNIFIED_G1_INFO:
             return new UnifiedG1InfoEvent(logLine);
         case UNIFIED_G1_MIXED_PAUSE:

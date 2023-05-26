@@ -12,52 +12,36 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * UNIFIED_G1_INFO
+ * TO_SPACE_EXHAUSTED
  * </p>
- * 
- * <p>
- * Information logging not used for GC analysis.
- * </p>
- * 
- * TODO: Remove this event and pre-process (throw) these away?
  * 
  * <h2>Example Logging</h2>
  *
  * <pre>
- * [2.726s][info][gc,start     ] GC(51) Pause Initial Mark (G1 Humongous Allocation)
+ * [390286.701s][info][gc] GC(1442) To-space exhausted
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
+public class ToSpaceExhaustedEvent extends G1Collector implements UnifiedLogging {
+
+    private static Pattern pattern = Pattern.compile(ToSpaceExhaustedEvent.REGEX);
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX[] = {
-            //
-            "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + UnifiedG1YoungInitialMarkEvent._TRIGGER + "\\)$",
-            //
-    };
-
-    private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
-
-    static {
-        for (String regex : REGEX) {
-            REGEX_LIST.add(Pattern.compile(regex));
-        }
-    }
+    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " To-space exhausted[ ]*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -67,15 +51,7 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean match = false;
-        for (int i = 0; i < REGEX_LIST.size(); i++) {
-            Pattern pattern = REGEX_LIST.get(i);
-            if (pattern.matcher(logLine).matches()) {
-                match = true;
-                break;
-            }
-        }
-        return match;
+        return pattern.matcher(logLine).matches();
     }
 
     /**
@@ -94,9 +70,31 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public UnifiedG1InfoEvent(String logEntry) {
+    public ToSpaceExhaustedEvent(String logEntry) {
         this.logEntry = logEntry;
-        this.timestamp = 0L;
+
+        if (logEntry.matches(REGEX)) {
+            Pattern pattern = Pattern.compile(REGEX);
+            Matcher matcher = pattern.matcher(logEntry);
+            if (matcher.find()) {
+                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(12));
+                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                } else {
+                    if (matcher.group(14) != null) {
+                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(16));
+                        } else {
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    }
+                }
+            }
+        }
     }
 
     public String getLogEntry() {
@@ -104,7 +102,7 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_G1_INFO.toString();
+        return JdkUtil.LogEventType.TO_SPACE_EXHAUSTED.toString();
     }
 
     public long getTimestamp() {

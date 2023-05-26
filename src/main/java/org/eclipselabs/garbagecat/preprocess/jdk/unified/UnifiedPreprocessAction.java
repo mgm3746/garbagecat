@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ToSpaceExhaustedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
@@ -835,8 +836,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [0.030s][info][safepoint    ] Application time: 0.0012757 seconds
      * 
-     * [2021-03-13T03:37:40.051+0530][79853119ms] GC(8645) To-space exhausted
-     * 
      * [2021-09-22T10:59:49.112-0500][5455002ms] Entering safepoint region: Exit
      * 
      * [0.031s] Entering safepoint region: Halt
@@ -910,8 +909,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "Mark reset for overflow|Preclean|Reset|Scan Root Regions|Undo Cycle|Sweep)[ ]{0,}$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Application time:.+$",
-            //
-            "^" + UnifiedRegEx.DECORATOR + " To-space exhausted$",
             // ***** AdaptiveSizePolicy *****
             "^" + UnifiedRegEx.DECORATOR + " (PS)?AdaptiveSize.*$",
             //
@@ -1030,6 +1027,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logLine).matches()
+                || JdkUtil.parseLogLine(logLine, null) instanceof ToSpaceExhaustedEvent
                 || JdkUtil.parseLogLine(logLine, null) instanceof UnifiedConcurrentEvent) {
             match = true;
         } else if (isThrowaway(logLine)) {
@@ -1267,6 +1265,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             }
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC);
+        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ToSpaceExhaustedEvent) {
+            // output at end
+            entangledLogLines.add(logEntry);
+            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
         } else if (JdkUtil.parseLogLine(logEntry, null) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
             // Stand alone eventlogEntry
             if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC)) {

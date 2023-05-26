@@ -100,14 +100,6 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     }
 
     @Test
-    void testUnpreprocessedTriggerG1EvacuationPause() {
-        String logLine = "[217224.994s][info][gc] GC(137) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
-                + "13840M->7940M(16384M) 44.565ms";
-        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
-    }
-
-    @Test
     void testLogLineWhitespaceAtEnd() {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
@@ -218,5 +210,13 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         eventTypes.add(LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as unified.");
+    }
+
+    @Test
+    void testUnpreprocessedTriggerG1EvacuationPause() {
+        String logLine = "[217224.994s][info][gc] GC(137) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
+                + "13840M->7940M(16384M) 44.565ms";
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
 }

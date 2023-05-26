@@ -60,6 +60,7 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderVmInfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ToSpaceExhaustedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
@@ -1152,6 +1153,10 @@ public class GcManager {
                     if (!jvmDao.getAnalysis().contains(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED)) {
                         jvmDao.addAnalysis(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED);
                     }
+                }
+            } else if (event instanceof ToSpaceExhaustedEvent) {
+                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
+                    jvmDao.addAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE);
                 }
             } else if (event instanceof UnknownEvent) {
                 jvmDao.setLogEndingUnidentified(true);

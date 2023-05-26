@@ -1142,7 +1142,7 @@ class TestUnifiedPreprocessAction {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_PARALLEL),
@@ -1150,7 +1150,9 @@ class TestUnifiedPreprocessAction {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
                 JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.TO_SPACE_EXHAUSTED),
+                JdkUtil.LogEventType.TO_SPACE_EXHAUSTED.toString() + " event not identified.");
     }
 
     @Test
@@ -2609,13 +2611,6 @@ class TestUnifiedPreprocessAction {
     @Test
     void testTimesDataDatestampMillis() {
         String logLine = "[2019-05-09T01:39:00.821+0000][5413ms] GC(0) User=0.02s Sys=0.01s Real=0.06s";
-        assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-    }
-
-    @Test
-    void testToSpaceExhausted() {
-        String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms] GC(8645) To-space exhausted";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
