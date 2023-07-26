@@ -126,7 +126,7 @@
 		<dependency>
 			<groupId>joa</groupId>
 			<artifactId>joa</artifactId>
-			<version>1.0.68</version>
+			<version>1.0.69</version>
 		</dependency>
 	</dependencies>
 	<reporting>
