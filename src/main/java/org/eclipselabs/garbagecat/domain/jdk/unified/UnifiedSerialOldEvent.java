@@ -54,7 +54,7 @@ import org.github.joa.domain.GarbageCollector;
  * </p>
  * 
  * <pre>
- * [[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) 0M->0M(2M) 1.699ms DefNew: 1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms User=0.00s Sys=0.00s Real=0.00s]
+ * [[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) 0M-&gt;0M(2M) 1.699ms DefNew: 1152K-&gt;0K(1152K) Tenured: 458K-&gt;929K(960K) Metaspace: 697K-&gt;697K(1056768K) 1M-&gt;0M(2M) 3.061ms User=0.00s Sys=0.00s Real=0.00s]
  * </pre>
  * 
  * <pre>
