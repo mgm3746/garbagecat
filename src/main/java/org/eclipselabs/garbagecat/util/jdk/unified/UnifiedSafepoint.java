@@ -34,13 +34,13 @@ public class UnifiedSafepoint {
         //
         FORCE_SAFEPOINT, G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_CONCURRENT, G1_INC_COLLECTION_PAUSE,
         //
-        G1_TRY_INITIATE_CONC_MARK, GC_HEAP_INSPECTION, GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT,
+        G1_PAUSE_CLEANUP, G1_PAUSE_REMARK, G1_TRY_INITIATE_CONC_MARK, GC_HEAP_INSPECTION, GEN_COLLECT_FOR_ALLOCATION,
         //
-        GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK, HEAP_DUMPER, IC_BUFFER_FULL,
+        GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK,
         //
-        MARK_ACTIVE_N_METHODS, NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC,
+        HEAP_DUMPER, IC_BUFFER_FULL, MARK_ACTIVE_N_METHODS, NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION,
         //
-        PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC,
+        PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC,
         //
         SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK,
         //
@@ -186,6 +186,26 @@ public class UnifiedSafepoint {
      * </p>
      */
     public static final String G1_INC_COLLECTION_PAUSE = "G1IncCollectionPause";
+
+    /**
+     * <p>
+     * {@link #G1_CONCURRENT} was split into {@link #G1_PAUSE_REMARK} and {@link #G1_PAUSE_CLEANUP} in JDK17u8.
+     * Reference: https://mail.openjdk.org/pipermail/hotspot-dev/2022-January/056810.html.
+     * </p>
+     *
+     * <p>
+     * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent}
+     * </p>
+     */
+    public static final String G1_PAUSE_CLEANUP = "G1PauseCleanup";
+
+    /**
+     * <p>
+     * {@link #G1_CONCURRENT} was split into {@link #G1_PAUSE_REMARK} and {@link #G1_PAUSE_CLEANUP} in JDK17u8.
+     * Reference: https://mail.openjdk.org/pipermail/hotspot-dev/2022-January/056810.html.
+     * </p>
+     */
+    public static final String G1_PAUSE_REMARK = "G1PauseRemark";
 
     /**
      * <p>
@@ -434,6 +454,10 @@ public class UnifiedSafepoint {
             return Trigger.G1_CONCURRENT;
         if (G1_INC_COLLECTION_PAUSE.matches(triggerLiteral))
             return Trigger.G1_INC_COLLECTION_PAUSE;
+        if (G1_PAUSE_CLEANUP.matches(triggerLiteral))
+            return Trigger.G1_PAUSE_CLEANUP;
+        if (G1_PAUSE_REMARK.matches(triggerLiteral))
+            return Trigger.G1_PAUSE_REMARK;
         if (G1_TRY_INITIATE_CONC_MARK.matches(triggerLiteral))
             return Trigger.G1_TRY_INITIATE_CONC_MARK;
         if (GEN_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
@@ -552,6 +576,12 @@ public class UnifiedSafepoint {
             break;
         case G1_INC_COLLECTION_PAUSE:
             triggerLiteral = G1_INC_COLLECTION_PAUSE;
+            break;
+        case G1_PAUSE_CLEANUP:
+            triggerLiteral = G1_PAUSE_CLEANUP;
+            break;
+        case G1_PAUSE_REMARK:
+            triggerLiteral = G1_PAUSE_REMARK;
             break;
         case G1_TRY_INITIATE_CONC_MARK:
             triggerLiteral = G1_TRY_INITIATE_CONC_MARK;
@@ -680,6 +710,10 @@ public class UnifiedSafepoint {
             return Trigger.G1_CONCURRENT;
         if (Trigger.G1_INC_COLLECTION_PAUSE.name().matches(trigger))
             return Trigger.G1_INC_COLLECTION_PAUSE;
+        if (Trigger.G1_PAUSE_CLEANUP.name().matches(trigger))
+            return Trigger.G1_PAUSE_CLEANUP;
+        if (Trigger.G1_PAUSE_REMARK.name().matches(trigger))
+            return Trigger.G1_PAUSE_REMARK;
         if (Trigger.G1_TRY_INITIATE_CONC_MARK.name().matches(trigger))
             return Trigger.G1_TRY_INITIATE_CONC_MARK;
         if (Trigger.GEN_COLLECT_FOR_ALLOCATION.name().matches(trigger))

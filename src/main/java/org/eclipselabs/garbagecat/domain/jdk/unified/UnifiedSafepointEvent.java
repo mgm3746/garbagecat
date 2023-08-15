@@ -102,8 +102,8 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      */
     public static final String REGEX_JDK17 = "^" + UnifiedRegEx.DECORATOR + " Safepoint \""
             + UnifiedSafepoint.triggerRegEx()
-            + "\", Time since last: \\d{1,} ns, Reaching safepoint: (\\d{1,}) ns, At safepoint: (\\d{1,}) ns, "
-            + "Total: \\d{1,} ns[ ]*$";
+            + "\", Time since last: \\d{1,} ns, Reaching safepoint: (\\d{1,}) ns(, Cleanup: (\\d{1,}) ns)?, "
+            + "At safepoint: (\\d{1,}) ns, Total: \\d{1,} ns[ ]*$";
 
     /**
      * RegEx pattern.
@@ -130,6 +130,11 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
+
+    /**
+     * The elapsed clock time spent on internal VM cleanup activities.
+     */
+    private long timeCleanup;
 
     /**
      * The time when the safepoint event started in milliseconds after JVM startup.
@@ -204,8 +209,11 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
                     }
                 }
-                timeThreadsStopped = Long.parseLong(matcher.group(DECORATOR_SIZE + 3));
                 timeToStopThreads = Long.parseLong(matcher.group(DECORATOR_SIZE + 2));
+                if (matcher.group(DECORATOR_SIZE + 3) != null) {
+                    timeCleanup = Long.parseLong(matcher.group(DECORATOR_SIZE + 4));
+                }
+                timeThreadsStopped = Long.parseLong(matcher.group(DECORATOR_SIZE + 5));
             }
         }
     }
@@ -221,12 +229,16 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      *            The elapsed clock time to stop all threads (bring the JVM to safepoint) in nanoseconds (rounded).
      * @param timeThreadsStopped
      *            The elapsed clock time the application threads were stopped (at safepoint) in nanoseconds (rounded).
+     * @param timeCleanup
+     *            The elapsed clock time for VM internal cleanup activities (at safepoint) in nanoseconds (rounded).
      */
-    public UnifiedSafepointEvent(String logEntry, long timestamp, long timeToStopThreads, long timeThreadsStopped) {
+    public UnifiedSafepointEvent(String logEntry, long timestamp, long timeToStopThreads, long timeThreadsStopped,
+            long timeCleanup) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
         this.timeToStopThreads = timeToStopThreads;
         this.timeThreadsStopped = timeThreadsStopped;
+        this.timeCleanup = timeCleanup;
     }
 
     /**
@@ -243,6 +255,10 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
 
     public String getName() {
         return JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString();
+    }
+
+    public long getTimeCleanup() {
+        return timeCleanup;
     }
 
     public long getTimestamp() {
