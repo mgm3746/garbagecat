@@ -122,6 +122,11 @@ public enum GcTrigger {
      */
     ERGONOMICS("Ergonomics"),
     /**
+     * G1 Compaction Pause trigger. A full gc when memory is exhausted at the start of a concurrent cycle during the
+     * concurrent start phase (when liveness information is determined).
+     */
+    G1_COMPACTION_PAUSE("G1 Compaction Pause"),
+    /**
      * G1 Evacuation Pause trigger. Live objects are copied out of one region (evacuated) to another region to free
      * contiguous space. For both young and mixed collections.
      */

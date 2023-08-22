@@ -669,6 +669,21 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1AttemptingFullCompaction() {
+        String logLine = "[2023-08-22T02:49:17.609-0400][185.733s] Attempting full compaction";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1AttemptingMaximumFullCompactionClearingSoftReferences() {
+        String logLine = "[2023-08-22T02:49:12.471-0400][180.595s] Attempting maximum full compaction clearing soft "
+                + "references";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testG1BasicInformation() {
         String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,ihop           ] GC(9) Basic information "
                 + "(value update), threshold: 7701161574B (70.00), target occupancy: 11001659392B, current occupancy: "
@@ -742,6 +757,22 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1FullGcBeginTriggerDiagnosticCommand() {
+        String logLine = "[2022-05-12T14:53:58.573-0500][411066.724s][info][gc,start      ] GC(567) Pause Full "
+                + "(Diagnostic Command)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1FullGcMiddleTriggerDiagnosticCommand() {
+        String logLine = "[2023-08-22T02:49:11.116-0400][179.240s] GC(73) Pause Full (G1 Compaction Pause) "
+                + "2679M->2149M(3072M) 657.941ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testG1FullGcParallelConcurrentIntermingled() throws IOException {
         File testFile = TestUtil.getFile("dataset257.txt");
         GcManager gcManager = new GcManager();
@@ -760,14 +791,6 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testG1FullGcTriggerDiagnosticCommand() {
-        String logLine = "[2022-05-12T14:53:58.573-0500][411066.724s][info][gc,start      ] GC(567) Pause Full "
-                + "(Diagnostic Command)";
-        assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-    }
-
-    @Test
     void testG1FullGcTriggerDiagnosticCommandDetails() {
         String logLine = "[2022-05-12T14:54:09.413-0500][411077.565s][info][gc             ] GC(567) Pause Full "
                 + "(Diagnostic Command) 41808M->35651M(49152M) 10840.271ms";
@@ -780,6 +803,13 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(" 41808M->35651M(49152M) 10840.271ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testG1FullGcTriggerG1CompactionPause() {
+        String logLine = "[2023-08-22T02:49:10.458-0400][178.582s] GC(73) Pause Full (G1 Compaction Pause)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
 
     @Test

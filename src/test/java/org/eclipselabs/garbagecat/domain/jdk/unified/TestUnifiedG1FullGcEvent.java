@@ -129,6 +129,17 @@ class TestUnifiedG1FullGcEvent {
     }
 
     @Test
+    void testPreprocessedTriggerG1CompactionPause() {
+        String logLine = "[2023-08-22T02:49:10.458-0400][178.582s] GC(73) Pause Full (G1 Compaction Pause) Humongous "
+                + "regions: 105->81 Metaspace: 71663K(72128K)->71663K(72128K) 2679M->2149M(3072M) 657.941ms User=2.04s "
+                + "Sys=0.06s Real=0.66s";
+        assertTrue(UnifiedG1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
+    }
+
+    @Test
     void testPreprocessedTriggerG1HumongousAllocation() {
         String logLine = "[2021-10-29T21:02:24.624+0000][info][gc,start       ] GC(23863) Pause Full "
                 + "(G1 Humongous Allocation) Humongous regions: 0->0 Metaspace: 69475K->69475K(153600K) "
