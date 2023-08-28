@@ -203,17 +203,6 @@ public enum Analysis {
     WARN_CMS_CLASS_UNLOADING_NOT_ENABLED("warn.cms.class.unloading.not.enabled"),
 
     /**
-     * Property key for specifying both the CMS collector running in incremental mode and an initiating occupancy
-     * fraction.
-     */
-    WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT("warn.cms.inc.mode.with.init.occup.fract"),
-
-    /**
-     * Property key for CMS collector running in incremental mode.
-     */
-    WARN_CMS_INCREMENTAL_MODE("warn.cms.incremental.mode"),
-
-    /**
      * Property key for CMS initial mark low parallelism.
      */
     WARN_CMS_INITIAL_MARK_LOW_PARALLELISM("warn.cms.initial.mark.low.parallelism"),

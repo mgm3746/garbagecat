@@ -42,6 +42,7 @@ import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.CmsIncrementalModeCollector;
 import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
@@ -374,6 +375,16 @@ public class JvmDao {
      */
     public synchronized List<BlockingEvent> getBlockingEvents(LogEventType eventType) {
         return this.blockingEvents.stream().filter(e -> e.getName().equals(eventType.toString()))
+                .map(JvmDao::toBlockingEvent).collect(toList());
+    }
+
+    /**
+     * Retrieve all <code>CmsIncrementalModeCollector</code> events.
+     * 
+     * @return <code>List</code> of <code>CmsIncrementalModeCollector</code> events.
+     */
+    public synchronized List<BlockingEvent> getCmsIncrementalModeCollectorEvents() {
+        return this.blockingEvents.stream().filter(e -> e instanceof CmsIncrementalModeCollector)
                 .map(JvmDao::toBlockingEvent).collect(toList());
     }
 

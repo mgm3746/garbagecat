@@ -315,6 +315,7 @@ public class GcManager {
         jvmRun.setPreprocessEvents(jvmDao.getPreprocessEvents());
         jvmRun.setVmInfo(jvmDao.getVmInfo());
 
+        // Analysis that depends on jvmDao
         if (!jvmRun.hasDatestamps() && jvmStartDate == null && jvmRun.getLogFileDate() != null
                 && jvmRun.getFirstEvent() != null && jvmRun.getFirstEvent().getLogEntry() != null) {
             // Approximate JVM start date: log file create date - first event timestamp
@@ -322,6 +323,18 @@ public class GcManager {
                     GcUtil.getDateMinusTimestamp(jvmRun.getLogFileDate(), jvmRun.getFirstEvent().getTimestamp()));
             jvmDao.getAnalysis().add(0, Analysis.WARN_DATESTAMP_APPROXIMATE);
             jvmRun.setAnalysis(jvmDao.getAnalysis());
+        }
+        // Check for CMS running in incremental mode
+        List<BlockingEvent> cmsIncrementalModeCollectorEvents = jvmDao.getCmsIncrementalModeCollectorEvents();
+        if (!cmsIncrementalModeCollectorEvents.isEmpty()) {
+            Iterator<BlockingEvent> iterator = cmsIncrementalModeCollectorEvents.iterator();
+            if (iterator.hasNext()) {
+                CmsIncrementalModeCollector cmsIncrementalModeCollectorEvent = (CmsIncrementalModeCollector) iterator
+                        .next();
+                if (cmsIncrementalModeCollectorEvent.isIncrementalMode()) {
+                    jvmRun.getJvmOptions().addAnalysis((org.github.joa.util.Analysis.INFO_CMS_INCREMENTAL_MODE));
+                }
+            }
         }
 
         jvmRun.doAnalysis();
@@ -824,16 +837,7 @@ public class GcManager {
                     }
                 }
 
-                // 5) CMS incremental mode
-                if (!jvmDao.getAnalysis().contains(Analysis.WARN_CMS_INCREMENTAL_MODE)) {
-                    if (event instanceof CmsIncrementalModeCollector) {
-                        if (((CmsIncrementalModeCollector) event).isIncrementalMode()) {
-                            jvmDao.addAnalysis(Analysis.WARN_CMS_INCREMENTAL_MODE);
-                        }
-                    }
-                }
-
-                // 6) Heap dump initiated gc
+                // 5) Heap dump initiated gc
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_HEAP_DUMP_INITIATED_GC)) {
                     if (event instanceof TriggerData) {
                         GcTrigger trigger = ((TriggerData) event).getTrigger();
@@ -843,7 +847,7 @@ public class GcManager {
                     }
                 }
 
-                // 7) Heap inspection initiated gc
+                // 6) Heap inspection initiated gc
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC)) {
                     if (event instanceof TriggerData) {
                         GcTrigger trigger = ((TriggerData) event).getTrigger();
@@ -853,7 +857,7 @@ public class GcManager {
                     }
                 }
 
-                // 8) Metaspace allocation failure
+                // 7) Metaspace allocation failure
                 if (!jvmDao.getAnalysis().contains(Analysis.ERROR_METASPACE_ALLOCATION_FAILURE)) {
                     if (event instanceof TriggerData) {
                         GcTrigger trigger = ((TriggerData) event).getTrigger();
@@ -863,7 +867,7 @@ public class GcManager {
                     }
                 }
 
-                // 9) JV TI explicit gc
+                // 8) JV TI explicit gc
                 if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_JVMTI)) {
                     if (event instanceof TriggerData) {
                         GcTrigger trigger = ((TriggerData) event).getTrigger();
@@ -873,7 +877,7 @@ public class GcManager {
                     }
                 }
 
-                // 10) G1 evacuation failure
+                // 9) G1 evacuation failure
                 if (event instanceof TriggerData) {
                     GcTrigger trigger = ((TriggerData) event).getTrigger();
                     if ((trigger == GcTrigger.TO_SPACE_EXHAUSTED || trigger == GcTrigger.TO_SPACE_OVERFLOW)) {
@@ -883,7 +887,7 @@ public class GcManager {
                     }
                 }
 
-                // 11) CMS promotion failure
+                // 10) CMS promotion failure
                 if (event instanceof TriggerData) {
                     GcTrigger trigger = ((TriggerData) event).getTrigger();
                     if (trigger == GcTrigger.PROMOTION_FAILED) {

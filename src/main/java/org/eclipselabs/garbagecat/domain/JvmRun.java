@@ -29,8 +29,6 @@ import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_SWAP_DISABLED;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED;
-import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_CMS_INCREMENTAL_MODE;
-import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_GC_SAFEPOINT_RATIO;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_GC_STOPPED_RATIO;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PARALLELISM_INVERTED;
@@ -560,10 +558,6 @@ public class JvmRun {
                 analysis.add(WARN_PRINT_GC_CAUSE_DISABLED);
                 analysis.remove(WARN_PRINT_GC_CAUSE_NOT_ENABLED);
             }
-        }
-        // Check for incremental mode in combination with -XX:CMSInitiatingOccupancyFraction=<n>.
-        if (analysis.contains(WARN_CMS_INCREMENTAL_MODE) && jvmOptions.getCmsInitiatingOccupancyFraction() != null) {
-            analysis.add(WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT);
         }
         // Check events for outputting application concurrent time
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME) &&
