@@ -325,14 +325,15 @@ public class GcManager {
             jvmRun.setAnalysis(jvmDao.getAnalysis());
         }
         // Check for CMS running in incremental mode
-        List<BlockingEvent> cmsIncrementalModeCollectorEvents = jvmDao.getCmsIncrementalModeCollectorEvents();
-        if (!cmsIncrementalModeCollectorEvents.isEmpty()) {
-            Iterator<BlockingEvent> iterator = cmsIncrementalModeCollectorEvents.iterator();
-            if (iterator.hasNext()) {
-                CmsIncrementalModeCollector cmsIncrementalModeCollectorEvent = (CmsIncrementalModeCollector) iterator
-                        .next();
-                if (cmsIncrementalModeCollectorEvent.isIncrementalMode()) {
-                    jvmRun.getJvmOptions().addAnalysis((org.github.joa.util.Analysis.INFO_CMS_INCREMENTAL_MODE));
+        if (jvmDao.getJvmContext().getGarbageCollectors().contains(GarbageCollector.CMS)) {
+            List<BlockingEvent> cmsIncrementalModeEvents = jvmDao.getCmsIncrementalModeCollectorEvents();
+            if (!cmsIncrementalModeEvents.isEmpty()) {
+                Iterator<BlockingEvent> iterator = cmsIncrementalModeEvents.iterator();
+                if (iterator.hasNext()) {
+                    CmsIncrementalModeCollector cmsIncrementalModeEvent = (CmsIncrementalModeCollector) iterator.next();
+                    if (cmsIncrementalModeEvent.isIncrementalMode()) {
+                        jvmRun.getJvmOptions().addAnalysis((org.github.joa.util.Analysis.INFO_CMS_INCREMENTAL_MODE));
+                    }
                 }
             }
         }
