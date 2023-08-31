@@ -77,7 +77,7 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
                     + " )?Concurrent (Class Unloading|Cleanup|Evacuation|Marking|Reset|Precleaning|"
                     + "(Mark|Strong|Thread) Roots|Update (Refs|Thread Roots)|Weak (References|Roots)).+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init|Final) Mark \\((G|N)\\).+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Final Mark|Final Roots|Init Mark|) \\((G|N)\\).+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?[ ]{1,}(Accumulate Stats|Evacuation|Exception Caches|Finish (Mark|Queues|Work)|"
@@ -123,11 +123,11 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
                     + " )?[ ]{1,}(DU|E|FA|FS|FU|S|U|UR): (CLDG|Code Cache|Flat Profiler|JNI|JNI Handles|JNI Weak|"
                     + "Management|String Table|Synchronizer|System Dict|Thread|Universe|JVMTI) Roots.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(CMR|CSR|CTR|CU|CWR|CWRF|DCU|DSM|DU|DWR|E|FA|FS|FU|S|UR|WR|WRP):"
-                    + " (<total>|CLDG Roots|Code Cache Cleaning|Code Cache Roots|Flat Profiler Roots|JFR Weak Roots|"
-                    + "JNI Handles Roots|JNI Weak Roots|Parallel Mark|Weak References|Resolved Table Roots|"
-                    + "String Table Roots|Thread Roots|Unload Code Caches|Unlink CLDs|VM Strong Roots|VM Weak Roots)"
-                    + "[ ]{1,}\\d{1,} us.*$"
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(CMR|CSR|CTR|CU|CWR|CWRF|DCU|DSM|DU|DWR|E|FA|FM|FS|FU|S|UR|WR|"
+                    + "WRP): (<total>|CLDG Roots|Code Cache Cleaning|Code Cache Roots|Flat Profiler Roots|"
+                    + "JFR Weak Roots|JNI Handles Roots|JNI Weak Roots|Parallel Mark|Weak References|"
+                    + "Resolved Table Roots|String Table Roots|Thread Roots|Unload Code Caches|Unlink CLDs|"
+                    + "VM Strong Roots|VM Weak Roots)[ ]{1,}\\d{1,} us.*$"
             //
     };
 

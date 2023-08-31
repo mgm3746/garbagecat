@@ -22,6 +22,7 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahDegeneratedGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalRootsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
@@ -271,12 +272,14 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
                     + ") (\\[)?Pause (Init|Final) Mark( \\((process weakrefs|update refs|unload classes)\\))?"
                     + "( \\((process weakrefs|unload classes)\\))?" + "(, start\\])?$",
+            // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalRootsEvent}
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") (\\[)?Pause Final Roots$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahDegeneratedGcEvent}
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
                     + ") (\\[)?Pause Degenerated GC \\((Evacuation|Mark|Outside of Cycle|Update Refs)\\)"
                     + "(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFullGcEvent}
-            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") \\[Pause Full, start\\]$",
+            "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") (\\[)?Pause Full(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahFinalEvacEvent}
             "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR + ") (\\[)?Pause Final Evac(, start\\])?$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.ShenandoahInitUpdateEvent}
@@ -351,9 +354,10 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                     + ", Alloc Tax Rate: \\d{1,3}\\.\\dx$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Uncommitted " + JdkRegEx.SIZE + ". Heap: " + JdkRegEx.SIZE + " reserved, "
-                    + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$"
+                    + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
-    };
+            "^" + UnifiedRegEx.DECORATOR
+                    + " (Bad|Good) progress for (ex|in)ternal fragmentation: (-)?\\d{1,3}.\\d%, need \\d{1,3}.\\d%$" };
 
     private static final List<Pattern> THROWAWAY_PATTERN_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
 
@@ -422,6 +426,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitUpdateEvent
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitMarkEvent
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalMarkEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalRootsEvent
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalUpdateEvent
                 || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahMetaspaceEvent) {
             match = true;
@@ -508,11 +513,12 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT);
-        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitUpdateEvent
-                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitMarkEvent
+        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahDegeneratedGcEvent
                 || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalMarkEvent
-                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahDegeneratedGcEvent
-                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalUpdateEvent) {
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalRootsEvent
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalUpdateEvent
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitMarkEvent
+                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitUpdateEvent) {
             this.logEntry = logEntry;
             context.add(TOKEN_BEGINNING_OF_EVENT);
             context.remove(TOKEN_BEGINNING_SHENANDOAH);

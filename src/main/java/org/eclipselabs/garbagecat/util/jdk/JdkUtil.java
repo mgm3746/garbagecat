@@ -65,6 +65,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConsiderClassUnloadingCon
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahDegeneratedGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalEvacEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalMarkEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalRootsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitMarkEvent;
@@ -146,17 +147,17 @@ public final class JdkUtil {
         //
         SHENANDOAH_CANCELLING_GC, SHENANDOAH_CONCURRENT, SHENANDOAH_CONSIDER_CLASS_UNLOADING_CONC_MARK,
         //
-        SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE,
+        SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_ROOTS,
         //
-        SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE, SHENANDOAH_STATS,
+        SHENANDOAH_FINAL_UPDATE, SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_METASPACE,
         //
-        SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, TO_SPACE_EXHAUSTED, UNIFIED_BLANK_LINE,
+        SHENANDOAH_STATS, SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, TO_SPACE_EXHAUSTED,
         //
-        UNIFIED_CMS_INITIAL_MARK, UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE,
+        UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CONCURRENT, UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO,
         //
-        UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER,
+        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
-        UNIFIED_HEADER_VERSION, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
+        UNIFIED_HEADER, UNIFIED_HEADER_VERSION, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
         //
         UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD,
         //
@@ -314,6 +315,8 @@ public final class JdkUtil {
             return new ShenandoahFinalEvacEvent(logEntry, timestamp, duration);
         case SHENANDOAH_FINAL_MARK:
             return new ShenandoahFinalMarkEvent(logEntry, timestamp, duration);
+        case SHENANDOAH_FINAL_ROOTS:
+            return new ShenandoahFinalRootsEvent(logEntry, timestamp, duration);
         case SHENANDOAH_FINAL_UPDATE:
             return new ShenandoahFinalUpdateEvent(logEntry, timestamp, duration);
         case SHENANDOAH_FULL_GC:
@@ -512,6 +515,8 @@ public final class JdkUtil {
             return LogEventType.SHENANDOAH_FINAL_EVAC;
         if (ShenandoahFinalMarkEvent.match(logLine))
             return LogEventType.SHENANDOAH_FINAL_MARK;
+        if (ShenandoahFinalRootsEvent.match(logLine))
+            return LogEventType.SHENANDOAH_FINAL_ROOTS;
         if (ShenandoahFinalUpdateEvent.match(logLine))
             return LogEventType.SHENANDOAH_FINAL_UPDATE;
         if (ShenandoahFullGcEvent.match(logLine))
@@ -860,6 +865,8 @@ public final class JdkUtil {
             return new ShenandoahFinalEvacEvent(logLine);
         case SHENANDOAH_FINAL_MARK:
             return new ShenandoahFinalMarkEvent(logLine);
+        case SHENANDOAH_FINAL_ROOTS:
+            return new ShenandoahFinalRootsEvent(logLine);
         case SHENANDOAH_FINAL_UPDATE:
             return new ShenandoahFinalUpdateEvent(logLine);
         case SHENANDOAH_FULL_GC:

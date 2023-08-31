@@ -643,6 +643,21 @@ class TestShenandoahStatsEvent {
     }
 
     @Test
+    void testFmThreadRoots() {
+        String logLine = "[2023-08-25T02:17:01.772-0400][297.177s]     FM: Thread Roots                523 us, workers "
+                + "(us): 257, 266,";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testFmTotal() {
+        String logLine = "[2023-08-25T02:17:01.772-0400][297.177s]     FM: <total>                 1083362 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
     void testFsThreadRoots() {
         String logLine = "    FS: Thread Roots              14587 us, workers (us): 7245, 120, 7222,";
         assertTrue(ShenandoahStatsEvent.match(logLine),
@@ -784,6 +799,13 @@ class TestShenandoahStatsEvent {
     @Test
     void testPauseDegenerateGcN() {
         String logLine = "Pause Degenerated GC (N)        1285099 us";
+        assertTrue(ShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testPauseFinalRoots() {
+        String logLine = "[2023-08-25T02:15:57.864-0400][233.269s] Pause Final Roots (G)              2282 us";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
