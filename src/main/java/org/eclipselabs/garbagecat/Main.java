@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat;
 
-import static org.eclipselabs.garbagecat.OptionsParser.getLatestVersion;
-import static org.eclipselabs.garbagecat.OptionsParser.getVersion;
 import static org.eclipselabs.garbagecat.OptionsParser.options;
 import static org.eclipselabs.garbagecat.OptionsParser.parseOptions;
 import static org.eclipselabs.garbagecat.util.Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
@@ -21,7 +19,6 @@ import static org.eclipselabs.garbagecat.util.Constants.LINE_SEPARATOR;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_HELP_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_JVMOPTIONS_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_JVMOPTIONS_SHORT;
-import static org.eclipselabs.garbagecat.util.Constants.OPTION_LATEST_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_PREPROCESS_LONG;
@@ -32,7 +29,6 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_STARTDATETIME_SHO
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERBOSE_LONG;
-import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
 import static org.eclipselabs.garbagecat.util.GcUtil.parseStartDateTime;
 import static org.eclipselabs.garbagecat.util.Memory.ZERO;
@@ -152,9 +148,7 @@ public class Main {
                 : DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, throughputThreshold);
         boolean reportConsole = cmd.hasOption(OPTION_REPORT_CONSOLE_LONG);
-        boolean version = cmd.hasOption(OPTION_VERSION_LONG);
-        boolean latestVersion = cmd.hasOption(OPTION_LATEST_VERSION_LONG);
-        createReport(jvmRun, reportConsole, reportFile, version, latestVersion, logFileName);
+        createReport(jvmRun, reportConsole, reportFile, logFileName);
         if (verbose) {
             System.out.println("done");
         }
@@ -169,15 +163,10 @@ public class Main {
      *            Whether print the report to the console or to a file.
      * @param reportFile
      *            Report file.
-     * @param version
-     *            Whether or not to report garbagecat version.
-     * @param latestVersion
-     *            Whether or not to report latest garbagecat version.
      * @param gcLogFileName
      *            The gc log file analyzed.
      */
-    public static void createReport(JvmRun jvmRun, boolean reportConsole, File reportFile, boolean version,
-            boolean latestVersion, String gcLogFileName) {
+    public static void createReport(JvmRun jvmRun, boolean reportConsole, File reportFile, String gcLogFileName) {
         FileWriter fileWriter = null;
         PrintWriter printWriter = null;
         try {
@@ -190,18 +179,6 @@ public class Main {
             File gcLogFile = new File(gcLogFileName);
             printWriter.write(gcLogFile.getName());
             printWriter.write(LINE_SEPARATOR);
-
-            if (version || latestVersion) {
-                printWriter.write(LINEBREAK_DOUBLE);
-                if (version) {
-                    printWriter.write(
-                            "Running garbagecat version: " + getVersion() + System.getProperty("line.separator"));
-                }
-                if (latestVersion) {
-                    printWriter.write("Latest garbagecat version/tag: " + getLatestVersion()
-                            + System.getProperty("line.separator"));
-                }
-            }
 
             // GC Bottlenecks
             List<String> gcBottlenecks = jvmRun.getGcBottlenecks();

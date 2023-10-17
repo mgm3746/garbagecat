@@ -16,8 +16,6 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_HELP_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_HELP_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_JVMOPTIONS_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_JVMOPTIONS_SHORT;
-import static org.eclipselabs.garbagecat.util.Constants.OPTION_LATEST_VERSION_LONG;
-import static org.eclipselabs.garbagecat.util.Constants.OPTION_LATEST_VERSION_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_OUTPUT_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_PREPROCESS_LONG;
@@ -32,8 +30,6 @@ import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_THRESHOLD_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERBOSE_LONG;
 import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERBOSE_SHORT;
-import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_LONG;
-import static org.eclipselabs.garbagecat.util.Constants.OPTION_VERSION_SHORT;
 import static org.eclipselabs.garbagecat.util.Constants.OUTPUT_FILE_NAME;
 import static org.eclipselabs.garbagecat.util.GcUtil.isValidStartDateTime;
 
@@ -47,15 +43,6 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 
 /**
  * @author <a href="https://github.com/pfichtner">Peter Fichtner</a>
@@ -68,8 +55,6 @@ public class OptionsParser {
         // Declare command line options
         options = new Options();
         options.addOption(OPTION_HELP_SHORT, OPTION_HELP_LONG, false, "help");
-        options.addOption(OPTION_VERSION_SHORT, OPTION_VERSION_LONG, false, "version");
-        options.addOption(OPTION_LATEST_VERSION_SHORT, OPTION_LATEST_VERSION_LONG, false, "latest version");
         options.addOption(OPTION_JVMOPTIONS_SHORT, OPTION_JVMOPTIONS_LONG, true, "JVM options used during JVM run");
         options.addOption(OPTION_PREPROCESS_SHORT, OPTION_PREPROCESS_LONG, false, "do preprocessing");
         options.addOption(OPTION_STARTDATETIME_SHORT, OPTION_STARTDATETIME_LONG, true,
@@ -82,30 +67,6 @@ public class OptionsParser {
         options.addOption(OPTION_REPORT_CONSOLE_SHORT, OPTION_REPORT_CONSOLE_LONG, false,
                 "print report to stdout instead of file");
         options.addOption(OPTION_VERBOSE_SHORT, OPTION_VERBOSE_LONG, false, "verbose output");
-    }
-
-    /**
-     * @return version string.
-     */
-    static String getLatestVersion() {
-        String url = "https://github.com/mgm3746/garbagecat/releases/latest";
-        try {
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            httpClient = HttpClients.custom()
-                    .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-                    .build();
-            HttpGet request = new HttpGet(url);
-            request.addHeader("Accept", "application/json");
-            request.addHeader("content-type", "application/json");
-            HttpResponse result = httpClient.execute(request);
-            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
-            return new JSONObject(json).getString("tag_name");
-        }
-
-        catch (Exception ex) {
-            ex.printStackTrace();
-            return "Unable to retrieve";
-        }
     }
 
     /**
@@ -126,30 +87,14 @@ public class OptionsParser {
      */
     public static final CommandLine parseOptions(String[] args) throws ParseException {
         CommandLineParser parser = new DefaultParser();
-        // Allow user to just specify help or version.
+        // Allow user to just specify help.
         if (args.length == 1 && (args[0].equals("-" + OPTION_HELP_SHORT) || args[0].equals("--" + OPTION_HELP_LONG))) {
             return null;
-        } else if (args.length == 1
-                && (args[0].equals("-" + OPTION_VERSION_SHORT) || args[0].equals("--" + OPTION_VERSION_LONG))) {
-            System.out.println("Running garbagecat version: " + getVersion());
-        } else if (args.length == 1 && (args[0].equals("-" + OPTION_LATEST_VERSION_SHORT)
-                || args[0].equals("--" + OPTION_LATEST_VERSION_LONG))) {
-            System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
-        } else if (args.length == 2
-                && (((args[0].equals("-" + OPTION_VERSION_SHORT) || args[0].equals("--" + OPTION_VERSION_LONG))
-                        && (args[1].equals("-" + OPTION_LATEST_VERSION_SHORT)
-                                || args[1].equals("--" + OPTION_LATEST_VERSION_LONG)))
-                        || ((args[1].equals("-" + OPTION_VERSION_SHORT) || args[1].equals("--" + OPTION_VERSION_LONG))
-                                && (args[0].equals("-" + OPTION_LATEST_VERSION_SHORT)
-                                        || args[0].equals("--" + OPTION_LATEST_VERSION_LONG))))) {
-            System.out.println("Running garbagecat version: " + getVersion());
-            System.out.println("Latest garbagecat version/tag: " + getLatestVersion());
         } else {
             CommandLine cmd = parser.parse(options, args);
             validateOptions(cmd);
             return cmd;
         }
-        return null;
     }
 
     /**

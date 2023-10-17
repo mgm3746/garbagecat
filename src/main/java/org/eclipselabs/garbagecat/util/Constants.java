@@ -69,16 +69,6 @@ public class Constants {
     public static final String OPTION_JVMOPTIONS_SHORT = "j";
 
     /**
-     * Latest version command line long option.
-     */
-    public static final String OPTION_LATEST_VERSION_LONG = "latest";
-
-    /**
-     * Latest version command line short option.
-     */
-    public static final String OPTION_LATEST_VERSION_SHORT = "l";
-
-    /**
      * Output (name of report file) command line long option.
      */
     public static final String OPTION_OUTPUT_LONG = "output";
@@ -147,16 +137,6 @@ public class Constants {
      * Verbose command line short option.
      */
     public static final String OPTION_VERBOSE_SHORT = "v";
-
-    /**
-     * Version command line long option.
-     */
-    public static final String OPTION_VERSION_LONG = "version";
-
-    /**
-     * Version command line short option.
-     */
-    public static final String OPTION_VERSION_SHORT = "n";
 
     /**
      * Default output file name.
