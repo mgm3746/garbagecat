@@ -27,16 +27,7 @@ import org.junit.jupiter.api.Test;
 class TestSerialOldEvent {
 
     @Test
-    void testIsBlocking() {
-        String logLine = "187.159: [Full GC 187.160: "
-                + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
-                + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
-                JdkUtil.LogEventType.SERIAL_OLD.toString() + " not indentified as blocking.");
-    }
-
-    @Test
-    void testLogLine() {
+    void test() {
         String logLine = "187.159: [Full GC 187.160: "
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
                 + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
@@ -58,7 +49,7 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineDatestamp() {
+    void testDatestamp() {
         String logLine = "2017-03-26T13:16:18.668+0200: [GC2017-03-26T13:16:18.668+0200: [DefNew: "
                 + "4928K->511K(4928K), 0.0035715 secs]2017-03-26T13:16:18.684+0200: [Tenured: "
                 + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
@@ -70,7 +61,7 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineDatestampTimestamp() {
+    void testDatestampTimestamp() {
         String logLine = "2017-03-26T13:16:18.668+0200: 24.296: [GC2017-03-26T13:16:18.668+0200: 24.296: [DefNew: "
                 + "4928K->511K(4928K), 0.0035715 secs]2017-03-26T13:16:18.684+0200: 24.300: [Tenured: "
                 + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
@@ -96,7 +87,7 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineFullGcWithMetadatGcThresholdTrigger() {
+    void testFullGcTriggerMetadatGcThreshold() {
         String logLine = "2.447: [Full GC (Metadata GC Threshold) 2.447: [Tenured: 0K->12062K(524288K), "
                 + "0.1248607 secs] 62508K->12062K(760256K), [Metaspace: 20526K->20526K(1069056K)], 0.1249442 secs] "
                 + "[Times: user=0.18 sys=0.08, real=0.13 secs]";
@@ -118,31 +109,7 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineGcPromotionFailedTrigger() {
-        String logLine = "116.957: [GC (Allocation Failure) 116.957: [DefNew (promotion failed) : "
-                + "229660K->235967K(235968K), 0.2897884 secs]117.247: [Tenured: 524288K->144069K(524288K), "
-                + "0.3905008 secs] 674654K->144069K(760256K), [Metaspace: 65384K->65384K(1114112K)], 0.6804246 secs] "
-                + "[Times: user=0.67 sys=0.01, real=0.69 secs]";
-        assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
-        SerialOldEvent event = new SerialOldEvent(logLine);
-        assertEquals((long) 116957, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
-        assertEquals(kilobytes(674654 - 524288), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(144069 - 144069), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(760256 - 524288), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(524288), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(144069), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(524288), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(65384), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(65384), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1114112), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(680424, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineGcWithAllocationFailureTrigger() {
+    void testGcTriggerAllocationFailure() {
         String logLine = "38.922: [GC (Allocation Failure) 38.922: [DefNew: 229570K->229570K(235968K), "
                 + "0.0000182 secs]38.922: [Tenured: 459834K->79151K(524288K), 0.2871383 secs] "
                 + "689404K->79151K(760256K), [Metaspace: 68373K->68373K(1114112K)], 0.2881307 secs] "
@@ -166,7 +133,40 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineJdk16WithTrigger() {
+    void testGcTriggerAllocationFailurePromotionFailed() {
+        String logLine = "116.957: [GC (Allocation Failure) 116.957: [DefNew (promotion failed) : "
+                + "229660K->235967K(235968K), 0.2897884 secs]117.247: [Tenured: 524288K->144069K(524288K), "
+                + "0.3905008 secs] 674654K->144069K(760256K), [Metaspace: 65384K->65384K(1114112K)], 0.6804246 secs] "
+                + "[Times: user=0.67 sys=0.01, real=0.69 secs]";
+        assertTrue(SerialOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+        SerialOldEvent event = new SerialOldEvent(logLine);
+        assertEquals((long) 116957, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
+        assertEquals(kilobytes(674654 - 524288), event.getYoungOccupancyInit(),
+                "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(144069 - 144069), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
+        assertEquals(kilobytes(760256 - 524288), event.getYoungSpace(), "Young available size not parsed correctly.");
+        assertEquals(kilobytes(524288), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
+        assertEquals(kilobytes(144069), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
+        assertEquals(kilobytes(524288), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(65384), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
+        assertEquals(kilobytes(65384), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
+        assertEquals(kilobytes(1114112), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(680424, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testIsBlocking() {
+        String logLine = "187.159: [Full GC 187.160: "
+                + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
+                + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+                JdkUtil.LogEventType.SERIAL_OLD.toString() + " not indentified as blocking.");
+    }
+
+    @Test
+    void testJdk16Trigger() {
         String logLine = "2.457: [Full GC (System) 2.457: "
                 + "[Tenured: 1092K->2866K(116544K), 0.0489980 secs] 11012K->2866K(129664K), "
                 + "[Perm : 8602K->8604K(131072K)], 0.0490880 secs]";
@@ -188,7 +188,7 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineTimestamp() {
+    void testTimestamp() {
         String logLine = "24.296: [GC24.296: [DefNew: 4928K->511K(4928K), 0.0035715 secs]24.300: [Tenured: "
                 + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
                 + "0.1148688 secs] [Times: user=0.11 sys=0.02, real=0.13 secs]";
@@ -199,7 +199,7 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineWhitespaceAtEnd() {
+    void testWhitespaceAtEnd() {
         String logLine = "187.159: [Full GC 187.160: "
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
                 + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]       ";
@@ -208,7 +208,7 @@ class TestSerialOldEvent {
     }
 
     @Test
-    void testLogLineWithSerialNewBlock() {
+    void testWithSerialNewBlock() {
         String logLine = "3727.365: [GC 3727.365: [DefNew: 400314K->400314K(400384K), 0.0000550 secs]"
                 + "3727.365: [Tenured: 837793K->597490K(889536K), 44.7498530 secs] 1238107K->597490K(1289920K), "
                 + "[Perm : 54745K->54745K(54784K)], 44.7501880 secs]";

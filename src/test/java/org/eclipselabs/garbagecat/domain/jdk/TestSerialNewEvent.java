@@ -26,15 +26,7 @@ import org.junit.jupiter.api.Test;
 class TestSerialNewEvent {
 
     @Test
-    void testIsBlocking() {
-        String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
-                + "41677K->10314K(126720K), 0.0210210 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
-                JdkUtil.LogEventType.SERIAL_NEW.toString() + " not indentified as blocking.");
-    }
-
-    @Test
-    void testLogLine() {
+    void test() {
         String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
                 + "41677K->10314K(126720K), 0.0210210 secs]";
         assertTrue(SerialNewEvent.match(logLine),
@@ -51,7 +43,7 @@ class TestSerialNewEvent {
     }
 
     @Test
-    void testLogLineDatestamp() {
+    void testDatestamp() {
         String logLine = "2016-11-22T09:07:01.358+0100: [GC2016-11-22T09:07:01.359+0100: [DefNew: "
                 + "68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), 0,0360580 secs] "
                 + "[Times: user=0,04 sys=0,00, real=0,03 secs]";
@@ -62,7 +54,7 @@ class TestSerialNewEvent {
     }
 
     @Test
-    void testLogLineDatestampTimestamp() {
+    void testDatestampTimestamp() {
         String logLine = "2016-11-22T09:07:01.358+0100: 1,319: [GC2016-11-22T09:07:01.359+0100: 1,320: [DefNew: "
                 + "68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), 0,0360580 secs] "
                 + "[Times: user=0,04 sys=0,00, real=0,03 secs]";
@@ -80,7 +72,15 @@ class TestSerialNewEvent {
     }
 
     @Test
-    void testLogLineNoSpaceAfterGC() {
+    void testIsBlocking() {
+        String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
+                + "41677K->10314K(126720K), 0.0210210 secs]";
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+                JdkUtil.LogEventType.SERIAL_NEW.toString() + " not indentified as blocking.");
+    }
+
+    @Test
+    void testNoSpaceAfterGC() {
         String logLine = "4.296: [GC4.296: [DefNew: 68160K->8512K(76672K), 0.0528470 secs] "
                 + "68160K->11664K(1325760K), 0.0530640 secs] [Times: user=0.04 sys=0.00, real=0.05 secs]";
         assertTrue(SerialNewEvent.match(logLine),
@@ -101,7 +101,7 @@ class TestSerialNewEvent {
     }
 
     @Test
-    void testLogLineTimestamp() {
+    void testTimestamp() {
         String logLine = "1,319: [GC1,320: [DefNew: 68160K->4425K(76672K), 0,0354890 secs] 68160K->4425K(3137216K), "
                 + "0,0360580 secs] [Times: user=0,04 sys=0,00, real=0,03 secs]";
         assertTrue(SerialNewEvent.match(logLine),
@@ -111,7 +111,7 @@ class TestSerialNewEvent {
     }
 
     @Test
-    void testLogLineWhitespaceAtEnd() {
+    void testWhitespaceAtEnd() {
         String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
                 + "41677K->10314K(126720K), 0.0210210 secs] ";
         assertTrue(SerialNewEvent.match(logLine),
@@ -119,7 +119,7 @@ class TestSerialNewEvent {
     }
 
     @Test
-    void testLogLineWithTrigger() {
+    void testWithTrigger() {
         String logLine = "2.218: [GC (Allocation Failure) 2.218: [DefNew: 209792K->15933K(235968K), 0.0848369 secs] "
                 + "209792K->15933K(760256K), 0.0849244 secs] [Times: user=0.03 sys=0.06, real=0.08 secs]";
         assertTrue(SerialNewEvent.match(logLine),

@@ -84,7 +84,8 @@ public class SerialNewEvent extends SerialCollector
     /**
      * Trigger(s) regular expression(s).
      */
-    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + ")";
+    private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + ")";
 
     /**
      * Regular expression defining the logging.
