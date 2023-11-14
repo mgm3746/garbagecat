@@ -426,6 +426,10 @@ public class JvmRun {
                 && hasAnalysis(WARN_CMS_CLASS_UNLOADING_NOT_ENABLED.getKey())) {
             analysis.remove(WARN_CMS_CLASS_UNLOADING_NOT_ENABLED);
         }
+        if (hasAnalysis(org.github.joa.util.Analysis.INFO_GC_SERIAL_ELECTED.getKey())
+                && hasAnalysis(WARN_SERIAL_GC.getKey())) {
+            analysis.remove(WARN_SERIAL_GC);
+        }
         // Check for partial log
         if (firstGcEvent != null || firstSafepointEvent != null) {
             long firstTimeStamp = Long.MIN_VALUE;
