@@ -819,7 +819,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.056s][info][gc,heap      ] GC(1) Old: 518K->518K(960K)
      * 
      * [0.053s][info][gc,start     ] GC(1) Pause Initial Mark
-     * 
+     *   
+     * Concurrent (CMS/G1):
+     *     
      * [0.053s][info][gc           ] GC(1) Concurrent Mark
      * 
      * [0.054s][info][gc           ] GC(1) Concurrent Preclean
@@ -833,6 +835,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Scan Root Regions
      * 
      * [2021-03-13T03:37:44.312+0530][79857381ms] GC(8652) Concurrent Mark From Roots
+     * 
+     * [2023-11-16T06:43:27.109-0500] GC(5) Concurrent Rebuild Remembered Sets and Scrub Regions
      * 
      * [0.055s][info][gc           ] GC(1) Concurrent Reset
      * 
@@ -909,10 +913,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Old: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
                     + "\\)$",
-            //
+            // ***** Concurrent (CMS/G1) *****
             "^" + UnifiedRegEx.DECORATOR
                     + " Concurrent (Clear Claimed (Marks|Roots)|Cycle|Mark|Mark Abort|Mark From Roots|"
-                    + "Mark reset for overflow|Preclean|Reset|Scan Root Regions|Undo Cycle|Sweep)[ ]{0,}$",
+                    + "Mark reset for overflow|Preclean|Reset|Rebuild Remembered Sets and Scrub Regions|"
+                    + "Scan Root Regions|Undo Cycle|Sweep)[ ]{0,}$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Application time:.+$",
             // ***** AdaptiveSizePolicy *****
@@ -944,7 +949,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Clearing All SoftReferences$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Allocation Stall \\((main|C[12] CompilerThread\\d{1,})\\) "
+            "^" + UnifiedRegEx.DECORATOR
+                    + " Allocation Stall \\((main|Common-Cleaner|C[12] CompilerThread\\d{1,}|Reference Handler)\\) "
                     + JdkRegEx.DURATION_MS + "$",
             //
             "^" + UnifiedRegEx.DECORATOR

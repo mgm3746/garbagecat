@@ -41,95 +41,7 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedSafepointEvent {
 
     @Test
-    void testIdentityEventType() {
-        String logLine = "[2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: "
-                + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] "
-                + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
-                + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
-                + "seconds";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SAFEPOINT, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT + "not identified.");
-    }
-
-    @Test
-    void testJdk11Time() {
-        String logLine = "[2021-09-14T11:40:53.379-0500][info][safepoint     ] Entering safepoint region: "
-                + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][info][safepoint     ] "
-                + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][info][safepoint     ] Total time for which "
-                + "application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(684934853379L - 0, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk11TimeUptime() {
-        String logLine = "[2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: "
-                + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] "
-                + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
-                + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
-                + "seconds";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk11TimeUptimeMillis() {
-        String logLine = "[2021-09-14T11:40:53.379-0500][144035ms][info][safepoint     ] Entering safepoint region: "
-                + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144036ms][info][safepoint     ] "
-                + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144036ms][info][safepoint     ] Total time "
-                + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
-                + "seconds";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk11Uptime() {
-        String logLine = "[144.035s][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation"
-                + "[144.036s][info][safepoint     ] Leaving safepoint region[144.036s][info][safepoint     ] Total "
-                + "time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: "
-                + "0.0002048 seconds";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk11UptimeMillis() {
-        String logLine = "[144035ms][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation"
-                + "[144036ms][info][safepoint     ] Leaving safepoint region[144036ms][info][safepoint     ] Total "
-                + "time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: "
-                + "0.0002048 seconds";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk17CleanClassLoaderDataMetaspaces() {
+    void testCleanClassLoaderDataMetaspacesJdk17() {
         String logLine = "[0.192s][info][safepoint   ] Safepoint \"CleanClassLoaderDataMetaspaces\", Time since last: "
                 + "1223019 ns, Reaching safepoint: 138450 ns, At safepoint: 73766 ns, Total: 212216 ns";
         assertTrue(UnifiedSafepointEvent.match(logLine),
@@ -142,46 +54,7 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testJdk17G1Concurrent() {
-        String logLine = "[0.064s][info][safepoint   ] Safepoint \"G1Concurrent\", Time since last: 1666947 ns, "
-                + "Reaching safepoint: 79150 ns, At safepoint: 349999 ns, Total: 429149 ns";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.G1_CONCURRENT, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(64, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(79150, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(349999, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk17G1TryInitiateConcMark() {
-        String logLine = "[2023-01-11T16:09:59.190+0000][19084.729s] Safepoint \"G1TryInitiateConcMark\", Time since "
-                + "last: 720212197 ns, Reaching safepoint: 477437 ns, At safepoint: 119597295 ns, Total: 120074732 ns";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.G1_TRY_INITIATE_CONC_MARK, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(19084729L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(477437, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(119597295, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk17ICBufferFull() {
-        String logLine = "[2022-12-29T10:13:49.155+0000][0.433s] Safepoint \"ICBufferFull\", Time since last: "
-                + "392373271 ns, Reaching safepoint: 553351 ns, At safepoint: 23698 ns, Total: 577049 ns";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.IC_BUFFER_FULL, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(433, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(553351, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(23698, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk17Update8Cleanup() {
+    void testCleanupJdk17Update8() {
         String logLine = "[1.708s] Safepoint \"G1CollectForAllocation\", Time since last: 11990384 ns, Reaching "
                 + "safepoint: 2496 ns, Cleanup: 11042 ns, At safepoint: 623787 ns, Total: 637325 ns";
         assertTrue(UnifiedSafepointEvent.match(logLine),
@@ -195,83 +68,53 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testJdk17Update8PauseCleanup() {
-        String logLine = "[0.069s] Safepoint \"G1PauseCleanup\", Time since last: 399905 ns, Reaching safepoint: "
-                + "63366 ns, Cleanup: 7340 ns, At safepoint: 22046 ns, Total: 92752 ns";
+    void testG1ConcurrentJdk17() {
+        String logLine = "[0.064s][info][safepoint   ] Safepoint \"G1Concurrent\", Time since last: 1666947 ns, "
+                + "Reaching safepoint: 79150 ns, At safepoint: 349999 ns, Total: 429149 ns";
         assertTrue(UnifiedSafepointEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.G1_PAUSE_CLEANUP, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(69, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(63366, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(7340, event.getTimeCleanup(), "Time cleanup not parsed correctly.");
-        assertEquals(22046, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(Trigger.G1_CONCURRENT, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(64, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(79150, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(349999, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
-    void testJdk17Update8PauseRemark() {
-        String logLine = "[0.069s] Safepoint \"G1PauseRemark\", Time since last: 1333915 ns, Reaching safepoint: "
-                + "64336 ns, Cleanup: 6649 ns, At safepoint: 156813 ns, Total: 227798 ns";
+    void testG1TryInitiateConcMarkJdk17() {
+        String logLine = "[2023-01-11T16:09:59.190+0000][19084.729s] Safepoint \"G1TryInitiateConcMark\", Time since "
+                + "last: 720212197 ns, Reaching safepoint: 477437 ns, At safepoint: 119597295 ns, Total: 120074732 ns";
         assertTrue(UnifiedSafepointEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.G1_PAUSE_REMARK, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(69, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(64336, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(6649, event.getTimeCleanup(), "Time cleanup not parsed correctly.");
-        assertEquals(156813, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(Trigger.G1_TRY_INITIATE_CONC_MARK, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(19084729L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(477437, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(119597295, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
-    void testJdk17Uptime() {
-        String logLine = "[0.061s][info][safepoint   ] Safepoint \"GenCollectForAllocation\", Time since last: "
-                + "24548411 ns, Reaching safepoint: 69521 ns, At safepoint: 779732 ns, Total: 849253 ns";
+    void testICBufferFullJdk17() {
+        String logLine = "[2022-12-29T10:13:49.155+0000][0.433s] Safepoint \"ICBufferFull\", Time since last: "
+                + "392373271 ns, Reaching safepoint: 553351 ns, At safepoint: 23698 ns, Total: 577049 ns";
         assertTrue(UnifiedSafepointEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.GEN_COLLECT_FOR_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(61, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(69521, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(779732, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(Trigger.IC_BUFFER_FULL, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(433, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(553351, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(23698, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
-    void testJdk17ZMarkEnd() {
-        String logLine = "[0.129s] Safepoint \"ZMarkEnd\", Time since last: 4051145 ns, Reaching safepoint: 79105 ns, "
-                + "At safepoint: 16082 ns, Total: 95187 ns";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.Z_MARK_END, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(129, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(79105, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(16082, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk17ZMarkStart() {
-        String logLine = "[0.124s][info][safepoint   ] Safepoint \"ZMarkStart\", Time since last: 103609844 ns, "
-                + "Reaching safepoint: 99888 ns, At safepoint: 30677 ns, Total: 130565 ns";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.Z_MARK_START, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(124, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(99888, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(30677, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
-    }
-
-    @Test
-    void testJdk17ZRelocateStart() {
-        String logLine = "[0.132s] Safepoint \"ZRelocateStart\", Time since last: 1366138 ns, Reaching safepoint: "
-                + "138018 ns, At safepoint: 15653 ns, Total: 153671 ns";
-        assertTrue(UnifiedSafepointEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
-        assertEquals(Trigger.Z_RELOCATE_START, event.getTrigger(), "Trigger not parsed correctly.");
-        assertEquals(132, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(138018, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
-        assertEquals(15653, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    void testIdentityEventType() {
+        String logLine = "[2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: "
+                + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] "
+                + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
+                + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
+                + "seconds";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SAFEPOINT, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT + "not identified.");
     }
 
     @Test
@@ -310,6 +153,34 @@ class TestUnifiedSafepointEvent {
                 + "seconds";
         assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedSafepointEvent,
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " not parsed.");
+    }
+
+    @Test
+    void testPauseCleanupJdk17Update8() {
+        String logLine = "[0.069s] Safepoint \"G1PauseCleanup\", Time since last: 399905 ns, Reaching safepoint: "
+                + "63366 ns, Cleanup: 7340 ns, At safepoint: 22046 ns, Total: 92752 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.G1_PAUSE_CLEANUP, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(69, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(63366, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(7340, event.getTimeCleanup(), "Time cleanup not parsed correctly.");
+        assertEquals(22046, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testPauseRemarkJdk17Update8() {
+        String logLine = "[0.069s] Safepoint \"G1PauseRemark\", Time since last: 1333915 ns, Reaching safepoint: "
+                + "64336 ns, Cleanup: 6649 ns, At safepoint: 156813 ns, Total: 227798 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.G1_PAUSE_REMARK, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(69, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(64336, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(6649, event.getTimeCleanup(), "Time cleanup not parsed correctly.");
+        assertEquals(156813, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
     @Test
@@ -377,6 +248,53 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
+    void testTimeJdk11() {
+        String logLine = "[2021-09-14T11:40:53.379-0500][info][safepoint     ] Entering safepoint region: "
+                + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][info][safepoint     ] "
+                + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][info][safepoint     ] Total time for which "
+                + "application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(684934853379L - 0, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testTimeUptimeJdk11() {
+        String logLine = "[2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: "
+                + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] "
+                + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time "
+                + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
+                + "seconds";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testTimeUptimeMillisJdk11() {
+        String logLine = "[2021-09-14T11:40:53.379-0500][144035ms][info][safepoint     ] Entering safepoint region: "
+                + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144036ms][info][safepoint     ] "
+                + "Leaving safepoint region[2021-09-14T11:40:53.379-0500][144036ms][info][safepoint     ] Total time "
+                + "for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 "
+                + "seconds";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
     void testTriggerGcHeapInspection() throws IOException {
         File testFile = TestUtil.getFile("dataset248.txt");
         GcManager gcManager = new GcManager();
@@ -401,6 +319,49 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
+    void testUptimeJdk11() {
+        String logLine = "[144.035s][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation"
+                + "[144.036s][info][safepoint     ] Leaving safepoint region[144.036s][info][safepoint     ] Total "
+                + "time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: "
+                + "0.0002048 seconds";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testUptimeJdk17() {
+        String logLine = "[0.061s][info][safepoint   ] Safepoint \"GenCollectForAllocation\", Time since last: "
+                + "24548411 ns, Reaching safepoint: 69521 ns, At safepoint: 779732 ns, Total: 849253 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.GEN_COLLECT_FOR_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(61, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(69521, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(779732, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testUptimeMillisJdk11() {
+        String logLine = "[144035ms][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation"
+                + "[144036ms][info][safepoint     ] Leaving safepoint region[144036ms][info][safepoint     ] Total "
+                + "time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: "
+                + "0.0002048 seconds";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.COLLECT_FOR_METADATA_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(144035, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(204800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(454600, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
     void testWithSpacesAtEnd() {
         String logLine = "[2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: "
                 + "CollectForMetadataAllocation[2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] "
@@ -409,6 +370,84 @@ class TestUnifiedSafepointEvent {
                 + "seconds   ";
         assertTrue(UnifiedSafepointEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+    }
+
+    @Test
+    void testXMarkEndJdk21() {
+        String logLine = "[2023-11-16T07:13:24.719-0500] Safepoint \"XMarkEnd\", Time since last: 9298521 ns, Reaching "
+                + "safepoint: 64558 ns, Cleanup: 4188 ns, At safepoint: 19474 ns, Total: 88220 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.X_MARK_END, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(753434004719L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(64558, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(19474, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testXMarkStartJdk21() {
+        String logLine = "[2023-11-16T07:13:24.709-0500] Safepoint \"XMarkStart\", Time since last: 104262770 ns, "
+                + "Reaching safepoint: 313632 ns, Cleanup: 16571 ns, At safepoint: 21875 ns, Total: 352078 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.X_MARK_START, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(753434004709L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(313632, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(21875, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testXRelocateStartJdk21() {
+        String logLine = "[2023-11-16T07:13:24.721-0500] Safepoint \"XRelocateStart\", Time since last: 1668402 ns, "
+                + "Reaching safepoint: 605 ns, Cleanup: 580 ns, At safepoint: 12417 ns, Total: 13602 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.X_RELOCATE_START, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(753434004721L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(605, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(12417, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testZMarkEndJdk17() {
+        String logLine = "[0.129s] Safepoint \"ZMarkEnd\", Time since last: 4051145 ns, Reaching safepoint: 79105 ns, "
+                + "At safepoint: 16082 ns, Total: 95187 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.Z_MARK_END, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(129, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(79105, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(16082, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testZMarkStartJdk17() {
+        String logLine = "[0.124s][info][safepoint   ] Safepoint \"ZMarkStart\", Time since last: 103609844 ns, "
+                + "Reaching safepoint: 99888 ns, At safepoint: 30677 ns, Total: 130565 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.Z_MARK_START, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(124, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(99888, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(30677, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
+    void testZRelocateStartJdk17() {
+        String logLine = "[0.132s] Safepoint \"ZRelocateStart\", Time since last: 1366138 ns, Reaching safepoint: "
+                + "138018 ns, At safepoint: 15653 ns, Total: 153671 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.Z_RELOCATE_START, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(132, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(138018, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(15653, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
     }
 
 }

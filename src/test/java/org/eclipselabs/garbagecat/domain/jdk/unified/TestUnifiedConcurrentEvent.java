@@ -129,6 +129,14 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentRebuildRememberedSetsAndScrubRegionsWithDuration() {
+        String logLine = "[2023-11-16T06:43:27.111-0500] GC(5) Concurrent Rebuild Remembered Sets and Scrub Regions "
+                + "2.155ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentRelocate() {
         String logLine = "[0.134s] GC(0) Concurrent Relocate 2.550ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),

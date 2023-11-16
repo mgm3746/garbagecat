@@ -98,7 +98,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
             + "Stopping threads took: (\\d{1,}[\\.\\,]\\d{7}) seconds[ ]*$";
 
     /**
-     * Regular expressions defining the JDK17 logging.
+     * Regular expressions defining the JDK17+ logging.
      */
     public static final String REGEX_JDK17 = "^" + UnifiedRegEx.DECORATOR + " Safepoint \""
             + UnifiedSafepoint.triggerRegEx()

@@ -1024,6 +1024,19 @@ class TestShenandoahPreprocessAction {
     }
 
     @Test
+    void testPauseFinalRootsWithTime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][233.267s] GC(4) Pause Final Roots 0.019ms";
+        assertTrue(ShenandoahPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        List<String> entangledLogLines = new ArrayList<String>();
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testPauseFinalUpdateNoTime() {
         String logLine = "[2021-10-27T13:03:16.634-0400] GC(0) Pause Final Update Refs";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
@@ -1111,19 +1124,6 @@ class TestShenandoahPreprocessAction {
     @Test
     void testPauseInitUpdateRefsWithTime() {
         String logLine = "[2021-10-27T13:03:16.666-0400] GC(2) Pause Init Update Refs 0.012ms";
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
-                "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
-        String nextLogLine = null;
-        Set<String> context = new HashSet<String>();
-        List<String> entangledLogLines = new ArrayList<String>();
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
-        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
-    }
-
-    @Test
-    void testPauseFinalRootsWithTime() {
-        String logLine = "[2023-08-25T02:15:57.862-0400][233.267s] GC(4) Pause Final Roots 0.019ms";
         assertTrue(ShenandoahPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         String nextLogLine = null;

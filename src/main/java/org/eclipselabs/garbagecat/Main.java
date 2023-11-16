@@ -543,8 +543,10 @@ public class Main {
                         pauseTotalString = pauseTotal.toString();
                     }
                     BigDecimal percent;
-                    if (totalSafepointTime.longValue() > 0) {
-                        percent = pauseTotal.divide(totalSafepointTime, 2, RoundingMode.HALF_EVEN);
+                    if (jvmRun.getUnifiedSafepointTimeTotal() > 0) {
+                        percent = new BigDecimal(summary.getPauseTotal());
+                        percent = percent.divide(JdkMath.convertNanosToMillis(jvmRun.getUnifiedSafepointTimeTotal()), 2,
+                                RoundingMode.HALF_EVEN);
                         percent = percent.movePointRight(2);
                     } else {
                         percent = new BigDecimal(100);

@@ -183,7 +183,7 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "Large Page Support|Max TLAB size|Medium Page Size|Memory|Mode|Narrow klass base|"
             + "Min heap equals to max heap, disabling ShenandoahUncommit|NUMA Support|Pacer for Idle|Parallel Workers|"
             + "Periodic GC|Pre-touch|Regions|Runtime Workers|Safepointing mechanism|Shenandoah GC mode|"
-            + "Shenandoah heuristics|TLAB Size Max|Uncommit( Delay)?)(:)?.*$";
+            + "Shenandoah heuristics|TLAB Size Max|Uncommit( Delay)?|Using legacy single-generation mode)(:)?.*$";
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

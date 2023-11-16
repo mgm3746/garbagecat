@@ -44,7 +44,9 @@ public class UnifiedSafepoint {
         //
         SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK,
         //
-        SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
+        SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, X_MARK_END, X_MARK_START, X_RELOCATE_START, Z_MARK_END,
+        //
+        Z_MARK_START, Z_RELOCATE_START
     };
 
     /**
@@ -392,22 +394,44 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * The second phase of the Z garbage collector. Do reference processing, weak root cleaning, mark regions to
-     * compact.
+     * Second phase of non-generational (JDK21+) Z garbage collector. Do reference processing, weak root cleaning, mark
+     * regions to compact.
+     * </p>
+     */
+    public static final String X_MARK_END = "XMarkEnd";
+
+    /**
+     * <p>
+     * First phase of non-generational (JDK21+) Z garbage collector. Mark objects pointed to by roots.
+     * </p>
+     */
+    public static final String X_MARK_START = "XMarkStart";
+
+    /**
+     * <p>
+     * Third phase of non-generational (JDK21+) Z garbage collector. Region compaction.
+     * </p>
+     */
+    public static final String X_RELOCATE_START = "XRelocateStart";
+
+    /**
+     * <p>
+     * The second phase of the legacy (<JDK21) Z garbage collector. Do reference processing, weak root cleaning, mark
+     * regions to compact.
      * </p>
      */
     public static final String Z_MARK_END = "ZMarkEnd";
 
     /**
      * <p>
-     * The first phase of the Z garbage collector. Mark objects pointed to by roots.
+     * The first phase of the legacy (<JDK21) Z garbage collector. Mark objects pointed to by roots.
      * </p>
      */
     public static final String Z_MARK_START = "ZMarkStart";
 
     /**
      * <p>
-     * The third phase of the Z garbage collector. Region compaction.
+     * The third phase of the legacy (<JDK21) Z garbage collector. Region compaction.
      * </p>
      */
     public static final String Z_RELOCATE_START = "ZRelocateStart";
@@ -504,6 +528,12 @@ public class UnifiedSafepoint {
             return Trigger.SHENANDOAH_INIT_UPDATE_REFS;
         if (THREAD_DUMP.matches(triggerLiteral))
             return Trigger.THREAD_DUMP;
+        if (X_MARK_END.matches(triggerLiteral))
+            return Trigger.X_MARK_END;
+        if (X_MARK_START.matches(triggerLiteral))
+            return Trigger.X_MARK_START;
+        if (X_RELOCATE_START.matches(triggerLiteral))
+            return Trigger.X_RELOCATE_START;
         if (Z_MARK_END.matches(triggerLiteral))
             return Trigger.Z_MARK_END;
         if (Z_MARK_START.matches(triggerLiteral))
@@ -652,6 +682,15 @@ public class UnifiedSafepoint {
         case THREAD_DUMP:
             triggerLiteral = THREAD_DUMP;
             break;
+        case X_MARK_END:
+            triggerLiteral = X_MARK_END;
+            break;
+        case X_MARK_START:
+            triggerLiteral = X_MARK_START;
+            break;
+        case X_RELOCATE_START:
+            triggerLiteral = X_RELOCATE_START;
+            break;
         case Z_MARK_END:
             triggerLiteral = Z_MARK_END;
             break;
@@ -760,6 +799,12 @@ public class UnifiedSafepoint {
             return Trigger.SHENANDOAH_INIT_UPDATE_REFS;
         if (Trigger.THREAD_DUMP.name().matches(trigger))
             return Trigger.THREAD_DUMP;
+        if (Trigger.X_MARK_END.name().matches(trigger))
+            return Trigger.X_MARK_END;
+        if (Trigger.X_MARK_START.name().matches(trigger))
+            return Trigger.X_MARK_START;
+        if (Trigger.X_RELOCATE_START.name().matches(trigger))
+            return Trigger.X_RELOCATE_START;
         if (Trigger.Z_MARK_END.name().matches(trigger))
             return Trigger.Z_MARK_END;
         if (Trigger.Z_MARK_START.name().matches(trigger))

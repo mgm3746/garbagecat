@@ -670,4 +670,13 @@ class TestUnifiedHeaderEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_Z.toString() + ".");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
+
+    @Test
+    void testZJdk21UsingLegacySingleGenerationMode() {
+        String logLine = "[2023-11-16T07:13:24.592-0500] Using legacy single-generation mode";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
 }

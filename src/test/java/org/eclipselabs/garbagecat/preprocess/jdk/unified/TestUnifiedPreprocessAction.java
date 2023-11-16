@@ -494,6 +494,33 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testConcurrentRebuildRememberedSetsAndScrubRegions() {
+        String logLine = "[2023-11-16T06:43:27.109-0500] GC(5) Concurrent Rebuild Remembered Sets and Scrub Regions";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testConcurrentRebuildRememberedSetsAndScrubRegionsWithDuration() {
+        String logLine = "[2023-11-16T06:43:27.111-0500] GC(5) Concurrent Rebuild Remembered Sets and Scrub Regions "
+                + "2.155ms";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testConcurrentReset() {
         String logLine = "[0.055s][info][gc           ] GC(1) Concurrent Reset";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -2757,8 +2784,22 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZAllocationStallCommonCleaner() {
+        String logLine = "[2023-11-16T08:36:06.351-0500] Allocation Stall (Common-Cleaner) 1.534ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZAllocationStallMain() {
         String logLine = "[0.274s] Allocation Stall (main) 12.040ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZAllocationStallReferenceHandler() {
+        String logLine = "[2023-11-16T08:36:06.392-0500] Allocation Stall (Reference Handler) 1.544ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }

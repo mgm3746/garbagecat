@@ -41,6 +41,15 @@ class TestUnifiedHeaderVersionEvent {
     }
 
     @Test
+    void testJdk21() {
+        String logLine = "[2023-11-16T06:43:27.034-0500] Version: 21.0.1+12-LTS (release)";
+        assertTrue(UnifiedHeaderVersionEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString() + ".");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
     void testLineWithSpaces() {
         String logLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)   ";
         assertTrue(UnifiedHeaderVersionEvent.match(logLine),
@@ -108,5 +117,4 @@ class TestUnifiedHeaderVersionEvent {
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString() + " not indentified as unified.");
     }
-
 }
