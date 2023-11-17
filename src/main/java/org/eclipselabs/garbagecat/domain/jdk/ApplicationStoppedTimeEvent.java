@@ -215,5 +215,4 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
     public long getTimeToStopThreads() {
         return timeToStopThreads;
     }
-
 }

@@ -416,7 +416,7 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * The second phase of the legacy (<JDK21) Z garbage collector. Do reference processing, weak root cleaning, mark
+     * The second phase of the legacy (&lt;JDK21) Z garbage collector. Do reference processing, weak root cleaning, mark
      * regions to compact.
      * </p>
      */
@@ -424,14 +424,14 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * The first phase of the legacy (<JDK21) Z garbage collector. Mark objects pointed to by roots.
+     * The first phase of the legacy &lt;JDK21) Z garbage collector. Mark objects pointed to by roots.
      * </p>
      */
     public static final String Z_MARK_START = "ZMarkStart";
 
     /**
      * <p>
-     * The third phase of the legacy (<JDK21) Z garbage collector. Region compaction.
+     * The third phase of the legacy (&lt;JDK21) Z garbage collector. Region compaction.
      * </p>
      */
     public static final String Z_RELOCATE_START = "ZRelocateStart";
