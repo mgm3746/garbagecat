@@ -111,8 +111,14 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UsingShenandoahEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UsingZEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartYoungAndOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartYoungEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -163,7 +169,11 @@ public final class JdkUtil {
         //
         UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z,
         //
-        VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_START, Z_RELOCATE_START
+        VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START,
+        //
+        Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD, Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG,
+        //
+        Z_STATS
     }
 
     /**
@@ -439,10 +449,22 @@ public final class JdkUtil {
             return LogEventType.USING_Z;
         if (ZMarkEndEvent.match(logLine))
             return LogEventType.Z_MARK_END;
+        if (ZMarkEndOldEvent.match(logLine))
+            return LogEventType.Z_MARK_END_OLD;
+        if (ZMarkEndYoungEvent.match(logLine))
+            return LogEventType.Z_MARK_END_YOUNG;
         if (ZMarkStartEvent.match(logLine))
             return LogEventType.Z_MARK_START;
+        if (ZMarkStartYoungEvent.match(logLine))
+            return LogEventType.Z_MARK_START_YOUNG;
+        if (ZMarkStartYoungAndOldEvent.match(logLine))
+            return LogEventType.Z_MARK_START_YOUNG_AND_OLD;
         if (ZRelocateStartEvent.match(logLine))
             return LogEventType.Z_RELOCATE_START;
+        if (ZRelocateStartOldEvent.match(logLine))
+            return LogEventType.Z_RELOCATE_START_OLD;
+        if (ZRelocateStartYoungEvent.match(logLine))
+            return LogEventType.Z_RELOCATE_START_YOUNG;
 
         // Unknown
         if (VerboseGcYoungEvent.match(logLine))
@@ -885,10 +907,22 @@ public final class JdkUtil {
         // Z
         case Z_MARK_END:
             return new ZMarkEndEvent(logLine);
+        case Z_MARK_END_OLD:
+            return new ZMarkEndOldEvent(logLine);
+        case Z_MARK_END_YOUNG:
+            return new ZMarkEndYoungEvent(logLine);
         case Z_MARK_START:
             return new ZMarkStartEvent(logLine);
+        case Z_MARK_START_YOUNG:
+            return new ZMarkStartYoungEvent(logLine);
+        case Z_MARK_START_YOUNG_AND_OLD:
+            return new ZMarkStartYoungAndOldEvent(logLine);
         case Z_RELOCATE_START:
             return new ZRelocateStartEvent(logLine);
+        case Z_RELOCATE_START_OLD:
+            return new ZRelocateStartOldEvent(logLine);
+        case Z_RELOCATE_START_YOUNG:
+            return new ZRelocateStartYoungEvent(logLine);
 
         // CMS
         case PAR_NEW:

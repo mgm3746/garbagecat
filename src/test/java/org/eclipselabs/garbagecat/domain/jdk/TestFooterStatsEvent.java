@@ -574,4 +574,21 @@ class TestFooterStatsEvent {
         assertTrue(FooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
     }
+
+    @Test
+    void testZGenerational() throws IOException {
+        File testFile = TestUtil.getFile("dataset273.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
+                JdkUtil.LogEventType.FOOTER_STATS.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
+                JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " event incorrectly identified.");
+    }
 }

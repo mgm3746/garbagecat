@@ -72,6 +72,13 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentMarkContinueZGenerationalMinor() {
+        String logLine = "[2023-11-16T09:18:11.215-0500] GC(157) y: Concurrent Mark Continue 0.073ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentMarkCycle() {
         String logLine = "[0.062s][info][gc          ] GC(2) Concurrent Mark Cycle";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
@@ -100,6 +107,13 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentMarkZGenerationalMinor() {
+        String logLine = "[0.305s][info][gc,phases   ] GC(3) y: Concurrent Mark 8.889ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentPreclean() {
         String logLine = "[0.083s][info][gc] GC(1) Concurrent Preclean";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
@@ -117,6 +131,13 @@ class TestUnifiedConcurrentEvent {
     void testConcurrentPrecleanWithTimesData() {
         String logLine = "[0.054s][info][gc           ] GC(1) Concurrent Preclean 0.033ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentProcessNonStrong() {
+        String logLine = "[0.213s][info][gc,phases   ] GC(2) O: Concurrent Process Non-Strong 0.658ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }
@@ -144,8 +165,22 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentRemapRoots() {
+        String logLine = "[0.228s][info][gc,phases   ] GC(2) O: Concurrent Remap Roots 12.855ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentReset() {
         String logLine = "[0.085s][info][gc] GC(1) Concurrent Reset";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentResetRelocationSet() {
+        String logLine = "[0.100s][info][gc,phases   ] GC(0) Y: Concurrent Reset Relocation Set 0.000ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }

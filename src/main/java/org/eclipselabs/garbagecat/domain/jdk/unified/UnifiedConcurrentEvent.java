@@ -185,6 +185,10 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [2023-01-11T16:09:59.244+0000][19084.784s] GC(300) Concurrent Undo Cycle 54.191ms
  * </pre>
  * 
+ * <pre>
+ * [0.100s][info][gc,phases   ] GC(0) Y: Concurrent Reset Relocation Set 0.000ms
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -198,12 +202,12 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
             "^" + UnifiedRegEx.DECORATOR + " Concurrent Cycle( " + JdkRegEx.DURATION_MS + ")?$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|Mark Abort|"
-                    + "Mark Cycle|Mark Free|Mark From Roots|Preclean|Process Non-Strong References|"
-                    + "Rebuild Remembered Sets|Rebuild Remembered Sets and Scrub Regions|Relocate|Reset|"
-                    + "Scan Root Regions|Select Relocation Set|String Deduplication.*|Undo Cycle|Sweep)( \\("
-                    + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.DURATION_MS + ")?"
-                    + TimesData.REGEX_JDK9 + "?[ ]*$",
+                    + "( [OYy]:)? Concurrent (Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Mark|"
+                    + "Mark Abort|Mark Continue|Mark Cycle|Mark Free|Mark From Roots|Preclean|Process Non-Strong|"
+                    + "Process Non-Strong References|Rebuild Remembered Sets|Rebuild Remembered Sets and Scrub Regions|"
+                    + "Relocate|Remap Roots|Reset|Reset Relocation Set|Scan Root Regions|Select Relocation Set|"
+                    + "String Deduplication.*|Undo Cycle|" + "Sweep)( \\(" + JdkRegEx.TIMESTAMP + "s(, "
+                    + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.DURATION_MS + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$",
             //

@@ -667,6 +667,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [2021-12-01T10:04:06.358-0500] GC(0) Garbage Collection (Warmup)
      * 
+     * [0.126s][info][gc          ] GC(1) Major Collection (Warmup)
+     * 
      * [2021-12-01T10:04:06.358-0500] GC(0) Using 1 workers
      * 
      * [0.275s] GC(2) Load: 0.53/0.41/0.33
@@ -729,6 +731,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * -                  -
      * 
      * [0.134s] GC(0) Garbage Collection (Warmup) 10M(10%)->6M(6%)
+     * 
+     * [0.119s][info][gc          ] GC(0) Major Collection (Warmup) 10M(10%)->14M(15%) 0.022s    
      * 
      * [0.262s] GC(2) Garbage Collection (Allocation Stall)
      * 
@@ -932,20 +936,21 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // ***** Safepoint *****
             "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: (Exit|Halt)$",
             // ***** Z *****
-            "^" + UnifiedRegEx.DECORATOR + " Garbage Collection \\((Allocation (Rate|Stall)|Warmup)\\).*$",
+            "^" + UnifiedRegEx.DECORATOR
+                    + " (Garbage|Major|Minor) Collection \\((Allocation (Rate|Stall)|High Usage|Warmup)\\).*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} workers$",
+            "^" + UnifiedRegEx.DECORATOR + "( O:)? Using \\d{1,} [wW]orkers( for (Old|Young) Generation)?$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,}(Allocated|Capacity|Final|Forwarding Usage|Free|Garbage|Large Pages|Live|Load|Mark|"
-                    + "Mark Stack Usage|(Max|Min) Capacity|MMU|NMethods|Phantom|Reclaimed|Small Pages|Soft|"
+                    + "( [OYy]:)?[ ]{1,}(Allocated|Capacity|Final|Forwarding Usage|Free|Garbage|Large Pages|Live|Load|"
+                    + "Mark|Mark Stack Usage|(Max|Min) Capacity|MMU|NMethods|Phantom|Reclaimed|Small Pages|Soft|"
                     + "Soft Max Capacity|Used|Weak):.+$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Metaspace: " + JdkRegEx.SIZE + " used, " + JdkRegEx.SIZE + " committed, "
-                    + JdkRegEx.SIZE + " reserved$",
+            "^" + UnifiedRegEx.DECORATOR + "( [OYy]:)? Metaspace: " + JdkRegEx.SIZE + " used, " + JdkRegEx.SIZE
+                    + " committed, " + JdkRegEx.SIZE + " reserved$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + "[ ]+Mark Start[ ]+Mark End[ ]+Relocate Start[ ]+Relocate End[ ]+High[ ]+Low[ ]*$",
+                    + "( [OYy]:)?[ ]+Mark Start[ ]+Mark End[ ]+Relocate Start[ ]+Relocate End([ ]+High[ ]+Low)?[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Clearing All SoftReferences$",
             //
@@ -954,11 +959,25 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + JdkRegEx.DURATION_MS + "$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " Relocation Stall \\((main|C[12] CompilerThread\\d{1,}|Reference Handler)\\) "
-                    + JdkRegEx.DURATION_MS + "$",
+                    + "( [Oy]:)? Relocation Stall \\((main|C[12] CompilerThread\\d{1,}|Reference Handler|"
+                    + "ZWorkerOld#0|ZWorkerYoung#0)\\) " + JdkRegEx.DURATION_MS + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " (Age table|- age).+$",
+            "^" + UnifiedRegEx.DECORATOR + "( [Yy]:)? (Age [tT]able|- age).+$",
+            // Generational only
+            "^" + UnifiedRegEx.DECORATOR
+                    + " [OYy]: (Allocation Stalls|Compacted:|Eden|Final References|Heap Statistics:|Old Generation|"
+                    + "Phantom References| Promoted:|Soft References:|Survivor \\d|Using tenuring threshold|"
+                    + "Weak References|Young Generation).*$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " [OYy]:[ ]+Candidates[ ]+Selected[ ]+In-Place[ ]+Size[ ]+Empty[ ]+Relocated"
+                    + "[ ]*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " [Yy]:[ ]+Live[ ]+Garbage[ ]+Small[ ]+Medium[ ]+Large[ ]*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " O:[ ]+Encountered[ ]+Discovered[ ]+Enqueued[ ]*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Stopping ZGC[ ]*$",
+            // ***** Other *****
             UnifiedBlankLineEvent.REGEX
             //
     };

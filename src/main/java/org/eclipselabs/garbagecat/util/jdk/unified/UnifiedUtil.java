@@ -82,8 +82,14 @@ public final class UnifiedUtil {
             case USING_SHENANDOAH:
             case USING_Z:
             case Z_MARK_END:
+            case Z_MARK_END_OLD:
+            case Z_MARK_END_YOUNG:
             case Z_MARK_START:
+            case Z_MARK_START_YOUNG:
+            case Z_MARK_START_YOUNG_AND_OLD:
             case Z_RELOCATE_START:
+            case Z_RELOCATE_START_OLD:
+            case Z_RELOCATE_START_YOUNG:
                 return true;
             default:
             }

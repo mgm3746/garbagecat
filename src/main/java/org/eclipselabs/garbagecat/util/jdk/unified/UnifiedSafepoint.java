@@ -46,7 +46,9 @@ public class UnifiedSafepoint {
         //
         SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, X_MARK_END, X_MARK_START, X_RELOCATE_START, Z_MARK_END,
         //
-        Z_MARK_START, Z_RELOCATE_START
+        Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD,
+        //
+        Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG
     };
 
     /**
@@ -394,8 +396,8 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * Second phase of non-generational (JDK21+) Z garbage collector. Do reference processing, weak root cleaning, mark
-     * regions to compact.
+     * Second phase of non-generational (JDK21+) Z garbage collector. Do reference processing, weak root cleaning, and
+     * mark regions to compact.
      * </p>
      */
     public static final String X_MARK_END = "XMarkEnd";
@@ -416,18 +418,50 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * The second phase of the legacy (&lt;JDK21) Z garbage collector. Do reference processing, weak root cleaning, mark
-     * regions to compact.
+     * The second phase of the legacy (&lt;JDK21) Z garbage collector. Do reference processing, weak root cleaning, and
+     * mark regions to compact.
      * </p>
      */
     public static final String Z_MARK_END = "ZMarkEnd";
 
     /**
      * <p>
-     * The first phase of the legacy &lt;JDK21) Z garbage collector. Mark objects pointed to by roots.
+     * The second phase of the generational (JDK21+) Z garbage collector. Do reference processing, weak root cleaning,
+     * and mark regions to compact in the old generation.
+     * </p>
+     */
+    public static final String Z_MARK_END_OLD = "ZMarkEndOld";
+
+    /**
+     * <p>
+     * The second phase of the generational (JDK21+) Z garbage collector. Do reference processing, weak root cleaning,
+     * and mark regions to compact in the young generation.
+     * </p>
+     */
+    public static final String Z_MARK_END_YOUNG = "ZMarkEndYoung";
+
+    /**
+     * <p>
+     * The first phase of the legacy (&lt;JDK21) Z garbage collector. Mark objects pointed to by roots.
      * </p>
      */
     public static final String Z_MARK_START = "ZMarkStart";
+
+    /**
+     * <p>
+     * The first phase of the generational (JDK21+) Z garbage collector. Mark objects pointed to by roots in the young
+     * generation.
+     * </p>
+     */
+    public static final String Z_MARK_START_YOUNG = "ZMarkStartYoung";
+
+    /**
+     * <p>
+     * The first phase of the generational (JDK21+) Z garbage collector. Mark objects pointed to by roots in the young
+     * and tenured generations.
+     * </p>
+     */
+    public static final String Z_MARK_START_YOUNG_AND_OLD = "ZMarkStartYoungAndOld";
 
     /**
      * <p>
@@ -435,6 +469,20 @@ public class UnifiedSafepoint {
      * </p>
      */
     public static final String Z_RELOCATE_START = "ZRelocateStart";
+
+    /**
+     * <p>
+     * The third phase of the generational (JDK21+) Z garbage collector. Region compaction in the young tenured.
+     * </p>
+     */
+    public static final String Z_RELOCATE_START_OLD = "ZRelocateStartOld";
+
+    /**
+     * <p>
+     * The third phase of the generational (JDK21+) Z garbage collector. Region compaction in the young generation.
+     * </p>
+     */
+    public static final String Z_RELOCATE_START_YOUNG = "ZRelocateStartYoung";
 
     /**
      * Get <code>Trigger</code> from log literal.
@@ -536,10 +584,22 @@ public class UnifiedSafepoint {
             return Trigger.X_RELOCATE_START;
         if (Z_MARK_END.matches(triggerLiteral))
             return Trigger.Z_MARK_END;
+        if (Z_MARK_END_OLD.matches(triggerLiteral))
+            return Trigger.Z_MARK_END_OLD;
+        if (Z_MARK_END_YOUNG.matches(triggerLiteral))
+            return Trigger.Z_MARK_END_YOUNG;
         if (Z_MARK_START.matches(triggerLiteral))
             return Trigger.Z_MARK_START;
+        if (Z_MARK_START_YOUNG.matches(triggerLiteral))
+            return Trigger.Z_MARK_START_YOUNG;
+        if (Z_MARK_START_YOUNG_AND_OLD.matches(triggerLiteral))
+            return Trigger.Z_MARK_START_YOUNG_AND_OLD;
         if (Z_RELOCATE_START.matches(triggerLiteral))
             return Trigger.Z_RELOCATE_START;
+        if (Z_RELOCATE_START_OLD.matches(triggerLiteral))
+            return Trigger.Z_RELOCATE_START_OLD;
+        if (Z_RELOCATE_START_YOUNG.matches(triggerLiteral))
+            return Trigger.Z_RELOCATE_START_YOUNG;
 
         return Trigger.UNKNOWN;
     }
@@ -694,11 +754,29 @@ public class UnifiedSafepoint {
         case Z_MARK_END:
             triggerLiteral = Z_MARK_END;
             break;
+        case Z_MARK_END_OLD:
+            triggerLiteral = Z_MARK_END_OLD;
+            break;
+        case Z_MARK_END_YOUNG:
+            triggerLiteral = Z_MARK_END_YOUNG;
+            break;
         case Z_MARK_START:
             triggerLiteral = Z_MARK_START;
             break;
+        case Z_MARK_START_YOUNG:
+            triggerLiteral = Z_MARK_START_YOUNG;
+            break;
+        case Z_MARK_START_YOUNG_AND_OLD:
+            triggerLiteral = Z_MARK_START_YOUNG_AND_OLD;
+            break;
         case Z_RELOCATE_START:
             triggerLiteral = Z_RELOCATE_START;
+            break;
+        case Z_RELOCATE_START_OLD:
+            triggerLiteral = Z_RELOCATE_START_OLD;
+            break;
+        case Z_RELOCATE_START_YOUNG:
+            triggerLiteral = Z_RELOCATE_START_YOUNG;
             break;
 
         default:
@@ -807,10 +885,22 @@ public class UnifiedSafepoint {
             return Trigger.X_RELOCATE_START;
         if (Trigger.Z_MARK_END.name().matches(trigger))
             return Trigger.Z_MARK_END;
+        if (Trigger.Z_MARK_END_OLD.name().matches(trigger))
+            return Trigger.Z_MARK_END_OLD;
+        if (Trigger.Z_MARK_END_YOUNG.name().matches(trigger))
+            return Trigger.Z_MARK_END_YOUNG;
         if (Trigger.Z_MARK_START.name().matches(trigger))
             return Trigger.Z_MARK_START;
+        if (Trigger.Z_MARK_START_YOUNG.name().matches(trigger))
+            return Trigger.Z_MARK_START_YOUNG;
+        if (Trigger.Z_MARK_START_YOUNG_AND_OLD.name().matches(trigger))
+            return Trigger.Z_MARK_START_YOUNG_AND_OLD;
         if (Trigger.Z_RELOCATE_START.name().matches(trigger))
             return Trigger.Z_RELOCATE_START;
+        if (Trigger.Z_RELOCATE_START_OLD.name().matches(trigger))
+            return Trigger.Z_RELOCATE_START_OLD;
+        if (Trigger.Z_RELOCATE_START_YOUNG.name().matches(trigger))
+            return Trigger.Z_RELOCATE_START_YOUNG;
 
         // no idea what trigger is
         return Trigger.UNKNOWN;

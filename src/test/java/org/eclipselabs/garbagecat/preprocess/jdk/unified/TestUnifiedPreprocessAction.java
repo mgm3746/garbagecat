@@ -256,6 +256,20 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testAgeTableGerational() {
+        String logLine = "[0.104s][info][gc,reloc    ] GC(0) Y: Age Table:";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testAgeTableGerationalLowerCaseY() {
+        String logLine = "[0.315s][info][gc,reloc    ] GC(3) y: Age Table:";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testArchiveRegions() {
         String logLine = "[0.038s][info][gc,heap     ] GC(0) Archive regions: 2->2";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -323,8 +337,14 @@ class TestUnifiedPreprocessAction {
     @Test
     void testCmsInitialMarkWithDuration() {
         String logLine = "[0.053s][info][gc           ] GC(1) Pause Initial Mark 0M->0M(2M) 0.278ms";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -383,7 +403,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -409,7 +429,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -435,7 +455,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -462,7 +482,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -476,7 +496,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -503,7 +523,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -564,7 +584,7 @@ class TestUnifiedPreprocessAction {
         List<String> entangledLogLines = new ArrayList<String>();
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
-        assertEquals(null, event.getLogEntry(), "Log line not parsed correctly.");
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -2805,6 +2825,14 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZAllocationStallsGenerational() {
+        String logLine = "[0.119s][info][gc,alloc    ] GC(0) O: Allocation Stalls:          0                0"
+                + "                0                0";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZCapacity() {
         String logLine = "[0.134s] GC(0)  Capacity:       32M (33%)          32M (33%)          32M (33%)          "
                 + "32M (33%)          32M (33%)          32M (33%)";
@@ -2822,6 +2850,14 @@ class TestUnifiedPreprocessAction {
     @Test
     void testZFinal() {
         String logLine = "[0.134s] GC(0) Final: 2 encountered, 0 discovered, 0 enqueued";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZFinalReferencesGenerational() {
+        String logLine = "[0.228s][info][gc,ref      ] GC(2) O: Final References:               2            0"
+                + "            0 ";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -2864,6 +2900,101 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZGarbageEdenGenerational() {
+        String logLine = "[0.137s][info][gc,reloc    ] GC(1) Y: Eden               9M (10%)           6M (7%)"
+                + "           6 / 1              0 / 0              2 / 0";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZGarbageHeaderGenerational() {
+        String logLine = "[0.137s][info][gc,reloc    ] GC(1) Y:                    Live             Garbage"
+                + "             Small              Medium             Large";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZGarbageHeaderGenerationalLowerCaseY() {
+        String logLine = "[0.315s][info][gc,reloc    ] GC(3) y:                    Live             Garbage"
+                + "             Small              Medium             Large";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZGarbageSurvivor1DigitGenerational() {
+        String logLine = "[0.137s][info][gc,reloc    ] GC(1) Y: Survivor 1         1M (2%)            2M (3%)"
+                + "           2 / 2              0 / 0              0 / 0";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZGenerationalConcurrentMarkOld() {
+        String logLine = "[0.213s][info][gc,phases   ] GC(2) O: Concurrent Mark 0.295ms";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testZGenerationalConcurrentMarkYoung() {
+        String logLine = "[0.100s][info][gc,phases   ] GC(0) Y: Concurrent Mark 2.536ms";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testZGenerationalUsingTenuringThreshold() {
+        String logLine = "[0.102s][info][gc,reloc    ] GC(0) Y: Using tenuring threshold: 1 (Computed)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZGenerationalYoungGeneration() {
+        String logLine = "[0.098s][info][gc,phases   ] GC(0) Y: Young Generation";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZHeapStatisticsCompactedGenerational() {
+        String logLine = "[0.104s][info][gc,heap     ] GC(0) Y: Compacted:         -                  -"
+                + "                  -                 1M (2%)     ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZHeapStatisticsGenerational() {
+        String logLine = "[0.104s][info][gc,heap     ] GC(0) Y: Heap Statistics:";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZHeapStatisticsPromotedGenerational() {
+        String logLine = "[0.104s][info][gc,heap     ] GC(0) Y:  Promoted:         -                  -"
+                + "                 0M (0%)            0M (0%)     ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZLargePages() {
         String logLine = "[0.134s] GC(0) Large Pages: 0 / 0M, Empty: 0M, Relocated: 0M, In-Place: 0";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -2894,6 +3025,27 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZLoadGenerationalOld() {
+        String logLine = "[0.119s][info][gc,load     ] GC(0) O: Load: 0.96 (8%) / 0.58 (5%) / 0.74 (6%)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZLoadGenerationalYoung() {
+        String logLine = "[0.104s][info][gc,load     ] GC(0) Y: Load: 0.96 (8%) / 0.58 (5%) / 0.74 (6%)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZLoadGenerationalYoungLowerCaseY() {
+        String logLine = "[0.315s][info][gc,load     ] GC(3) y: Load: 0.96 (8%) / 0.58 (5%) / 0.74 (6%)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZLoadInfo() {
         String logLine = "[0.132s][info][gc,load     ] GC(0) Load: 0.42/0.38/0.32";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -2912,6 +3064,30 @@ class TestUnifiedPreprocessAction {
     void testZMarkingHeader() {
         String logLine = "[0.275s] GC(2)                Mark Start          Mark End        Relocate Start      "
                 + "Relocate End           High               Low         ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZMarkingHeaderGenerationalOld() {
+        String logLine = "[0.228s][info][gc,alloc    ] GC(2) O:                         Mark Start        "
+                + "Mark End      Relocate Start    Relocate End   ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZMarkingHeaderGenerationalYoung() {
+        String logLine = "[0.104s][info][gc,alloc    ] GC(0) Y:                         Mark Start        "
+                + "Mark End      Relocate Start    Relocate End   ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZMarkingHeaderGenerationalYoungLowerCaseY() {
+        String logLine = "[0.315s][info][gc,alloc    ] GC(3) y:                         Mark Start        Mark End"
+                + "      Relocate Start    Relocate End";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -2946,8 +3122,43 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZMetaspaceGenerationalOld() {
+        String logLine = "[0.228s][info][gc,metaspace] GC(2) O: Metaspace: 2M used, 3M committed, 1088M reserved";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZMetaspaceGenerationalYoung() {
+        String logLine = "[0.104s][info][gc,metaspace] GC(0) Y: Metaspace: 0M used, 0M committed, 1088M reserved";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZMetaspaceGenerationalYoungLowerCaseY() {
+        String logLine = "[0.315s][info][gc,metaspace] GC(3) y: Metaspace: 3M used, 4M committed, 1088M reserved";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZMinCapacity() {
         String logLine = "[0.132s][info][gc,heap     ] GC(0) Min Capacity: 32M(33%)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZMinorCollectionAllocationRateGenerational() {
+        String logLine = "[0.296s][info][gc          ] GC(3) Minor Collection (Allocation Rate)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZMinorCollectionHighUsageGenerational() {
+        String logLine = "[1.962s][info][gc          ] GC(382) Minor Collection (High Usage)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -2974,8 +3185,54 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZOldGenerationGenerational() {
+        String logLine = "[0.212s][info][gc,phases   ] GC(2) O: Old Generation";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZOldUsingWorkersGenerational() {
+        String logLine = "[0.215s][info][gc,task     ] GC(2) O: Using 1 Workers for Old Generation";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZPagesHeaderGenerationalOld() {
+        String logLine = "[0.365s][info][gc,reloc    ] GC(4) O:                        Candidates     Selected     "
+                + "In-Place         Size        Empty    Relocated ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZPagesHeaderGenerationalYoung() {
+        String logLine = "[0.104s][info][gc,reloc    ] GC(0) Y:                        Candidates     Selected     "
+                + "In-Place         Size        Empty    Relocated ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZPagesHeaderGenerationalYoungLowerCaseY() {
+        String logLine = "[0.315s][info][gc,reloc    ] GC(3) y:                        Candidates     Selected     "
+                + "In-Place         Size        Empty    Relocated";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZPhantom() {
         String logLine = "[0.134s] GC(0) Phantom: 25 encountered, 22 discovered, 20 enqueued";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZPhantomReferencesGenerational() {
+        String logLine = "[0.228s][info][gc,ref      ] GC(2) O: Phantom References:            29            0"
+                + "            0 ";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -3005,9 +3262,69 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZPreparsingGenerationalMajorCollection() throws IOException {
+        File testFile = TestUtil.getFile("dataset271.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(7, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
+                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_START_YOUNG_AND_OLD),
+                JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_END_YOUNG),
+                JdkUtil.LogEventType.Z_MARK_END_YOUNG.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_END_OLD),
+                JdkUtil.LogEventType.Z_MARK_END_OLD.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_RELOCATE_START_YOUNG),
+                JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_RELOCATE_START_OLD),
+                JdkUtil.LogEventType.Z_RELOCATE_START_OLD.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testZPreparsingGenerationalMinorCollection() throws IOException {
+        File testFile = TestUtil.getFile("dataset272.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
+                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_START_YOUNG),
+                JdkUtil.LogEventType.Z_MARK_START_YOUNG.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_END_YOUNG),
+                JdkUtil.LogEventType.Z_MARK_END_YOUNG.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_RELOCATE_START_YOUNG),
+                JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + " collector not identified.");
+    }
+
+    @Test
     void testZReclaimed() {
         String logLine = "[0.134s] GC(0) Reclaimed:         -                  -                 0M (0%)            "
                 + "5M (6%)             -                  -";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZReferencesHeaderGenerational() {
+        String logLine = "[0.228s][info][gc,ref      ] GC(2) O:                       Encountered   Discovered     "
+                + "Enqueued ";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -3034,6 +3351,20 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZRelocationStallZWorkerOld0() {
+        String logLine = "[2023-11-16T09:18:12.565-0500] GC(468) O: Relocation Stall (ZWorkerOld#0) 0.009ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZRelocationStallZWorkerYoung0() {
+        String logLine = "[0.750s][info][gc          ] GC(89) y: Relocation Stall (ZWorkerYoung#0) 0.721ms";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZSmallPages() {
         String logLine = "[0.134s] GC(0) Small Pages: 5 / 10M, Empty: 0M, Relocated: 3M, In-Place: 0";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -3041,8 +3372,45 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZSmallPagesGenerational() {
+        String logLine = "[0.137s][info][gc,reloc    ] GC(1) Y: Small Pages:                    8            3"
+                + "            0          16M           0M           1M";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZSoftReferencesGenerational() {
+        String logLine = "[0.228s][info][gc,ref      ] GC(2) O: Soft References:             3240            0"
+                + "            0 ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZStoppingGenerational() {
+        String logLine = "[3.267s][info][gc,exit     ] Stopping ZGC";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZUsingWorkers() {
         String logLine = "[2021-12-01T10:04:06.358-0500] GC(0) Using 1 workers";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZUsingWorkersGenerationalOld() {
+        String logLine = "[0.098s][info][gc,task     ] GC(0) Using 1 Workers for Old Generation";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZUsingWorkersGenerationalYoung() {
+        String logLine = "[0.098s][info][gc,task     ] GC(0) Using 1 Workers for Young Generation";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -3057,6 +3425,35 @@ class TestUnifiedPreprocessAction {
     @Test
     void testZWarmupWithDetails() {
         String logLine = "[0.134s] GC(0) Garbage Collection (Warmup) 10M(10%)->6M(6%)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZWeakReferencesGenerational() {
+        String logLine = "[0.228s][info][gc,ref      ] GC(2) O: Weak References:              291            0"
+                + "            0 ";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZYoungAndOldWarmupGenerational() {
+        String logLine = "[2021-12-01T10:04:06.358-0500] GC(0) Major Collection (Warmup)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZYoungAndOldWarmupWithDetailsGenerational() {
+        String logLine = "[0.119s][info][gc          ] GC(0) Major Collection (Warmup) 10M(10%)->14M(15%) 0.022s";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZYoungGenerationGenerational() {
+        String logLine = "[0.296s][info][gc,phases   ] GC(3) y: Young Generation";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }

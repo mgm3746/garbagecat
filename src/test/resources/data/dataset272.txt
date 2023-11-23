@@ -1,0 +1,50 @@
+[0.296s][info][gc          ] GC(3) Minor Collection (Allocation Rate)
+[0.296s][info][gc,task     ] GC(3) Using 1 Workers for Young Generation
+[0.296s][info][gc,phases   ] GC(3) y: Young Generation
+[0.296s][info][gc,phases   ] GC(3) y: Pause Mark Start 0.010ms
+[0.296s][info][safepoint   ] Safepoint "ZMarkStartYoung", Time since last: 67718217 ns, Reaching safepoint: 66975 ns, Cleanup: 28473 ns, At safepoint: 28850 ns, Total: 124298 ns
+[0.305s][info][gc,phases   ] GC(3) y: Concurrent Mark 8.889ms
+[0.305s][info][gc,phases   ] GC(3) y: Pause Mark End 0.007ms
+[0.305s][info][safepoint   ] Safepoint "ZMarkEndYoung", Time since last: 8925468 ns, Reaching safepoint: 187888 ns, Cleanup: 1465 ns, At safepoint: 20786 ns, Total: 210139 ns
+[0.305s][info][gc,phases   ] GC(3) y: Concurrent Mark Free 0.000ms
+[0.305s][info][gc,phases   ] GC(3) y: Concurrent Reset Relocation Set 0.003ms
+[0.308s][info][gc,reloc    ] GC(3) y: Using tenuring threshold: 1 (Computed)
+[0.310s][info][gc,phases   ] GC(3) y: Concurrent Select Relocation Set 4.817ms
+[0.310s][info][gc,phases   ] GC(3) y: Pause Relocate Start 0.008ms
+[0.310s][info][safepoint   ] Safepoint "ZRelocateStartYoung", Time since last: 4892481 ns, Reaching safepoint: 127539 ns, Cleanup: 2111 ns, At safepoint: 21098 ns, Total: 150748 ns
+[0.315s][info][gc,phases   ] GC(3) y: Concurrent Relocate 5.077ms
+[0.315s][info][gc,alloc    ] GC(3) y:                         Mark Start        Mark End      Relocate Start    Relocate End
+[0.315s][info][gc,alloc    ] GC(3) y: Allocation Stalls:          0                0                0                0
+[0.315s][info][gc,load     ] GC(3) y: Load: 0.96 (8%) / 0.58 (5%) / 0.74 (6%)
+[0.315s][info][gc,mmu      ] GC(3) y: MMU: 2ms/99.4%, 5ms/99.6%, 10ms/99.7%, 20ms/99.9%, 50ms/99.9%, 100ms/99.9%
+[0.315s][info][gc,marking  ] GC(3) y: Mark: 1 stripe(s), 2 proactive flush(es), 1 terminate flush(es), 0 completion(s), 0 continuation(s)
+[0.315s][info][gc,marking  ] GC(3) y: Mark Stack Usage: 32M
+[0.315s][info][gc,nmethod  ] GC(3) y: NMethods: 854 registered, 0 unregistered
+[0.315s][info][gc,metaspace] GC(3) y: Metaspace: 3M used, 4M committed, 1088M reserved
+[0.315s][info][gc,reloc    ] GC(3) y:                        Candidates     Selected     In-Place         Size        Empty    Relocated
+[0.315s][info][gc,reloc    ] GC(3) y: Small Pages:                   22           18            0          44M           0M           1M
+[0.315s][info][gc,reloc    ] GC(3) y: Large Pages:                    1            0            0           2M           0M           0M
+[0.315s][info][gc,reloc    ] GC(3) y: Forwarding Usage: 0M
+[0.315s][info][gc,reloc    ] GC(3) y: Age Table:
+[0.315s][info][gc,reloc    ] GC(3) y:                    Live             Garbage             Small              Medium             Large
+[0.315s][info][gc,reloc    ] GC(3) y: Eden               2M (3%)           35M (37%)         19 / 17             0 / 0              0 / 0
+[0.315s][info][gc,reloc    ] GC(3) y: Survivor 1         4M (5%)            3M (3%)           3 / 1              0 / 0              1 / 0
+[0.315s][info][gc,heap     ] GC(3) y: Min Capacity: 32M(33%)
+[0.315s][info][gc,heap     ] GC(3) y: Max Capacity: 96M(100%)
+[0.315s][info][gc,heap     ] GC(3) y: Soft Max Capacity: 96M(100%)
+[0.315s][info][gc,heap     ] GC(3) y: Heap Statistics:
+[0.315s][info][gc,heap     ] GC(3) y:                Mark Start          Mark End        Relocate Start      Relocate End           High               Low
+[0.316s][info][gc,heap     ] GC(3) y:  Capacity:       60M (62%)          74M (77%)          80M (83%)          86M (90%)          86M (90%)          60M (62%)
+[0.316s][info][gc,heap     ] GC(3) y:      Free:       36M (38%)          22M (23%)          16M (17%)          34M (35%)          42M (44%)          10M (10%)
+[0.316s][info][gc,heap     ] GC(3) y:      Used:       60M (62%)          74M (77%)          80M (83%)          62M (65%)          86M (90%)          54M (56%)
+[0.316s][info][gc,heap     ] GC(3) y: Young Generation Statistics:
+[0.316s][info][gc,heap     ] GC(3) y:                Mark Start          Mark End        Relocate Start      Relocate End
+[0.316s][info][gc,heap     ] GC(3) y:      Used:       46M (48%)          60M (62%)          60M (62%)          40M (42%)
+[0.316s][info][gc,heap     ] GC(3) y:      Live:         -                 7M (8%)            2M (3%)            2M (3%)
+[0.316s][info][gc,heap     ] GC(3) y:   Garbage:         -                38M (40%)          37M (39%)           0M (1%)
+[0.316s][info][gc,heap     ] GC(3) y: Allocated:         -                14M (15%)          20M (21%)          36M (38%)
+[0.316s][info][gc,heap     ] GC(3) y: Reclaimed:         -                  -                 1M (1%)           37M (39%)
+[0.316s][info][gc,heap     ] GC(3) y:  Promoted:         -                  -                 4M (5%)            4M (5%)
+[0.316s][info][gc,heap     ] GC(3) y: Compacted:         -                  -                  -                 1M (2%)
+[0.316s][info][gc,phases   ] GC(3) y: Young Generation 60M(62%)->62M(65%) 0.019s
+[0.316s][info][gc          ] GC(3) Minor Collection (Allocation Rate) 60M(62%)->62M(65%) 0.020s
