@@ -750,6 +750,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      *
      * [0.437s] GC(7) Garbage Collection (Allocation Rate) 54M(56%)->34M(35%)
      * 
+     * [2023-12-02T00:22:33.236+0700][2.783s] GC(0) Garbage Collection (Metadata GC Threshold)
+     * 
      * G1:
      * 
      * [4.057s][info][gc,phases,start] GC(2264) Phase 1: Mark live objects
@@ -937,14 +939,15 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: (Exit|Halt)$",
             // ***** Z *****
             "^" + UnifiedRegEx.DECORATOR
-                    + " (Garbage|Major|Minor) Collection \\((Allocation (Rate|Stall)|High Usage|Warmup)\\).*$",
+                    + " (Garbage|Major|Minor) Collection \\((Allocation (Rate|Stall)|High Usage|Metadata GC Threshold|"
+                    + "Warmup)\\).*$",
             //
             "^" + UnifiedRegEx.DECORATOR + "( O:)? Using \\d{1,} [wW]orkers( for (Old|Young) Generation)?$",
             //
             "^" + UnifiedRegEx.DECORATOR
                     + "( [OYy]:)?[ ]{1,}(Allocated|Capacity|Final|Forwarding Usage|Free|Garbage|Large Pages|Live|Load|"
-                    + "Mark|Mark Stack Usage|(Max|Min) Capacity|MMU|NMethods|Phantom|Reclaimed|Small Pages|Soft|"
-                    + "Soft Max Capacity|Used|Weak):.+$",
+                    + "Mark|Mark Stack Usage|(Max|Min) Capacity|Medium Pages|MMU|NMethods|Phantom|Reclaimed|"
+                    + "Small Pages|Soft|Soft Max Capacity|Used|Weak):.+$",
             //
             "^" + UnifiedRegEx.DECORATOR + "( [OYy]:)? Metaspace: " + JdkRegEx.SIZE + " used, " + JdkRegEx.SIZE
                     + " committed, " + JdkRegEx.SIZE + " reserved$",

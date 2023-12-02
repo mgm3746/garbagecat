@@ -2900,6 +2900,13 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZGarbageCollectionMetadataGcThreshold() {
+        String logLine = "[2023-12-02T00:22:33.236+0700][2.783s] GC(0) Garbage Collection (Metadata GC Threshold)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZGarbageEdenGenerational() {
         String logLine = "[0.137s][info][gc,reloc    ] GC(1) Y: Eden               9M (10%)           6M (7%)"
                 + "           6 / 1              0 / 0              2 / 0";
@@ -3110,6 +3117,14 @@ class TestUnifiedPreprocessAction {
     @Test
     void testZMaxCapacity() {
         String logLine = "[0.132s][info][gc,heap     ] GC(0) Max Capacity: 96M(100%)";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZMediumPages() {
+        String logLine = "[2023-12-02T00:22:33.278+0700][2.825s] GC(0) Medium Pages: 0 / 0M, Empty: 0M, Relocated: "
+                + "0M, In-Place: 0";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
