@@ -947,4 +947,33 @@ class TestAnalysis {
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN.getKey()),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
     }
+
+    @Test
+    void testZStatisticsInterval() throws IOException {
+        File testFile = TestUtil.getFile("dataset274.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_Z_STATISTICS_INTERVAL.getKey()),
+                Analysis.INFO_Z_STATISTICS_INTERVAL + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED.getKey()),
+                org.github.joa.util.Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED + " analysis incorrectly identified.");
+    }
+
+    @Test
+    void testZStatisticsIntervalPreprocess() throws IOException {
+        File testFile = TestUtil.getFile("dataset274.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_Z_STATISTICS_INTERVAL.getKey()),
+                Analysis.INFO_Z_STATISTICS_INTERVAL + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED.getKey()),
+                org.github.joa.util.Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED + " analysis incorrectly identified.");
+    }
 }

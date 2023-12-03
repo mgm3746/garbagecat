@@ -177,6 +177,12 @@ public enum Analysis {
     INFO_UNIDENTIFIED_LOG_LINE_LAST("info.unidentified.log.line.last"),
 
     /**
+     * Property key for multiple {@link org.eclipselabs.garbagecat.domain.jdk.unified.ZStatsEvent} due to JVM
+     * diagnostics enabled with <code>-XX:+UnlockDiagnosticVMOptions</code>.
+     */
+    INFO_Z_STATISTICS_INTERVAL("info.z.statistics.interval"),
+
+    /**
      * Property key for application logging mixed with gc logging.
      */
     WARN_APPLICATION_LOGGING("warn.application.logging"),

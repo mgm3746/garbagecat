@@ -10,20 +10,18 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
-
-import org.github.joa.domain.GarbageCollector;
+package org.eclipselabs.garbagecat.domain;
 
 /**
- * Z collector.
+ * Multi-line logging events that include one or more headers.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ZCollector extends GcEvent {
+public interface HeaderEvent {
 
-    @Override
-    public GarbageCollector getGarbageCollector() {
-        return GarbageCollector.ZGC;
-    }
+    /**
+     * @return true if the logging is a header, false otherwise.
+     */
+    boolean isHeader();
 }

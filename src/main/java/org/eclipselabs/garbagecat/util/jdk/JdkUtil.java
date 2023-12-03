@@ -119,6 +119,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartYoungEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZStatsEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -465,6 +466,8 @@ public final class JdkUtil {
             return LogEventType.Z_RELOCATE_START_OLD;
         if (ZRelocateStartYoungEvent.match(logLine))
             return LogEventType.Z_RELOCATE_START_YOUNG;
+        if (ZStatsEvent.match(logLine))
+            return LogEventType.Z_STATS;
 
         // Unknown
         if (VerboseGcYoungEvent.match(logLine))
@@ -647,6 +650,7 @@ public final class JdkUtil {
         case USING_SHENANDOAH:
         case USING_Z:
         case VM_WARNING:
+        case Z_STATS:
             return false;
         default:
             return true;
@@ -773,6 +777,7 @@ public final class JdkUtil {
         case UNIFIED_HEADER_VERSION:
         case UNKNOWN:
         case VM_WARNING:
+        case Z_STATS:
             return false;
         default:
             return true;
@@ -923,6 +928,8 @@ public final class JdkUtil {
             return new ZRelocateStartOldEvent(logLine);
         case Z_RELOCATE_START_YOUNG:
             return new ZRelocateStartYoungEvent(logLine);
+        case Z_STATS:
+            return new ZStatsEvent(logLine);
 
         // CMS
         case PAR_NEW:

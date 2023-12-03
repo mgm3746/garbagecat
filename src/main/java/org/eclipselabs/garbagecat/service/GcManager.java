@@ -65,6 +65,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZStatsEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
@@ -383,6 +384,11 @@ public class GcManager {
                 JdkUtil.LogEventType throwAwayEventType = JdkUtil.determineEventType(throwAwayEvent.getName());
                 if (!jvmDao.getEventTypes().contains(throwAwayEventType)) {
                     jvmDao.getEventTypes().add(throwAwayEventType);
+                } else {
+                    if (throwAwayEvent instanceof ZStatsEvent && ((ZStatsEvent) throwAwayEvent).isHeader()
+                            && !jvmDao.getAnalysis().contains(Analysis.INFO_Z_STATISTICS_INTERVAL)) {
+                        jvmDao.addAnalysis(Analysis.INFO_Z_STATISTICS_INTERVAL);
+                    }
                 }
                 currentLogLine = null;
             } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
@@ -1173,6 +1179,11 @@ public class GcManager {
             JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
             if (!jvmDao.getEventTypes().contains(eventType)) {
                 jvmDao.getEventTypes().add(eventType);
+            } else {
+                if (event instanceof ZStatsEvent && ((ZStatsEvent) event).isHeader()
+                        && !jvmDao.getAnalysis().contains(Analysis.INFO_Z_STATISTICS_INTERVAL)) {
+                    jvmDao.addAnalysis(Analysis.INFO_Z_STATISTICS_INTERVAL);
+                }
             }
             // Populate triggers list.
             if (event instanceof TriggerData) {
