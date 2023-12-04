@@ -241,7 +241,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
-     * Regular expression for external root scanning block.
+     * Regular expression for external root scanning block. Enabled with "gc+phases=info" unified logging.
      *
      * Ext Root Scanning (ms): 1.8
      */

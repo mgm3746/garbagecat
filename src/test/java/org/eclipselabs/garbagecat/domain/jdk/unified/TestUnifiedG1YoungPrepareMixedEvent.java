@@ -131,6 +131,18 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     }
 
     @Test
+    void testPreprocessedNoOther() {
+        String logLine = "[0.112s][info][gc,start    ] GC(12) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
+                + "Humongous regions: 0->0 Metaspace: 654K(832K)->654K(832K) 10M->10M(50M) 1.550ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
+                "Event name incorrect.");
+    }
+
+    @Test
     void testPreprocessedTriggerG1HumongousAllocation() {
         String logLine = "[2021-10-29T20:56:08.426+0000][info][gc,start      ] GC(734) Pause Young (Prepare Mixed) "
                 + "(G1 Humongous Allocation) Other: 0.1ms Humongous regions: 13->13 "

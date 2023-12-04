@@ -113,7 +113,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR
             + " Pause Young( \\((Normal|Concurrent Start)\\))? \\(" + _TRIGGER + "\\) "
             + UnifiedPreprocessAction.REGEX_G1_EXT_ROOT_SCANNING + "?" + OtherTime.REGEX
-            + " Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + "?Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 

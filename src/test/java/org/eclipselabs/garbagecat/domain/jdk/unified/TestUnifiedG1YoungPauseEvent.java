@@ -240,6 +240,15 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
+    void testPreprocessedNoExtRootScanningNoOther() {
+        String logLine = "[0.043s][info][gc,start ] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Humongous "
+                + "regions: 0->0 Metaspace: 477K(4864K)->477K(4864K) 1M->1M(4M) 4.478ms "
+                + "User=0.01s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+    }
+
+    @Test
     void testPreprocessedTimeUptimemillisTriggerGcLocker() {
         String logLine = "[2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) "
                 + "Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: "

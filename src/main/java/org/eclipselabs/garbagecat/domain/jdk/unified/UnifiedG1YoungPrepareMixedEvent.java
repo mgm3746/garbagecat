@@ -85,7 +85,7 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR
             + " Pause Young \\(Prepare Mixed\\) \\(" + _TRIGGER + "\\) " + OtherTime.REGEX
-            + " Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
+            + "?Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 

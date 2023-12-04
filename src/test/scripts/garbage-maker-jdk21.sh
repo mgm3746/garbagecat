@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Generates garbage collection logging for various collectors/settings.
+# Generates garbage collection logging for JDK21 collectors for all gc tags (gc*) and safepoint info level with standard decorators.
 #
 # Usage: sh ./garbage-maker-jdk21.sh 
 #

@@ -21,6 +21,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
  * <code>UnifiedSafepointEvent</code> duration (wall clock) is the sum of GC time and this "Other" time.
  * </p>
  * 
+ * <p>
+ * Enabled with <code>-XX:+PrintGCDetails</code> in JDK8 and "gc+phases=info" in JDK9+ unified logging.
+ * </p>
+ * 
  * <h2>Example Logging</h2>
  * 
  *
@@ -168,7 +172,7 @@ public interface OtherTime {
      * Other: 9569.7ms
      * 
      */
-    public static final String REGEX = "([\\[]{0,1}Other:[ ]{1,3}" + JdkRegEx.DURATION_MS + "[\\]]{0,1})";
+    public static final String REGEX = "([\\[]{0,1}Other:[ ]{1,3}" + JdkRegEx.DURATION_MS + "[\\]]{0,1}[ ]{0,1})";
 
     /**
      * @return The "Other" time in microseconds (rounded).

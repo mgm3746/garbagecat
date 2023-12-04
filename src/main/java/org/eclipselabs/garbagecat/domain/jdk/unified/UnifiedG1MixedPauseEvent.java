@@ -84,7 +84,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
      * Regular expression defining preprocessed logging.
      */
     private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(Mixed\\) \\("
-            + _TRIGGER + "\\) " + OtherTime.REGEX + " Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE
+            + _TRIGGER + "\\) " + OtherTime.REGEX + "?Humongous regions: \\d{1,}->\\d{1,} Metaspace: " + JdkRegEx.SIZE
             + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 
