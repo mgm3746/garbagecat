@@ -286,7 +286,7 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
         return combinedAvailable;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

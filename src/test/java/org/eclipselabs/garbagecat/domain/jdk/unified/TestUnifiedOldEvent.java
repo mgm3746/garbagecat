@@ -69,7 +69,7 @@ class TestUnifiedOldEvent {
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(7 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(2969, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(2969, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -95,8 +95,6 @@ class TestUnifiedOldEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
@@ -129,7 +127,7 @@ class TestUnifiedOldEvent {
         assertEquals(kilobytes(583 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(1223 * 1024), event.getCombinedSpace(),
                 "Combined allocation size not parsed correctly.");
-        assertEquals(3460196, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3460196, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(178, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(346, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(52, event.getParallelism(), "Parallelism not calculated correctly.");

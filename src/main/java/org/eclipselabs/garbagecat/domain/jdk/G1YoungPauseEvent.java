@@ -388,7 +388,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
         return combinedAvailable;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime + otherTime;
     }
 

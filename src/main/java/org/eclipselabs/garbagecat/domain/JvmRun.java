@@ -888,13 +888,13 @@ public class JvmRun {
         long lastGcEventDuration = 0;
         if (lastGcEvent != null) {
             lastGcEventTimeStamp = lastGcEvent.getTimestamp();
-            lastGcEventDuration = lastGcEvent.getDuration();
+            lastGcEventDuration = lastGcEvent.getDurationMicros();
         }
         long lastStoppedEventTimestamp = 0;
         long lastStoppedEventDuration = 0;
         if (lastSafepointEvent != null) {
             lastStoppedEventTimestamp = lastSafepointEvent.getTimestamp();
-            lastStoppedEventDuration = lastSafepointEvent.getDuration();
+            lastStoppedEventDuration = lastSafepointEvent.getDurationMicros();
         }
 
         long end = lastStoppedEventTimestamp > lastGcEventTimeStamp

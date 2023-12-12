@@ -232,7 +232,7 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
         return combinedAllocation;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime;
     }
 

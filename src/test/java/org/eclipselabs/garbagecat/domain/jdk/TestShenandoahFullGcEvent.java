@@ -74,7 +74,7 @@ class TestShenandoahFullGcEvent {
         assertEquals(kilobytes(282195), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(281648), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1314816), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4077274, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -117,7 +117,7 @@ class TestShenandoahFullGcEvent {
         assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
         ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
         assertEquals(635008911130L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4077274, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -127,7 +127,7 @@ class TestShenandoahFullGcEvent {
         assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
         ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
         assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4077274, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -137,7 +137,7 @@ class TestShenandoahFullGcEvent {
         assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
         ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
         assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4077274, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -147,7 +147,7 @@ class TestShenandoahFullGcEvent {
         assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
         ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
         assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4077274, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -157,7 +157,7 @@ class TestShenandoahFullGcEvent {
         assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
         ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
         assertEquals((long) (100052 - 4077), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4077274, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4077274, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

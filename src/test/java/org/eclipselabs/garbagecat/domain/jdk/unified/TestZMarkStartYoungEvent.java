@@ -51,7 +51,7 @@ class TestZMarkStartYoungEvent {
         ZMarkStartYoungEvent event = new ZMarkStartYoungEvent(logLine);
         assertEquals(JdkUtil.LogEventType.Z_MARK_START_YOUNG.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (296 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(10, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(10, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

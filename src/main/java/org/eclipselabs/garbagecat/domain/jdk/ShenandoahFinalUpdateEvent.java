@@ -159,7 +159,7 @@ public class ShenandoahFinalUpdateEvent extends ShenandoahCollector implements B
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

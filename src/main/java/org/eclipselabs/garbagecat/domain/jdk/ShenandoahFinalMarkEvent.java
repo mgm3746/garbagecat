@@ -194,7 +194,7 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector implements Blo
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

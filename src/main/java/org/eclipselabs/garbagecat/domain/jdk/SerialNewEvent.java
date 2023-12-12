@@ -222,7 +222,7 @@ public class SerialNewEvent extends SerialCollector
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

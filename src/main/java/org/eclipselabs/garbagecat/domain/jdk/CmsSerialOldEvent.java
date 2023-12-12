@@ -442,7 +442,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

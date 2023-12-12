@@ -255,7 +255,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
         return combinedAllocation;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime;
     }
 

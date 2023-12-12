@@ -186,7 +186,7 @@ public class UnifiedYoungEvent extends UnknownCollector
         return combinedAllocation;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime;
     }
 

@@ -86,7 +86,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(3879), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(2859), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(6144), event.getCombinedSpace(), "Combined available size not parsed correctly.");
-        assertEquals(1956, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1956, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -103,7 +103,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(52 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(110 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
-        assertEquals(28009, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(28009, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -117,7 +117,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(867328), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(613376), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(993280), event.getCombinedSpace(), "Combined available size not parsed correctly.");
-        assertEquals(56684, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(56684, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(18, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(2, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(6, event.getTimeReal(), "Real time not parsed correctly.");
@@ -145,7 +145,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(22 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(110 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
-        assertEquals(21001, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(21001, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -165,7 +165,7 @@ class TestG1YoungInitialMarkEvent {
                 "Combined available size not parsed correctly.");
         assertEquals(4400, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(282770, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(282770, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(109, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(27, event.getTimeReal(), "Real time not parsed correctly.");
@@ -206,7 +206,7 @@ class TestG1YoungInitialMarkEvent {
                 "Combined available size not parsed correctly.");
         assertEquals(4400, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(430953, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(430953, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(166, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(43, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(391, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -226,7 +226,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(23757), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(31981568), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(17500, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(17500, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -246,7 +246,7 @@ class TestG1YoungInitialMarkEvent {
                 "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(430953, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(430953, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(166, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(2, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(43, event.getTimeReal(), "Real time not parsed correctly.");
@@ -270,7 +270,7 @@ class TestG1YoungInitialMarkEvent {
                 "Combined available size not parsed correctly.");
         assertEquals(4400, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(28979, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(28979, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(13, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(2, event.getTimeReal(), "Real time not parsed correctly.");
@@ -293,7 +293,7 @@ class TestG1YoungInitialMarkEvent {
                 "Combined available size not parsed correctly.");
         assertEquals(4400, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(30858, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(30858, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(14, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(2, event.getTimeReal(), "Real time not parsed correctly.");
@@ -311,7 +311,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(0), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(0), event.getCombinedSpace(), "Combined available size not parsed correctly.");
-        assertEquals(14248, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(14248, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -329,7 +329,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(5120 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(4400, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(60016, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(60016, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(9, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(5, event.getTimeReal(), "Real time not parsed correctly.");
@@ -353,7 +353,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(5120 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(4400, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(300770, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(300770, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(56, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(29, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(207, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -375,7 +375,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(2362 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(108434, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(108434, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(19, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(10, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(190, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -398,7 +398,7 @@ class TestG1YoungInitialMarkEvent {
                 "Combined available size not parsed correctly.");
         assertEquals(4400, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(7500, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(1029935, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1029935, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(303, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(2, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(102, event.getTimeReal(), "Real time not parsed correctly.");
@@ -418,7 +418,7 @@ class TestG1YoungInitialMarkEvent {
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(100 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(8192 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
-        assertEquals(72045, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(72045, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");
@@ -439,7 +439,7 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(kilobytes(8184 * 1024), event.getCombinedOccupancyEnd(),
                 "Combined end size not parsed correctly.");
         assertEquals(kilobytes(8192 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
-        assertEquals(129440, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(129440, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeReal(), "Real time not parsed correctly.");

@@ -229,7 +229,7 @@ public class ParallelScavengeEvent extends ParallelCollector
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

@@ -196,7 +196,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         return combinedAvailable;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

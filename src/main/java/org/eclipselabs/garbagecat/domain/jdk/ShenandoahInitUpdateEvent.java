@@ -160,7 +160,7 @@ public class ShenandoahInitUpdateEvent extends ShenandoahCollector implements Bl
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

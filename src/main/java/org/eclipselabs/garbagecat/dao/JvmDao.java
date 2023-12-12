@@ -394,7 +394,7 @@ public class JvmDao {
      * @return maximum pause duration (microseconds).
      */
     public synchronized long getDurationMax() {
-        return longs(this.blockingEvents, BlockingEvent::getDuration).mapToLong(Long::valueOf).max().orElse(0);
+        return longs(this.blockingEvents, BlockingEvent::getDurationMicros).mapToLong(Long::valueOf).max().orElse(0);
     }
 
     /**
@@ -403,7 +403,7 @@ public class JvmDao {
      * @return total pause duration (microseconds).
      */
     public synchronized long getDurationTotal() {
-        return longs(this.blockingEvents, BlockingEvent::getDuration).collect(summingLong(Long::valueOf));
+        return longs(this.blockingEvents, BlockingEvent::getDurationMicros).collect(summingLong(Long::valueOf));
     }
 
     public List<LogEventType> getEventTypes() {
@@ -739,7 +739,7 @@ public class JvmDao {
                 pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
                 // Use trigger for event name
                 pst.setString(TRIGGER_TYPE_INDEX, event.getTrigger().toString());
-                pst.setLong(DURATION_INDEX, event.getDuration());
+                pst.setLong(DURATION_INDEX, event.getDurationMicros());
                 pst.setString(LOG_ENTRY_INDEX, event.getLogEntry());
                 pst.addBatch();
             }
@@ -813,8 +813,8 @@ public class JvmDao {
      * @return maximum pause duration (microseconds).
      */
     public synchronized long getStoppedTimeMax() {
-        return longs(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration).mapToLong(Long::valueOf).max()
-                .orElse(0);
+        return longs(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDurationMicros).mapToLong(Long::valueOf)
+                .max().orElse(0);
     }
 
     /**
@@ -823,7 +823,7 @@ public class JvmDao {
      * @return total pause duration (microseconds).
      */
     public synchronized long getStoppedTimeTotal() {
-        return longs(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDuration)
+        return longs(this.stoppedTimeEvents, ApplicationStoppedTimeEvent::getDurationMicros)
                 .collect(summingLong(Long::valueOf));
     }
 
@@ -867,8 +867,8 @@ public class JvmDao {
      * @return maximum pause duration (nanoseconds).
      */
     public synchronized long getUnifiedSafepointTimeMax() {
-        return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration).mapToLong(Long::valueOf).max()
-                .orElse(0);
+        return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDurationMicros).mapToLong(Long::valueOf)
+                .max().orElse(0);
     }
 
     /**
@@ -877,7 +877,7 @@ public class JvmDao {
      * @return total pause duration (nanoseconds).
      */
     public synchronized long getUnifiedSafepointTimeTotal() {
-        return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDuration)
+        return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDurationNanos)
                 .collect(summingLong(Long::valueOf));
     }
 

@@ -52,7 +52,7 @@ class TestZMarkStartYoungAndOldEvent {
         assertEquals(JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString(), event.getName(),
                 "Event name incorrect.");
         assertEquals((long) (410 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(8, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(8, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

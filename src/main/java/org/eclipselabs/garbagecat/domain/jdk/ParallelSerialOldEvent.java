@@ -249,7 +249,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

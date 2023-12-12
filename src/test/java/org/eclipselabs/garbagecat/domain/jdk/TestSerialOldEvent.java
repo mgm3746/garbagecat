@@ -45,7 +45,7 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(49152), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(49154), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(49158), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(692925, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(692925, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -79,7 +79,7 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(15599), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(15599), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(65536), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(114868, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(114868, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(11, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(2, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(13, event.getTimeReal(), "Real time not parsed correctly.");
@@ -105,7 +105,7 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(20526), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(20526), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1069056), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(124944, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(124944, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -129,7 +129,7 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(68373), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(68373), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1114112), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(288130, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(288130, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -153,7 +153,7 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(65384), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(65384), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1114112), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(680424, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(680424, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -184,7 +184,7 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(8602), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(8604), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(49088, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(49088, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -226,6 +226,6 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(54745), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(54745), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(54784), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(44750188, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(44750188, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 }

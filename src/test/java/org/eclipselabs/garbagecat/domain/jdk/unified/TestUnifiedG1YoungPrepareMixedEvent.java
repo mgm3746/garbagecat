@@ -102,7 +102,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         assertEquals(kilobytes(13 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(31 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(100, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(461, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(461, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -140,7 +140,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         assertEquals(kilobytes(5 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(30 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(0, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(1419, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1419, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");

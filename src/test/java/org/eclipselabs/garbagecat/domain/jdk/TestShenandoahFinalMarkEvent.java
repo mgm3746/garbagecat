@@ -63,7 +63,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) 489, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(313, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(313, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -82,7 +82,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) 553, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(508, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(508, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -101,7 +101,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) 17345, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(659, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(659, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -133,7 +133,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) (41911 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(429, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(429, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -143,7 +143,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) (472 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(1772, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1772, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -154,7 +154,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals(730366294631L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(10861, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(10861, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -164,7 +164,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) (531 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(1004, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1004, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -174,7 +174,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) (10459 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(253, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(253, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -184,7 +184,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) (11012 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(200, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(200, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -194,7 +194,7 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) (3114 - 2), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(2517, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(2517, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -211,6 +211,6 @@ class TestShenandoahFinalMarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + ".");
         ShenandoahFinalMarkEvent event = new ShenandoahFinalMarkEvent(logLine);
         assertEquals((long) (5602 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(1561, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1561, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 }

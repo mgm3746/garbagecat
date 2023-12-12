@@ -85,7 +85,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(206989), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(206977), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(79935662, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(79935662, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -109,7 +109,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(1794415), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(909664), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1835008), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(124596332, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(124596332, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -168,7 +168,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(473438), event.getPermOccupancyInit(), "Perm begin size not parsed correctly.");
         assertEquals(kilobytes(450663), event.getPermOccupancyEnd(), "Perm end size not parsed correctly.");
         assertEquals(kilobytes(771512), event.getPermSpace(), "Perm allocation size not parsed correctly.");
-        assertEquals(102335790, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(102335790, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
         assertEquals(10625, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(21, event.getTimeSys(), "Sys time not parsed correctly.");
@@ -194,7 +194,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(13140), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(13124), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(89127, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(89127, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -229,7 +229,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(68021), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(67965), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(1118602, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1118602, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -256,7 +256,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(72496), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(72496), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1118208), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(11677083, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(11677083, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -279,7 +279,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(8602), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(8593), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(82809, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(82809, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -301,7 +301,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(0), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(0), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(3708405, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3708405, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -321,7 +321,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(887439), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(893801), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(907264), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(9641918, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(9641918, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -344,7 +344,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(1281600), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(978341), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1281600), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(3793020, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3793020, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -367,7 +367,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(0), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(0), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(0), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(9256447, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(9256447, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -393,7 +393,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(851635), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(408849), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1048576), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(94911621, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(94911621, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -419,7 +419,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(851635), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(408849), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1048576), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(94911621, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(94911621, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -447,7 +447,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(260428), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(260406), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(516760, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(516760, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -471,7 +471,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(83805), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(80520), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(83968), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(1365942, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1365942, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -496,7 +496,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(252246), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(252202), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(42907027, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(42907027, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -544,7 +544,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(73362), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(73362), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1118208), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(855335, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(855335, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -568,7 +568,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(256552), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(256552), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1230848), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(262479, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(262479, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -591,7 +591,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(256586), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(256586), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1230848), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(210863, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(210863, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -615,7 +615,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(256586), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(256586), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1230848), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(234309, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(234309, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -644,7 +644,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(1082057), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(934941), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1082084), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(6558777, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6558777, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -669,7 +669,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(72200), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(72200), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1118208), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(8798675, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(8798675, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -692,7 +692,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(43759), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(43759), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(277307, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(277307, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -715,7 +715,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(1141548), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(1078465), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1179648), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(7383839, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(7383839, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -766,7 +766,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(206688), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(206662), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(79050959, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(79050959, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -792,7 +792,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(72175), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(72175), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1118208), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(12348057, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(12348057, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -818,7 +818,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(72111), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(72111), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1118208), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(9361008, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(9361008, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -846,7 +846,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(500357), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(443269), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1048576), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(97218882, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(97218882, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -874,7 +874,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(498279), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(443366), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1048576), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(83677520, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(83677520, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -899,7 +899,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(83780), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(83711), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(3003904, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3003904, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -924,7 +924,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(201541), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(201494), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(524288), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(5042168, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(5042168, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -950,7 +950,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(682507), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(442221), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1048576), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(107655371, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(107655371, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -995,7 +995,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(1048384), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(1015603), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1179648), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(7855766, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(7855766, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -1024,7 +1024,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(376898), event.getPermOccupancyInit(), "Perm begin size not parsed correctly.");
         assertEquals(kilobytes(376894), event.getPermOccupancyEnd(), "Perm end size not parsed correctly.");
         assertEquals(kilobytes(524288), event.getPermSpace(), "Perm allocation size not parsed correctly.");
-        assertEquals(88278527, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(88278527, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -1038,7 +1038,7 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 159275552, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(4339851, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4339851, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -1063,7 +1063,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(227503), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(226115), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(378908), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(15192712, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(15192712, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -1086,7 +1086,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(2818067), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(2769354), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(5120000), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(4284796, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4284796, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -1099,7 +1099,7 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 5881424, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(214385, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(214385, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 
@@ -1267,7 +1267,7 @@ class TestCmsSerialOldEvent {
         assertEquals(kilobytes(1257346), event.getPermOccupancyInit(), "Perm begin size not parsed correctly.");
         assertEquals(kilobytes(1257346), event.getPermOccupancyEnd(), "Perm end size not parsed correctly.");
         assertEquals(kilobytes(2097152), event.getPermSpace(), "Perm allocation size not parsed correctly.");
-        assertEquals(23183850, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(23183850, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
 }

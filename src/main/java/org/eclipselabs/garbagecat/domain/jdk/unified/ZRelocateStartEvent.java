@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -58,12 +59,10 @@ public class ZRelocateStartEvent extends ZCollector implements UnifiedLogging, B
     public static final boolean match(String logLine) {
         return PATTERN.matcher(logLine).matches();
     }
-
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private long duration;
-
+    private long eventTime;
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -86,26 +85,13 @@ public class ZRelocateStartEvent extends ZCollector implements UnifiedLogging, B
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                long endTimestamp;
-                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE));
-                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+                eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
+                long time = UnifiedUtil.calculateTime(matcher);
+                if (!isEndstamp()) {
+                    timestamp = time;
                 } else {
-                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 1) != null) {
-                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 4));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3))
-                                    .longValue();
-                        }
-                    } else {
-                        // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                    }
+                    timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }
     }
@@ -123,11 +109,11 @@ public class ZRelocateStartEvent extends ZCollector implements UnifiedLogging, B
     public ZRelocateStartEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.duration = duration;
+        this.eventTime = duration;
     }
 
-    public long getDuration() {
-        return duration;
+    public long getDurationMicros() {
+        return eventTime;
     }
 
     public String getLogEntry() {
@@ -148,7 +134,6 @@ public class ZRelocateStartEvent extends ZCollector implements UnifiedLogging, B
     }
 
     public boolean isEndstamp() {
-        boolean isEndStamp = false;
-        return isEndStamp;
+        return true;
     }
 }

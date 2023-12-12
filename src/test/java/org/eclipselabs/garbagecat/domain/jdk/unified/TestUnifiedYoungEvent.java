@@ -70,7 +70,7 @@ class TestUnifiedYoungEvent {
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(2 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(663, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(663, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -86,7 +86,7 @@ class TestUnifiedYoungEvent {
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(12 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(38 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(1812, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1812, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -129,7 +129,7 @@ class TestUnifiedYoungEvent {
                 "Combined begin size not parsed correctly.");
         assertEquals(kilobytes(10 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(36 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(940, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(940, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -187,8 +187,6 @@ class TestUnifiedYoungEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");

@@ -247,7 +247,7 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         this.eventTime = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime;
     }
 

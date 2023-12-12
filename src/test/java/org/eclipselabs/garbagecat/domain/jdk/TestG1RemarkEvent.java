@@ -50,7 +50,7 @@ class TestG1RemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
         G1RemarkEvent event = new G1RemarkEvent(logLine);
         assertEquals((long) 106129, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(45017, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(45017, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -71,7 +71,7 @@ class TestG1RemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_REMARK.toString() + ".");
         G1RemarkEvent event = new G1RemarkEvent(logLine);
         assertEquals((long) 35563088, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(82721, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(82721, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(37, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(8, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(463, event.getParallelism(), "Parallelism not calculated correctly.");

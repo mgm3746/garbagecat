@@ -243,7 +243,7 @@ public class UnifiedG1CleanupEvent extends G1Collector
         return combinedAllocation;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

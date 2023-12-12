@@ -160,7 +160,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

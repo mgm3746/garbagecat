@@ -63,7 +63,7 @@ class TestUnifiedG1YoungInitialMarkEvent {
         assertEquals(kilobytes(5 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(1250 * 1024), event.getCombinedSpace(),
                 "Combined allocation size not parsed correctly.");
-        assertEquals(1212, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1212, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

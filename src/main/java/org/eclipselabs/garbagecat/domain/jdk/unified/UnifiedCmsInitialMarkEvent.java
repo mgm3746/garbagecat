@@ -166,7 +166,7 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

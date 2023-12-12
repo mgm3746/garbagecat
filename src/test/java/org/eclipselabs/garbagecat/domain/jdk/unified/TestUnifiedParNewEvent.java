@@ -108,7 +108,7 @@ class TestUnifiedParNewEvent {
         assertEquals(kilobytes(250), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(250), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1056768), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(3544, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3544, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(1, event.getTimeReal(), "Real time not parsed correctly.");

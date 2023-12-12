@@ -271,7 +271,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

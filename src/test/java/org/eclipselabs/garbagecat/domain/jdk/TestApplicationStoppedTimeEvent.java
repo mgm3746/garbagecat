@@ -32,7 +32,7 @@ class TestApplicationStoppedTimeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 0, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(96845, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(96845, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -53,7 +53,7 @@ class TestApplicationStoppedTimeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 964, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(139, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(139, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -63,7 +63,7 @@ class TestApplicationStoppedTimeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 1977, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(205, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(205, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -74,7 +74,7 @@ class TestApplicationStoppedTimeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 4482, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(1823, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1823, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -93,7 +93,7 @@ class TestApplicationStoppedTimeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 1065, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(161, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(161, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -104,7 +104,7 @@ class TestApplicationStoppedTimeEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 51185692, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(-595, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(-595, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

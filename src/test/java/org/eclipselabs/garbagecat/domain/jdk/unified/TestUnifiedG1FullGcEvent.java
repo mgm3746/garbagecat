@@ -99,7 +99,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(megabytes(8186), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(8178), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(8192), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(2127343, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(2127343, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1640, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(213, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(775, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -121,7 +121,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(megabytes(1), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(1), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(5), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(6324, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6324, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -262,7 +262,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(megabytes(1), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(1), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(5), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(6324, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6324, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -283,7 +283,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(megabytes(1), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(1), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(5), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(6324, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6324, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -304,7 +304,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(megabytes(1), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(1), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(5), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(6324, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6324, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -325,7 +325,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(megabytes(1), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(1), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(5), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(6324, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6324, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -346,7 +346,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(megabytes(1), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(1), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(5), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(6324, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6324, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -384,7 +384,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(megabytes(16382), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
         assertEquals(megabytes(13777), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(16384), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(6796352, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6796352, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

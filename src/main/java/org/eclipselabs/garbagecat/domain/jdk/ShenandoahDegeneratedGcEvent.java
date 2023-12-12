@@ -244,7 +244,7 @@ public class ShenandoahDegeneratedGcEvent extends ShenandoahCollector
         return combinedAvailable;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

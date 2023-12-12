@@ -200,7 +200,7 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector implements Bloc
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

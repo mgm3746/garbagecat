@@ -193,7 +193,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
         return combinedAllocation;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

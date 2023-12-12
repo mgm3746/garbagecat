@@ -56,7 +56,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 253103, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(85701, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(85701, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
     }
@@ -73,7 +73,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 214303, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(303520, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(303520, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(98, event.getTimeUser(), "User time not parsed correctly.");
@@ -92,7 +92,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 76694727, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(144688, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(144688, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
     }
 
@@ -111,7 +111,7 @@ class TestCmsRemarkEvent {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 3674, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
-        assertEquals(93573, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(93573, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(26, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
@@ -129,7 +129,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 75500, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(68741, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(68741, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
     }
 
@@ -145,7 +145,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 7294, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(37531, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(37531, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(3, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
@@ -175,7 +175,7 @@ class TestCmsRemarkEvent {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 13758, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
-        assertEquals(43034, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(43034, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(36, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
@@ -196,7 +196,7 @@ class TestCmsRemarkEvent {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 38695, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
-        assertEquals(589380, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(589380, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(392, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(4, event.getTimeSys(), "Sys time not parsed correctly.");
@@ -225,7 +225,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 76694727, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(144688, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(144688, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(13, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(7, event.getTimeReal(), "Real time not parsed correctly.");
@@ -254,7 +254,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 6458, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(10630, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(10630, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(23, event.getTimeUser(), "User time not parsed correctly.");
@@ -282,7 +282,7 @@ class TestCmsRemarkEvent {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 78, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
-        assertEquals(1080, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1080, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
@@ -300,7 +300,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 4578, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(102510, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(102510, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(17, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
@@ -317,7 +317,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 4237354, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(412406, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(412406, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(282, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(4, event.getTimeSys(), "Sys time not parsed correctly.");
@@ -336,7 +336,7 @@ class TestCmsRemarkEvent {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 13749, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
-        assertEquals(23951, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(23951, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(18, event.getTimeUser(), "User time not parsed correctly.");
@@ -354,7 +354,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 61013, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(35120, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(35120, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(12, event.getTimeUser(), "User time not parsed correctly.");
@@ -372,7 +372,7 @@ class TestCmsRemarkEvent {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 19763069, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
-        assertEquals(0, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
     }
 
@@ -384,7 +384,7 @@ class TestCmsRemarkEvent {
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals(558759221262L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
-        assertEquals(0, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
     }
 
@@ -407,7 +407,7 @@ class TestCmsRemarkEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_REMARK.toString() + ".");
         CmsRemarkEvent event = new CmsRemarkEvent(logLine);
         assertEquals((long) 253103, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(85701, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(85701, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
         assertFalse(event.isClassUnloading(), "Class unloading not parsed correctly.");
         assertEquals(15, event.getTimeUser(), "User time not parsed correctly.");

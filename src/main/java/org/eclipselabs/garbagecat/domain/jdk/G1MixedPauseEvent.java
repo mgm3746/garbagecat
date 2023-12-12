@@ -282,7 +282,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
         return combinedAvailable;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime + otherTime;
     }
 

@@ -233,7 +233,7 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
         this.eventTime = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime;
     }
 

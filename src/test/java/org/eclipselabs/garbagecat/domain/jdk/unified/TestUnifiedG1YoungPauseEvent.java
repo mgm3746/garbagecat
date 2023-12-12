@@ -131,8 +131,6 @@ class TestUnifiedG1YoungPauseEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
@@ -185,7 +183,7 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(kilobytes(13 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(31 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(100, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(501, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(501, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -209,7 +207,7 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(kilobytes(1223 * 1024), event.getCombinedSpace(),
                 "Combined allocation size not parsed correctly.");
         assertEquals(100, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(105641, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(105641, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(18, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(11, event.getTimeReal(), "Real time not parsed correctly.");
@@ -225,7 +223,7 @@ class TestUnifiedG1YoungPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals((long) 610663140763L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(57363, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(57363, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -237,7 +235,7 @@ class TestUnifiedG1YoungPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals((long) 5355, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(57363, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(57363, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -260,7 +258,7 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(kilobytes(1304 * 1024), event.getCombinedSpace(),
                 "Combined allocation size not parsed correctly.");
         assertEquals(100, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(57363, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(57363, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(2, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(6, event.getTimeReal(), "Real time not parsed correctly.");
@@ -276,7 +274,7 @@ class TestUnifiedG1YoungPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals((long) 325, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(7791, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(7791, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -298,7 +296,7 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(kilobytes(4 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(0, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(4854, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(4854, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
@@ -334,7 +332,7 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(kilobytes(1304 * 1024), event.getCombinedSpace(),
                 "Combined allocation size not parsed correctly.");
         assertEquals(100, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(35822, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(35822, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(2, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(4, event.getTimeReal(), "Real time not parsed correctly.");
@@ -579,7 +577,7 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(megabytes(13853), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
         assertEquals(megabytes(16384), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
         assertEquals(0, event.getOtherTime(), "Other time not parsed correctly.");
-        assertEquals(92109, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(92109, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

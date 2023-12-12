@@ -39,7 +39,7 @@ class TestSerialNewEvent {
         assertEquals(kilobytes(4505), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(6683), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(87424), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(21021, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(21021, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -68,7 +68,7 @@ class TestSerialNewEvent {
         assertEquals(kilobytes(68160 - 68160), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(4425 - 4425), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(3137216 - 76672), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(36058, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(36058, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -93,7 +93,7 @@ class TestSerialNewEvent {
         assertEquals(kilobytes(68160 - 68160), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(11664 - 8512), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1325760 - 76672), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(53064, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(53064, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(4, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(5, event.getTimeReal(), "Real time not parsed correctly.");
@@ -132,6 +132,6 @@ class TestSerialNewEvent {
         assertEquals(kilobytes(209792 - 209792), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(15933 - 15933), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(760256 - 235968), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(84924, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(84924, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 }

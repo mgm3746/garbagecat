@@ -240,7 +240,7 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector implements Unif
         return combinedAllocation;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime + otherTime;
     }
 

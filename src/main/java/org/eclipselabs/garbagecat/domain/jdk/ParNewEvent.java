@@ -282,7 +282,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

@@ -292,7 +292,7 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
         return combinedAvailable;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime + otherTime;
     }
 

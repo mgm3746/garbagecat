@@ -236,7 +236,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         return combinedAllocation;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime + otherTime;
     }
 

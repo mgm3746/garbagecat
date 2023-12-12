@@ -51,7 +51,7 @@ class TestZRelocateStartOldEvent {
         ZRelocateStartOldEvent event = new ZRelocateStartOldEvent(logLine);
         assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START_OLD.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (228 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(6, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

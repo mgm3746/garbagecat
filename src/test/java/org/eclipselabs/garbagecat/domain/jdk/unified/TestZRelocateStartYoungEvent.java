@@ -13,11 +13,21 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
@@ -51,7 +61,7 @@ class TestZRelocateStartYoungEvent {
         ZRelocateStartYoungEvent event = new ZRelocateStartYoungEvent(logLine);
         assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (103 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(6, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(6, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -62,7 +72,7 @@ class TestZRelocateStartYoungEvent {
         ZRelocateStartYoungEvent event = new ZRelocateStartYoungEvent(logLine);
         assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (310 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(8, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(8, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -70,6 +80,33 @@ class TestZRelocateStartYoungEvent {
         String logLine = "[0.103s][info][gc,phases   ] GC(0) Y: Pause Relocate Start 0.006ms";
         assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZRelocateStartYoungEvent,
                 JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + " not parsed.");
+    }
+
+    @Test
+    void testPreprocessed() throws IOException {
+        File testFile = TestUtil.getFile("dataset278.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG),
+                "Log line not recognized as " + JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.Z_MARK_END_YOUNG),
+                "Log line not recognized as " + JdkUtil.LogEventType.Z_MARK_END_YOUNG.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG),
+                "Log line not recognized as " + JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_SAFEPOINT),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
+        ZRelocateStartYoungEvent event = (ZRelocateStartYoungEvent) jvmRun.getLastGcEvent();
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (755666465303L - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

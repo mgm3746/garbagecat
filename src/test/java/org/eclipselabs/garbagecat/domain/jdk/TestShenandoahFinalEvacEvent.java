@@ -63,7 +63,7 @@ class TestShenandoahFinalEvacEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
         assertEquals((long) 17313, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(9, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(9, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -73,7 +73,7 @@ class TestShenandoahFinalEvacEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
         assertEquals(637139026251L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(9, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(9, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -92,7 +92,7 @@ class TestShenandoahFinalEvacEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
         assertEquals((long) (10486 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(2, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(2, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -102,7 +102,7 @@ class TestShenandoahFinalEvacEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_EVAC.toString() + ".");
         ShenandoahFinalEvacEvent event = new ShenandoahFinalEvacEvent(logLine);
         assertEquals((long) (41912 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(22, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(22, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

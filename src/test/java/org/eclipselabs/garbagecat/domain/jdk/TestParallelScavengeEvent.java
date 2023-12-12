@@ -54,7 +54,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(1271095 - 385537), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(1275901 - 385537), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1288192 - 397824), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(167461, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(167461, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(24, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(17, event.getTimeReal(), "Real time not parsed correctly.");
@@ -78,7 +78,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(1220565 - 335699), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(918194 - 33192), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(1287680 - 397312), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(24342, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(24342, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(7, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(3, event.getTimeReal(), "Real time not parsed correctly.");
@@ -101,7 +101,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(4407360 - 1475708), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(2982516 - 47669), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(6233088 - 1514496), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(263594, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(263594, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(86, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(27, event.getTimeReal(), "Real time not parsed correctly.");
@@ -131,7 +131,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(1118082 - 1048576), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(201204 - 131690), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(4019712 - 1223168), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(65742, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(65742, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(13, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(7, event.getTimeReal(), "Real time not parsed correctly.");
@@ -153,7 +153,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(673650 - 649034), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(138909 - 114285), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(4019712 - 1223168), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(71141, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(71141, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(24, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(8, event.getTimeReal(), "Real time not parsed correctly.");
@@ -175,7 +175,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(1226834 - 1226834), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(17795 - 17779), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(6029312 - 1835008), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(14491, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(14491, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(4, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(1, event.getTimeReal(), "Real time not parsed correctly.");
@@ -197,7 +197,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(773083 - 0), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(773083 - 0), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(6287872 - 1569280), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(221706, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(221706, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(76, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(22, event.getTimeReal(), "Real time not parsed correctly.");
@@ -218,7 +218,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(132375), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(132527), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(557056), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(22521, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(22521, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -244,7 +244,7 @@ class TestParallelScavengeEvent {
                 "Old begin size not parsed correctly.");
         assertEquals(kilobytes(80396669 - 20643840), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(129092672 - 67413056), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(3899346, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3899346, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(6640, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(373, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(389, event.getTimeReal(), "Real time not parsed correctly.");
@@ -265,7 +265,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(565806), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(699071), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(699072), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(956194, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(956194, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -284,7 +284,7 @@ class TestParallelScavengeEvent {
         assertEquals(kilobytes(2900456 - 553672), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
         assertEquals(kilobytes(2372732 - 22188), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
         assertEquals(kilobytes(6191104 - 1472512), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(166827, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(166827, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(58, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(17, event.getTimeReal(), "Real time not parsed correctly.");

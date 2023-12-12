@@ -256,7 +256,7 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

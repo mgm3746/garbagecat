@@ -1,0 +1,63 @@
+[2023-12-12T10:20:45.257+0200][info][gc          ] GC(34) Minor Collection (Allocation Rate)
+[2023-12-12T10:20:45.258+0200][info][gc,task     ] GC(34) Using 16 Workers for Young Generation
+[2023-12-12T10:20:45.258+0200][info][gc,phases   ] GC(34) y: Young Generation
+[2023-12-12T10:20:45.260+0200][info][gc,phases   ] GC(34) y: Pause Mark Start 0.234ms
+[2023-12-12T10:20:45.260+0200][info][safepoint   ] Safepoint "ZMarkStartYoung", Time since last: 9642266719 ns, Reaching safepoint: 1900085 ns, Cleanup: 4204 ns, At safepoint: 806967 ns, Total: 2711256 ns
+[2023-12-12T10:20:54.060+0200][info][safepoint   ] Safepoint "ICBufferFull", Time since last: 8795948884 ns, Reaching safepoint: 2490087 ns, Cleanup: 188159 ns, At safepoint: 451413 ns, Total: 3129659 ns
+[2023-12-12T10:20:54.061+0200][info][safepoint   ] Safepoint "ICBufferFull", Time since last: 219926 ns, Reaching safepoint: 897352 ns, Cleanup: 5377 ns, At safepoint: 370426 ns, Total: 1273155 ns
+[2023-12-12T10:20:55.084+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 1000167930 ns, Reaching safepoint: 22260700 ns, Cleanup: 122358 ns, At safepoint: 416181 ns, Total: 22799239 ns
+[2023-12-12T10:20:58.134+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 1000297463 ns, Reaching safepoint: 2049524537 ns, Cleanup: 107492 ns, At safepoint: 532327 ns, Total: 2050164356 ns
+[2023-12-12T10:20:59.140+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 1000359183 ns, Reaching safepoint: 4385759 ns, Cleanup: 19904 ns, At safepoint: 425116 ns, Total: 4830779 ns
+[2023-12-12T10:21:00.167+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 1000402924 ns, Reaching safepoint: 26418790 ns, Cleanup: 22390 ns, At safepoint: 451107 ns, Total: 26892287 ns
+[2023-12-12T10:21:00.686+0200][info][gc,phases   ] GC(34) y: Concurrent Mark 15425.566ms
+[2023-12-12T10:21:00.687+0200][info][gc,phases   ] GC(34) y: Pause Mark End 0.147ms
+[2023-12-12T10:21:00.687+0200][info][safepoint   ] Safepoint "ZMarkEndYoung", Time since last: 519442657 ns, Reaching safepoint: 440828 ns, Cleanup: 12019 ns, At safepoint: 509117 ns, Total: 961964 ns
+[2023-12-12T10:21:00.687+0200][info][gc,phases   ] GC(34) y: Concurrent Mark Free 0.008ms
+[2023-12-12T10:21:01.148+0200][info][gc,phases   ] GC(34) y: Concurrent Reset Relocation Set 460.711ms
+[2023-12-12T10:21:01.513+0200][info][gc,reloc    ] GC(34) y: Using tenuring threshold: 1 (Computed)
+[2023-12-12T10:21:01.689+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 1000243758 ns, Reaching safepoint: 879197 ns, Cleanup: 18151 ns, At safepoint: 395737 ns, Total: 1293085 ns
+[2023-12-12T10:21:02.708+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 1000407638 ns, Reaching safepoint: 18298588 ns, Cleanup: 9032 ns, At safepoint: 461108 ns, Total: 18768728 ns
+[2023-12-12T10:21:05.258+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 1000378230 ns, Reaching safepoint: 1549017811 ns, Cleanup: 14670 ns, At safepoint: 444412 ns, Total: 1549476893 ns
+[2023-12-12T10:21:05.302+0200][info][gc,phases   ] GC(34) y: Concurrent Select Relocation Set 4153.990ms
+[2023-12-12T10:21:05.303+0200][info][gc,phases   ] GC(34) y: Pause Relocate Start 0.039ms
+[2023-12-12T10:21:05.304+0200][info][safepoint   ] Safepoint "ZRelocateStartYoung", Time since last: 44751249 ns, Reaching safepoint: 702079 ns, Cleanup: 3378 ns, At safepoint: 519230 ns, Total: 1224687 ns
+[2023-12-12T10:21:06.307+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 1000183270 ns, Reaching safepoint: 2696970 ns, Cleanup: 25069 ns, At safepoint: 588190 ns, Total: 3310229 ns
+[2023-12-12T10:21:22.020+0200][info][safepoint   ] Safepoint "Cleanup", Time since last: 4000802487 ns, Reaching safepoint: 11710844001 ns, Cleanup: 114480 ns, At safepoint: 365533 ns, Total: 11711324014 ns
+[2023-12-12T10:21:22.020+0200][info][gc,phases   ] GC(34) y: Concurrent Relocate 16716.185ms
+[2023-12-12T10:21:22.020+0200][info][gc,alloc    ] GC(34) y:                         Mark Start        Mark End      Relocate Start    Relocate End
+[2023-12-12T10:21:22.020+0200][info][gc,alloc    ] GC(34) y: Allocation Stalls:          0                0                0                0
+[2023-12-12T10:21:22.021+0200][info][gc,load     ] GC(34) y: Load: 125.74 (56%) / 133.08 (59%) / 96.01 (43%)
+[2023-12-12T10:21:22.021+0200][info][gc,mmu      ] GC(34) y: MMU: 2ms/59.4%, 5ms/83.8%, 10ms/91.9%, 20ms/95.9%, 50ms/98.4%, 100ms/99.2%
+[2023-12-12T10:21:22.021+0200][info][gc,marking  ] GC(34) y: Mark: 16 stripe(s), 3 proactive flush(es), 1 terminate flush(es), 0 completion(s), 0 continuation(s)
+[2023-12-12T10:21:22.021+0200][info][gc,marking  ] GC(34) y: Mark Stack Usage: 32M
+[2023-12-12T10:21:22.021+0200][info][gc,nmethod  ] GC(34) y: NMethods: 44428 registered, 0 unregistered
+[2023-12-12T10:21:22.021+0200][info][gc,metaspace] GC(34) y: Metaspace: 255M used, 265M committed, 1280M reserved
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y:                        Candidates     Selected     In-Place         Size        Empty    Relocated
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y: Small Pages:               132287       129361            0      264574M          66M         637M
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y: Medium Pages:                  68            1            0        2176M           0M          17M
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y: Large Pages:                 1601            0            0       93424M           0M           0M
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y: Forwarding Usage: 285M
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y: Age Table:
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y:                    Live             Garbage             Small              Medium             Large
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y: Eden             798M (0%)       258589M (5%)      129598 / 129206         6 / 1              0 / 0
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y: Survivor 1     80791M (2%)          508M (0%)        1872 / 140           55 / 0            996 / 0
+[2023-12-12T10:21:22.021+0200][info][gc,reloc    ] GC(34) y: Survivor 2     19416M (0%)           69M (0%)         817 / 15             7 / 0            605 / 0
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y: Min Capacity: 4710400M(92%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y: Max Capacity: 5120000M(100%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y: Soft Max Capacity: 5120000M(100%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y: Heap Statistics:
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:                Mark Start          Mark End        Relocate Start      Relocate End           High               Low
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:  Capacity:  4710400M (92%)     4710400M (92%)     4710400M (92%)     4710400M (92%)     4710400M (92%)     4710400M (92%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:      Free:  3295056M (64%)     3148580M (61%)     3101186M (61%)     3185606M (62%)     3348552M (65%)     3100772M (61%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:      Used:  1824944M (36%)     1971420M (39%)     2018814M (39%)     1934394M (38%)     2019228M (39%)     1771448M (35%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y: Young Generation Statistics:
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:                Mark Start          Mark End        Relocate Start      Relocate End
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:      Used:   360174M (7%)       506650M (10%)      453634M (9%)       369064M (7%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:      Live:         -            101007M (2%)          829M (0%)          798M (0%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:   Garbage:         -            259166M (5%)       258868M (5%)            8M (0%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y: Allocated:         -            146476M (3%)       193936M (4%)       368256M (7%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y: Reclaimed:         -                  -               298M (0%)       259158M (5%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y:  Promoted:         -                  -            100177M (2%)       100208M (2%)
+[2023-12-12T10:21:22.021+0200][info][gc,heap     ] GC(34) y: Compacted:         -                  -                  -               647M (0%)
+[2023-12-12T10:21:22.021+0200][info][gc,phases   ] GC(34) y: Young Generation 1824940M(36%)->1934394M(38%) 36.763s
+[2023-12-12T10:21:22.021+0200][info][gc          ] GC(34) Minor Collection (Allocation Rate) 1824936M(36%)->1934414M(38%) 36.764s

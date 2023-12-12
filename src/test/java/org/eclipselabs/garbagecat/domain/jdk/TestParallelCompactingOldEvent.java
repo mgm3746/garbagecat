@@ -47,7 +47,7 @@ class TestParallelCompactingOldEvent {
         assertEquals(kilobytes(170955), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(170731), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1220608), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(3573039, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3573039, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(2624, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(9, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(357, event.getTimeReal(), "Real time not parsed correctly.");
@@ -87,7 +87,7 @@ class TestParallelCompactingOldEvent {
         assertEquals(kilobytes(142181), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(141753), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(1185792), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(2372889, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(2372889, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(755, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(60, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(237, event.getTimeReal(), "Real time not parsed correctly.");
@@ -115,7 +115,7 @@ class TestParallelCompactingOldEvent {
         assertEquals(kilobytes(3959933), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(3959881), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
         assertEquals(kilobytes(3977216), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
-        assertEquals(2430840, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(2430840, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(695, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(3, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(243, event.getTimeReal(), "Real time not parsed correctly.");
@@ -149,7 +149,7 @@ class TestParallelCompactingOldEvent {
         assertEquals(kilobytes(81960), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(81783), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(164352), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(2474918, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(2474918, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -173,7 +173,7 @@ class TestParallelCompactingOldEvent {
         assertEquals(kilobytes(136339), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(135256), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1177600), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(3452205, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(3452205, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1158, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(64, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(345, event.getTimeReal(), "Real time not parsed correctly.");
@@ -200,7 +200,7 @@ class TestParallelCompactingOldEvent {
         assertEquals(kilobytes(8602), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(8593), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(102836, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(102836, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test
@@ -223,7 +223,7 @@ class TestParallelCompactingOldEvent {
         assertEquals(kilobytes(19114), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(19114), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(1067008), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(35213, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(35213, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(9, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(4, event.getTimeReal(), "Real time not parsed correctly.");
@@ -251,7 +251,7 @@ class TestParallelCompactingOldEvent {
         assertEquals(kilobytes(4177368), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
         assertEquals(kilobytes(4177368), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
         assertEquals(kilobytes(4194304), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
-        assertEquals(1970867, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1970867, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(441, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(1, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(197, event.getTimeReal(), "Real time not parsed correctly.");

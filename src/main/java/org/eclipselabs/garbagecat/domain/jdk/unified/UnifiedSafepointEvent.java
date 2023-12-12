@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 
 /**
@@ -56,7 +57,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) JDK81/11 on three lines:
+ * 1) JDK81/11 on three lines (timestamp is beginning of safepoint):
  * </p>
  * 
  * <pre>
@@ -74,7 +75,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
  * </pre>
  * 
  * <p>
- * 2) JDK17 on a single line:
+ * 2) JDK17 on a single line (timestamp is end of safepoint):
  * </p>
  * 
  * <pre>
@@ -190,27 +191,13 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
             matcher.reset();
             if (matcher.find()) {
                 trigger = UnifiedSafepoint.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(13));
-                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            timestamp = Long.parseLong(matcher.group(17));
-                        } else {
-                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                        }
-                    } else {
-                        // Datestamp only.
-                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                    }
-                }
                 timeToStopThreads = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2));
                 if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3) != null) {
                     timeCleanup = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4));
                 }
                 timeThreadsStopped = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5));
+                long time = UnifiedUtil.calculateTime(matcher);
+                timestamp = time - JdkMath.convertNanosToMillis(getDurationNanos()).longValue();
             }
         }
     }
@@ -254,6 +241,14 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
         return JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString();
     }
 
+    public long getDurationMicros() {
+        return (JdkMath.convertNanosToMicros(timeThreadsStopped + timeToStopThreads)).longValue();
+    }
+
+    public long getDurationNanos() {
+        return timeThreadsStopped + timeToStopThreads;
+    }
+
     @Override
     public Tag getTag() {
         return Tag.UNKNOWN;
@@ -280,8 +275,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     }
 
     public boolean isEndstamp() {
-        boolean isEndStamp = false;
-        return isEndStamp;
+        return REGEX_JDK17_PATTERN.matcher(logEntry).matches();
     }
 
 }

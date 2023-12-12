@@ -240,7 +240,7 @@ public class UnifiedSerialOldEvent extends SerialCollector
         this.eventTime = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return eventTime;
     }
 

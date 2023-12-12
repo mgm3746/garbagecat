@@ -51,7 +51,7 @@ class TestZMarkEndOldEvent {
         ZMarkEndOldEvent event = new ZMarkEndOldEvent(logLine);
         assertEquals(JdkUtil.LogEventType.Z_MARK_END_OLD.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (213 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(5, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(5, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
     @Test

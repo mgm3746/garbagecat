@@ -254,7 +254,7 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 

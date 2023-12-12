@@ -682,9 +682,9 @@ public final class JdkUtil {
                     .longValue();
             long priorEventDurationNanos;
             if (priorEvent instanceof UnifiedSafepointEvent) {
-                priorEventDurationNanos = priorEvent.getDuration();
+                priorEventDurationNanos = priorEvent.getDurationMicros();
             } else {
-                priorEventDurationNanos = JdkMath.convertMicrosToNanos(priorEvent.getDuration()).longValue();
+                priorEventDurationNanos = JdkMath.convertMicrosToNanos(priorEvent.getDurationMicros()).longValue();
             }
             if (eventTimestampNanos < priorEventTimestampNanos - 1000000L) {
                 // Only report if 2nd event > 1 millisecond before 1st event
@@ -699,9 +699,9 @@ public final class JdkUtil {
             } else {
                 long eventDurationNanos;
                 if (event instanceof UnifiedSafepointEvent) {
-                    eventDurationNanos = event.getDuration();
+                    eventDurationNanos = event.getDurationMicros();
                 } else {
-                    eventDurationNanos = JdkMath.convertMicrosToNanos(event.getDuration()).longValue();
+                    eventDurationNanos = JdkMath.convertMicrosToNanos(event.getDurationMicros()).longValue();
                 }
                 /*
                  * Timestamp is the start of an event; therefore, the interval is from the prior event timestamp to the

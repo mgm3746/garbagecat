@@ -198,7 +198,7 @@ public class UnifiedRemarkEvent extends UnknownCollector
         this.duration = duration;
     }
 
-    public long getDuration() {
+    public long getDurationMicros() {
         return duration;
     }
 
