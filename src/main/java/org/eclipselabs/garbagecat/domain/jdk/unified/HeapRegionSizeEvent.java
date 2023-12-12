@@ -74,7 +74,6 @@ public class HeapRegionSizeEvent implements UnifiedLogging, ThrowAwayEvent {
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
     /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
@@ -99,7 +98,17 @@ public class HeapRegionSizeEvent implements UnifiedLogging, ThrowAwayEvent {
         return JdkUtil.LogEventType.HEAP_REGION_SIZE.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

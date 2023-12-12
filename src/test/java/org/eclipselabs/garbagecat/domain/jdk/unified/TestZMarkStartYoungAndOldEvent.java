@@ -72,7 +72,7 @@ class TestZMarkStartYoungAndOldEvent {
      * Test with time, uptime decorator.
      */
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start "
                 + "(Major) 0.008ms";
         assertTrue(ZMarkStartYoungAndOldEvent.match(logLine),

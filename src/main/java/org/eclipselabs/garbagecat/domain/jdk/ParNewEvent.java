@@ -117,7 +117,7 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         implements BlockingEvent, YoungCollection, ParallelEvent, YoungData, OldData, TriggerData, TimesData {
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + "|"

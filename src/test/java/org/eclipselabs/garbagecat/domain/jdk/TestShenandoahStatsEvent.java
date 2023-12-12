@@ -714,6 +714,8 @@ class TestShenandoahStatsEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -731,6 +733,8 @@ class TestShenandoahStatsEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -973,6 +977,38 @@ class TestShenandoahStatsEvent {
         String logLine = "[2020-10-26T14:51:41.413-0400]   Finish Work                     10950 us";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testUnifiedG1YoungChooseCollectionSet() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases         ] GC(9)     Choose "
+                + "Collection Set: 0.0ms";
+        assertFalse(ShenandoahStatsEvent.match(logLine),
+                "Log line inccorectly recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testUnifiedG1YoungCodeRootsFixup() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases         ] GC(9)     Code Roots "
+                + "Fixup: 0.0ms";
+        assertFalse(ShenandoahStatsEvent.match(logLine),
+                "Log line inccorectly recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testUnifiedG1YoungPrepareTlabs() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases         ] GC(9)     Prepare "
+                + "TLABs: 0.1ms";
+        assertFalse(ShenandoahStatsEvent.match(logLine),
+                "Log line inccorectly recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testUnifiedG1YoungProcessedBuffers() {
+        String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases         ] GC(9)       Processed "
+                + "Buffers:        Min: 1, Avg: 26.9, Max: 111, Diff: 110, Sum: 215, Workers: 8";
+        assertFalse(ShenandoahStatsEvent.match(logLine),
+                "Log line inccorectly recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
     }
 
     @Test

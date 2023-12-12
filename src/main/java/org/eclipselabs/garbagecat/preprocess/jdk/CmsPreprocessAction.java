@@ -641,7 +641,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             }
             // Output beginning of PAR_NEW line
             this.logEntry = matcher.group(1);
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN.matcher(logEntry)).matches()) {
             // Par_NEW mixed with FLS_STATISTICS
@@ -650,7 +650,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 // Output beginning of PAR_NEW line
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             // CMS_SERIAL_OLD mixed with CMS_CONCURRENT
@@ -660,7 +660,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             }
             // Output beginning of CMS_SERIAL_OLD line
             this.logEntry = matcher.group(1);
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
 
         } else if ((matcher = REGEX_RETAIN_BEGINNING_SERIAL_PATTERN.matcher(logEntry)).matches()) {
@@ -668,14 +668,14 @@ public class CmsPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_PARNEW_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC_PATTERN.matcher(logEntry)).matches()) {
             // Remove PrintHeapAtGC output
@@ -683,14 +683,14 @@ public class CmsPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_SERIAL_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logEntry))
                 .matches()) {
@@ -698,14 +698,14 @@ public class CmsPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_PARNEW_BAILING_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME_PATTERN
                 .matcher(logEntry)).matches()) {
@@ -718,7 +718,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                     entangledLogLines.add(matcher.group(32));
                 }
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_STOPPED_TIME_PATTERN.matcher(logEntry))
                 .matches()) {
@@ -727,7 +727,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1) + matcher.group(15);
                 entangledLogLines.add(matcher.group(17));
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -740,7 +740,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                     entangledLogLines.add(matcher.group(1));
                 }
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SERIAL_CONCURRENT_MIXED_PATTERN.matcher(logEntry)).matches()) {
             // Output serial part, save concurrent to output later
             matcher.reset();
@@ -748,7 +748,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
                 entangledLogLines.add(matcher.group(22));
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PARNEW_CONCURRENT_MIXED_PATTERN.matcher(logEntry)).matches()) {
             // Output ParNew part, save concurrent to output later
             matcher.reset();
@@ -756,46 +756,46 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
                 entangledLogLines.add(matcher.group(37));
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAR_NEW_FLS_STATISTICS_PATTERN.matcher(logEntry)).matches()) {
             // Output ParNew part minus FL stats
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SERIAL_FLS_STATISTICS_PATTERN.matcher(logEntry)).matches()) {
             // Output serial part minus FL stats
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PRINT_HEAP_AT_GC_PATTERN.matcher(logEntry)).matches()) {
             // Remove PrintHeapAtGC output
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_CONCURRENT_MODE_FAILURE_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_CMS_REMARK_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_DURATION_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
@@ -805,7 +805,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             if (!entangledLogLines.isEmpty() && newLoggingEvent(nextLogEntry)) {
                 clearEntangledLines(entangledLogLines);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches() && !(priorLogEntry != null
                 && REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(priorLogEntry).matches())) {
             // End of logging event
@@ -814,7 +814,7 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             clearEntangledLines(entangledLogLines);
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
         } else if ((matcher = REGEX_RETAIN_END_PAR_NEW_PATTERN.matcher(logEntry)).matches()) {
             // End of logging event
@@ -826,9 +826,9 @@ public class CmsPreprocessAction implements PreprocessAction {
             if (context.contains(TOKEN) && !(priorLogEntry != null
                     && REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(priorLogEntry).matches())) {
                 // End of multi-line event or PAR_NEW truncated
-                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                context.remove(PreprocessAction.NEWLINE);
             } else {
-                context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                context.add(PreprocessAction.NEWLINE);
             }
             context.remove(TOKEN);
         } else if ((matcher = REGEX_RETAIN_PAR_NEW_PATTERN.matcher(logEntry)).matches()) {
@@ -836,7 +836,7 @@ public class CmsPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(4);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         }
     }

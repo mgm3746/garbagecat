@@ -81,7 +81,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
         TimesData, OtherTime, G1ExtRootScanningData {
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
             + GcTrigger.TO_SPACE_EXHAUSTED.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
@@ -101,7 +101,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + __TRIGGER
             + "\\))? \\(mixed\\)( \\(" + __TRIGGER + "\\))?, " + JdkRegEx.DURATION + "\\]"
-            + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + OtherTime.REGEX + "\\[Eden: " + JdkRegEx.SIZE + "\\("
+            + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "(" + OtherTime.REGEX + ")\\[Eden: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
@@ -198,7 +198,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(15));
                 combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
@@ -221,7 +221,7 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 // use last trigger
                 if (matcher.group(17) != null) {

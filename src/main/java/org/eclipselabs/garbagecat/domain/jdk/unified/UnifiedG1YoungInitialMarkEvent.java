@@ -14,7 +14,6 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
-import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,12 +57,10 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class UnifiedG1YoungInitialMarkEvent extends G1Collector
         implements UnifiedLogging, BlockingEvent, YoungCollection, ParallelEvent, CombinedData, TriggerData, TimesData {
-
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     static final String _TRIGGER = "(" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + ")";
-
     /**
      * Regular expression defining standard logging (no details).
      */
@@ -108,12 +105,10 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
     /**
      * The wall (clock) time in centiseconds.
      */
     private int timeReal = TimesData.NO_DATA;
-
     /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
@@ -123,6 +118,7 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
      * The time of all system (kernel) threads added together in centiseconds.
      */
     private int timeSys = TimesData.NO_DATA;
+
     /**
      * The time of all user (non-kernel) threads added together in centiseconds.
      */
@@ -146,34 +142,35 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
             matcher.reset();
             if (matcher.find()) {
                 long endTimestamp;
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(12));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE));
+                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    if (matcher.group(14) != null) {
-                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(16));
+                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 1) != null) {
+                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 4));
                         } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3))
+                                    .longValue();
                         }
                     } else {
                         // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
-                combinedBegin = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
-                        .convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(DECORATOR_SIZE + 5), matcher.group(DECORATOR_SIZE + 7).charAt(0))
-                        .convertTo(KILOBYTES);
-                combinedAllocation = memory(matcher.group(DECORATOR_SIZE + 8),
-                        matcher.group(DECORATOR_SIZE + 10).charAt(0)).convertTo(KILOBYTES);
-                duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 11)).intValue();
+                trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
+                combinedBegin = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4).charAt(0)).convertTo(KILOBYTES);
+                combinedEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7).charAt(0)).convertTo(KILOBYTES);
+                combinedAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10).charAt(0)).convertTo(KILOBYTES);
+                duration = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 13)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 14)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 15)).intValue();
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 13)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 14)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15)).intValue();
             }
         }
     }
@@ -222,6 +219,11 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
@@ -240,5 +242,10 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
 
     public GcTrigger getTrigger() {
         return trigger;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

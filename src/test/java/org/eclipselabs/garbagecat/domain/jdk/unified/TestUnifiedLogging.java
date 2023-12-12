@@ -10,17 +10,18 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.util.jdk.unified;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-class TestUnifiedRegEx {
+class TestUnifiedLogging {
 
     @Test
     void testDecoratorGcAge() {
@@ -119,24 +120,6 @@ class TestUnifiedRegEx {
     }
 
     @Test
-    void testReleaseStringJdk11() {
-        String release = "11.0.9+11-LTS";
-        assertTrue(release.matches(UnifiedRegEx.RELEASE_STRING), "Release string " + release + " not recognized.");
-    }
-
-    @Test
-    void testReleaseStringJdk12() {
-        String release = "12.0.1+12";
-        assertTrue(release.matches(UnifiedRegEx.RELEASE_STRING), "Release string " + release + " not recognized.");
-    }
-
-    @Test
-    void testReleaseStringJdk17() {
-        String release = "17.0.1+12-LTS";
-        assertTrue(release.matches(UnifiedRegEx.RELEASE_STRING), "Release string " + release + " not recognized.");
-    }
-
-    @Test
     void testTagsGc() {
         String id = "[gc          ]";
         assertTrue(id.matches(UnifiedRegEx.TAGS), "'" + id + "' not recognized as a valid tag.");
@@ -170,12 +153,6 @@ class TestUnifiedRegEx {
     void testTimestampTimeUptime() {
         String decorator = "[2020-02-14T15:21:55.207-0500][25.016s]";
         assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
-    }
-
-    @Test
-    void testTimestampUnifiedLogging() {
-        String timestamp = "0.002s";
-        assertTrue(timestamp.matches(UnifiedRegEx.UPTIME), "'" + timestamp + "' is a valid timestamp.");
     }
 
     @Test

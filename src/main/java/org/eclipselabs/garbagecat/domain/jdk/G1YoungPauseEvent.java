@@ -116,7 +116,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
      *
      */
     private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause \\(young\\), "
-            + JdkRegEx.DURATION + "\\]" + OtherTime.REGEX + "?\\[ " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.DURATION + "\\](" + OtherTime.REGEX + ")?\\[ " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
@@ -130,8 +130,8 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
             + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
             + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + ")\\) )?\\(young\\)( \\(("
             + GcTrigger.TO_SPACE_EXHAUSTED.getRegex() + "|" + GcTrigger.TO_SPACE_OVERFLOW.getRegex() + ")\\))?, "
-            + JdkRegEx.DURATION + "\\]" + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "?" + OtherTime.REGEX
-            + "?\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + JdkRegEx.DURATION + "\\]" + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "?(" + OtherTime.REGEX
+            + ")?\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
@@ -259,7 +259,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(15));
                 combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
@@ -281,7 +281,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 if (matcher.group(17) != null) {
                     // trigger after (young):
@@ -321,7 +321,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(14)).intValue();
                 combined = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
@@ -343,7 +343,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(15));
                 // Get duration from times block

@@ -66,7 +66,7 @@ public class VerboseGcOldEvent extends UnknownCollector
         implements BlockingEvent, OldCollection, CombinedData, TriggerData {
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
             + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
@@ -143,7 +143,7 @@ public class VerboseGcOldEvent extends UnknownCollector
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
                 // Datestamp only.
-                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             trigger = GcTrigger.getTrigger(matcher.group(15));
             if (matcher.group(17).matches(JdkRegEx.SIZE_K)) {

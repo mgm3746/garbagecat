@@ -28,15 +28,11 @@ public interface PreprocessAction {
     }
 
     /**
-     * Indicates the current logging event is the start of a new line.
+     * Indicates the current logging event is the start of a new line (a single line event or the beginning of an event
+     * that spans multiple lines). If the previous entry did not end with a newline, one will need to be appended before
+     * outputting the current entry.
      */
     public static final String NEWLINE = "NEWLINE";
-
-    /**
-     * Indicates the current log entry is either the beginning of an event that spans multiple logging lines, or it is a
-     * single line logging event.
-     */
-    public static final String TOKEN_BEGINNING_OF_EVENT = "TOKEN_BEGINNING_OF_EVENT";
 
     /**
      * @return The log entry for the action.

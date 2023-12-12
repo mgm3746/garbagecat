@@ -119,7 +119,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
                 // Datestamp only.
-                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             duration = JdkMath.convertSecsToMicros(matcher.group(14)).intValue();
             if (matcher.group(17) != null) {

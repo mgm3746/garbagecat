@@ -598,7 +598,7 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] TLAB Size Max: 256K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");

@@ -82,7 +82,7 @@ class TestZMarkEndYoungEvent {
      * Test with time, uptime decorator.
      */
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.100s][info][gc,phases   ] GC(0) Y: Pause Mark End 0.006ms";
         assertTrue(ZMarkEndYoungEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.Z_MARK_END_YOUNG.toString() + ".");

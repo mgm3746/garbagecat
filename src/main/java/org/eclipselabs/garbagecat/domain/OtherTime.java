@@ -172,7 +172,7 @@ public interface OtherTime {
      * Other: 9569.7ms
      * 
      */
-    public static final String REGEX = "([\\[]{0,1}Other:[ ]{1,3}" + JdkRegEx.DURATION_MS + "[\\]]{0,1}[ ]{0,1})";
+    public static final String REGEX = "[\\[]{0,1}Other:[ ]{1,3}" + JdkRegEx.DURATION_MS + "[\\]]{0,1}";
 
     /**
      * @return The "Other" time in microseconds (rounded).

@@ -57,63 +57,6 @@ class TestShenandoahFinalRootsEvent {
     }
 
     @Test
-    void testLogLineUnifiedTime() {
-        String logLine = "[2023-08-25T02:15:57.862-0400] GC(4) Pause Final Roots 0.019ms";
-        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
-        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
-        assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineUnifiedTimeUptime() {
-        String logLine = "[2023-08-25T02:15:57.862-0400][3.161s] GC(4) Pause Final Roots 0.019ms";
-        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
-        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
-        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineUnifiedTimeUptimeMillis() {
-        String logLine = "[2023-08-25T02:15:57.862-0400][3161ms] GC(4) Pause Final Roots 0.019ms";
-        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
-        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
-        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineUptime() {
-        String logLine = "[3.161s] GC(4) Pause Final Roots 0.019ms";
-        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
-        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
-        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineUptimeMillis() {
-        String logLine = "[3161ms] GC(4) Pause Final Roots 0.019ms";
-        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
-        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
-        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testLogLineWhitespaceAtEnd() {
-        String logLine = "[2023-08-25T02:15:57.862-0400][3161ms] GC(4) Pause Final Roots 0.019ms   ";
-        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "[2023-08-25T02:15:57.862-0400][3161ms] GC(4) Pause Final Roots 0.019ms";
         assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalRootsEvent,
@@ -127,10 +70,67 @@ class TestShenandoahFinalRootsEvent {
     }
 
     @Test
+    void testTimestampUptime() {
+        String logLine = "[3.161s] GC(4) Pause Final Roots 0.019ms";
+        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
+        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampUptimeMillis() {
+        String logLine = "[3161ms] GC(4) Pause Final Roots 0.019ms";
+        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
+        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.SHENANDOAH_FINAL_ROOTS);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + " incorrectly indentified as unified.");
+    }
+
+    @Test
+    void testUnifiedTime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400] GC(4) Pause Final Roots 0.019ms";
+        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
+        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
+        assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testUnifiedTimeUptime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3.161s] GC(4) Pause Final Roots 0.019ms";
+        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
+        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testUnifiedTimeUptimeMillis() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3161ms] GC(4) Pause Final Roots 0.019ms";
+        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
+        ShenandoahFinalRootsEvent event = new ShenandoahFinalRootsEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(19, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testWhitespaceAtEnd() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3161ms] GC(4) Pause Final Roots 0.019ms   ";
+        assertTrue(ShenandoahFinalRootsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString() + ".");
     }
 }

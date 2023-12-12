@@ -616,7 +616,7 @@ public class G1PreprocessAction implements PreprocessAction {
      * 
      * [Other: 0.9 ms]
      */
-    private static final String REGEX_RETAIN_MIDDLE_OTHER_TIME = "^[ ]{3}" + OtherTime.REGEX + "$";
+    private static final String REGEX_RETAIN_MIDDLE_OTHER_TIME = "^[ ]{3}(" + OtherTime.REGEX + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_OTHER_TIME);
@@ -896,21 +896,21 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_FULL_GC_CLASS_HISTOGRAM_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_CLEANUP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_YOUNG_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             // Handle concurrent mixed with young collections. See datasets 47-48 and 51-52, 54.
@@ -920,7 +920,7 @@ public class G1PreprocessAction implements PreprocessAction {
             }
             // Output beginning of young line
             this.logEntry = matcher.group(1);
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_FULL_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             // Handle concurrent mixed with full collections. See dataset 74.
@@ -951,7 +951,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 // G1_FULL timestamp missing. Use G1_CONCURRENT timestamp.
                 this.logEntry = matcher.group(indexConcurrentDecorator) + " " + matcher.group(indexFullBlock);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_CONCURRENT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -981,7 +981,7 @@ public class G1PreprocessAction implements PreprocessAction {
                     entangledLogLines.add(decorator + " " + matcher.group(135));
                 }
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_YOUNG_PAUSE_PATTERN.matcher(logEntry)).matches()) {
             // Strip out G1Ergonomics
@@ -989,7 +989,7 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_REMARK_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -1000,7 +1000,7 @@ public class G1PreprocessAction implements PreprocessAction {
                     preprocessEvents.add(PreprocessAction.PreprocessEvent.REFERENCE_GC);
                 }
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_MIXED_PATTERN.matcher(logEntry)).matches()) {
             // Strip out G1Ergonomics
@@ -1008,7 +1008,7 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_YOUNG_INITIAL_MARK_PATTERN.matcher(logEntry)).matches()) {
             // Strip out G1Ergonomics
@@ -1016,34 +1016,34 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_YOUNG_PAUSE_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_YOUNG_INITIAL_MARK_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_EDEN_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_CLASS_HISTOGRAM_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
@@ -1058,18 +1058,18 @@ public class G1PreprocessAction implements PreprocessAction {
                 }
                 this.logEntry = matcher.group(82);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = "[Ext Root Scanning (ms): " + matcher.group(1) + "]";
-                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches()) {
             // End of logging event
@@ -1078,7 +1078,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             clearEntangledLines(entangledLogLines);
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
         } else if ((matcher = REGEX_RETAIN_END_CONCURRENT_YOUNG_PATTERN.matcher(logEntry)).matches()) {
             // End of logging event
@@ -1088,7 +1088,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(18);
             }
             clearEntangledLines(entangledLogLines);
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
         }
     }

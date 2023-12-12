@@ -71,7 +71,7 @@ class TestZMarkEndOldEvent {
      * Test with time, uptime decorator.
      */
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.213s][info][gc,phases   ] GC(2) O: Pause Mark End 0.005ms";
         assertTrue(ZMarkEndOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.Z_MARK_END_OLD.toString() + ".");

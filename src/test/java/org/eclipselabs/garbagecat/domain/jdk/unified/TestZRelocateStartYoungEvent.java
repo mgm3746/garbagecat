@@ -82,7 +82,7 @@ class TestZRelocateStartYoungEvent {
      * Test with time, uptime decorator.
      */
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.103s][info][gc,phases   ] GC(0) Y: Pause Relocate Start "
                 + "0.006ms";
         assertTrue(ZRelocateStartYoungEvent.match(logLine),

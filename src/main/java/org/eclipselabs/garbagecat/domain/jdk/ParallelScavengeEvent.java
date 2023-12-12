@@ -85,7 +85,7 @@ public class ParallelScavengeEvent extends ParallelCollector
         implements BlockingEvent, YoungCollection, ParallelEvent, YoungData, OldData, TriggerData, TimesData {
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
@@ -194,7 +194,7 @@ public class ParallelScavengeEvent extends ParallelCollector
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
             }
             trigger = GcTrigger.getTrigger(matcher.group(16));

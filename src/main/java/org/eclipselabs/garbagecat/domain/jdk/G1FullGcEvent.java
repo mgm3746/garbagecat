@@ -208,7 +208,7 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(15));
                 combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
@@ -230,7 +230,7 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 if (matcher.group(15) != null) {
                     trigger = GcTrigger.getTrigger(matcher.group(15));

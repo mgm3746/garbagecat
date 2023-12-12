@@ -71,7 +71,7 @@ class TestZRelocateStartEvent {
      * Test with time, uptime decorator.
      */
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.132s] GC(0) Pause Relocate Start 0.004ms";
         assertTrue(ZRelocateStartEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.Z_RELOCATE_START.toString() + ".");

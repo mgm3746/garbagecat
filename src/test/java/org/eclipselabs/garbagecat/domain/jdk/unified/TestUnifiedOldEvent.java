@@ -95,26 +95,31 @@ class TestUnifiedOldEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.TO_SPACE_EXHAUSTED),
-                JdkUtil.LogEventType.TO_SPACE_EXHAUSTED.toString() + " event not identified.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
+                Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
+        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (390361491 - 6628), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
     void testPreprocessedTriggerSystemGc() {
-        String logLine = "[2020-06-24T18:13:47.695-0700][173690ms] GC(74) Pause Full (System.gc()) Metaspace: "
-                + "260211K->260197K(1290240K) 887M->583M(1223M) 3460.196ms User=1.78s Sys=0.01s Real=3.46s";
+        String logLine = "[2020-06-24T18:13:47.695-0700][173690ms][gc,start] GC(74) Pause Full (System.gc()) "
+                + "Metaspace: 260211K->260197K(1290240K) 887M->583M(1223M) 3460.196ms User=1.78s Sys=0.01s Real=3.46s";
         assertTrue(UnifiedOldEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
         UnifiedOldEvent event = new UnifiedOldEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_OLD.toString(), event.getName(), "Event name incorrect.");
-        assertEquals((long) (173690 - 3460), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals((long) (173690), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(260211), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
         assertEquals(kilobytes(260197), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
@@ -128,6 +133,29 @@ class TestUnifiedOldEvent {
         assertEquals(178, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(346, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(52, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
+    void testPreprocessingNewAllocationFailureTriggersOld() throws IOException {
+        File testFile = TestUtil.getFile("dataset277.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_YOUNG),
+                JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_OLD),
+                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (89 - 3), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -163,6 +191,9 @@ class TestUnifiedOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN.getKey()),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
+        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (7187 - 31), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -173,6 +204,8 @@ class TestUnifiedOldEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -182,22 +215,9 @@ class TestUnifiedOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING.getKey()),
                 Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
-    }
-
-    @Test
-    void testUnifiedSerialOldTriggerSystemGc() throws IOException {
-        File testFile = TestUtil.getFile("dataset184.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (139 - 5), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

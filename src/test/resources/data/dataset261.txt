@@ -1,7 +1,3 @@
-[2022-10-09T13:16:39.707+0000][3783.195s][debug][gc,heap           ] GC(9) Heap before GC invocations=9 (full 0): garbage-first heap   total 10743808K, used 1819374K [0x0000000570400000, 0x0000000800000000)
-[2022-10-09T13:16:49.276+0000][3792.764s][debug][gc,heap           ] GC(9)   region size 4096K, 425 young (1740800K), 7 survivors (28672K)
-[2022-10-09T13:16:49.276+0000][3792.764s][debug][gc,heap           ] GC(9)  Metaspace       used 91225K, capacity 98503K, committed 98816K, reserved 339968K
-[2022-10-09T13:16:49.276+0000][3792.764s][debug][gc,heap           ] GC(9)   class space    used 10833K, capacity 13361K, committed 13440K, reserved 253952K
 [2022-10-09T13:16:49.276+0000][3792.764s][info ][gc,start          ] GC(9) Pause Young (Normal) (G1 Evacuation Pause)
 [2022-10-09T13:16:49.276+0000][3792.764s][info ][gc,task           ] GC(9) Using 8 workers of 8 for evacuation
 [2022-10-09T13:16:49.276+0000][3792.764s][debug][gc,tlab           ] GC(9) TLAB totals: thrds: 223  refills: 9596 max: 462 slow allocs: 767 max 41 waste:  1.5% gc: 16198888B max: 1568112B slow: 6511096B max: 409312B fast: 0B max: 0B

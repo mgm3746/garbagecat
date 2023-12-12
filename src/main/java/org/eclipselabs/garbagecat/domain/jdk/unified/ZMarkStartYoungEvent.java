@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,9 +41,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  */
 public class ZMarkStartYoungEvent extends ZCollector implements UnifiedLogging, BlockingEvent {
-
     private static final Pattern PATTERN = Pattern.compile(ZMarkStartYoungEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
@@ -91,23 +87,24 @@ public class ZMarkStartYoungEvent extends ZCollector implements UnifiedLogging, 
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 long endTimestamp;
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(12));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE));
+                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    if (matcher.group(14) != null) {
-                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(16));
+                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 1) != null) {
+                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 4));
                         } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3))
+                                    .longValue();
                         }
                     } else {
                         // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 1)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
             }
         }
@@ -141,7 +138,17 @@ public class ZMarkStartYoungEvent extends ZCollector implements UnifiedLogging, 
         return JdkUtil.LogEventType.Z_MARK_START_YOUNG.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

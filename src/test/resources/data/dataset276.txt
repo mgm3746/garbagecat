@@ -1,0 +1,14 @@
+[0.002s][info][gc] Using Serial
+[0.029s][info][safepoint] Entering safepoint region: EnableBiasedLocking
+[0.030s][info][safepoint] Leaving safepoint region
+[0.030s][info][safepoint] Total time for which application threads were stopped: 0.0004025 seconds, Stopping threads took: 0.0001847 seconds
+[0.032s][info][safepoint] Application time: 0.0022046 seconds
+[0.032s][info][safepoint] Entering safepoint region: RevokeBias
+[0.032s][info][safepoint] Leaving safepoint region
+[0.032s][info][safepoint] Total time for which application threads were stopped: 0.0001320 seconds, Stopping threads took: 0.0000777 seconds
+[0.048s][info][safepoint] Application time: 0.0156647 seconds
+[0.048s][info][safepoint] Entering safepoint region: GenCollectForAllocation
+[0.050s][info][gc       ] GC(0) Pause Young (Allocation Failure) 0M->0M(1M) 1.470ms
+[0.050s][info][gc,cpu   ] GC(0) User=0.00s Sys=0.00s Real=0.01s
+[0.050s][info][safepoint] Leaving safepoint region
+[0.050s][info][safepoint] Total time for which application threads were stopped: 0.0015478 seconds, Stopping threads took: 0.0000061 seconds

@@ -39,6 +39,27 @@ import org.junit.jupiter.api.Test;
  */
 class TestUnifiedRemarkEvent {
 
+    /**
+     * Test with time, uptime decorator.
+     * 
+     * @throws IOException
+     */
+    @Test
+    void testDecoratorTimeUptime() throws IOException {
+        File testFile = TestUtil.getFile("dataset201.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
+                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.");
+
+    }
+
     @Test
     void testIdentityEventType() {
         String logLine = "[7.944s][info][gc] GC(6432) Pause Remark 8M->8M(10M) 1.767ms";
@@ -103,27 +124,6 @@ class TestUnifiedRemarkEvent {
     void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_REMARK),
                 JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " not indentified as reportable.");
-    }
-
-    /**
-     * Test with time, uptime decorator.
-     * 
-     * @throws IOException
-     */
-    @Test
-    void testTimeUptime() throws IOException {
-        File testFile = TestUtil.getFile("dataset201.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
-                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " collector not identified.");
-
     }
 
     @Test

@@ -90,7 +90,7 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         PermMetaspaceCollection, ParallelEvent, YoungData, OldData, PermMetaspaceData, TriggerData, TimesData {
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
             + GcTrigger.SYSTEM_GC.getRegex() + "|" + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|"
@@ -98,7 +98,7 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
             + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + ")";
 
     /**
-     * Regular expressions defining the logging.
+     * Regular expression defining the logging.
      */
     private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC (\\(" + __TRIGGER
             + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
@@ -217,7 +217,7 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
             }
             trigger = GcTrigger.getTrigger(matcher.group(15));

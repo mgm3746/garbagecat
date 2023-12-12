@@ -99,7 +99,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
             + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
             + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")";
@@ -226,7 +226,7 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
                 // Datestamp only.
-                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             // Use last trigger
             if (matcher.group(33) != null) {

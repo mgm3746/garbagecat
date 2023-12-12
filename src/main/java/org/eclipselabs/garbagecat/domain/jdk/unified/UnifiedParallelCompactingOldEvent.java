@@ -14,7 +14,6 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
-import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,6 +34,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -49,21 +49,27 @@ import org.github.joa.domain.GarbageCollector;
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) JDK8/11 preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:
+ * 1) Timestamp is end of gc (e.g. no `gc,start` details):
+ * </p>
+ * 
+ * <pre>
+ * [0.017s][info][gc       ] GC(0) Pause Young (Allocation Failure) 0M-&gt;0M(1M) 0.521ms User=0.00s Sys=0.00s Real=0.00s
+ * </pre>
+ * 
+ * <p>
+ * 2) Timestamp is beginning of gc (e.g. preprocessed with `gc,start` details):
+ * </p>
+ * 
+ * <p>
+ * JDK11
  * </p>
  * 
  * <pre>
  * [0.083s][info][gc,start     ] GC(3) Pause Full (Ergonomics) PSYoungGen: 502K-&gt;496K(1536K) ParOldGen: 472K-&gt;432K(2048K) Metaspace: 701K-&gt;701K(1056768K) 0M-&gt;0M(3M) 4.336ms User=0.01s Sys=0.00s Real=0.01s
  * </pre>
- *
- * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.ParallelCompactingOldEvent} with unified logging (JDK9+).
- * </p>
- * 
- * <h2>Example Logging</h2>
  * 
  * <p>
- * 2) JDK17 preprocessed with {@link org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction}:
+ * JDK17
  * </p>
  * 
  * <pre>
@@ -78,7 +84,7 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         OldData, PermMetaspaceData, TriggerData, TimesData {
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
             + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|"
@@ -88,14 +94,14 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     /**
      * Regular expression defining the logging.
      */
-    private static final String _REGEX_PREPROCESSED = "" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + __TRIGGER
+    private static final String _REGEX = "" + UnifiedRegEx.DECORATOR + " Pause Full \\(" + __TRIGGER
             + "\\) PSYoungGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) ParOldGen: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\) Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "[ ]*$";
 
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(_REGEX_PREPROCESSED);
+    private static Pattern pattern = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -105,19 +111,17 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return REGEX_PREPROCESSED_PATTERN.matcher(logLine).matches();
+        return pattern.matcher(logLine).matches();
     }
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private long duration;
-
+    private long eventTime;
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
     /**
      * Old generation size at beginning of GC event.
      */
@@ -137,12 +141,10 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
      * Permanent generation size at beginning of GC event.
      */
     private Memory permGen;
-
     /**
      * Space allocated to permanent generation.
      */
     private Memory permGenAllocation;
-
     /**
      * Permanent generation size at end of GC event.
      */
@@ -195,48 +197,37 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
      */
     public UnifiedParallelCompactingOldEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = REGEX_PREPROCESSED_PATTERN.matcher(logEntry);
+        Matcher matcher = pattern.matcher(logEntry);
         if (matcher.find()) {
-            // Preparsed logging has a true timestamp (it outputs the beginning logging before the safepoint).
-            if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(12));
-            } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 50)).intValue();
+            long time = UnifiedUtil.calculateTime(matcher);
+            if (!isEndstamp()) {
+                timestamp = time;
             } else {
-                if (matcher.group(14) != null) {
-                    if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(16));
-                    } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
-                    }
-                } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
-                }
+                timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
-            trigger = GcTrigger.getTrigger(matcher.group(DECORATOR_SIZE + 1));
-            young = memory(matcher.group(DECORATOR_SIZE + 2), matcher.group(DECORATOR_SIZE + 4).charAt(0))
-                    .convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(DECORATOR_SIZE + 9), matcher.group(DECORATOR_SIZE + 11).charAt(0))
-                    .convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(DECORATOR_SIZE + 12), matcher.group(DECORATOR_SIZE + 14).charAt(0))
-                    .convertTo(KILOBYTES);
-            old = memory(matcher.group(DECORATOR_SIZE + 15), matcher.group(DECORATOR_SIZE + 17).charAt(0))
-                    .convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(DECORATOR_SIZE + 22), matcher.group(DECORATOR_SIZE + 24).charAt(0))
-                    .convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(DECORATOR_SIZE + 25), matcher.group(DECORATOR_SIZE + 27).charAt(0))
-                    .convertTo(KILOBYTES);
-            permGen = memory(matcher.group(DECORATOR_SIZE + 28), matcher.group(DECORATOR_SIZE + 30).charAt(0))
-                    .convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(DECORATOR_SIZE + 35), matcher.group(DECORATOR_SIZE + 37).charAt(0))
-                    .convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(DECORATOR_SIZE + 38), matcher.group(DECORATOR_SIZE + 40).charAt(0))
-                    .convertTo(KILOBYTES);
-            duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 50)).intValue();
-            timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 52)).intValue();
-            timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 53)).intValue();
-            timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 54)).intValue();
+            trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
+            young = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4).charAt(0)).convertTo(KILOBYTES);
+            youngEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
+            youngAvailable = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 14).charAt(0)).convertTo(KILOBYTES);
+            old = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 17).charAt(0)).convertTo(KILOBYTES);
+            oldEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24).charAt(0)).convertTo(KILOBYTES);
+            oldAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 25),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27).charAt(0)).convertTo(KILOBYTES);
+            permGen = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 28),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30).charAt(0)).convertTo(KILOBYTES);
+            permGenEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 35),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 37).charAt(0)).convertTo(KILOBYTES);
+            permGenAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 38),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 40).charAt(0)).convertTo(KILOBYTES);
+            timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 52)).intValue();
+            timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 53)).intValue();
+            timeReal = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 54)).intValue();
         }
     }
 
@@ -253,11 +244,11 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     public UnifiedParallelCompactingOldEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.duration = duration;
+        this.eventTime = duration;
     }
 
     public long getDuration() {
-        return duration;
+        return eventTime;
     }
 
     @Override
@@ -301,6 +292,11 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         return permGenAllocation;
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
@@ -331,6 +327,13 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
 
     public Memory getYoungSpace() {
         return youngAvailable;
+    }
+
+    public boolean isEndstamp() {
+        // default assumes gc,start not logged (e.g. not preprocessed)
+        boolean isEndStamp = true;
+        isEndStamp = !logEntry.matches(UnifiedRegEx.TAG_GC_START);
+        return isEndStamp;
     }
 
     protected void setPermOccupancyEnd(Memory permGenEnd) {

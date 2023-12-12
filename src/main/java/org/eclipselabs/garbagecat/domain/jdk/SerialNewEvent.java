@@ -82,7 +82,7 @@ public class SerialNewEvent extends SerialCollector
         implements BlockingEvent, YoungCollection, YoungData, OldData, TriggerData, SerialCollection, TimesData {
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + ")";
@@ -188,7 +188,7 @@ public class SerialNewEvent extends SerialCollector
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
                 // Datestamp only.
-                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             trigger = GcTrigger.getTrigger(matcher.group(18));
             young = kilobytes(matcher.group(31));

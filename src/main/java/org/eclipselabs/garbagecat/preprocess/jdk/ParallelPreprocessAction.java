@@ -249,7 +249,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logEntry)).matches()) {
             // Remove GCTimeLimit output
@@ -258,7 +258,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
                 entangledLogLines.add(matcher.group(29));
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_PARALLEL_SCAVENGE_PATTERN.matcher(logEntry)).matches()) {
             // Remove beginning PARALLEL_SCAVENGE output
@@ -266,7 +266,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_SCAVENGE_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logEntry))
                 .matches()) {
@@ -275,7 +275,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logEntry)).matches()) {
             // Remove ending AdaptiveResizePolicy output
@@ -283,7 +283,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches()) {
             // End of logging event
@@ -296,7 +296,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
                 }
             }
             clearEntangledLines(entangledLogLines);
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
         }
     }

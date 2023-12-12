@@ -69,7 +69,7 @@ class TestGcLockerRetryEvent {
     }
 
     @Test
-    void testTime() {
+    void testTimestampTime() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
         assertTrue(GcLockerRetryEvent.match(logLine),
@@ -79,9 +79,19 @@ class TestGcLockerRetryEvent {
     }
 
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2023-02-12T07:16:14.167+0200][0.005s][warning][gc,alloc       ] ForkJoinPool-123-worker: "
                 + "Retried waiting for GCLocker too often allocating 1235 words";
+        assertTrue(GcLockerRetryEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.GC_LOCKER_RETRY.toString() + ".");
+        GcLockerRetryEvent event = new GcLockerRetryEvent(logLine);
+        assertEquals((long) 5, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampUptime() {
+        String logLine = "[0.005s][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
+                + "waiting for GCLocker too often allocating 1235 words";
         assertTrue(GcLockerRetryEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.GC_LOCKER_RETRY.toString() + ".");
         GcLockerRetryEvent event = new GcLockerRetryEvent(logLine);
@@ -94,16 +104,6 @@ class TestGcLockerRetryEvent {
         eventTypes.add(LogEventType.GC_LOCKER_RETRY);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.GC_LOCKER_RETRY.toString() + " incorrectly indentified as unified.");
-    }
-
-    @Test
-    void testUptime() {
-        String logLine = "[0.005s][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
-                + "waiting for GCLocker too often allocating 1235 words";
-        assertTrue(GcLockerRetryEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.GC_LOCKER_RETRY.toString() + ".");
-        GcLockerRetryEvent event = new GcLockerRetryEvent(logLine);
-        assertEquals((long) 5, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
 }

@@ -200,7 +200,6 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
     /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
@@ -219,20 +218,20 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(12));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    timestamp = Long.parseLong(matcher.group(13));
+                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
+                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    if (matcher.group(14) != null) {
-                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            timestamp = Long.parseLong(matcher.group(16));
+                    if (matcher.group(15) != null) {
+                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            timestamp = Long.parseLong(matcher.group(17));
                         } else {
-                            timestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
                         }
                     } else {
                         // Datestamp only.
-                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
             }
@@ -247,8 +246,18 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
         return JdkUtil.LogEventType.UNIFIED_HEADER.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 
     public void setTimestamp(long timestamp) {

@@ -168,6 +168,9 @@ class TestUnifiedG1MixedPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = (UnifiedG1MixedPauseEvent) jvmRun.getFirstGcEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (16629), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -176,18 +179,59 @@ class TestUnifiedG1MixedPauseEvent {
                 JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as reportable.");
     }
 
-    /**
-     * Test with time, uptime decorator.
-     */
     @Test
-    void testTimeUptime() {
-        String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] GC(6) Pause Young (Mixed) (G1 Evacuation Pause) "
+    void testTimestampTime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][gc,start] GC(4) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampTimeUptime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3.161s][gc,start] GC(4) Pause Young (Mixed) "
+                + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
+                + "15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampTimeUptimeMillis() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3161ms][gc,start] GC(4) Pause Young (Mixed) "
+                + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
+                + "15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampUptime() {
+        String logLine = "[3.161s][gc,start] GC(4) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampUptimeMillis() {
+        String logLine = "[3161ms][gc,start] GC(4) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
+                + "User=0.00s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

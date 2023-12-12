@@ -104,7 +104,7 @@ class TestUnifiedHeaderVersionEvent {
     }
 
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] Version: 17.0.1+12-LTS (release)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER_VERSION, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER_VERSION + "not identified.");

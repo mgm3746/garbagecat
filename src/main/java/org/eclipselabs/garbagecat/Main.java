@@ -246,7 +246,7 @@ public class Main {
                     printWriter.write(jvmRun.getFirstEventDatestamp());
                     printWriter.write(LINE_SEPARATOR);
                 }
-                if (!jvmRun.getFirstEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
+                if (!jvmRun.getFirstEvent().getLogEntry().matches(UnifiedRegEx.TIME_DECORATOR)) {
                     printWriter.write("Timestamp First: ");
                     BigDecimal firstEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getFirstEvent().getTimestamp());
                     printWriter.write(firstEventTimestamp.toString());
@@ -258,7 +258,7 @@ public class Main {
                     printWriter.write(jvmRun.getLastEventDatestamp());
                     printWriter.write(LINE_SEPARATOR);
                 }
-                if (!jvmRun.getLastEvent().getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
+                if (!jvmRun.getLastEvent().getLogEntry().matches(UnifiedRegEx.TIME_DECORATOR)) {
                     printWriter.write("Timestamp Last: ");
                     BigDecimal lastEventTimestamp = JdkMath.convertMillisToSecs(jvmRun.getLastEvent().getTimestamp());
                     printWriter.write(lastEventTimestamp.toString());

@@ -248,7 +248,17 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
         return JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         throw new UnsupportedOperationException("Event does not include timestamp information");
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

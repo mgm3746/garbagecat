@@ -123,7 +123,7 @@ public class SerialPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if (logEntry.matches(REGEX_RETAIN_END)) {
             // End of logging event
@@ -133,7 +133,7 @@ public class SerialPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             clearEntangledLines(entangledLogLines);
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
         }
     }

@@ -71,7 +71,7 @@ class TestZRelocateStartOldEvent {
      * Test with time, uptime decorator.
      */
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.228s][info][gc,phases   ] GC(2) O: Pause Relocate Start "
                 + "0.006ms";
         assertTrue(ZRelocateStartOldEvent.match(logLine),

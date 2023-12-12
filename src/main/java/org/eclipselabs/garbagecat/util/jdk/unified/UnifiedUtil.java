@@ -14,9 +14,12 @@ package org.eclipselabs.garbagecat.util.jdk.unified;
 
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
+import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.util.GcUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
@@ -30,16 +33,40 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 public final class UnifiedUtil {
 
     /**
-     * The number of regex patterns in <code>UnifiedRegEx.DECORATOR</code>. Convenience field to make the code resilient
-     * to decorator pattern changes.
-     */
-    public static final int DECORATOR_SIZE = Pattern.compile(UnifiedRegEx.DECORATOR)
-            .matcher("[2020-02-14T15:21:55.207-0500] GC(44) Pause Young (Normal) (G1 Evacuation Pause)").groupCount();
-
-    /**
      * Arbitrary date for determining time intervals when gc logging includes only uptime.
      */
     public static final Date JVM_START_DATE = GcUtil.parseDateStamp("2000-01-01T00:00:00.000-0500");
+
+    /**
+     * @param matcher
+     *            The unified log line <code>Matcher</code>.
+     * @return The time when the GC event either started or ended in milliseconds after: (1) JVM startup. (2)
+     *         <code>JVM_START_DATE</code>, if startup time is unknown.
+     */
+    public static final long calculateTime(Matcher matcher) throws TimeWarpException {
+        long time = 0L;
+        if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+            time = Long.parseLong(matcher.group(13));
+        } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
+            time = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+        } else {
+            if (matcher.group(15) != null) {
+                if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    time = Long.parseLong(matcher.group(17));
+                } else {
+                    time = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                }
+            } else {
+                // Datestamp only.
+                time = JdkUtil.convertDatestampToMillis(matcher.group(2));
+            }
+        }
+        if (time < 0) {
+            throw new TimeWarpException("Time < 0: " + matcher.group(0));
+        } else {
+            return time;
+        }
+    }
 
     /**
      * @param eventTypes
@@ -59,7 +86,6 @@ public final class UnifiedUtil {
             case UNIFIED_CMS_INITIAL_MARK:
             case UNIFIED_G1_CLEANUP:
             case G1_FULL_GC_PARALLEL:
-            case TO_SPACE_EXHAUSTED:
             case UNIFIED_G1_INFO:
             case UNIFIED_G1_MIXED_PAUSE:
             case UNIFIED_G1_YOUNG_INITIAL_MARK:

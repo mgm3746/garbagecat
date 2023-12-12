@@ -434,11 +434,11 @@ public class JvmRun {
         if (firstGcEvent != null || firstSafepointEvent != null) {
             long firstTimeStamp = Long.MIN_VALUE;
             if (firstGcEvent != null && !firstGcEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
-                    && !firstGcEvent.getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)) {
+                    && !firstGcEvent.getLogEntry().matches(UnifiedRegEx.TIME_DECORATOR)) {
                 firstTimeStamp = firstGcEvent.getTimestamp();
             }
             if (firstSafepointEvent != null && !firstSafepointEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
-                    && !firstSafepointEvent.getLogEntry().matches(UnifiedRegEx.DATESTAMP_EVENT)
+                    && !firstSafepointEvent.getLogEntry().matches(UnifiedRegEx.TIME_DECORATOR)
                     && firstSafepointEvent.getTimestamp() < firstTimeStamp) {
                 firstTimeStamp = firstSafepointEvent.getTimestamp();
             }

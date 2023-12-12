@@ -100,7 +100,7 @@ class TestUnifiedG1YoungInitialMarkEvent {
      * Test with time, uptime decorator.
      */
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] GC(6) Pause Initial Mark (G1 Humongous Allocation) "
                 + "1162M->5M(1250M) 1.336ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine),

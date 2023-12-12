@@ -221,7 +221,8 @@ public class HeapEvent implements ThrowAwayEvent {
                     + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS + ")?\\)$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Status: ((has forwarded objects|marking), )?(evacuating, concurrent weak roots, )?cancelled$",
+                    + " )?Status:(,{0,1} (cancelled|concurrent weak roots|evacuating|has forwarded objects|marking|"
+                    + "updating refs)){1,}$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Reserved region:$",
             //

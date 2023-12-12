@@ -115,9 +115,9 @@ class TestFooterStatsEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " collector not identified.");
         // Some logging patterns are exactly the same as SHENANDOAH_STATS. No easy way to distinguish them.
@@ -135,9 +135,9 @@ class TestFooterStatsEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " collector not identified.");
     }
@@ -150,9 +150,9 @@ class TestFooterStatsEvent {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " collector not identified.");
         // Some logging patterns are exactly the same as SHENANDOAH_STATS. No easy way to distinguish them.
@@ -395,6 +395,14 @@ class TestFooterStatsEvent {
     }
 
     @Test
+    void testUnifiedFinishQueues() {
+        String logLine = "[2020-10-26T14:52:27.770-0400]   Finish Queues                =    0.116 s (a =       83 us)"
+                + " (n =  1398) (lvls, us =       11,       20,       51,       65,    10887)";
+        assertTrue(FooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
     void testUnifiedFromToCountSumData() {
         String logLine = "[103.684s][info][gc,stats     ]       1 ms -       2 ms:         1998         999 ms";
         assertTrue(FooterStatsEvent.match(logLine),
@@ -573,5 +581,13 @@ class TestFooterStatsEvent {
                 + "(n =  2498) (lvls, us =        7,       10,       12,       16,      178)";
         assertTrue(FooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testUpdateRegionStates() {
+        String logLine = "[2020-10-26T14:52:27.770-0400]   Update Region States         =    0.003 s (a =        2 us) "
+                + "(n =  1398) (lvls, us =        1,        2,        2,        2,       18)";
+        assertEquals(JdkUtil.LogEventType.FOOTER_STATS, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.FOOTER_STATS + "not identified.");
     }
 }

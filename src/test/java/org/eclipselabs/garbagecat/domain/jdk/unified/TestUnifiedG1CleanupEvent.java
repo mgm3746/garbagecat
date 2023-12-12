@@ -118,10 +118,80 @@ class TestUnifiedG1CleanupEvent {
     }
 
     @Test
+    void testTimestampUptime() {
+        String logLine = "[3.161s] GC(4) Pause Cleanup 30M->30M(44M) 0.058ms";
+        assertTrue(UnifiedG1CleanupEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");
+        UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampUptimeMillis() {
+        String logLine = "[3161ms] GC(4) Pause Cleanup 30M->30M(44M) 0.058ms";
+        assertTrue(UnifiedG1CleanupEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");
+        UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.UNIFIED_G1_CLEANUP);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " not indentified as unified.");
+    }
+
+    @Test
+    void testUnifiedTime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400] GC(4) Pause Cleanup 30M->30M(44M) 0.058ms";
+        assertTrue(UnifiedG1CleanupEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");
+        UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
+        assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testUnifiedTimeUptime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3.161s] GC(4) Pause Cleanup 30M->30M(44M) 0.058ms";
+        assertTrue(UnifiedG1CleanupEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");
+        UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testUnifiedTimeUptimeMillis() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3161ms] GC(4) Pause Cleanup 30M->30M(44M) 0.058ms";
+        assertTrue(UnifiedG1CleanupEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + ".");
+        UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getDuration(), "Duration not parsed correctly.");
     }
 }

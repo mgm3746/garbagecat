@@ -20,17 +20,19 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-class TestTimesData {
+class TestOtherTime {
 
     @Test
-    void testTimesData() {
-        String timesData = " [Times: user=0.44 sys=0.00, real=0.08 secs]";
-        assertTrue(timesData.matches(TimesData.REGEX), "'" + timesData + "' is a valid times block.");
+    void testJdk8() {
+        String otherTime = "[Other: 0.9 ms]";
+        assertTrue(otherTime.matches(OtherTime.REGEX),
+                "'" + otherTime + "' not identified as a valid 'other' time block.");
     }
 
     @Test
-    void testTimesDataJdk9() {
-        String timesData = " User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(timesData.matches(TimesData.REGEX_JDK9), "'" + timesData + "' is a valid times block.");
+    void testUnified() {
+        String otherTime = "Other: 9569.7ms";
+        assertTrue(otherTime.matches(OtherTime.REGEX),
+                "'" + otherTime + "' not identified as a valid 'other' time block.");
     }
 }

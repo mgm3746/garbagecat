@@ -75,53 +75,56 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?Concurrent (Class Unloading|Cleanup|Evacuation|Marking|Reset|Precleaning|"
-                    + "(Mark|Strong|Thread) Roots|Update (Refs|Thread Roots)|Weak (References|Roots)).+$",
+                    + "(Mark|Strong|Thread) Roots|Update (Refs|Thread Roots)|Weak (References|Roots))[ ]{1,}.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Final Mark|Final Roots|Init Mark|) \\((G|N)\\).+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Final Mark|Final Roots|Init Mark|) \\((G|N)\\)[ ]{1,}.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{1,}(Accumulate Stats|Evacuation|Exception Caches|Finish (Mark|Queues|Work)|"
+                    + " )?[ ]{1,}(Accumulate Stats|(Code )?Roots|Evacuation|Exception Caches|Finish (Mark|Queues|Work)|"
                     + "Make Parsable|Manage (GCLABs|GC/TLABs)|Purge Unlinked|(Code )?Roots|Rendezvous|"
                     + "System (Purge|Dictionary)|Unlink Stale|Update (References|Region States)|"
-                    + "Weak (Class Links|References)).*$",
+                    + "Weak (Class Links|References))[ ]{1,}\\d{1,} us.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Scan|Update) Roots.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Scan|Update) Roots[ ]{1,}.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,}(Choose|Trash) Collection Set.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,}(Choose|Trash) Collection Set[ ]{1,}.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,}Rebuild Free Set.+$",
+            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,}Rebuild Free Set[ ]{1,}.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}Finish Work.+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}Finish Work[ ]{1,}.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Degenerated|Full) GC \\((G|N)\\).+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Degenerated|Full) GC \\((G|N)\\)[ ]{1,}.+$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Degen (STW Mark|Update Roots).+$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?  Degen (STW Mark|Update Roots)[ ]{1,}.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?[ ]{1,}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
-                    + "Weak Roots).*$",
+                    + "Weak Roots)[ ]{1,}.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Initial|Prepare)( Evacuation)?.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}Initial Evacuation[ ]{1,}.*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs).*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{1,}(Adjust Pointers|Calculate Addresses|Copy Objects|(Post|Pre) Heap Dump|Mark).*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs)"
+                    + "[ ]{1,}.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{1,}((Humongous|Regular) Objects|Rebuild Region Sets|Reset Complete Bitmap).*$",
+                    + " )?[ ]{1,}(Adjust Pointers|Calculate Addresses|Copy Objects|Prepare|(Post|Pre) Heap Dump|Mark)"
+                    + "[ ]{1,}\\d{1,} us$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\).*$",
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?[ ]{1,}((Humongous|Regular) Objects|Rebuild Region Sets|Reset Complete Bitmap)[ ]{1,}.*$",
+            //
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\)[ ]{1,}.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Allocation pacing accrued:$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pacing.*$",
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pacing[ ]{1,}.*$",
             // ,
             "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{0,}\\d{1,} of[ ]{0,}\\d{1,} ms \\([ ]{0,}\\d{1,}\\.\\d%\\):.+$",
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?[ ]{1,}(DU|E|FA|FS|FU|S|U|UR): (CLDG|Code Cache|Flat Profiler|JNI|JNI Handles|JNI Weak|"
-                    + "Management|String Table|Synchronizer|System Dict|Thread|Universe|JVMTI) Roots.*$",
+                    + "Management|String Table|Synchronizer|System Dict|Thread|Universe|JVMTI) Roots[ ]{1,}.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(CMR|CSR|CTR|CU|CWR|CWRF|DCU|DSM|DU|DWR|E|FA|FM|FS|FU|S|UR|WR|"
                     + "WRP): (<total>|CLDG Roots|Code Cache Cleaning|Code Cache Roots|Flat Profiler Roots|"

@@ -1,0 +1,5 @@
+[0.062s][info][gc     ] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 2M->1M(4M) 0.818ms
+[0.062s][info][gc,cpu ] GC(0) User=0.00s Sys=0.00s Real=0.00s
+[0.069s][info][gc     ] GC(1) Pause Full (G1 Compaction Pause) 1M->1M(5M) 6.324ms
+[0.069s][info][gc,cpu ] GC(1) User=0.01s Sys=0.00s Real=0.00s
+[0.069s][info][safepoint] Safepoint "G1CollectForAllocation", Time since last: 47804593 ns, Reaching safepoint: 2569 ns, Cleanup: 8585 ns, At safepoint: 7295057 ns, Total: 7306211 ns

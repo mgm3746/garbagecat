@@ -39,6 +39,11 @@ public class Constants {
     public static final int FIRST_TIMESTAMP_THRESHOLD = 60;
 
     /**
+     * To-space exhausted block.
+     */
+    public static final String G1_TO_SPACE_EXHAUSTED = "To-space exhausted";
+
+    /**
      * The ratio of GC time vs. safepoint time for reporting excessive safepoint time.
      */
     public static final int GC_SAFEPOINT_RATIO_THRESHOLD = 80;

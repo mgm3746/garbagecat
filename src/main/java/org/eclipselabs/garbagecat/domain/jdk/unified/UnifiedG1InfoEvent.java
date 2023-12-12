@@ -50,7 +50,6 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
             "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + UnifiedG1YoungInitialMarkEvent._TRIGGER + "\\)$",
             //
     };
-
     private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
 
     static {
@@ -107,7 +106,17 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
         return JdkUtil.LogEventType.UNIFIED_G1_INFO.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

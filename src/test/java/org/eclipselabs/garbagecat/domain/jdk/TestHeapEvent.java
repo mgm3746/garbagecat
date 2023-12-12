@@ -619,6 +619,13 @@ class TestHeapEvent {
     }
 
     @Test
+    void testStatus() {
+        String logLine = "[4.009s] Status: has forwarded objects, updating refs, cancelled";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
     void testStatusHasForwarded() {
         String logLine = "Status: has forwarded objects, cancelled";
         assertTrue(HeapEvent.match(logLine),

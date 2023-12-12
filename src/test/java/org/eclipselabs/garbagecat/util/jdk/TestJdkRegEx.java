@@ -51,12 +51,6 @@ class TestJdkRegEx {
     }
 
     @Test
-    void testDecoratorTimeUptime() {
-        String decorator = "2020-03-10T08:03:29.311-0400: 0.373:";
-        assertTrue(decorator.matches(JdkRegEx.DECORATOR), "'" + decorator + "' " + "not a valid decorator.");
-    }
-
-    @Test
     void testDurationDecimalComma() {
         String duration = "0,0225213 secs";
         assertTrue(duration.matches(JdkRegEx.DURATION), "'0,0225213 secs' is a valid duration.");
@@ -67,6 +61,18 @@ class TestJdkRegEx {
         String durationFraction = "4.583/35144.874 secs";
         assertTrue(durationFraction.matches(JdkRegEx.DURATION_FRACTION),
                 "'" + durationFraction + "' " + "is a valid duration fraction.");
+    }
+
+    @Test
+    void testDurationJdk9() {
+        String duration = "2.969ms";
+        assertTrue(duration.matches(JdkRegEx.DURATION_MS), "'" + duration + "' is a valid duration.");
+    }
+
+    @Test
+    void testDurationJdk9WithSpace() {
+        String duration = "15.91 ms";
+        assertTrue(duration.matches(JdkRegEx.DURATION_MS), "'" + duration + "' is a valid duration.");
     }
 
     @Test
@@ -270,6 +276,12 @@ class TestJdkRegEx {
     void testTimestampLessThanOne() {
         String timestamp = ".123";
         assertTrue(timestamp.matches(JdkRegEx.TIMESTAMP), "Timestamps less than one do not have a leading zero.");
+    }
+
+    @Test
+    void testTimestampTimeUptime() {
+        String decorator = "2020-03-10T08:03:29.311-0400: 0.373:";
+        assertTrue(decorator.matches(JdkRegEx.DECORATOR), "'" + decorator + "' " + "not a valid decorator.");
     }
 
     @Test

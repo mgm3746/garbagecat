@@ -36,7 +36,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class VmWarningEvent implements UnifiedLogging {
-
     private static final Pattern pattern = Pattern.compile(VmWarningEvent.REGEX);
 
     /**
@@ -96,7 +95,17 @@ public class VmWarningEvent implements UnifiedLogging {
         return JdkUtil.LogEventType.VM_WARNING.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

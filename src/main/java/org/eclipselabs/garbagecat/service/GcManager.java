@@ -60,7 +60,7 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderVmInfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.ToSpaceExhaustedEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
@@ -393,8 +393,9 @@ public class GcManager {
                 currentLogLine = null;
             } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+                    // TODO: Remove Shenandoah dependency on UnifiedPreprocessAction (e.g. UnifiedSafepointEvent)
+                    // && !context.contains(UnifiedPreprocessAction.TOKEN)
                     && ShenandoahPreprocessAction.match(currentLogLine)) {
-                // ShenandoahPreprocessAction leverages UnifiedPreprocessAction
                 ShenandoahPreprocessAction action = new ShenandoahPreprocessAction(priorLogLine, currentLogLine,
                         nextLogLine, entangledLogLines, context);
                 if (action.getLogEntry() != null) {
@@ -402,8 +403,9 @@ public class GcManager {
                 }
             } else if (!context.contains(SerialPreprocessAction.TOKEN) && !context.contains(CmsPreprocessAction.TOKEN)
                     && !context.contains(G1PreprocessAction.TOKEN) && !context.contains(ParallelPreprocessAction.TOKEN)
+                    // TODO: Remove Unified dependency on ShenandoahPreprocessAction
+                    // && !context.contains(ShenandoahPreprocessAction.TOKEN)
                     && UnifiedPreprocessAction.match(currentLogLine)) {
-                // UnifiedPreprocessAction is used by ShenandoahPreprocessAction
                 UnifiedPreprocessAction action = new UnifiedPreprocessAction(priorLogLine, currentLogLine, nextLogLine,
                         entangledLogLines, context);
                 if (action.getLogEntry() != null) {
@@ -472,7 +474,7 @@ public class GcManager {
                 } else {
                     preprocessedLogLine = preprocessedLogLine + Constants.LINE_SEPARATOR + currentLogLine;
                 }
-                context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                context.add(PreprocessAction.NEWLINE);
             }
         }
         return preprocessedLogLine;
@@ -595,7 +597,7 @@ public class GcManager {
                         entangledLogLines, context);
                 if (preprocessedLogLine != null) {
                     String[] preprocessedLogLines = preprocessedLogLine.split(Constants.LINE_SEPARATOR);
-                    if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
+                    if (context.contains(PreprocessAction.NEWLINE)
                             && !priorLogEntry.endsWith(Constants.LINE_SEPARATOR)) {
                         for (int i = 0; i < preprocessedLogLines.length; i++) {
                             if (preprocessedLogLines[i] != "") {
@@ -648,7 +650,7 @@ public class GcManager {
                     entangledLogLines, context);
             if (preprocessedLogLine != null) {
                 String[] preprocessedLogLines = preprocessedLogLine.split(Constants.LINE_SEPARATOR);
-                if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)) {
+                if (context.contains(PreprocessAction.NEWLINE)) {
                     // Output on new line
                     for (int i = 0; i < preprocessedLogLines.length; i++) {
                         if (preprocessedLogLines[i] != "") {
@@ -887,7 +889,9 @@ public class GcManager {
                 // 9) G1 evacuation failure
                 if (event instanceof TriggerData) {
                     GcTrigger trigger = ((TriggerData) event).getTrigger();
-                    if ((trigger == GcTrigger.TO_SPACE_EXHAUSTED || trigger == GcTrigger.TO_SPACE_OVERFLOW)) {
+                    if ((trigger == GcTrigger.TO_SPACE_EXHAUSTED || trigger == GcTrigger.TO_SPACE_OVERFLOW)
+                            || (event instanceof UnifiedG1YoungPauseEvent
+                                    && ((UnifiedG1YoungPauseEvent) event).isToSpaceExhausted())) {
                         if (!jvmDao.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
                             jvmDao.addAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE);
                         }
@@ -1164,10 +1168,6 @@ public class GcManager {
                     if (!jvmDao.getAnalysis().contains(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED)) {
                         jvmDao.addAnalysis(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED);
                     }
-                }
-            } else if (event instanceof ToSpaceExhaustedEvent) {
-                if (!jvmDao.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
-                    jvmDao.addAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE);
                 }
             } else if (event instanceof UnknownEvent) {
                 jvmDao.setLogEndingUnidentified(true);

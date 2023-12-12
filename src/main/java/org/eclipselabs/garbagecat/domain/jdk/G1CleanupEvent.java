@@ -152,7 +152,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
                 // Datestamp only.
-                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             if (matcher.group(20) != null) {
                 combined = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);

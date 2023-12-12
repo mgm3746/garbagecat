@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk.unified;
 
+import java.util.regex.Pattern;
+
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 
 /**
@@ -26,13 +28,6 @@ public class UnifiedRegEx {
      * Blank line.
      */
     public static final String BLANK_LINE = "^" + UnifiedRegEx.DECORATOR + "\\s*$";
-
-    /**
-     * Logging event with only the time decorator (datestamp).
-     */
-    public static final String DATESTAMP_EVENT = "^\\[" + JdkRegEx.DATESTAMP
-            + "\\](\\[info\\]\\[(gc|safepoint)(,(cds|cpu|ergo|heap|init|marking|metaspace|mmu|phases|stats|start|"
-            + "stringtable|stringdedup|task))?(,(coops|exit|start))?[ ]{0,13}\\])?.*";
 
     /**
      * Regular expression for recognized decorations prepending logging.
@@ -95,19 +90,38 @@ public class UnifiedRegEx {
      * [2022-08-03T06:58:37.056+0000][1863][gc] Using G1
      * </pre>
      */
-    public static final String DECORATOR = "\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
-            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
-            + ")\\])?(\\[\\d{1,}\\])?(\\[(debug|info)[ ]{0,}\\])?(\\[(gc|safepoint)(,(age|alloc|cds|cpu|ergo|heap|ihop|"
-            + "init|load|marking|metaspace|mmu|nmethod|phases|plab|ref|reloc|stats|start|stringtable|stringdedup|task|"
-            + "tlab))?(,(coops|cset|exit|ref|refine|region|start|stats))?" + "[ ]{0,}\\])?( "
+    public static final String DECORATOR = "(\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
+            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\])?"
+            + UnifiedRegEx.PID + "?" + UnifiedRegEx.LEVEL + "?)" + UnifiedRegEx.TAGS + "?( "
             + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
 
     /**
-     * The garbage collection event number in JDK9+ unified logging.
+     * The number of regex patterns in <code>UnifiedLogging.DECORATOR</code>. Convenience field to make the code
+     * resilient to decorator pattern changes.
+     */
+    public static final int DECORATOR_SIZE = Pattern.compile(DECORATOR).matcher("[2020-02-14T15:21:55.207-0500]")
+            .groupCount();
+
+    /**
+     * Regular expression for the garbage collection event number.
      * 
      * For example: GC(6)
      */
     public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,}\\)";
+
+    /**
+     * Regular expression for the log level.
+     * 
+     * For example: [info]
+     */
+    public static final String LEVEL = "(\\[(debug|info)[ ]{0,}\\])";
+
+    /**
+     * Regular expression for the process id block.
+     * 
+     * For example: [1863]
+     */
+    public static final String PID = "(\\[\\d{1,}\\])";
 
     /**
      * <p>
@@ -123,6 +137,29 @@ public class UnifiedRegEx {
      * </pre>
      */
     public static final String RELEASE_STRING = "((9|[12]\\d)\\.\\d\\.(\\d)\\+\\d{1,}(-LTS)?)";
+
+    /**
+     * Regular expression for a `gc,start` event. Used to determine if a timestamp is when the event started or ended.
+     */
+    public static final String TAG_GC_START = "^.+\\[gc,start[ ]{0,}\\].+";
+
+    /**
+     * Regular expression for the tags block.
+     * 
+     * For example:
+     * 
+     * [gc ]
+     * 
+     * [gc,heap ]
+     */
+    public static final String TAGS = "(\\[((age|alloc|cds|coops|cpu|cset|ergo|exit|gc|heap|ihop|init|load|marking|"
+            + "metaspace|mmu|nmethod|phases|plab|ref|reloc|ref|refine|region|safepoint|stats|start|stringtable|"
+            + "stringdedup|task|tlab)[,]{0,1}){1,}[ ]{0,}\\])";
+
+    /**
+     * Logging event with only the time decorator (datestamp).
+     */
+    public static final String TIME_DECORATOR = "^\\[" + JdkRegEx.DATESTAMP + "\\] .*";
 
     /**
      * Seconds since JVM started.

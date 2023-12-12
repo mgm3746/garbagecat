@@ -460,16 +460,17 @@ public class FooterStatsEvent implements ThrowAwayEvent {
                     + "Unload Code Caches|VM Strong Roots|VM Weak Roots|Weak References)[ ]{1,}=.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?  (Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs)[ ]{1,}=.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Finish Queues[ ]{1,}=.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Weak References|System Purge)[ ]{1,}=.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?    (Process|Enqueue|Parallel Cleanup)[ ]{1,}=.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (Initial|Prepare)( Evacuation)?[ ]{1,}=.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Recycle[ ]{1,}=.*$",
+            // 2-3 spaces
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?  (Evacuation|Finish Mark|Finish Queues|Initial Evacuation|Manage GCLABs|Manage GC\\/TLABs|"
+                    + "Prepare|Prepare Evacuation|Purge Unlinked|Recycle|Rendezvous|Roots|System Purge|"
+                    + "Update References|Update Region States|Unlink Stale|Weak References)[ ]{1,}=.*$",
+            // 4-5 spaces
+            "^(" + UnifiedRegEx.DECORATOR
+                    + " )?    (Code Roots|Process|Enqueue|Exception Caches|Parallel Cleanup|System Dictionary|"
+                    + "System Purge|Weak Class Links)[ ]{1,}=.*$",
+            // 6-7 spaces
+            "^(" + UnifiedRegEx.DECORATOR + " )?      Weak References[ ]{1,}=.*$",
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + " )?Concurrent (Reset|Marking|Precleaning|Evacuation|Update Refs|Cleanup|Uncommit)[ ]{1,}=.*$",
@@ -539,11 +540,7 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             "^(" + UnifiedRegEx.DECORATOR
                     + ")?[ ]{0,3}OS takes longer to unblock the thread, or JVM experiences an STW pause.$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause Degenerated GC \\((G|N)\\)[ ]{1,}=.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + ")?[ ]{3,4}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
-                    + "Weak Roots)[ ]{1,}=.*$"
+            "^(" + UnifiedRegEx.DECORATOR + " )?Pause Degenerated GC \\((G|N)\\)[ ]{1,}=.*$"
             //
     };
 

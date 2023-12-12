@@ -293,50 +293,50 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(ApplicationStoppedTimePreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_DECORATOR_MISSING_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 // Remove colon
                 this.logEntry = matcher.group(1);
             }
-            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(ApplicationStoppedTimePreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + ": " + matcher.group(19);
             }
-            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(ApplicationStoppedTimePreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(11) + ": " + matcher.group(21) + ": " + matcher.group(23);
             }
-            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(ApplicationStoppedTimePreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + ": " + matcher.group(10) + ": " + matcher.group(20);
             }
-            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(ApplicationStoppedTimePreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_DATESTAMP_DATESTAMP_TIMESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + ": " + matcher.group(21) + ": " + matcher.group(23);
             }
-            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(ApplicationStoppedTimePreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_DATESTAMP_TIMESTAMP_DATESTAMP_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + ": " + matcher.group(10) + ": " + matcher.group(21);
             }
-            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(ApplicationStoppedTimePreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_TIMESTAMP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1) + ": " + matcher.group(2);
             }
-            context.add(ApplicationStoppedTimePreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(ApplicationStoppedTimePreprocessAction.NEWLINE);
         }
     }
 

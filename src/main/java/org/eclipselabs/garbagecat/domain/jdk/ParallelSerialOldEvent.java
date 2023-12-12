@@ -84,7 +84,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         PermMetaspaceCollection, YoungData, OldData, PermMetaspaceData, TriggerData, SerialCollection, TimesData {
 
     /**
-     * Trigger(s) regular expression(s).
+     * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.SYSTEM_GC.getRegex() + "|" + GcTrigger.ERGONOMICS.getRegex()
             + ")";
@@ -209,7 +209,7 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
             }
             if (matcher.group(15) != null) {

@@ -212,13 +212,13 @@ class TestJdkUtil {
 
     @Test
     void testBottleneckDetectionUnified() {
-        String previousLogLine = "[2021-03-13T03:57:31.060+0530][81044128ms] GC(10043) Pause Full "
+        String previousLogLine = "[2021-03-13T03:57:31.060+0530][81044128ms][gc,start] GC(10043) Pause Full "
                 + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214120K->214120K(739328K) "
                 + "8185M->8181M(8192M) 1431.688ms User=16.31s Sys=0.07s Real=1.44s";
         UnifiedG1FullGcEvent priorEvent = (UnifiedG1FullGcEvent) JdkUtil.parseLogLine(previousLogLine, null);
-        String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms] GC(10044) Pause Young (Concurrent Start) "
-                + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 0->0 Metaspace: 214120K->214120K(739328K) "
-                + "8185M->8185M(8192M) 2.859ms User=0.01s Sys=0.00s Real=0.00s";
+        String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms][gc,start] GC(10044) Pause Young "
+                + "(Concurrent Start) (G1 Evacuation Pause) Other: 0.1ms Humongous regions: 0->0 Metaspace: "
+                + "214120K->214120K(739328K) 8185M->8185M(8192M) 2.859ms User=0.01s Sys=0.00s Real=0.00s";
         UnifiedG1YoungPauseEvent gcEvent = (UnifiedG1YoungPauseEvent) JdkUtil.parseLogLine(logLine, null);
         // Test boundary
         int throughputThreshold = 41;
@@ -264,12 +264,12 @@ class TestJdkUtil {
      */
     @Test
     void testBottleneckNewInterval() {
-        String previousLogLine = "[2023-05-10T13:22:05.853-0500][890481.088s] GC(7242) Pause Full "
+        String previousLogLine = "[2023-05-10T13:22:05.853-0500][890481.088s][gc,start] GC(7242) Pause Full "
                 + "(G1 Evacuation Pause) Humongous regions: 30->30 Metaspace: 75425K(79448K)->75425K(79448K) "
                 + "12357M->12317M(12368M) 6151.429ms User=48.32s Sys=0.00s Real=6.15s";
         UnifiedG1FullGcEvent priorEvent = (UnifiedG1FullGcEvent) JdkUtil.parseLogLine(previousLogLine, null);
-        String logLine = "[2023-05-10T13:22:12.138-0500][890487.374s] GC(7243) Pause Young (Concurrent Start) "
-                + "(G1 Evacuation Pause) Other: 0.9ms Humongous regions: 30->30 Metaspace: "
+        String logLine = "[2023-05-10T13:22:12.138-0500][890487.374s][gc,start] GC(7243) Pause Young "
+                + "(Concurrent Start) (G1 Evacuation Pause) Other: 0.9ms Humongous regions: 30->30 Metaspace: "
                 + "75425K(79448K)->75425K(79448K) 12361M->12361M(12368M) 9.434ms User=0.05s Sys=0.00s Real=0.01s";
         UnifiedG1YoungPauseEvent currentEvent = (UnifiedG1YoungPauseEvent) JdkUtil.parseLogLine(logLine, null);
         int throughputThreshold = 20;

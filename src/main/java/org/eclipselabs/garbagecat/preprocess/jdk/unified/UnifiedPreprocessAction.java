@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk.unified;
 
-import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,9 +20,9 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.TimesData;
-import org.eclipselabs.garbagecat.domain.jdk.unified.ToSpaceExhaustedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
@@ -269,7 +267,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2021-03-13T03:37:40.051+0530][79853119ms] GC(8646) Pause Full (G1 Evacuation Pause)
      * </pre>
      */
-    private static final String REGEX_RETAIN_BEGINNING_G1_FULL_GC = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
+    private static final String REGEX_RETAIN_BEGINNING_G1_FULL_GC = "^(" + UnifiedRegEx.DECORATOR + ")( Pause Full \\(("
             + GcTrigger.G1_COMPACTION_PAUSE.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + ")\\))$";
 
@@ -297,11 +295,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [2022-05-12T14:53:58.573-0500][411066.724s][info][gc,start      ] GC(567) Pause Full (Diagnostic Command)
      * </pre>
      */
-    private static final String REGEX_RETAIN_BEGINNING_OLD = "^(" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
+    private static final String REGEX_RETAIN_BEGINNING_OLD = "^((" + UnifiedRegEx.DECORATOR + ")( Pause Full \\(("
             + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.DIAGNOSTIC_COMMAND.getRegex() + "|"
             + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
             + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
-            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")\\))$";
+            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")\\)))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_OLD_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_OLD);
 
@@ -312,8 +310,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.112s][info][gc,start       ] GC(3) Pause Young (Allocation Failure)
      * </pre>
      */
-    private static final String REGEX_RETAIN_BEGINNING_PAUSE_YOUNG = "^(" + UnifiedRegEx.DECORATOR + " Pause Young \\("
-            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "\\))$";
+    private static final String REGEX_RETAIN_BEGINNING_PAUSE_YOUNG = "^(" + UnifiedRegEx.DECORATOR
+            + ")( Pause Young \\(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
@@ -391,7 +389,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * </pre>
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG = "^(" + UnifiedRegEx.DECORATOR
-            + " Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
+            + ")( Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
             + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
             + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
             + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
@@ -477,15 +475,17 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * [0.038s][info][gc          ] GC(0) Pause Young (Normal) (G1 Preventive Collection) 1M->1M(4M) 0.792ms
      * </pre>
      */
-    private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^" + UnifiedRegEx.DECORATOR
-            + " Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("
-            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
-            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|"
-            + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + ")$";
+    private static final String REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA = "^(" + UnifiedRegEx.DECORATOR
+            + ")( Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
+            + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
+            + ")\\))( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
+            + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA);
+
     /**
      * Regular expression for retained middle metaspace data.
      *
@@ -516,14 +516,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     private static final Pattern REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_METASPACE_DATA);
-
     /**
      * Regular expression for retained <code>OtherTime</code> data.
      * 
      * [2022-10-09T13:16:49.289+0000][3792.777s][info ][gc,phases ] GC(9) Other: 9569.7ms
      */
-    private static final String REGEX_RETAIN_MIDDLE_OTHER_TIME = "^" + UnifiedRegEx.DECORATOR + "[ ]{1,}"
-            + OtherTime.REGEX + "$";
+    private static final String REGEX_RETAIN_MIDDLE_OTHER_TIME = "^" + UnifiedRegEx.DECORATOR + "[ ]{1,}("
+            + OtherTime.REGEX + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_OTHER_TIME);
@@ -559,14 +558,14 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 41808M->35651M(49152M) 10840.271ms
      * </pre>
      */
-    private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^" + UnifiedRegEx.DECORATOR + " Pause Full \\(("
-            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.DIAGNOSTIC_COMMAND.getRegex() + "|"
-            + GcTrigger.ERGONOMICS.getRegex() + "|" + GcTrigger.G1_COMPACTION_PAUSE.getRegex() + "|"
-            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
-            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|"
-            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
-            + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")\\)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
-            + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + ")$";
+    private static final String REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA = "^(" + UnifiedRegEx.DECORATOR
+            + ")( Pause Full \\((" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
+            + GcTrigger.DIAGNOSTIC_COMMAND.getRegex() + "|" + GcTrigger.ERGONOMICS.getRegex() + "|"
+            + GcTrigger.G1_COMPACTION_PAUSE.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
+            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")\\))(( "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)) " + JdkRegEx.DURATION_MS + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA);
@@ -899,15 +898,17 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "Young (other|PLAB|sizing)).*$",
             // Indented 5 spaces
             "^" + UnifiedRegEx.DECORATOR
-                    + "     (AOT Root Scanning|Clear Card Table|Code Root Scanning|DerivedPointerTable Update|"
+                    + "     (AOT Root Scanning|Code Root Scanning|Code Roots Fixup|Choose Collection Set|"
+                    + "Clear Card Table|Code Root Scanning|Code Roots Purge|DerivedPointerTable Update|"
                     + "Expand Heap After Collection|Free Collection Set|GC Worker (Other|Total)|"
-                    + "Humongous (Reclaim|Register)|Merge Per-Thread State|Object Copy|Redirty Cards|"
-                    + "Reference Processing|Scan RS|Start New Collection Set|Termination|Update RS|Weak Processing).*$",
+                    + "Humongous (Reclaim|Register)|Merge Per-Thread State|Object Copy|Prepare TLABs|Redirty Cards|"
+                    + "Reference Processing|Resize TLABs|Scan RS|Start New Collection Set|Termination|Update RS|"
+                    + "Weak Processing).*$",
             // Indented 7 spaces
             "^" + UnifiedRegEx.DECORATOR
                     + "       (Claimed Cards|FinalReference|Notify and keep alive finalizable|Notify PhantomReferences|"
-                    + "Notify Soft\\/WeakReferences|PhantomReference|Reconsider SoftReferences|Scanned Cards|"
-                    + "Skipped Cards|SoftReference|Termination Attempts|WeakReference).*$",
+                    + "Notify Soft\\/WeakReferences|Processed Buffers|PhantomReference|Reconsider SoftReferences|"
+                    + "Scanned Cards|Skipped Cards|SoftReference|Termination Attempts|WeakReference).*$",
             // Indented 9 spaces
             "^" + UnifiedRegEx.DECORATOR
                     + "         (Balance queues|Cleared|Discovered|FinalRef|PhantomRef|SoftRef|Total|WeakRef).*$",
@@ -985,6 +986,18 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
     };
 
+    /**
+     * Regular expression for To-space exhausted.
+     * 
+     * <pre>
+     * [390286.701s][info][gc] GC(1442) To-space exhausted
+     * </pre>
+     */
+    private static final String REGEX_TO_SPACE_EXHAUSTED = "^" + UnifiedRegEx.DECORATOR + "( "
+            + Constants.G1_TO_SPACE_EXHAUSTED + ")[ ]*$";
+
+    private static final Pattern REGEX_TO_SPACE_EXHAUSTED_PATTERN = Pattern.compile(REGEX_TO_SPACE_EXHAUSTED);
+
     private static final List<Pattern> THROWAWAY_PATTERN_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
 
     /**
@@ -1002,7 +1015,22 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent} that spans multiple logging lines, or it is a
      * single line logging event.
      */
-    private static final String TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC = "TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC";
+    public static final String TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC = "TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC";
+
+    /**
+     * Indicates the current log entry is either the beginning of a @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedRemarkEvent} that spans multiple logging lines, or it is a
+     * single line logging event.
+     */
+    public static final String TOKEN_BEGINNING_OF_UNIFIED_G1_PAUSE_YOUNG = "TOKEN_BEGINNING_OF_UNIFIED_G1_PAUSE_YOUNG";
+
+    /**
+     * Indicates the current log entry is either the beginning of a @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent} or @link
+     * org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent} that spans multiple logging
+     * lines, or it is a single line logging event.
+     */
+    public static final String TOKEN_BEGINNING_OF_UNIFIED_OLD = "TOKEN_BEGINNING_OF_UNIFIED_OLD";
 
     /**
      * Indicates the current log entry is either the beginning of a @link
@@ -1061,7 +1089,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logLine).matches()
-                || JdkUtil.parseLogLine(logLine, null) instanceof ToSpaceExhaustedEvent
+                || REGEX_TO_SPACE_EXHAUSTED_PATTERN.matcher(logLine).matches()
                 || JdkUtil.parseLogLine(logLine, null) instanceof UnifiedConcurrentEvent) {
             match = true;
         } else if (isThrowaway(logLine)) {
@@ -1099,54 +1127,94 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_UNIFIED_REMARK_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            // Only report young collections that do not trigger an old collection
-            if (nextLogEntry == null || !nextLogEntry.matches(REGEX_RETAIN_BEGINNING_OLD)) {
-                Matcher pauseMatcher = REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN.matcher(logEntry);
-                if (pauseMatcher.matches()) {
-                    this.logEntry = pauseMatcher.group(1);
+            if (matcher.matches()) {
+                if (logEntry.matches(UnifiedRegEx.TAG_GC_START)) {
+                    this.logEntry = matcher.group(0);
+                } else {
+                    if (matcher.group(22) == null) {
+                        // Add gc,start context to indicate the time is a timestamp, not an endstamp.
+                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(25) + matcher.group(26);
+                    }
                 }
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(UnifiedLogging.Tag.GC_START.toString());
+            context.add(TOKEN_BEGINNING_OF_UNIFIED_G1_PAUSE_YOUNG);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_OLD_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
+            if (context.contains(UnifiedLogging.Tag.GC_START.toString())) {
+                // A young collection triggered a full gc
+                if (matcher.matches()) {
+                    this.logEntry = matcher.group(27);
+                }
+                context.add(UnifiedLogging.Tag.GC_START.toString());
+                // Don't output on new line
+                context.remove(PreprocessAction.NEWLINE);
+            } else {
+                if (matcher.matches()) {
+                    if (logEntry.matches(UnifiedRegEx.TAG_GC_START)) {
+                        this.logEntry = matcher.group(1);
+                    } else {
+                        if (matcher.group(22) == null) {
+                            // Add gc,start context to indicate the time is a timestamp, not an endstamp.
+                            this.logEntry = matcher.group(3) + "[gc,start]" + matcher.group(26) + matcher.group(27);
+                        }
+                    }
+                }
+                context.add(UnifiedLogging.Tag.GC_START.toString());
+                context.add(PreprocessAction.NEWLINE);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN_BEGINNING_OF_UNIFIED_OLD);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_G1_FULL_GC_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
-                context.add(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC);
+                if (logEntry.matches(UnifiedRegEx.TAG_GC_START)) {
+                    this.logEntry = matcher.group(0);
+                } else {
+                    if (matcher.group(22) == null) {
+                        // Add gc,start context to indicate the time is a timestamp, not an endstamp.
+                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(25) + matcher.group(26);
+                    }
+                }
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC);
+            context.add(UnifiedLogging.Tag.GC_START.toString());
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_YOUNG_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(1);
+                if (logEntry.matches(UnifiedRegEx.TAG_GC_START)) {
+                    this.logEntry = matcher.group(0);
+                } else {
+                    if (matcher.group(22) == null) {
+                        // Add gc,start context to indicate the time is a timestamp, not an endstamp.
+                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(25) + matcher.group(26);
+                    }
+                }
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(UnifiedLogging.Tag.GC_START.toString());
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_G1_CLEANUP_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
@@ -1154,102 +1222,145 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 if (nextLogEntry == null || REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(nextLogEntry).matches()) {
                     // Non GC safepoint
                     this.logEntry = matcher.group(1);
-                    context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                    context.add(PreprocessAction.NEWLINE);
                 } else {
                     // GC safepoint, output after GC event
                     entangledLogLines.add(matcher.group(1));
                 }
-                context.add(TOKEN);
             }
             context.add(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT);
+            context.add(TOKEN);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(DECORATOR_SIZE + 1);
+                this.logEntry = matcher.group(25);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(DECORATOR_SIZE + 1);
-                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                this.logEntry = matcher.group(25);
+                context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
-            if (matcher.matches()) {
-                if (context.contains(TOKEN)) {
-                    this.logEntry = matcher.group(DECORATOR_SIZE + 2);
+            if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
+                // Single log event or beginning of multi-line event
+                if (priorLogEntry == null) {
+                    // first line in log file
+                    this.logEntry = logEntry;
                 } else {
-                    // Single line event
+                    // this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                    this.logEntry = logEntry;
+                }
+                context.add(PreprocessAction.NEWLINE);
+                context.add(UnifiedLogging.Tag.GC_START.toString());
+            } else {
+                if (context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_PAUSE_YOUNG)
+                        || context.contains(TOKEN_BEGINNING_OF_UNIFIED_OLD)) {
+                    // Young collection that triggered full gc has heap and event time
+                    if (matcher.matches()) {
+                        this.logEntry = matcher.group(26);
+                    }
+                    // Don't ouput on new line
+                    context.remove(PreprocessAction.NEWLINE);
+                } else {
+                    // Middle logging
+                    if (matcher.matches()) {
+                        this.logEntry = matcher.group(26);
+                    }
+                    context.remove(PreprocessAction.NEWLINE);
+                    // context.remove(UnifiedLogging.Tag.GC_START.toString());
+                }
+            }
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
+                    // A new collection that triggers a full gc will be wrapped in a single safepoint
+                    if (context.contains(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT) && nextLogEntry != null
+                            && REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(nextLogEntry).matches()) {
+                        this.logEntry = matcher.group(2) + matcher.group(26);
+                        context.add(UnifiedLogging.Tag.GC_START.toString());
+                        // Output on new line
+                        context.add(PreprocessAction.NEWLINE);
+                        context.add(TOKEN_BEGINNING_OF_UNIFIED_OLD);
+                    } else {
+                        // Single log event or beginning of multi-line event
+                        if (priorLogEntry == null) {
+                            // first line in log file
+                            this.logEntry = logEntry;
+                        } else {
+                            this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                        }
+                        // context.add(UnifiedLogging.Tag.GC_START.toString());
+                        context.add(PreprocessAction.NEWLINE);
+                    }
+                } else {
+                    // Middle logging
+                    if (!(context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_PAUSE_YOUNG)
+                            || !(context.contains(TOKEN_BEGINNING_OF_UNIFIED_OLD)
+                                    || context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC)))) {
+                        if (matcher.matches()) {
+                            this.logEntry = matcher.group(29);
+                        }
+                    }
+                    context.remove(PreprocessAction.NEWLINE);
+                }
+            }
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_HUMONGOUS_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                this.logEntry = matcher.group(25);
+                context.remove(PreprocessAction.NEWLINE);
+            }
+        } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
+                    // Single log event or beginning of multi-line event
                     if (priorLogEntry == null) {
                         // first line in log file
                         this.logEntry = logEntry;
                     } else {
-                        this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                        if (entangledLogLines.isEmpty()) {
+                            this.logEntry = Constants.LINE_SEPARATOR + logEntry;
+                        } else {
+                            if (entangledLogLines.size() == 1
+                                    && entangledLogLines.get(0).matches(" " + Constants.G1_TO_SPACE_EXHAUSTED)) {
+                                this.logEntry = Constants.LINE_SEPARATOR + matcher.group(1) + matcher.group(26)
+                                        + entangledLogLines.get(0) + matcher.group(30);
+                                entangledLogLines.clear();
+                            }
+                        }
+                    }
+                } else {
+                    // Middle logging
+                    if (matcher.matches()) {
+                        this.logEntry = matcher.group(30);
                     }
                 }
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_FULL_DATA_PATTERN.matcher(logEntry)).matches()) {
-            matcher.reset();
-            if (context.contains(PreprocessAction.TOKEN_BEGINNING_OF_EVENT)
-                    || (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches())) {
-                // Middle logging
-                if (matcher.matches()) {
-                    this.logEntry = matcher.group(DECORATOR_SIZE + 3);
-                }
-            } else {
-                // Single line event
-                if (priorLogEntry == null) {
-                    // first line in log file
-                    this.logEntry = logEntry;
-                } else {
-                    this.logEntry = Constants.LINE_SEPARATOR + logEntry;
-                }
-            }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-        } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_HUMONGOUS_PATTERN.matcher(logEntry)).matches()) {
-            matcher.reset();
-            if (matcher.matches()) {
-                this.logEntry = matcher.group(DECORATOR_SIZE + 1);
-                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
-            }
-        } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
-            matcher.reset();
-            if (!context.contains(PreprocessAction.NEWLINE)
-                    || (nextLogEntry != null && REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(nextLogEntry).matches())) {
-                // Middle logging
-                if (matcher.matches()) {
-                    this.logEntry = matcher.group(DECORATOR_SIZE + 4);
-                }
-            } else {
-                // Single line event
-                if (priorLogEntry == null) {
-                    // first line in log file
-                    this.logEntry = logEntry;
-                } else {
-                    this.logEntry = Constants.LINE_SEPARATOR + logEntry;
-                }
-            }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            // context.remove(UnifiedLogging.Tag.GC_START.toString());
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = " Ext Root Scanning (ms): " + matcher.group(DECORATOR_SIZE + 1);
-                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                this.logEntry = " Ext Root Scanning (ms): " + matcher.group(25);
+                context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = " " + matcher.group(DECORATOR_SIZE + 1);
-                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                this.logEntry = " " + matcher.group(25);
+                context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PROMOTION_FAILED_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(DECORATOR_SIZE + 2);
+                this.logEntry = matcher.group(26);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
@@ -1263,7 +1374,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     entangledLogLines.add(matcher.group(1));
                 } else {
                     this.logEntry = matcher.group(1);
-                    context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                    context.remove(PreprocessAction.NEWLINE);
                 }
             }
         } else if ((matcher = REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
@@ -1282,7 +1393,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     this.logEntry = beginningSafepointLogging + middleSafepointLogging + matcher.group(1);
                     entangledLogLines.remove(beginningSafepointLogging);
                     entangledLogLines.remove(middleSafepointLogging);
-                    context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                    context.add(PreprocessAction.NEWLINE);
                 } else {
                     this.logEntry = logEntry;
                 }
@@ -1292,26 +1403,33 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // End logging
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(DECORATOR_SIZE + 1);
+                this.logEntry = matcher.group(25);
             }
             if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT)) {
                 clearEntangledLines(entangledLogLines);
             }
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC);
-        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ToSpaceExhaustedEvent) {
-            // output at end
-            entangledLogLines.add(logEntry);
-            context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+            context.remove(TOKEN_BEGINNING_OF_UNIFIED_G1_PAUSE_YOUNG);
+            context.remove(UnifiedLogging.Tag.GC_START.toString());
+        } else if ((matcher = REGEX_TO_SPACE_EXHAUSTED_PATTERN.matcher(logEntry)).matches()) {
+            if (matcher.matches()) {
+                if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
+                    entangledLogLines.add(matcher.group(25));
+                } else {
+                    this.logEntry = matcher.group(25);
+                }
+            }
+            context.remove(PreprocessAction.NEWLINE);
         } else if (JdkUtil.parseLogLine(logEntry, null) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
             // Stand alone eventlogEntry
-            if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC)) {
+            if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
                 this.logEntry = logEntry;
-                context.add(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                context.add(PreprocessAction.NEWLINE);
             } else {
                 // output intermingled lines at end
                 entangledLogLines.add(logEntry);
-                context.remove(PreprocessAction.TOKEN_BEGINNING_OF_EVENT);
+                context.remove(PreprocessAction.NEWLINE);
             }
         }
     }

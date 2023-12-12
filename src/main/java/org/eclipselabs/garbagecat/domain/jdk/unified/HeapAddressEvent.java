@@ -103,7 +103,17 @@ public class HeapAddressEvent implements UnifiedLogging, ThrowAwayEvent {
         return JdkUtil.LogEventType.HEAP_ADDRESS.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

@@ -43,6 +43,33 @@ import org.junit.jupiter.api.Test;
  */
 class TestUnifiedG1YoungPauseEvent {
 
+    /**
+     * Test with time, uptime decorator.
+     * 
+     * @throws IOException
+     */
+    @Test
+    void testDecoratorTimeUptime() throws IOException {
+        File testFile = TestUtil.getFile("dataset200.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.USING_G1),
+                JdkUtil.LogEventType.USING_G1.toString() + " collector not identified.");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (3353 - 24), event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
     @Test
     void testHydration() {
         LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE;
@@ -102,11 +129,18 @@ class TestUnifiedG1YoungPauseEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.HEAP),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (3792764), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -118,6 +152,8 @@ class TestUnifiedG1YoungPauseEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
@@ -125,6 +161,9 @@ class TestUnifiedG1YoungPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (9770 - 130), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -151,13 +190,14 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedConcurrentStartTriggerMetaGcThreshold() {
-        String logLine = "[2020-06-24T18:11:52.676-0700][58671ms] GC(44) Pause Young (Concurrent Start) "
+        String logLine = "[2020-06-24T18:11:52.676-0700][58671ms][gc,start] GC(44) Pause Young (Concurrent Start) "
                 + "(Metadata GC Threshold) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 "
                 + "Metaspace: 88802K->88802K(1134592K) 733M->588M(1223M) 105.541ms User=0.18s Sys=0.00s Real=0.11s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) 58671, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
         assertEquals(kilobytes(88802), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
@@ -178,9 +218,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedJdk11Time() {
-        String logLine = "[2019-05-09T01:39:00.763+0000] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
-                + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) "
-                + "65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
+        String logLine = "[2019-05-09T01:39:00.763+0000][gc,start] GC(0) Pause Young (Normal) (G1 Evacuation Pause) "
+                + "Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 "
+                + "Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -190,9 +230,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedJdk11TimeUptime() {
-        String logLine = "[2019-05-09T01:39:00.763+0000][5.355s] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext "
-                + "Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) "
-                + "65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
+        String logLine = "[2019-05-09T01:39:00.763+0000][5.355s][gc,start] GC(0) Pause Young (Normal) "
+                + "(G1 Evacuation Pause) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 "
+                + "Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -202,9 +242,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedJdk11TimeUptimeMillis() {
-        String logLine = "[2019-05-09T01:39:00.763+0000][5355ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext "
-                + "Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 26116K->26116K(278528K) "
-                + "65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
+        String logLine = "[2019-05-09T01:39:00.763+0000][5355ms][gc,start] GC(0) Pause Young (Normal) "
+                + "(G1 Evacuation Pause) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 "
+                + "Metaspace: 26116K->26116K(278528K) 65M->8M(1304M) 57.263ms User=0.02s Sys=0.01s Real=0.06s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -229,14 +269,40 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedJdk11UptimeMillis() {
-        String logLine = "[325ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext Root Scanning (ms): 1.6 Other: "
-                + "0.1ms Humongous regions: 13->13 Metaspace: 4300K->4300K(1056768K) 24M->3M(504M) 7.691ms User=0.05s "
-                + "Sys=0.03s Real=0.00s";
+        String logLine = "[325ms][gc,start] GC(0) Pause Young (Normal) (G1 Evacuation Pause) Ext Root Scanning (ms): "
+                + "1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 4300K->4300K(1056768K) 24M->3M(504M) 7.691ms "
+                + "User=0.05s Sys=0.03s Real=0.00s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals((long) 325, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(7791, event.getDuration(), "Duration not parsed correctly.");
+    }
+
+    @Test
+    void testPreprocessedMinimal() {
+        String logLine = "[0.050s][info][gc       ] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 1M->1M(4M) "
+                + "4.854ms User=0.01s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (50 - 4), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertEquals(kilobytes(0), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+        assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(4 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+        assertEquals(0, event.getOtherTime(), "Other time not parsed correctly.");
+        assertEquals(4854, event.getDuration(), "Duration not parsed correctly.");
+        assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
+        assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(Integer.MAX_VALUE, event.getParallelism(), "Parallelism not calculated correctly.");
     }
 
     @Test
@@ -250,9 +316,9 @@ class TestUnifiedG1YoungPauseEvent {
 
     @Test
     void testPreprocessedTimeUptimemillisTriggerGcLocker() {
-        String logLine = "[2019-05-09T01:39:07.136+0000][11728ms] GC(3) Pause Young (Normal) (GCLocker Initiated GC) "
-                + "Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: "
-                + "35318K->35318K(288768K) 78M->22M(1304M) 35.722ms User=0.02s Sys=0.00s Real=0.04s";
+        String logLine = "[2019-05-09T01:39:07.136+0000][11728ms][gc,start] GC(3) Pause Young (Normal) "
+                + "(GCLocker Initiated GC) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 "
+                + "Metaspace: 35318K->35318K(288768K) 78M->22M(1304M) 35.722ms User=0.02s Sys=0.00s Real=0.04s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
@@ -276,10 +342,20 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
+    void testPreprocessedToSpaceExhausted() {
+        String logLine = "[2021-03-13T03:37:40.047+0530][79853115ms][gc,start] GC(8645) Pause Young (Normal) "
+                + "(GCLocker Initiated GC) To-space exhausted Other: 0.4ms Humongous regions: 18->18 "
+                + "Metaspace: 214096K->214096K(739328K) 8186M->8186M(8192M) 3.471ms User=0.01s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+    }
+
+    @Test
     void testPreprocessedTriggerG1EvacuationPause() {
-        String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms] GC(10044) Pause Young (Concurrent Start) "
-                + "(G1 Evacuation Pause) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: "
-                + "214120K->214120K(739328K) 8185M->8185M(8192M) 2.859ms User=0.01s Sys=0.00s Real=0.00s";
+        String logLine = "[2021-03-13T03:57:33.494+0530][81046562ms][gc,start] GC(10044) Pause Young "
+                + "(Concurrent Start) (G1 Evacuation Pause) Ext Root Scanning (ms): 1.6 Other: 0.1ms "
+                + "Humongous regions: 13->13 Metaspace: 214120K->214120K(739328K) 8185M->8185M(8192M) 2.859ms "
+                + "User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
     }
@@ -318,28 +394,64 @@ class TestUnifiedG1YoungPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
+        assertEquals((long) (3353 - 24), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
-    /**
-     * Test with time, uptime decorator.
-     * 
-     * @throws IOException
-     */
     @Test
-    void testTimeUptime() throws IOException {
-        File testFile = TestUtil.getFile("dataset200.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.USING_G1),
-                JdkUtil.LogEventType.USING_G1.toString() + " collector not identified.");
+    void testTimestampTime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][gc,start] GC(4) Pause Young (Normal) (G1 Evacuation Pause) "
+                + "Humongous regions: 0->0 Metaspace: 477K(4864K)->477K(4864K) 1M->1M(4M) 4.478ms "
+                + "User=0.01s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampTimeUptime() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3.161s][gc,start] GC(4) Pause Young (Normal) "
+                + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 477K(4864K)->477K(4864K) 1M->1M(4M) "
+                + "4.478ms User=0.01s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampTimeUptimeMillis() {
+        String logLine = "[2023-08-25T02:15:57.862-0400][3161ms][gc,start] GC(4) Pause Young (Normal) "
+                + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 477K(4864K)->477K(4864K) 1M->1M(4M) "
+                + "4.478ms User=0.01s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampUptime() {
+        String logLine = "[3.161s][gc,start] GC(4) Pause Young (Normal) (G1 Evacuation Pause) Humongous "
+                + "regions: 0->0 Metaspace: 477K(4864K)->477K(4864K) 1M->1M(4M) 4.478ms "
+                + "User=0.01s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
+    void testTimestampUptimeMillis() {
+        String logLine = "[3161ms][gc,start] GC(4) Pause Young (Normal) (G1 Evacuation Pause) Humongous "
+                + "regions: 0->0 Metaspace: 477K(4864K)->477K(4864K) 1M->1M(4M) 4.478ms "
+                + "User=0.01s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     /**
@@ -356,15 +468,16 @@ class TestUnifiedG1YoungPauseEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.TO_SPACE_EXHAUSTED),
-                JdkUtil.LogEventType.TO_SPACE_EXHAUSTED.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (79853115), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -389,6 +502,9 @@ class TestUnifiedG1YoungPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (4442370), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -405,6 +521,9 @@ class TestUnifiedG1YoungPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (58671), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -421,6 +540,9 @@ class TestUnifiedG1YoungPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (5355), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -437,6 +559,9 @@ class TestUnifiedG1YoungPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (333), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -447,6 +572,7 @@ class TestUnifiedG1YoungPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertTrue(event.isEndstamp(), "Event time information not identified as endstamp.");
         assertEquals((long) 89974613 - 92, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(megabytes(14593), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
@@ -463,5 +589,7 @@ class TestUnifiedG1YoungPauseEvent {
                 + "3771K->3771K(1056768K) 24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s    ";
         assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+        UnifiedG1YoungPauseEvent event = new UnifiedG1YoungPauseEvent(logLine);
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
     }
 }

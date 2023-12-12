@@ -122,8 +122,8 @@ public enum GcTrigger {
      */
     ERGONOMICS("Ergonomics"),
     /**
-     * G1 Compaction Pause trigger. A full gc when memory is exhausted at the start of a concurrent cycle during the
-     * concurrent start phase (when liveness information is determined).
+     * G1 Compaction Pause trigger. A full gc due to too high heap occupancy in the old generation at the start of a
+     * concurrent cycle during the concurrent start phase (when liveness information is determined).
      */
     G1_COMPACTION_PAUSE("G1 Compaction Pause"),
     /**
@@ -287,6 +287,8 @@ public enum GcTrigger {
                 return DIAGNOSTIC_COMMAND;
             if (literal.matches(ERGONOMICS.regex))
                 return ERGONOMICS;
+            if (literal.matches(G1_COMPACTION_PAUSE.regex))
+                return G1_COMPACTION_PAUSE;
             if (literal.matches(G1_EVACUATION_PAUSE.regex))
                 return G1_EVACUATION_PAUSE;
             if (literal.matches(G1_HUMONGOUS_ALLOCATION.regex))

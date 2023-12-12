@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,7 +86,6 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long duration;
-
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -103,12 +100,10 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
-
     /**
      * The time of all system (kernel) threads added together in centiseconds.
      */
     private int timeSys = TimesData.NO_DATA;
-
     /**
      * The time of all user (non-kernel) threads added together in centiseconds.
      */
@@ -127,28 +122,29 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 long endTimestamp;
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(12));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(11)).longValue();
+                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE));
+                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
                 } else {
-                    if (matcher.group(14) != null) {
-                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(16));
+                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 1) != null) {
+                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 4));
                         } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(15)).longValue();
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3))
+                                    .longValue();
                         }
                     } else {
                         // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                duration = JdkMath.convertMillisToMicros(matcher.group(DECORATOR_SIZE + 10)).intValue();
+                duration = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
-                if (matcher.group(DECORATOR_SIZE + 11) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 12)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 13)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(DECORATOR_SIZE + 14)).intValue();
+                if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 13)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 14)).intValue();
                 }
             }
         }
@@ -191,6 +187,11 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public int getTimeReal() {
         return timeReal;
     }
@@ -205,5 +206,10 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
 
     public int getTimeUser() {
         return timeUser;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

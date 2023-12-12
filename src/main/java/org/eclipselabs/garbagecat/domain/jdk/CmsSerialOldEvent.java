@@ -325,7 +325,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 // If multiple triggers, use last one.
                 if (matcher.group(54) != null) {
@@ -366,7 +366,7 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
                 } else {
                     // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 // If multiple triggers, use last one.
                 if (matcher.group(78) != null) {

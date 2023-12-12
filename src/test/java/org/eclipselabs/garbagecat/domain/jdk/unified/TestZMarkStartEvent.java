@@ -71,7 +71,7 @@ class TestZMarkStartEvent {
      * Test with time, uptime decorator.
      */
     @Test
-    void testTimeUptime() {
+    void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.124s][info][gc,phases   ] GC(0) Pause Mark Start 0.004ms";
         assertTrue(ZMarkStartEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.Z_MARK_START.toString() + ".");

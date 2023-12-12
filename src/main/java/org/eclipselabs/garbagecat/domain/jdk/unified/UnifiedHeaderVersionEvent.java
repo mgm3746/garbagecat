@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import static org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil.DECORATOR_SIZE;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,20 +70,21 @@ public class UnifiedHeaderVersionEvent extends UnifiedHeaderEvent {
             Pattern pattern = Pattern.compile(REGEX);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
-                if (matcher.group(1).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    super.setTimestamp(Long.parseLong(matcher.group(12)));
-                } else if (matcher.group(1).matches(UnifiedRegEx.UPTIME)) {
-                    super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(11)).longValue());
+                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    super.setTimestamp(Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE)));
+                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
+                    super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(12)).longValue());
                 } else {
-                    if (matcher.group(14) != null) {
-                        if (matcher.group(14).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            super.setTimestamp(Long.parseLong(matcher.group(16)));
+                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 1) != null) {
+                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            super.setTimestamp(Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 4)));
                         } else {
-                            super.setTimestamp(JdkMath.convertSecsToMillis(matcher.group(15)).longValue());
+                            super.setTimestamp(
+                                    JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3)).longValue());
                         }
                     } else {
                         // Datestamp only.
-                        super.setTimestamp(JdkUtil.convertDatestampToMillis(matcher.group(1)));
+                        super.setTimestamp(JdkUtil.convertDatestampToMillis(matcher.group(2)));
                     }
                 }
             }
@@ -107,7 +106,7 @@ public class UnifiedHeaderVersionEvent extends UnifiedHeaderEvent {
         String jdkReleaseString = null;
         Matcher matcher = pattern.matcher(super.getLogEntry());
         if (matcher.find()) {
-            jdkReleaseString = matcher.group(DECORATOR_SIZE + 1);
+            jdkReleaseString = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1);
         }
         return jdkReleaseString;
     }
@@ -121,7 +120,7 @@ public class UnifiedHeaderVersionEvent extends UnifiedHeaderEvent {
         if (super.getLogEntry() != null) {
             Matcher matcher = pattern.matcher(super.getLogEntry());
             if (matcher.find()) {
-                int index = DECORATOR_SIZE + 2;
+                int index = UnifiedRegEx.DECORATOR_SIZE + 2;
                 if (matcher.group(index) != null) {
                     if (matcher.group(index).equals("1.6.0")) {
                         jdkVersionMajor = 6;
@@ -147,7 +146,7 @@ public class UnifiedHeaderVersionEvent extends UnifiedHeaderEvent {
         if (super.getLogEntry() != null) {
             Matcher matcher = pattern.matcher(super.getLogEntry());
             if (matcher.find()) {
-                int index = DECORATOR_SIZE + 3;
+                int index = UnifiedRegEx.DECORATOR_SIZE + 3;
                 if (matcher.group(index) != null) {
                     jdkVersionMinor = Integer.parseInt(matcher.group(index));
                 }
