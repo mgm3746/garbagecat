@@ -294,7 +294,8 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
     }
 
     /**
-     * @return The JDK update, or <code>org.github.joa.domain.JvmContext.UNKNOWN</code> if it cannot be determined.
+     * @return The JDK minor version (update), or <code>org.github.joa.domain.JvmContext.UNKNOWN</code> if it cannot be
+     *         determined.
      */
     public int getJdkVersionMinor() {
         int jdkVersionMinor = org.github.joa.domain.JvmContext.UNKNOWN;

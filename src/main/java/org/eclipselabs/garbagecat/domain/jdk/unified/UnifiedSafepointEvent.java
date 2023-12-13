@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.SafepointEvent;
+import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
@@ -75,11 +76,17 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </pre>
  * 
  * <p>
- * 2) JDK17 on a single line (timestamp is end of safepoint):
+ * 2) JDK17 &lt; update 8 on a single line (timestamp is end of safepoint):
  * </p>
  * 
  * <pre>
  * [0.062s][info][safepoint   ] Safepoint "G1CollectForAllocation", Time since last: 22756680 ns, Reaching safepoint: 19114 ns, At safepoint: 910407 ns, Total: 929521 ns
+ * </pre>
+ * 
+ * 3) JDK17 &gt;= update 8 preprocessed to include "17U8" context.
+ * 
+ * <pre>
+ * [2023-12-12T10:21:02.708+0200][info][safepoint   ] 17U8 Safepoint "Cleanup", Time since last: 1000407638 ns, Reaching safepoint: 18298588 ns, Cleanup: 9032 ns, At safepoint: 461108 ns, Total: 18768728 ns
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -90,26 +97,29 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     /**
      * Regular expressions defining the JDK8/11 logging.
      */
-    public static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: "
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: "
             + UnifiedSafepoint.triggerRegEx() + UnifiedRegEx.DECORATOR + " Leaving safepoint region"
             + UnifiedRegEx.DECORATOR
             + " Total time for which application threads were stopped: (\\d{1,}[\\.\\,]\\d{7}) seconds, "
             + "Stopping threads took: (\\d{1,}[\\.\\,]\\d{7}) seconds[ ]*$";
     /**
-     * Regular expressions defining the JDK17+ logging.
+     * Regular expressions defining the JDK17 &lt; update 8 logging. Logging included in {@link #timeCleanup} in
+     * {@link #timeToStopThreads}F. Reference: https://bugs.openjdk.org/browse/JDK-8297154
      */
-    public static final String REGEX_JDK17 = "^" + UnifiedRegEx.DECORATOR + " Safepoint \""
-            + UnifiedSafepoint.triggerRegEx()
+    private static final String _REGEX_JDK17 = "^" + UnifiedRegEx.DECORATOR + "( (" + UnifiedPreprocessAction.JDK17U8
+            + " )?Safepoint \"" + UnifiedSafepoint.triggerRegEx()
             + "\", Time since last: \\d{1,} ns, Reaching safepoint: (\\d{1,}) ns(, Cleanup: (\\d{1,}) ns)?, "
-            + "At safepoint: (\\d{1,}) ns, Total: \\d{1,} ns[ ]*$";
+            + "At safepoint: (\\d{1,}) ns, Total: \\d{1,} ns)[ ]*$";
+
     /**
-     * RegEx pattern.
+     * RegEx pattern for JDK8 and JDK11.
      */
-    private static final Pattern REGEX_JDK17_PATTERN = Pattern.compile(REGEX_JDK17);
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
+
     /**
-     * RegEx pattern.
+     * RegEx pattern for JDK17+.
      */
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+    public static final Pattern PATTERN_JDK17 = Pattern.compile(_REGEX_JDK17);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -119,7 +129,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches() || REGEX_JDK17_PATTERN.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches() || PATTERN_JDK17.matcher(logLine).matches();
     }
 
     /**
@@ -129,6 +139,9 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
 
     /**
      * The elapsed clock time spent on internal VM cleanup activities.
+     * 
+     * JDK17 logging prior to update 8 included this time in {@link #timeToStopThreads} ("Reaching safepoint").
+     * Reference: https://bugs.openjdk.org/browse/JDK-8297154
      */
     private long timeCleanup;
 
@@ -161,7 +174,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     public UnifiedSafepointEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher;
-        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
+        if ((matcher = PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.find()) {
                 trigger = UnifiedSafepoint.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
@@ -187,58 +200,44 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
                 timeToStopThreads = JdkMath.convertSecsToNanos(matcher.group(3 * UnifiedRegEx.DECORATOR_SIZE + 3))
                         .longValue();
             }
-        } else if ((matcher = REGEX_JDK17_PATTERN.matcher(logEntry)).matches()) {
+        } else if ((matcher = PATTERN_JDK17.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.find()) {
-                trigger = UnifiedSafepoint.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-                timeToStopThreads = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2));
-                if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3) != null) {
-                    timeCleanup = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4));
+                trigger = UnifiedSafepoint.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3));
+                timeToStopThreads = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4));
+                if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5) != null) {
+                    timeCleanup = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6));
                 }
-                timeThreadsStopped = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5));
+                timeThreadsStopped = Long.parseLong(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7));
                 long time = UnifiedUtil.calculateTime(matcher);
                 timestamp = time - JdkMath.convertNanosToMillis(getDurationNanos()).longValue();
             }
         }
     }
 
-    /**
-     * Alternate constructor. Create safepoint event from values.
-     * 
-     * @param logEntry
-     *            The log entry for the event.
-     * @param timestamp
-     *            The time when the safepoint event started in milliseconds after JVM startup.
-     * @param timeToStopThreads
-     *            The elapsed clock time to stop all threads (bring the JVM to safepoint) in nanoseconds (rounded).
-     * @param timeThreadsStopped
-     *            The elapsed clock time the application threads were stopped (at safepoint) in nanoseconds (rounded).
-     * @param timeCleanup
-     *            The elapsed clock time for VM internal cleanup activities (at safepoint) in nanoseconds (rounded).
-     */
-    public UnifiedSafepointEvent(String logEntry, long timestamp, long timeToStopThreads, long timeThreadsStopped,
-            long timeCleanup) {
-        this.logEntry = logEntry;
-        this.timestamp = timestamp;
-        this.timeToStopThreads = timeToStopThreads;
-        this.timeThreadsStopped = timeThreadsStopped;
-        this.timeCleanup = timeCleanup;
-    }
-
-    /**
-     * The elapsed clock time for the safepoint event in nanoseconds (rounded). timeToStopThreads seems to be time in
-     * addition to timeThreadsStopped.
-     */
-    public long getDuration() {
-        return timeThreadsStopped + timeToStopThreads;
-    }
-
     public long getDurationMicros() {
-        return JdkMath.convertNanosToMicros(getDuration()).longValue();
+        return JdkMath.convertNanosToMicros(getDurationNanos()).longValue();
     }
 
+    /**
+     * The safepoint duration in nanoseconds. JDK17 logging prior to update 8 included {@link #timeCleanup} in
+     * {@link #timeToStopThreads} ("Reaching safepoint"). Reference: https://bugs.openjdk.org/browse/JDK-8297154
+     * 
+     * @return The safepoint duration in nanoseconds.
+     */
     public long getDurationNanos() {
-        return timeThreadsStopped + timeToStopThreads;
+        long durationNanos;
+        Matcher matcher = PATTERN_JDK17.matcher(logEntry);
+        if (matcher.matches()) {
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2) != null) {
+                durationNanos = timeThreadsStopped + timeToStopThreads + timeCleanup;
+            } else {
+                durationNanos = timeThreadsStopped + timeToStopThreads;
+            }
+        } else {
+            durationNanos = timeThreadsStopped + timeToStopThreads;
+        }
+        return durationNanos;
     }
 
     public String getLogEntry() {
@@ -275,7 +274,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     }
 
     public boolean isEndstamp() {
-        return REGEX_JDK17_PATTERN.matcher(logEntry).matches();
+        return PATTERN_JDK17.matcher(logEntry).matches();
     }
 
 }

@@ -326,6 +326,12 @@ public enum Analysis {
     WARN_PRINT_GC_CAUSE_NOT_ENABLED("warn.print.gc.cause.not.enabled"),
 
     /**
+     * Property key for possible safepoint time missing if running JDK17 prior to update 8. It was not possible to
+     * identify the JDK version to determine parsing. Reference: https://bugs.openjdk.org/browse/JDK-8297154.
+     */
+    WARN_SAFEPOINT_STATS("warn.safepoint.stats"),
+
+    /**
      * Property key for the SERIAL_OLD collector being invoked for reasons other than explicit gc.
      */
     WARN_SERIAL_GC("warn.serial.gc"),

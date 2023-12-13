@@ -2479,6 +2479,25 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testSafepointJdk17u8() {
+        String logLine = "[2023-08-18T11:40:51.508-0500][1.708s][info][safepoint     ] Safepoint "
+                + "\"G1CollectForAllocation\", Time since last: 11990384 ns, Reaching safepoint: 2496 ns, Cleanup: "
+                + "11042 ns, At safepoint: 623787 ns, " + "Total: 637325 ns";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        context.add(UnifiedPreprocessAction.JDK17U8);
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals("[2023-08-18T11:40:51.508-0500][1.708s][info][safepoint     ] JDK17U8 Safepoint "
+                + "\"G1CollectForAllocation\", Time since last: 11990384 ns, Reaching safepoint: 2496 ns, Cleanup: "
+                + "11042 ns, At safepoint: 623787 ns, Total: 637325 ns", event.getLogEntry(),
+                "Log line not parsed correctly.");
+    }
+
+    @Test
     void testSafepointLeaving() {
         String logLine = "[0.029s][info][safepoint    ] Leaving safepoint region";
         assertTrue(UnifiedPreprocessAction.match(logLine),

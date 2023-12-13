@@ -55,6 +55,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
@@ -296,7 +297,7 @@ public class JvmRun {
     /**
      * <code>SafepointEventSummary</code> used for reporting.
      */
-    private List<SafepointEventSummary> safepointEventSummaries;
+    private List<SafepointEventSummary> safepointEventSummaries = null;
 
     /**
      * Number of <code>SerialCollection</code> events.
@@ -645,6 +646,14 @@ public class JvmRun {
             if (GcUtil.dayDiff(jvmContext.getBuildDate(), new Date()) > 365) {
                 analysis.add(Analysis.INFO_JDK_ANCIENT);
             }
+        }
+        // Check if safepoint stats may not be accurate due to unknown JDK version
+        if (getLastSafepointEvent() != null && getLastSafepointEvent().getLogEntry() != null
+                && UnifiedSafepointEvent.PATTERN_JDK17.matcher(getLastSafepointEvent().getLogEntry()).matches()
+                && getJvmContext() != null
+                && !((getJvmContext().getVersionMajor() == 17 && getJvmContext().getVersionMinor() >= 8)
+                        || getJvmContext().getVersionMajor() >= 21)) {
+            analysis.add(Analysis.WARN_SAFEPOINT_STATS);
         }
     }
 

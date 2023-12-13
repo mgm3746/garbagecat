@@ -1,3 +1,4 @@
+[2023-12-12T08:47:56.693+0200][info][gc,init] Version: 21+35-2513 (release)
 [2023-12-12T09:00:08.608+0200][info][safepoint   ] Safepoint "PrintThreads", Time since last: 68743502 ns, Reaching safepoint: 85909 ns, Cleanup: 52720 ns, At safepoint: 1453301 ns, Total: 1591930 ns
 [2023-12-12T09:00:08.609+0200][info][safepoint   ] Safepoint "FindDeadlocks", Time since last: 35629 ns, Reaching safepoint: 127143 ns, Cleanup: 1637 ns, At safepoint: 6058 ns, Total: 134838 ns
 [2023-12-12T09:00:08.705+0200][info][safepoint   ] Safepoint "SetNotifyJvmtiEventsMode", Time since last: 95823672 ns, Reaching safepoint: 82429 ns, Cleanup: 112026 ns, At safepoint: 10659 ns, Total: 205114 ns

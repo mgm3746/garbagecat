@@ -688,6 +688,8 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
                 Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_SAFEPOINT_STATS.getKey()),
+                Analysis.WARN_SAFEPOINT_STATS + " analysis not identified.");
     }
 
     /**

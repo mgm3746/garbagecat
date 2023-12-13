@@ -80,6 +80,8 @@ public class JvmDao {
             "create table safepoint_event (id integer identity, time_stamp bigint, trigger_type varchar(64), "
                     + "duration bigint, log_entry varchar(500))" };
 
+    private static final String[] TABLES_DELETE_SQL = { "delete from safepoint_event " };
+
     private static Memory add(Memory m1, Memory m2) {
         return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
     }
@@ -346,6 +348,24 @@ public class JvmDao {
     public synchronized void cleanup() {
         this.blockingEvents.clear();
         JvmDao.created = false;
+        // TODO: Remove below when hsqldb dependency removed
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            for (int i = 0; i < TABLES_DELETE_SQL.length; i++) {
+                statement.executeUpdate(TABLES_DELETE_SQL[i]);
+            }
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException("Error deleting rows from tables.");
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+                throw new RuntimeException("Error closing Statement.");
+            }
+        }
     }
 
     public List<Analysis> getAnalysis() {

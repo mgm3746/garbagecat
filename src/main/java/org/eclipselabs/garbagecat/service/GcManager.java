@@ -572,19 +572,40 @@ public class GcManager {
         List<String> preprocessedLogList = new ArrayList<String>();
 
         if (!logLines.isEmpty()) {
+
+            // Check if JDK version information is included in logging.
+            int jdkVersionMajor = Integer.MIN_VALUE;
+            int jdkVersionMinor = Integer.MIN_VALUE;
+            Iterator<String> iterator = logLines.iterator();
+            String priorLogLine = null;
+            while (iterator.hasNext()) {
+                String logLine = iterator.next();
+                LogEvent event = JdkUtil.parseLogLine(logLine, priorLogLine);
+                if (event instanceof HeaderVmInfoEvent) {
+                    jdkVersionMajor = ((HeaderVmInfoEvent) event).getJdkVersionMajor();
+                    jdkVersionMinor = ((HeaderVmInfoEvent) event).getJdkVersionMinor();
+                    break;
+                } else if (event instanceof UnifiedHeaderEvent && ((UnifiedHeaderEvent) event).isVersion()) {
+                    jdkVersionMajor = ((UnifiedHeaderEvent) event).getJdkVersionMajor();
+                    jdkVersionMinor = ((UnifiedHeaderEvent) event).getJdkVersionMinor();
+                    break;
+                }
+                priorLogLine = logLine;
+            }
+
+            iterator = logLines.iterator();
             // Used for de-tangling intermingled logging events that span multiple lines
             List<String> entangledLogLines = new ArrayList<String>();
             // Used to provide context for preprocessing decisions
             Set<String> context = new HashSet<String>();
             context.add(PreprocessAction.NEWLINE);
+            if ((jdkVersionMajor == 17 && jdkVersionMinor >= 8) || jdkVersionMajor >= 21) {
+                context.add(UnifiedPreprocessAction.JDK17U8);
+            }
 
             String priorLogEntry = Constants.LINE_SEPARATOR;
-
-            Iterator<String> iterator = logLines.iterator();
-
             String currentLogLine = iterator.next();
-            // String priorLogLine = "";
-            String priorLogLine = null;
+            priorLogLine = null;
             String preprocessedLogLine = "";
             String nextLogLine = null;
 
@@ -699,6 +720,7 @@ public class GcManager {
         }
 
         return preprocessedLogList;
+
     }
 
     /**

@@ -23,6 +23,7 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
@@ -239,6 +240,11 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
+     * Indicates the logging is from JDK17 update 8+ or JDK21.
+     */
+    public static final String JDK17U8 = "JDK17U8";
+
+    /**
      * Regular expression for external root scanning block. Enabled with "gc+phases=info" unified logging.
      *
      * Ext Root Scanning (ms): 1.8
@@ -312,10 +318,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_PAUSE_YOUNG = "^(" + UnifiedRegEx.DECORATOR
             + ")( Pause Young \\(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "\\))$";
-
     private static final Pattern REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_PAUSE_YOUNG);
-
     /**
      * Regular expression for retained 1st line of safepoint logging.
      * 
@@ -1071,7 +1075,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        if (REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN.matcher(logLine).matches()
+        if (UnifiedSafepointEvent.PATTERN_JDK17.matcher(logLine).matches()
+                || REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_UNIFIED_REMARK_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_PAUSE_YOUNG_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_OLD_PATTERN.matcher(logLine).matches()
@@ -1124,7 +1129,19 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
         Matcher matcher;
 
-        if ((matcher = REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN.matcher(logEntry)).matches()) {
+        if ((matcher = UnifiedSafepointEvent.PATTERN_JDK17.matcher(logEntry)).matches()) {
+            matcher.reset();
+            if (matcher.matches()) {
+                if (context.contains(UnifiedPreprocessAction.JDK17U8)) {
+                    this.logEntry = matcher.group(1) + matcher.group(21) + " " + UnifiedPreprocessAction.JDK17U8 + ""
+                            + matcher.group(25);
+                } else {
+                    this.logEntry = matcher.group(0);
+                }
+            }
+            context.add(PreprocessAction.NEWLINE);
+            context.add(TOKEN);
+        } else if ((matcher = REGEX_RETAIN_BEGINNING_UNIFIED_CMS_INITIAL_MARK_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);

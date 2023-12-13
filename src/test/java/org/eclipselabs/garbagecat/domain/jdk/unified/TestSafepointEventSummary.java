@@ -28,6 +28,7 @@ import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,9 @@ class TestSafepointEventSummary {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_SAFEPOINT),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
         List<SafepointEventSummary> summaries = jvmRun.getSafepointEventSummaries();
@@ -64,15 +67,15 @@ class TestSafepointEventSummary {
             }
             safepointTimeTotal += summary.getPauseTotal();
         }
-        // assertEquals(15620, safepointTimeMax, "Safepoint Summary safepoint time max not correct.");
-        // assertEquals(18314, safepointTimeTotal, "Safepoint Summary safepoint time total not correct.");
-        // assertEquals(15620098, jvmRun.getUnifiedSafepointTimeMax(), "JVM Run safepoint time max not correct.");
-        // assertEquals(18317754, jvmRun.getUnifiedSafepointTimeTotal(), "JVM Run safepoint time total not correct.");
-        // assertEquals(JdkMath.convertMicrosToSecs(safepointTimeMax),
-        // JdkMath.convertNanosToSecs(jvmRun.getUnifiedSafepointTimeMax()),
-        // "Safepoint Summary vs. JVM Run max safepoint time mismatch.");
-        // assertEquals(JdkMath.convertMicrosToSecs(safepointTimeTotal),
-        // JdkMath.convertNanosToSecs(jvmRun.getUnifiedSafepointTimeTotal()),
-        // "Safepoint Summary vs. JVM Run total safepoint time mismatch.");
+        assertEquals(15910, safepointTimeMax, "Safepoint Summary safepoint time max not correct.");
+        assertEquals(19458, safepointTimeTotal, "Safepoint Summary safepoint time total not correct.");
+        assertEquals(15910741, jvmRun.getUnifiedSafepointTimeMax(), "JVM Run safepoint time max not correct.");
+        assertEquals(19464321, jvmRun.getUnifiedSafepointTimeTotal(), "JVM Run safepoint time total not correct.");
+        assertEquals(JdkMath.convertMicrosToSecs(safepointTimeMax),
+                JdkMath.convertNanosToSecs(jvmRun.getUnifiedSafepointTimeMax()),
+                "Safepoint Summary vs. JVM Run max safepoint time mismatch.");
+        assertEquals(JdkMath.convertMicrosToSecs(safepointTimeTotal),
+                JdkMath.convertNanosToSecs(jvmRun.getUnifiedSafepointTimeTotal()),
+                "Safepoint Summary vs. JVM Run total safepoint time mismatch.");
     }
 }

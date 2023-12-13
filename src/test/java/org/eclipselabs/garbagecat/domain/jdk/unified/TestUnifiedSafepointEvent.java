@@ -70,8 +70,8 @@ class TestUnifiedSafepointEvent {
 
     @Test
     void testCleanupJdk17Update8() {
-        String logLine = "[1.708s] Safepoint \"G1CollectForAllocation\", Time since last: 11990384 ns, Reaching "
-                + "safepoint: 2496 ns, Cleanup: 11042 ns, At safepoint: 623787 ns, Total: 637325 ns";
+        String logLine = "[1.708s] JDK17U8 Safepoint \"G1CollectForAllocation\", Time since last: 11990384 ns, "
+                + "Reaching safepoint: 2496 ns, Cleanup: 11042 ns, At safepoint: 623787 ns, Total: 637325 ns";
         assertTrue(UnifiedSafepointEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
@@ -161,6 +161,7 @@ class TestUnifiedSafepointEvent {
         assertEquals(433 - 0, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(81442, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
         assertEquals(25191, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+        assertEquals(113246, event.getTimeCleanup(), "Time cleanup not parsed correctly.");
         assertEquals(106, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
