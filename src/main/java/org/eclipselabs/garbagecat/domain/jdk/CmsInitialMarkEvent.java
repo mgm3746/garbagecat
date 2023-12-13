@@ -66,7 +66,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
             + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
             + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(_REGEX);
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -76,7 +76,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -123,7 +123,7 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
     public CmsInitialMarkEvent(String logEntry) {
         this.logEntry = logEntry;
         if (match(logEntry)) {
-            Matcher matcher = pattern.matcher(logEntry);
+            Matcher matcher = PATTERN.matcher(logEntry);
             if (matcher.find()) {
                 if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
                     timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();

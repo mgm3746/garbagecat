@@ -225,7 +225,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
     /**
      * Regular expression for no preprocessing needed
      */
-    private static final String REGEX_NO_PREPROCESSING = "^(" + ApplicationStoppedTimeEvent.REGEX + ")$";
+    private static final String REGEX_NO_PREPROCESSING = "^(" + ApplicationStoppedTimeEvent._REGEX + ")$";
 
     private static final Pattern REGEX_NO_PREPROCESSING_PATTERN = Pattern.compile(REGEX_NO_PREPROCESSING);
 

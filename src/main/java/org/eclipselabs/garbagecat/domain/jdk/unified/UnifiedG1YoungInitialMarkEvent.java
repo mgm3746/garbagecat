@@ -60,15 +60,15 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     /**
      * Trigger(s) regular expression.
      */
-    static final String _TRIGGER = "(" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + ")";
+    static final String __TRIGGER = "(" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + ")";
     /**
      * Regular expression defining standard logging (no details).
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + _TRIGGER + "\\) "
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + __TRIGGER + "\\) "
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
             + TimesData.REGEX_JDK9 + "[ ]*$";
 
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -78,7 +78,7 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -138,7 +138,7 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     public UnifiedG1YoungInitialMarkEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher;
-        if ((matcher = REGEX_PATTERN.matcher(logEntry)).matches()) {
+        if ((matcher = PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.find()) {
                 long endTimestamp;

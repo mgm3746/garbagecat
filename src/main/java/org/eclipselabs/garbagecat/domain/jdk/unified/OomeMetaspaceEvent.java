@@ -31,10 +31,10 @@ public class OomeMetaspaceEvent implements ThrowAwayEvent {
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR
             + " Metaspace \\(data\\) allocation failed for size \\d{1,}$";
 
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -44,7 +44,7 @@ public class OomeMetaspaceEvent implements ThrowAwayEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return REGEX_PATTERN.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -62,6 +62,6 @@ public class OomeMetaspaceEvent implements ThrowAwayEvent {
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 }

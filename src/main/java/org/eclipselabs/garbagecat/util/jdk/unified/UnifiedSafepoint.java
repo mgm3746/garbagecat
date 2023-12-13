@@ -28,19 +28,21 @@ public class UnifiedSafepoint {
      * TODO: Split into GC vs. non-GC?
      */
     public enum Trigger {
-        BULK_REVOKE_BIAS, CGC_OPERATION, CLEAN_CLASSLOADER_DATA_METASPACES, CLEANUP, CMS_FINAL_REMARK,
+        BULK_REVOKE_BIAS, CGC_OPERATION, CLASSLOADER_STATS_OPERATION, CLEAN_CLASSLOADER_DATA_METASPACES, CLEANUP,
         //
-        CMS_INITIAL_MARK, COLLECT_FOR_METADATA_ALLOCATION, DEOPTIMIZE, ENABLE_BIASED_LOCKING, EXIT, FIND_DEADLOCKS,
+        CMS_FINAL_REMARK, CMS_INITIAL_MARK, COLLECT_FOR_METADATA_ALLOCATION, DEOPTIMIZE, ENABLE_BIASED_LOCKING, EXIT,
         //
-        FORCE_SAFEPOINT, G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_CONCURRENT, G1_INC_COLLECTION_PAUSE,
+        FIND_DEADLOCKS, FORCE_SAFEPOINT, G1_COLLECT_FOR_ALLOCATION, G1_COLLECT_FULL, G1_CONCURRENT,
         //
-        G1_PAUSE_CLEANUP, G1_PAUSE_REMARK, G1_TRY_INITIATE_CONC_MARK, GC_HEAP_INSPECTION, GEN_COLLECT_FOR_ALLOCATION,
+        G1_INC_COLLECTION_PAUSE, G1_PAUSE_CLEANUP, G1_PAUSE_REMARK, G1_TRY_INITIATE_CONC_MARK, GC_HEAP_INSPECTION,
         //
-        GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES, HALT, HANDSHAKE_FALL_BACK,
+        GEN_COLLECT_FOR_ALLOCATION, GEN_COLLECT_FULL_CONCURRENT, GET_ALL_STACK_TRACES, GET_THREAD_LIST_STACK_TRACES,
         //
-        HEAP_DUMPER, IC_BUFFER_FULL, MARK_ACTIVE_N_METHODS, NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION,
+        HALT, HANDSHAKE_FALL_BACK, HEAP_DUMPER, IC_BUFFER_FULL, JFR_CHECKPOINT, JFR_OLD_OBJECT, MARK_ACTIVE_N_METHODS,
         //
-        PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REVOKE_BIAS, SHENANDOAH_DEGENERATED_GC,
+        NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS,
+        //
+        REDEFINE_CLASSES, REVOKE_BIAS, SET_NOTIFY_JVMTI_EVENTS_MODE, SHENANDOAH_DEGENERATED_GC,
         //
         SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK,
         //
@@ -67,6 +69,13 @@ public class UnifiedSafepoint {
      * </ul>
      */
     public static final String CGC_OPERATION = "CGC_Operation";
+
+    /**
+     * <p>
+     * TODO:
+     * </p>
+     */
+    public static final String CLASSLOADER_STATS_OPERATION = "ClassLoaderStatsOperation";
 
     /**
      * <p>
@@ -284,6 +293,20 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
+     * TODO:
+     * </p>
+     */
+    public static final String JFR_CHECKPOINT = "JFRCheckpoint";
+
+    /**
+     * <p>
+     * TODO:
+     * </p>
+     */
+    public static final String JFR_OLD_OBJECT = "JFROldObject";
+
+    /**
+     * <p>
      * Stack scanning of active methods required by the code cache sweeper thread, which tries to free space when the
      * code cache fills. This safepoint is an indication of code cache memory pressure.
      * </p>
@@ -351,6 +374,13 @@ public class UnifiedSafepoint {
      * </p>
      */
     public static final String REVOKE_BIAS = "RevokeBias";
+
+    /**
+     * <p>
+     * TODO:
+     * </p>
+     */
+    public static final String SET_NOTIFY_JVMTI_EVENTS_MODE = "SetNotifyJvmtiEventsMode";
 
     /**
      * <p>
@@ -496,6 +526,8 @@ public class UnifiedSafepoint {
             return Trigger.BULK_REVOKE_BIAS;
         if (CGC_OPERATION.matches(triggerLiteral))
             return Trigger.CGC_OPERATION;
+        if (CLASSLOADER_STATS_OPERATION.matches(triggerLiteral))
+            return Trigger.CLASSLOADER_STATS_OPERATION;
         if (CLEANUP.matches(triggerLiteral))
             return Trigger.CLEANUP;
         if (CLEAN_CLASSLOADER_DATA_METASPACES.matches(triggerLiteral))
@@ -548,6 +580,10 @@ public class UnifiedSafepoint {
             return Trigger.HEAP_DUMPER;
         if (IC_BUFFER_FULL.matches(triggerLiteral))
             return Trigger.IC_BUFFER_FULL;
+        if (JFR_CHECKPOINT.matches(triggerLiteral))
+            return Trigger.JFR_CHECKPOINT;
+        if (JFR_OLD_OBJECT.matches(triggerLiteral))
+            return Trigger.JFR_OLD_OBJECT;
         if (MARK_ACTIVE_N_METHODS.matches(triggerLiteral))
             return Trigger.MARK_ACTIVE_N_METHODS;
         if (NO_VM_OPERATION.matches(triggerLiteral))
@@ -564,6 +600,8 @@ public class UnifiedSafepoint {
             return Trigger.REDEFINE_CLASSES;
         if (REVOKE_BIAS.matches(triggerLiteral))
             return Trigger.REVOKE_BIAS;
+        if (SET_NOTIFY_JVMTI_EVENTS_MODE.matches(triggerLiteral))
+            return Trigger.SET_NOTIFY_JVMTI_EVENTS_MODE;
         if (SHENANDOAH_DEGENERATED_GC.matches(triggerLiteral))
             return Trigger.SHENANDOAH_DEGENERATED_GC;
         if (SHENANDOAH_FINAL_MARK_START_EVAC.matches(triggerLiteral))
@@ -618,6 +656,9 @@ public class UnifiedSafepoint {
 
         case BULK_REVOKE_BIAS:
             triggerLiteral = BULK_REVOKE_BIAS;
+            break;
+        case CLASSLOADER_STATS_OPERATION:
+            triggerLiteral = CLASSLOADER_STATS_OPERATION;
             break;
         case CLEANUP:
             triggerLiteral = CLEANUP;
@@ -700,6 +741,12 @@ public class UnifiedSafepoint {
         case IC_BUFFER_FULL:
             triggerLiteral = IC_BUFFER_FULL;
             break;
+        case JFR_CHECKPOINT:
+            triggerLiteral = JFR_CHECKPOINT;
+            break;
+        case JFR_OLD_OBJECT:
+            triggerLiteral = JFR_OLD_OBJECT;
+            break;
         case MARK_ACTIVE_N_METHODS:
             triggerLiteral = MARK_ACTIVE_N_METHODS;
             break;
@@ -723,6 +770,9 @@ public class UnifiedSafepoint {
             break;
         case REVOKE_BIAS:
             triggerLiteral = REVOKE_BIAS;
+            break;
+        case SET_NOTIFY_JVMTI_EVENTS_MODE:
+            triggerLiteral = SET_NOTIFY_JVMTI_EVENTS_MODE;
             break;
         case SHENANDOAH_DEGENERATED_GC:
             triggerLiteral = SHENANDOAH_DEGENERATED_GC;
@@ -797,6 +847,8 @@ public class UnifiedSafepoint {
             return Trigger.BULK_REVOKE_BIAS;
         if (Trigger.CGC_OPERATION.name().matches(trigger))
             return Trigger.CGC_OPERATION;
+        if (Trigger.CLASSLOADER_STATS_OPERATION.name().matches(trigger))
+            return Trigger.CLASSLOADER_STATS_OPERATION;
         if (Trigger.CLEANUP.name().matches(trigger))
             return Trigger.CLEANUP;
         if (Trigger.CLEAN_CLASSLOADER_DATA_METASPACES.name().matches(trigger))
@@ -849,6 +901,10 @@ public class UnifiedSafepoint {
             return Trigger.HEAP_DUMPER;
         if (Trigger.IC_BUFFER_FULL.name().matches(trigger))
             return Trigger.IC_BUFFER_FULL;
+        if (Trigger.JFR_CHECKPOINT.name().matches(trigger))
+            return Trigger.JFR_CHECKPOINT;
+        if (Trigger.JFR_OLD_OBJECT.name().matches(trigger))
+            return Trigger.JFR_OLD_OBJECT;
         if (Trigger.MARK_ACTIVE_N_METHODS.name().matches(trigger))
             return Trigger.MARK_ACTIVE_N_METHODS;
         if (Trigger.NO_VM_OPERATION.name().matches(trigger))
@@ -865,6 +921,8 @@ public class UnifiedSafepoint {
             return Trigger.REDEFINE_CLASSES;
         if (Trigger.REVOKE_BIAS.name().matches(trigger))
             return Trigger.REVOKE_BIAS;
+        if (Trigger.SET_NOTIFY_JVMTI_EVENTS_MODE.name().matches(trigger))
+            return Trigger.SET_NOTIFY_JVMTI_EVENTS_MODE;
         if (Trigger.SHENANDOAH_DEGENERATED_GC.name().matches(trigger))
             return Trigger.SHENANDOAH_DEGENERATED_GC;
         if (Trigger.SHENANDOAH_FINAL_MARK_START_EVAC.name().matches(trigger))

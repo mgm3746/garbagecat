@@ -28,7 +28,7 @@ public class BlankLineEvent implements ThrowAwayEvent {
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = JdkRegEx.BLANK_LINE;
+    private static final String _REGEX = JdkRegEx.BLANK_LINE;
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -38,7 +38,7 @@ public class BlankLineEvent implements ThrowAwayEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return logLine.matches(REGEX) || logLine.length() == 0;
+        return logLine.matches(_REGEX) || logLine.length() == 0;
     }
 
     /**

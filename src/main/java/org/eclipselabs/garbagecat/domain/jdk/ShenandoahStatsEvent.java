@@ -65,7 +65,7 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
     /**
      * Regular expression defining standard logging.
      */
-    private static final String REGEX[] = {
+    private static final String _REGEX[] = {
             //
             "^(" + UnifiedRegEx.DECORATOR
                     + ")?[ ]{0,}All times are wall-clock times, except per-root-class counters, that are sum over$",
@@ -134,10 +134,10 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
             //
     };
 
-    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(_REGEX.length);
 
     static {
-        for (String regex : REGEX) {
+        for (String regex : _REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }
@@ -170,6 +170,6 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 }

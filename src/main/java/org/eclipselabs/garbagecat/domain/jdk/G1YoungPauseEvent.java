@@ -102,12 +102,10 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
      *
      * 1.234: [GC pause (young) 102M-&gt;24M(512M), 0.0254200 secs]
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
             + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + ")\\) )?\\(young\\)(--)?[ ]{0,1}" + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**
      * Regular expression preprocessed, no details.
@@ -115,7 +113,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
      * 0.807: [GC pause (young), 0.00290200 secs][ 29M-&gt;2589K(59M)] [Times: user=0.01 sys=0.00, real=0.01 secs]
      *
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause \\(young\\), "
+    private static final String _REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause \\(young\\), "
             + JdkRegEx.DURATION + "\\](" + OtherTime.REGEX + ")?\\[ " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
@@ -126,7 +124,7 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
      * (ms): 1.8][Other: 544.6 ms][Eden: 1270M(1270M)->0B(723M) Survivors: 124M->175M Heap: 2468M(3072M)->1695M(3072M)]
      * [Times: user=1.51 sys=0.14, real=0.77 secs]
      */
-    private static final String REGEX_PREPROCESSED_DETAILS = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
+    private static final String _REGEX_PREPROCESSED_DETAILS = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
             + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
             + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + ")\\) )?\\(young\\)( \\(("
             + GcTrigger.TO_SPACE_EXHAUSTED.getRegex() + "|" + GcTrigger.TO_SPACE_OVERFLOW.getRegex() + ")\\))?, "
@@ -134,8 +132,6 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
             + ")?\\[Eden: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\) Survivors: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_PREPROCESSED_DETAILS_PATTERN = Pattern.compile(REGEX_PREPROCESSED_DETAILS);
 
     /**
      * Regular expression preprocessed with G1 details with no duration. Get duration from times block.
@@ -146,16 +142,20 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
      * 3808.0M(3808.0M)->0.0B(3760.0M) Survivors: 40.0M->64.0M Heap: 7253.9M(8192.0M)->3472.3M(8192.0M)] [Times:
      * user=0.22 sys=0.00, real=0.11 secs]
      */
-    private static final String REGEX_PREPROCESSED_NO_DURATION = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
+    private static final String _REGEX_PREPROCESSED_NO_DURATION = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
             + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + ")\\) )?\\(young\\)\\[Eden: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "[ ]*$";
 
-    private static final Pattern REGEX_PREPROCESSED_NO_DURATION_PATTERN = Pattern
-            .compile(REGEX_PREPROCESSED_NO_DURATION);
+    private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
 
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
+    private static final Pattern REGEX_PREPROCESSED_DETAILS_PATTERN = Pattern.compile(_REGEX_PREPROCESSED_DETAILS);
+
+    private static final Pattern REGEX_PREPROCESSED_NO_DURATION_PATTERN = Pattern
+            .compile(_REGEX_PREPROCESSED_NO_DURATION);
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

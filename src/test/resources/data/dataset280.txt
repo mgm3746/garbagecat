@@ -1,0 +1,10 @@
+[2023-12-12T09:00:08.608+0200][info][safepoint   ] Safepoint "PrintThreads", Time since last: 68743502 ns, Reaching safepoint: 85909 ns, Cleanup: 52720 ns, At safepoint: 1453301 ns, Total: 1591930 ns
+[2023-12-12T09:00:08.609+0200][info][safepoint   ] Safepoint "FindDeadlocks", Time since last: 35629 ns, Reaching safepoint: 127143 ns, Cleanup: 1637 ns, At safepoint: 6058 ns, Total: 134838 ns
+[2023-12-12T09:00:08.705+0200][info][safepoint   ] Safepoint "SetNotifyJvmtiEventsMode", Time since last: 95823672 ns, Reaching safepoint: 82429 ns, Cleanup: 112026 ns, At safepoint: 10659 ns, Total: 205114 ns
+[2023-12-12T09:00:08.824+0200][info][safepoint   ] Safepoint "ICBufferFull", Time since last: 119117767 ns, Reaching safepoint: 16613 ns, Cleanup: 133927 ns, At safepoint: 3971 ns, Total: 154511 ns
+[2023-12-12T09:00:08.901+0200][info][safepoint   ] Safepoint "RedefineClasses", Time since last: 61455941 ns, Reaching safepoint: 6783 ns, Cleanup: 290643 ns, At safepoint: 15613315 ns, Total: 15910741 ns
+[2023-12-12T09:00:08.991+0200][info][safepoint   ] Safepoint "JFRCheckpoint", Time since last: 89423866 ns, Reaching safepoint: 81442 ns, Cleanup: 113246 ns, At safepoint: 25191 ns, Total: 219879 ns
+[2023-12-12T09:00:08.996+0200][info][safepoint   ] Safepoint "JFROldObject", Time since last: 4554564 ns, Reaching safepoint: 87172 ns, Cleanup: 50531 ns, At safepoint: 31967 ns, Total: 169670 ns
+[2023-12-12T09:00:09.001+0200][info][safepoint   ] Safepoint "ClassLoaderStatsOperation", Time since last: 4597148 ns, Reaching safepoint: 19270 ns, Cleanup: 47719 ns, At safepoint: 586473 ns, Total: 653462 ns
+[2023-12-12T09:00:09.795+0200][info][safepoint   ] Safepoint "ICBufferFull", Time since last: 794022711 ns, Reaching safepoint: 37100 ns, Cleanup: 160963 ns, At safepoint: 9115 ns, Total: 207178 ns
+[2023-12-12T09:00:10.438+0200][info][safepoint   ] Safepoint "ICBufferFull", Time since last: 642159860 ns, Reaching safepoint: 25711 ns, Cleanup: 183155 ns, At safepoint: 8132 ns, Total: 216998 ns

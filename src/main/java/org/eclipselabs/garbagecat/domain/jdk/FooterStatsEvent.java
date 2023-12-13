@@ -417,7 +417,7 @@ public class FooterStatsEvent implements ThrowAwayEvent {
     /**
      * Regular expression defining standard logging.
      */
-    private static final String REGEX[] = {
+    private static final String _REGEX[] = {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?GC STATISTICS:$",
             //
@@ -544,10 +544,10 @@ public class FooterStatsEvent implements ThrowAwayEvent {
             //
     };
 
-    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(_REGEX.length);
 
     static {
-        for (String regex : REGEX) {
+        for (String regex : _REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }

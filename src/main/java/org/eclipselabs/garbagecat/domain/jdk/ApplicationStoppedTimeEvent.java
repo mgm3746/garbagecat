@@ -96,16 +96,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 public class ApplicationStoppedTimeEvent implements SafepointEvent {
 
     /**
-     * RegEx pattern.
-     */
-    private static Pattern pattern = Pattern.compile(ApplicationStoppedTimeEvent.REGEX);
-
-    /**
      * Regular expressions defining the logging.
      */
-    public static final String REGEX = "^(" + JdkRegEx.DECORATOR + " )?Total time for which application threads "
+    public static final String _REGEX = "^(" + JdkRegEx.DECORATOR + " )?Total time for which application threads "
             + "were stopped: ((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds(, Stopping threads took: "
             + "((-)?\\d{1,4}[\\.\\,]\\d{7}) seconds)?[ ]{0,}$";
+
+    /**
+     * RegEx pattern.
+     */
+    private static Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -115,7 +115,7 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -145,7 +145,7 @@ public class ApplicationStoppedTimeEvent implements SafepointEvent {
      */
     public ApplicationStoppedTimeEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             long endTimestamp = 0;
             if (matcher.group(14) != null && matcher.group(14).matches(JdkRegEx.TIMESTAMP)) {

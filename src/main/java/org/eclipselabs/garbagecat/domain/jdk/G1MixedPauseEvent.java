@@ -94,19 +94,19 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
             + "\\))? \\(mixed\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
             + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
-    private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
-
     /**
      * Regular expression preprocessed.
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + __TRIGGER
+    private static final String _REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause( \\(" + __TRIGGER
             + "\\))? \\(mixed\\)( \\(" + __TRIGGER + "\\))?, " + JdkRegEx.DURATION + "\\]"
             + G1PreprocessAction.REGEX_EXT_ROOT_SCANNING + "(" + OtherTime.REGEX + ")\\[Eden: " + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Survivors: " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?[ ]*$";
 
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
+    private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

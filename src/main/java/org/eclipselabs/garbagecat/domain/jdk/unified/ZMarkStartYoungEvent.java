@@ -42,12 +42,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  */
 public class ZMarkStartYoungEvent extends ZCollector implements UnifiedLogging, BlockingEvent {
-    private static final Pattern PATTERN = Pattern.compile(ZMarkStartYoungEvent.REGEX);
+
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " y: Pause Mark Start " + JdkRegEx.DURATION_MS
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " y: Pause Mark Start " + JdkRegEx.DURATION_MS
             + "[ ]*$";
+
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -83,17 +85,14 @@ public class ZMarkStartYoungEvent extends ZCollector implements UnifiedLogging, 
      */
     public ZMarkStartYoungEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
-                long time = UnifiedUtil.calculateTime(matcher);
-                if (!isEndstamp()) {
-                    timestamp = time;
-                } else {
-                    timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
-                }
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
+            long time = UnifiedUtil.calculateTime(matcher);
+            if (!isEndstamp()) {
+                timestamp = time;
+            } else {
+                timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
         }
     }

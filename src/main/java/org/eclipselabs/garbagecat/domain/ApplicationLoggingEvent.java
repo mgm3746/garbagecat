@@ -73,7 +73,7 @@ public class ApplicationLoggingEvent implements ThrowAwayEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX[] = {
+    private static final String _REGEX[] = {
             // HH:MM:SS datestamp
             "^(\\d{4}-\\d{2}-\\d{2} )?\\d{2}:\\d{2}:\\d{2},\\d{3} (DEBUG|ERROR|FATAL|INFO|TRACE|WARN) .*$",
             // Exceptions, Errors
@@ -105,10 +105,10 @@ public class ApplicationLoggingEvent implements ThrowAwayEvent {
             //
     };
 
-    private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
+    private static final List<Pattern> REGEX_LIST = new ArrayList<>(_REGEX.length);
 
     static {
-        for (String regex : REGEX) {
+        for (String regex : _REGEX) {
             REGEX_LIST.add(Pattern.compile(regex));
         }
     }

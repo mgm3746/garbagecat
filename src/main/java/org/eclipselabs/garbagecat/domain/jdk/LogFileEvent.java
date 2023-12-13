@@ -42,13 +42,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class LogFileEvent implements LogEvent {
 
-    public static final Pattern pattern = Pattern.compile(LogFileEvent.REGEX);
-
     /**
      * Regular expressions defining the logging JDK8 and prior.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DATETIME
+    private static final String _REGEX = "^(" + JdkRegEx.DATETIME
             + ") GC log (file created|file has reached the maximum size|rotation request has been received).+$";
+
+    public static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -58,7 +58,7 @@ public class LogFileEvent implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**

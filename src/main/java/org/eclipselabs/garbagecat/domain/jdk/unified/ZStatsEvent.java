@@ -27,7 +27,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.unified.ZCollector} output at then end of gc logging and periodically
+ * {@link org.eclipselabs.garbagecat.domain.jdk.unified.ZCollector} output at the end of gc logging and periodically
  * based on {@link org.github.joa.JvmOptions#getzStatisticsInterval()} when diagnostics are enabled
  * (<code>-XX:+UnlockDiagnosticVMOptions</code>).
  * </p>
@@ -186,15 +186,15 @@ public class ZStatsEvent extends ZCollector implements ThrowAwayEvent, HeaderEve
     /**
      * Regular expression for the header.
      */
-    public static final String _REGEX_HEADER = "^(" + UnifiedRegEx.DECORATOR
+    public static final String __REGEX_HEADER = "^(" + UnifiedRegEx.DECORATOR
             + ") ={3} Garbage Collection Statistics ={119}$";
 
     /**
      * Regular expression defining standard logging.
      */
-    private static final String REGEX[] = {
+    private static final String _REGEX[] = {
             // Header
-            _REGEX_HEADER,
+            __REGEX_HEADER,
             //
             "^" + UnifiedRegEx.DECORATOR + "[ ]+Last 10s[ ]+Last 10m[ ]+Last 10h[ ]+Total[ ]*$",
             //
@@ -209,10 +209,10 @@ public class ZStatsEvent extends ZCollector implements ThrowAwayEvent, HeaderEve
             //
     };
 
-    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(_REGEX.length);
 
     static {
-        for (String regex : REGEX) {
+        for (String regex : _REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }
@@ -260,14 +260,14 @@ public class ZStatsEvent extends ZCollector implements ThrowAwayEvent, HeaderEve
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 
     @Override
     public boolean isHeader() {
         boolean isHeader = false;
         if (this.logEntry != null) {
-            isHeader = logEntry.matches(_REGEX_HEADER);
+            isHeader = logEntry.matches(__REGEX_HEADER);
         }
         return isHeader;
     }

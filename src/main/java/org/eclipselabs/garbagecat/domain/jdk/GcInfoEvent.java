@@ -105,7 +105,7 @@ public class GcInfoEvent implements ThrowAwayEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX[] = {
+    private static final String _REGEX[] = {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Humongous object threshold: " + JdkRegEx.SIZE + "$",
             //
@@ -142,13 +142,13 @@ public class GcInfoEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )?Heuristics ergonomically sets (-XX:\\+ExplicitGCInvokesConcurrent|"
                     + "-XX:\\+ShenandoahImplicitGCInvokesConcurrent)$"
-            //
+
     };
 
-    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(_REGEX.length);
 
     static {
-        for (String regex : REGEX) {
+        for (String regex : _REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }

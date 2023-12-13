@@ -69,16 +69,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class G1CleanupEvent extends G1Collector implements BlockingEvent, ParallelEvent, CombinedData, TimesData {
 
-    private static final Pattern pattern = Pattern.compile(G1CleanupEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR
             + " \\[GC cleanup( )?(1745.419: \\[G1Ergonomics \\(Concurrent Cycles\\) finish cleanup, occupancy: "
             + JdkRegEx.SIZE_BYTES + " bytes, capacity: " + JdkRegEx.SIZE_BYTES + " bytes, known garbage: "
             + JdkRegEx.SIZE_BYTES + " bytes \\(\\d{1,2}\\.\\d{2} %\\)\\])?(" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\))?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -88,7 +88,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -144,7 +144,7 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
      */
     public G1CleanupEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();

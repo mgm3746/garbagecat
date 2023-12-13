@@ -62,7 +62,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZStatsEvent;
@@ -265,6 +264,7 @@ public class GcManager {
         jvmRun.setExtRootScanningTimeMax(jvmDao.getExtRootScanningTimeMax());
         jvmRun.setExtRootScanningTimeTotal(jvmDao.getExtRootScanningTimeTotal());
         jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
+        jvmRun.setFirstLogEvent(jvmDao.getFirstLogEvent());
         jvmRun.setFirstSafepointEvent(jvmDao.getFirstSafepointEvent());
         jvmRun.setGcBottlenecks(getGcBottlenecks(throughputThreshold));
         jvmRun.setGcPauseMax(jvmDao.getDurationMax());
@@ -1111,16 +1111,16 @@ public class GcManager {
                 jvmDao.getJvmContext().setBuildDate(((HeaderVmInfoEvent) event).getBuildDate());
                 jvmDao.getJvmContext().setReleaseString(((HeaderVmInfoEvent) event).getJdkReleaseString());
                 jvmDao.setVmInfo(((HeaderVmInfoEvent) event).getLogEntry());
-            } else if (event instanceof UnifiedHeaderVersionEvent) {
+            } else if (event instanceof UnifiedHeaderEvent && ((UnifiedHeaderEvent) event).isVersion()) {
                 jvmDao.setLogEndingUnidentified(false);
-                jvmDao.getJvmContext().setVersionMajor(((UnifiedHeaderVersionEvent) event).getJdkVersionMajor());
-                jvmDao.getJvmContext().setVersionMinor(((UnifiedHeaderVersionEvent) event).getJdkVersionMinor());
-                jvmDao.getJvmContext().setReleaseString(((UnifiedHeaderVersionEvent) event).getJdkReleaseString());
-                jvmDao.setVmInfo(((UnifiedHeaderVersionEvent) event).getJdkReleaseString());
+                jvmDao.getJvmContext().setVersionMajor(((UnifiedHeaderEvent) event).getJdkVersionMajor());
+                jvmDao.getJvmContext().setVersionMinor(((UnifiedHeaderEvent) event).getJdkVersionMinor());
+                jvmDao.getJvmContext().setReleaseString(((UnifiedHeaderEvent) event).getJdkReleaseString());
+                jvmDao.setVmInfo(((UnifiedHeaderEvent) event).getJdkReleaseString());
             } else if (event instanceof LogFileEvent) {
                 jvmDao.setLogEndingUnidentified(false);
                 if (((LogFileEvent) event).isCreated()) {
-                    Matcher matcher = LogFileEvent.pattern.matcher(((LogFileEvent) event).getLogEntry());
+                    Matcher matcher = LogFileEvent.PATTERN.matcher(((LogFileEvent) event).getLogEntry());
                     if (matcher.find()) {
                         jvmDao.setLogFileDate(GcUtil.parseDatetime(logLine));
                     }
@@ -1196,6 +1196,10 @@ public class GcManager {
                 if (!jvmDao.getJvmContext().getGarbageCollectors().contains(((GcEvent) event).getGarbageCollector())) {
                     jvmDao.getJvmContext().getGarbageCollectors().add(((GcEvent) event).getGarbageCollector());
                 }
+            }
+            // Populate first log event with a valid timestamp
+            if (event instanceof LogEvent && event.getTimestamp() > 0 && jvmDao.getFirstLogEvent() == null) {
+                jvmDao.setFirstLogEvent(event);
             }
             priorLogLine = logLine;
         }

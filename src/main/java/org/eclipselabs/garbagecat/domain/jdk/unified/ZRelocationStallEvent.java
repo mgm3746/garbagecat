@@ -15,58 +15,39 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * USING_G1
- * 
- * TODO: Move to UnifiedHeaderEvent?
+ * Z_ALLOCATION_STALL
  * </p>
  * 
  * <p>
- * Initial line of JDK9+ logging indicating collector family.
+ * A thread that is stalled waiting for relocation.
  * </p>
  * 
  * <h2>Example Logging</h2>
  * 
- * <p>
- * 1) With <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).
- * </p>
- * 
  * <pre>
- * [0.003s][info][gc] Using G1
- * </pre>
- * 
- * <p>
- * 2) With <code>-Xlog:gc*:file=&lt;file&gt;</code> (details).
- * </p>
- * 
- * <pre>
- * [0.003s][info][gc     ] Using G1
- * </pre>
- * 
- * <p>
- * 3) With datestamp, no gc, no logging level, ms (JDK11).
- * </p>
- * 
- * <pre>
- * [2019-05-09T01:38:55.426+0000][18ms] Using G1
+ * [123456.789s][info][gc          ] Relocation Stall (default task-1234) 1.234ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UsingG1Event extends G1Collector implements UnifiedLogging {
-    private static Pattern pattern = Pattern.compile(UsingG1Event.REGEX);
+public class ZRelocationStallEvent extends ZCollector implements UnifiedLogging {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Using G1[ ]*$";
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Relocation Stall \\(.+\\) "
+            + JdkRegEx.DURATION_MS + "[ ]*$";
+
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -76,9 +57,13 @@ public class UsingG1Event extends G1Collector implements UnifiedLogging {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
+    /**
+     * The elapsed clock time for the event in microseconds (rounded).
+     */
+    private long eventTime;
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -95,31 +80,22 @@ public class UsingG1Event extends G1Collector implements UnifiedLogging {
      * @param logEntry
      *            The log entry for the event.
      */
-    public UsingG1Event(String logEntry) {
+    public ZRelocationStallEvent(String logEntry) {
         this.logEntry = logEntry;
-
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(13));
-                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            timestamp = Long.parseLong(matcher.group(17));
-                        } else {
-                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                        }
-                    } else {
-                        // Datestamp only.
-                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                    }
-                }
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
+            long time = UnifiedUtil.calculateTime(matcher);
+            if (!isEndstamp()) {
+                timestamp = time;
+            } else {
+                timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
         }
+    }
+
+    public long getDurationMicros() {
+        return eventTime;
     }
 
     public String getLogEntry() {
@@ -127,7 +103,7 @@ public class UsingG1Event extends G1Collector implements UnifiedLogging {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.USING_G1.toString();
+        return JdkUtil.LogEventType.Z_RELOCATION_STALL.toString();
     }
 
     @Override
@@ -139,8 +115,8 @@ public class UsingG1Event extends G1Collector implements UnifiedLogging {
         return timestamp;
     }
 
+    @Override
     public boolean isEndstamp() {
-        boolean isEndStamp = false;
-        return isEndStamp;
+        return true;
     }
 }

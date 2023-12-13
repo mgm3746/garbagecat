@@ -51,13 +51,13 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class HeapRegionSizeEvent implements UnifiedLogging, ThrowAwayEvent {
 
-    private static final Pattern pattern = Pattern.compile(HeapRegionSizeEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Heap region size:( \\d{1,4} x)? "
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Heap region size:( \\d{1,4} x)? "
             + JdkRegEx.SIZE + "$";
+
+    private static final Pattern PATTERN = Pattern.compile(HeapRegionSizeEvent._REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -67,7 +67,7 @@ public class HeapRegionSizeEvent implements UnifiedLogging, ThrowAwayEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**

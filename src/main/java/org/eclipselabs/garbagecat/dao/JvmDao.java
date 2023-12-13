@@ -49,7 +49,6 @@ import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
@@ -129,6 +128,11 @@ public class JvmDao {
      * Total external root scanning time (microseconds).
      */
     private long extRootScanningTimeTotal;
+
+    /**
+     * The first log event.
+     */
+    private LogEvent firstLogEvent;
 
     /**
      * List of all GC triggers associate with the JVM run.
@@ -426,8 +430,12 @@ public class JvmDao {
      * @return The first blocking event.
      */
     public synchronized BlockingEvent getFirstGcEvent() {
-        // TODO JdkUtil#parseLogLine no longer needed?
+        // TODO: JdkUtil#parseLogLine no longer needed?
         return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(0);
+    }
+
+    public LogEvent getFirstLogEvent() {
+        return firstLogEvent;
     }
 
     /**
@@ -766,9 +774,8 @@ public class JvmDao {
             rs = statement.executeQuery(sql.toString());
             while (rs.next()) {
                 Trigger trigger = UnifiedSafepoint.identifyTrigger(rs.getString(1));
-                SafepointEventSummary summary = new SafepointEventSummary(trigger, rs.getLong(2),
-                        JdkMath.convertNanosToMillis(rs.getLong(3)).longValue(),
-                        JdkMath.convertNanosToMillis(rs.getLong(4)).intValue());
+                SafepointEventSummary summary = new SafepointEventSummary(trigger, rs.getLong(2), rs.getLong(3),
+                        rs.getLong(4));
                 safepointEventSummaries.add(summary);
             }
         } catch (SQLException e) {
@@ -867,7 +874,7 @@ public class JvmDao {
      * @return maximum pause duration (nanoseconds).
      */
     public synchronized long getUnifiedSafepointTimeMax() {
-        return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDurationMicros).mapToLong(Long::valueOf)
+        return longs(this.unifiedSafepointEvents, UnifiedSafepointEvent::getDurationNanos).mapToLong(Long::valueOf)
                 .max().orElse(0);
     }
 
@@ -934,6 +941,10 @@ public class JvmDao {
 
     public void setExtRootScanningTimeTotal(long extRootScanningTimeTotal) {
         this.extRootScanningTimeTotal = extRootScanningTimeTotal;
+    }
+
+    public void setFirstLogEvent(LogEvent firstLogEvent) {
+        this.firstLogEvent = firstLogEvent;
     }
 
     /**

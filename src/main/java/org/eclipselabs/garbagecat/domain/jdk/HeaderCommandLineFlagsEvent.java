@@ -68,7 +68,7 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
      */
     private static final String _REGEX = "^(CommandLine flags:|  JAVA_OPTS:)[ ]{1,2}(.+)$";
 
-    private static Pattern pattern = Pattern.compile(_REGEX);
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -78,7 +78,7 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -107,7 +107,7 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
      */
     public String getJvmOptions() {
         String jvmOptions = null;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             jvmOptions = matcher.group(2);
         }

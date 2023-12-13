@@ -41,12 +41,12 @@ public class MetaspaceUtilsReportEvent implements ThrowAwayEvent {
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
+    private static final String _REGEX = "^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
             + ")\\])?[ ]+(Both|CDS|Chunk freelists|Class( space)?|CompressedClassSpaceSize|"
             + "(Current|Initial) GC threshold|MaxMetaspaceSize|Non-[cC]lass( space)?|Usage|Virtual space):.*$";
 
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+    private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -68,6 +68,6 @@ public class MetaspaceUtilsReportEvent implements ThrowAwayEvent {
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 }

@@ -1,0 +1,3 @@
+[2023-08-18T08:47:56.693+0200][info][gc,init] Initializing The Z Garbage Collector
+[2023-08-18T09:00:08.525+0200][info][gc     ] Using The Z Garbage Collector
+[2023-08-18T09:00:08.608+0200][info][safepoint   ] Safepoint "PrintThreads", Time since last: 68743502 ns, Reaching safepoint: 85909 ns, Cleanup: 52720 ns, At safepoint: 1453301 ns, Total: 1591930 ns

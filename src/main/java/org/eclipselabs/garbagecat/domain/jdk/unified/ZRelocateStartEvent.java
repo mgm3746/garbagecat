@@ -42,12 +42,12 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  */
 public class ZRelocateStartEvent extends ZCollector implements UnifiedLogging, BlockingEvent {
 
-    private static final Pattern PATTERN = Pattern.compile(ZRelocateStartEvent.REGEX);
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Relocate Start " + JdkRegEx.DURATION_MS
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Relocate Start " + JdkRegEx.DURATION_MS
             + "[ ]*$";
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -59,6 +59,7 @@ public class ZRelocateStartEvent extends ZCollector implements UnifiedLogging, B
     public static final boolean match(String logLine) {
         return PATTERN.matcher(logLine).matches();
     }
+
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
@@ -81,17 +82,14 @@ public class ZRelocateStartEvent extends ZCollector implements UnifiedLogging, B
      */
     public ZRelocateStartEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
-                long time = UnifiedUtil.calculateTime(matcher);
-                if (!isEndstamp()) {
-                    timestamp = time;
-                } else {
-                    timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
-                }
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
+            long time = UnifiedUtil.calculateTime(matcher);
+            if (!isEndstamp()) {
+                timestamp = time;
+            } else {
+                timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
         }
     }

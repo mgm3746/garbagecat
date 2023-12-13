@@ -91,12 +91,13 @@ class TestUnifiedHeaderEvent {
 
     @Test
     void testCdsArchivesMappedAt() {
+        String priorLogLine = "[0.018s][info][gc     ] Using The Z Garbage Collector";
         String logLine = "[0.013s][info][gc,metaspace] CDS archive(s) mapped at: "
                 + "[0x0000000800000000-0x0000000800be2000-0x0000000800be2000), size 12460032, SharedBaseAddress: "
                 + "0x0000000800000000, ArchiveRelocationMode: 0.";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
                 JdkUtil.LogEventType.GC_INFO + "not identified.");
     }
 
@@ -139,10 +140,13 @@ class TestUnifiedHeaderEvent {
 
     @Test
     void testCpus() {
+        String priorLogLine = "[0.013s][info][gc,init] Version: 17.0.1+12-LTS (release)";
+        assertTrue(UnifiedHeaderEvent.match(priorLogLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         String logLine = "[0.013s][info][gc,init] CPUs: 12 total, 12 available";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
                 JdkUtil.LogEventType.GC_INFO + "not identified.");
     }
 
@@ -156,15 +160,11 @@ class TestUnifiedHeaderEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.GC_INFO),
                 JdkUtil.LogEventType.GC_INFO.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER_VERSION),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertEquals("17.0.1+12-LTS", jvmRun.getJvmContext().getReleaseString(), "JDK version string not correct.");
         assertEquals(17, jvmRun.getJvmOptions().getJvmContext().getVersionMajor(), "JDK major version not correct.");
         assertEquals(1, jvmRun.getJvmOptions().getJvmContext().getVersionMinor(), "JDK minor version not correct.");
@@ -252,11 +252,23 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testHeuristics() {
+    void testHeuristicsAdaptive() {
         String logLine = "[0.014s][info][gc,init] Heuristics: Adaptive";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testHeuristicsErgonomicallySets() {
+        String priorLogLine = "[0.013s][info][gc] Heuristics ergonomically sets -XX:+ExplicitGCInvokesConcurrent";
+        assertTrue(UnifiedHeaderEvent.match(priorLogLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        String logLine = "[0.013s][info][gc] Heuristics ergonomically sets -XX:+ShenandoahImplicitGCInvokesConcurrent";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
                 JdkUtil.LogEventType.GC_INFO + "not identified.");
     }
 
@@ -435,6 +447,18 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testNumaNodes() {
+        String priorLogLine = "[2023-12-12T08:47:56.693+0200][info][gc,init] NUMA Support: Enabled";
+        assertTrue(UnifiedHeaderEvent.match(priorLogLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        String logLine = "[2023-12-12T08:47:56.693+0200][info][gc,init] NUMA Nodes: 4";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "incorrectly identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
+                JdkUtil.LogEventType.GC_INFO + "incorrectly identified.");
+    }
+
+    @Test
     void testNumaSupport() {
         String logLine = "[0.013s][info][gc,init] NUMA Support: Disabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
@@ -457,11 +481,7 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.LogEventType.GC_INFO.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER_VERSION),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_PARALLEL),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_PARALLEL.toString() + ".");
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -543,15 +563,11 @@ class TestUnifiedHeaderEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.GC_INFO),
                 JdkUtil.LogEventType.GC_INFO.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER_VERSION),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SERIAL),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_SERIAL.toString() + ".");
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -565,17 +581,11 @@ class TestUnifiedHeaderEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER_VERSION),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_SHENANDOAH),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_SHENANDOAH.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.GC_INFO),
-                "Log line not recognized as " + JdkUtil.LogEventType.GC_INFO.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SHENANDOAH_TRIGGER),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
-        assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -642,11 +652,105 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testVersion() {
-        String logLine = "[2022-12-29T10:13:48.750+0000][0.028s] Version: 17.0.5+8-LTS (release)";
-        assertNotEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "incorrectly identified.");
+    void testUsingCms() {
+        String logLine = "[3ms] GC(6) Using Concurrent Mark Sweep";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testUsingCmsParsin() throws IOException {
+        File testFile = TestUtil.getFile("dataset151.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+    }
+
+    @Test
+    void testUsingG1() {
+        String logLine = "[2019-05-09T01:38:55.426+0000][18ms] Using G1";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testUsingParallel() {
+        String logLine = "[0.002s][info][gc] Using Parallel";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testUsingSerial() {
+        String logLine = "[0.003s][info][gc] Using Serial";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testUsingShenandoah() {
+        String logLine = "[0.006s][info][gc] Using Shenandoah";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testUsingZ() {
+        String logLine = "[0.018s][info][gc     ] Using The Z Garbage Collector";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testVersionJdk17() {
+        String logLine = "[2022-12-29T10:13:48.750+0000][0.028s] Version: 17.0.5+8-LTS (release)";
+        UnifiedHeaderEvent event = new UnifiedHeaderEvent(logLine);
+        assertTrue(event.isVersion(), "Version information not identified.");
+        assertEquals(17, event.getJdkVersionMajor(), "JDK major version not correct.");
+        assertEquals(5, event.getJdkVersionMinor(), "JDK minor version not correct.");
+        assertEquals("17.0.5+8-LTS", event.getJdkReleaseString(), "JDK release string not correct.");
+    }
+
+    @Test
+    void testVersionJdk21() {
+        String priorLogLine = "[0.001s][info][gc,init] Initializing The Z Garbage Collector";
+        assertTrue(UnifiedHeaderEvent.match(priorLogLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        String logLine = "[0.006s][info][gc,init] Version: 21.0.1+12-LTS (release)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "incorrectly identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
+                JdkUtil.LogEventType.GC_INFO + "incorrectly identified.");
+    }
+
+    @Test
+    void testVersionJdk21NoMinorVersion() {
+        String priorLogLine = "[0.001s][info][gc,init] Initializing The Z Garbage Collector";
+        assertTrue(UnifiedHeaderEvent.match(priorLogLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        String logLine = "[2023-12-12T08:47:56.693+0200][info][gc,init] Version: 21+35-2513 (release)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "incorrectly identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
                 JdkUtil.LogEventType.GC_INFO + "incorrectly identified.");
     }
 
@@ -660,15 +764,11 @@ class TestUnifiedHeaderEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.GC_INFO),
                 JdkUtil.LogEventType.GC_INFO.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER_VERSION),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER_VERSION.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_Z),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_Z.toString() + ".");
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test

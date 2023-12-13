@@ -36,12 +36,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class VmWarningEvent implements UnifiedLogging {
-    private static final Pattern pattern = Pattern.compile(VmWarningEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^OpenJDK 64-Bit Server VM warning: (.+\\(error = (\\d{1,2})\\))$";
+    private static final String _REGEX = "^OpenJDK 64-Bit Server VM warning: (.+\\(error = (\\d{1,2})\\))$";
+
+    private static final Pattern PATTERN = Pattern.compile(VmWarningEvent._REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -51,7 +51,7 @@ public class VmWarningEvent implements UnifiedLogging {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -80,7 +80,7 @@ public class VmWarningEvent implements UnifiedLogging {
      */
     public String getErrNo() {
         String errNo = null;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             errNo = matcher.group(2);
         }

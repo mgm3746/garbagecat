@@ -254,7 +254,7 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 
     public boolean isEndstamp() {

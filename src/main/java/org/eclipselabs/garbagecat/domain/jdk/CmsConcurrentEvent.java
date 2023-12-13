@@ -78,16 +78,16 @@ import org.github.joa.domain.GarbageCollector;
  */
 public class CmsConcurrentEvent extends CmsCollector implements LogEvent, ParallelEvent {
 
-    private static Pattern pattern = Pattern.compile(CmsConcurrentEvent.REGEX);
-
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.DECORATOR + " \\[CMS)?"
+    private static final String _REGEX = "^( CMS: abort preclean due to time )?(" + JdkRegEx.DECORATOR + " \\[CMS)?"
             + JdkRegEx.DECORATOR
             + " \\[CMS-concurrent-(abortable-preclean|abortable-preclean-start|mark|mark-start|preclean|preclean-start|"
             + "reset|reset-start|sweep|sweep-start)(: " + JdkRegEx.DURATION_FRACTION + ")?\\]" + TimesData.REGEX
             + "?[ ]*$";
+
+    private static Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -97,7 +97,7 @@ public class CmsConcurrentEvent extends CmsCollector implements LogEvent, Parall
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     @Override
@@ -114,6 +114,6 @@ public class CmsConcurrentEvent extends CmsCollector implements LogEvent, Parall
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 }

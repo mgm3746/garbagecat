@@ -50,14 +50,14 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class HeaderMemoryEvent implements LogEvent {
 
-    private static Pattern pattern = Pattern.compile(HeaderMemoryEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^Memory: (4|8)k page, physical " + HeaderMemoryEvent.SIZE + "\\("
+    private static final String _REGEX = "^Memory: (4|8)k page, physical " + HeaderMemoryEvent.SIZE + "\\("
             + HeaderMemoryEvent.SIZE + " free\\)(, swap " + HeaderMemoryEvent.SIZE + "\\(" + HeaderMemoryEvent.SIZE
             + " free\\))?$";
+
+    private static Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Regular expression for memory size.
@@ -72,7 +72,7 @@ public class HeaderMemoryEvent implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -114,7 +114,7 @@ public class HeaderMemoryEvent implements LogEvent {
     public HeaderMemoryEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             physicalMemory = Integer.parseInt(matcher.group(2));
             physicalMemoryFree = Integer.parseInt(matcher.group(3));

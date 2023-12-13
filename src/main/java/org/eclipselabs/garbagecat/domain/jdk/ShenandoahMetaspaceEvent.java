@@ -53,17 +53,17 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class ShenandoahMetaspaceEvent extends ShenandoahCollector implements ThrowAwayEvent {
 
-    private static Pattern pattern = Pattern.compile(ShenandoahMetaspaceEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
+    private static final String _REGEX = "^^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
             + ")\\])?(\\[info\\]\\[gc,metaspace\\])? Metaspace: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) NonClass: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[ ]*$";
+
+    private static Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -73,7 +73,7 @@ public class ShenandoahMetaspaceEvent extends ShenandoahCollector implements Thr
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -100,6 +100,6 @@ public class ShenandoahMetaspaceEvent extends ShenandoahCollector implements Thr
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 }

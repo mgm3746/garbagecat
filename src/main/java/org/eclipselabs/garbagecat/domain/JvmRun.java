@@ -124,6 +124,11 @@ public class JvmRun {
     private BlockingEvent firstGcEvent;
 
     /**
+     * The first log event.
+     */
+    private LogEvent firstLogEvent;
+
+    /**
      * The first safepoint event.
      */
     private SafepointEvent firstSafepointEvent;
@@ -431,18 +436,22 @@ public class JvmRun {
             analysis.remove(WARN_SERIAL_GC);
         }
         // Check for partial log
-        if (firstGcEvent != null || firstSafepointEvent != null) {
-            long firstTimeStamp = Long.MIN_VALUE;
-            if (firstGcEvent != null && !firstGcEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
-                    && !firstGcEvent.getLogEntry().matches(UnifiedRegEx.TIME_DECORATOR)) {
-                firstTimeStamp = firstGcEvent.getTimestamp();
+        if (firstLogEvent != null) {
+            long firstLogEventTimestamp = Long.MIN_VALUE;
+            if (!firstLogEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
+                    && !firstLogEvent.getLogEntry().matches(UnifiedRegEx.TIME_DECORATOR)) {
+                firstLogEventTimestamp = firstLogEvent.getTimestamp();
             }
-            if (firstSafepointEvent != null && !firstSafepointEvent.getLogEntry().matches(JdkRegEx.DATESTAMP_EVENT)
-                    && !firstSafepointEvent.getLogEntry().matches(UnifiedRegEx.TIME_DECORATOR)
-                    && firstSafepointEvent.getTimestamp() < firstTimeStamp) {
-                firstTimeStamp = firstSafepointEvent.getTimestamp();
+            if (firstLogEventTimestamp < 0 && startDate != null) {
+                /*
+                 * firstLogEvent must have a timestamp based on {@link org.eclipselabs.garbagecat.util.GcUtil}
+                 * JVM_START_DATE. Convert that timestamp to a date.
+                 */
+                Date firstLogEventDate = GcUtil.getDatePlusTimestamp(GcUtil.JVM_START_DATE,
+                        firstLogEvent.getTimestamp());
+                firstLogEventTimestamp = GcUtil.dateDiff(startDate, firstLogEventDate);
             }
-            if (GcUtil.isPartialLog(firstTimeStamp)) {
+            if (firstLogEventTimestamp > 0 && GcUtil.isPartialLog(firstLogEventTimestamp)) {
                 analysis.add(INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED);
             }
         }
@@ -743,7 +752,7 @@ public class JvmRun {
     }
 
     /**
-     * @return The first gc or stopped event.
+     * @return The first gc or safepoint event.
      */
     public LogEvent getFirstEvent() {
         LogEvent event = null;
@@ -800,6 +809,10 @@ public class JvmRun {
 
     public BlockingEvent getFirstGcEvent() {
         return firstGcEvent;
+    }
+
+    public LogEvent getFirstLogEvent() {
+        return firstLogEvent;
     }
 
     public SafepointEvent getFirstSafepointEvent() {
@@ -1273,6 +1286,10 @@ public class JvmRun {
 
     public void setFirstGcEvent(BlockingEvent firstGcEvent) {
         this.firstGcEvent = firstGcEvent;
+    }
+
+    public void setFirstLogEvent(LogEvent firstLogEvent) {
+        this.firstLogEvent = firstLogEvent;
     }
 
     public void setFirstSafepointEvent(SafepointEvent firstSafepointEvent) {

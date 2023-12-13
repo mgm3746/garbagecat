@@ -534,7 +534,7 @@ public class Main {
                 Iterator<SafepointEventSummary> iterator = summaries.iterator();
                 while (iterator.hasNext()) {
                     SafepointEventSummary summary = iterator.next();
-                    BigDecimal pauseTotal = JdkMath.convertMillisToSecs(summary.getPauseTotal());
+                    BigDecimal pauseTotal = JdkMath.convertMicrosToSecs(summary.getPauseTotal());
                     String pauseTotalString = null;
                     if (pauseTotal.toString().equals("0.000")) {
                         // give rounding hint
@@ -545,7 +545,7 @@ public class Main {
                     BigDecimal percent;
                     if (jvmRun.getUnifiedSafepointTimeTotal() > 0) {
                         percent = new BigDecimal(summary.getPauseTotal());
-                        percent = percent.divide(JdkMath.convertNanosToMillis(jvmRun.getUnifiedSafepointTimeTotal()), 2,
+                        percent = percent.divide(JdkMath.convertNanosToMicros(jvmRun.getUnifiedSafepointTimeTotal()), 2,
                                 RoundingMode.HALF_EVEN);
                         percent = percent.movePointRight(2);
                     } else {
@@ -558,7 +558,7 @@ public class Main {
                     } else {
                         percentString = percent.toString();
                     }
-                    BigDecimal pauseMax = JdkMath.convertMillisToSecs(summary.getPauseMax());
+                    BigDecimal pauseMax = JdkMath.convertMicrosToSecs(summary.getPauseMax());
                     String pauseMaxString = null;
                     if (pauseMax.toString().equals("0.000")) {
                         // give rounding hint

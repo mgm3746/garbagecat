@@ -91,8 +91,8 @@ class TestZStatsEvent {
     void testUnified() {
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
         eventTypes.add(LogEventType.Z_STATS);
-        assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.Z_STATS.toString() + " incorrectly indentified as unified.");
+        assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
+                JdkUtil.LogEventType.Z_STATS.toString() + " not indentified as unified.");
     }
 
     @Test

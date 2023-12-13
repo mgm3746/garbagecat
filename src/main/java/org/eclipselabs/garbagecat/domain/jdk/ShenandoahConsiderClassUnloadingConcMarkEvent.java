@@ -52,14 +52,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCollector implements ThrowAwayEvent {
 
-    private static Pattern pattern = Pattern.compile(ShenandoahConsiderClassUnloadingConcMarkEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR
             + " Consider -XX:\\+ClassUnloadingWithConcurrentMark if large pause times are "
             + "observed on class-unloading sensitive workloads[ ]*$";
+
+    private static Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -69,7 +69,7 @@ public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCol
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -90,26 +90,22 @@ public class ShenandoahConsiderClassUnloadingConcMarkEvent extends ShenandoahCol
      */
     public ShenandoahConsiderClassUnloadingConcMarkEvent(String logEntry) {
         this.logEntry = logEntry;
-
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(13));
-                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            timestamp = Long.parseLong(matcher.group(17));
-                        } else {
-                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                        }
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                timestamp = Long.parseLong(matcher.group(13));
+            } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            } else {
+                if (matcher.group(15) != null) {
+                    if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        timestamp = Long.parseLong(matcher.group(17));
                     } else {
-                        // Datestamp only.
-                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
                     }
+                } else {
+                    // Datestamp only.
+                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
             }
         }

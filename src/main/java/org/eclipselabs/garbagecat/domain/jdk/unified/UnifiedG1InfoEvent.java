@@ -45,16 +45,17 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX[] = {
+    private static final String _REGEX[] = {
             //
-            "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + UnifiedG1YoungInitialMarkEvent._TRIGGER + "\\)$",
+            "^" + UnifiedRegEx.DECORATOR + " Pause Initial Mark \\(" + UnifiedG1YoungInitialMarkEvent.__TRIGGER
+                    + "\\)$",
             //
     };
-    private static final List<Pattern> REGEX_LIST = new ArrayList<>(REGEX.length);
+    private static final List<Pattern> PATTERN = new ArrayList<>(_REGEX.length);
 
     static {
-        for (String regex : REGEX) {
-            REGEX_LIST.add(Pattern.compile(regex));
+        for (String regex : _REGEX) {
+            PATTERN.add(Pattern.compile(regex));
         }
     }
 
@@ -67,8 +68,8 @@ public class UnifiedG1InfoEvent implements UnifiedLogging, ThrowAwayEvent {
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        for (int i = 0; i < REGEX_LIST.size(); i++) {
-            Pattern pattern = REGEX_LIST.get(i);
+        for (int i = 0; i < PATTERN.size(); i++) {
+            Pattern pattern = PATTERN.get(i);
             if (pattern.matcher(logLine).matches()) {
                 match = true;
                 break;

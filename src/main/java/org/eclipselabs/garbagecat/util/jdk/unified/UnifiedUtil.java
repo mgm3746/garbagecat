@@ -12,12 +12,10 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk.unified;
 
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
-import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
@@ -31,11 +29,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
  * 
  */
 public final class UnifiedUtil {
-
-    /**
-     * Arbitrary date for determining time intervals when gc logging includes only uptime.
-     */
-    public static final Date JVM_START_DATE = GcUtil.parseDateStamp("2000-01-01T00:00:00.000-0500");
 
     /**
      * @param matcher
@@ -92,7 +85,6 @@ public final class UnifiedUtil {
             case UNIFIED_G1_YOUNG_PAUSE:
             case UNIFIED_G1_YOUNG_PREPARE_MIXED:
             case UNIFIED_HEADER:
-            case UNIFIED_HEADER_VERSION:
             case UNIFIED_OLD:
             case UNIFIED_REMARK:
             case UNIFIED_PARALLEL_COMPACTING_OLD:
@@ -101,12 +93,7 @@ public final class UnifiedUtil {
             case UNIFIED_SERIAL_NEW:
             case UNIFIED_SERIAL_OLD:
             case UNIFIED_YOUNG:
-            case USING_CMS:
-            case USING_G1:
-            case USING_PARALLEL:
-            case USING_SERIAL:
-            case USING_SHENANDOAH:
-            case USING_Z:
+            case Z_ALLOCATION_STALL:
             case Z_MARK_END:
             case Z_MARK_END_OLD:
             case Z_MARK_END_YOUNG:
@@ -116,6 +103,8 @@ public final class UnifiedUtil {
             case Z_RELOCATE_START:
             case Z_RELOCATE_START_OLD:
             case Z_RELOCATE_START_YOUNG:
+            case Z_RELOCATION_STALL:
+            case Z_STATS:
                 return true;
             default:
             }

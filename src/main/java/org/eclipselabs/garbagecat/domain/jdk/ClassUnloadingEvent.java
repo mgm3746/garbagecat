@@ -56,11 +56,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ClassUnloadingEvent implements ThrowAwayEvent {
 
-    private static final Pattern PATTERN = Pattern.compile(ClassUnloadingEvent.REGEX);
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^( )?" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
+    private static final String _REGEX = "^( )?" + JdkRegEx.UNLOADING_CLASS_BLOCK + "(.*)$";
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

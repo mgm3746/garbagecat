@@ -80,13 +80,11 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
      * 
      * 1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
             + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
             + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex()
             + ")\\) )?\\(young\\) \\(initial-mark\\)(--)? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
             + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
-
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**
      * Regular expression preprocessed.
@@ -97,7 +95,7 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
      * 2017-02-20T20:17:04.874-0500: 40442.077: [GC pause (G1 Humongous Allocation) (young) (initial-mark), 0.0142482
      * secs]
      */
-    private static final String REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
+    private static final String _REGEX_PREPROCESSED = "^" + JdkRegEx.DECORATOR + " \\[GC pause (\\(("
             + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
             + GcTrigger.SYSTEM_GC.getRegex() + ")\\) )?\\(young\\)( \\(initial-mark\\))?( \\(("
@@ -107,7 +105,9 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
             + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + " Heap: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\]" + TimesData.REGEX + "?)?[ ]*$";
 
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
+    private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
+
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

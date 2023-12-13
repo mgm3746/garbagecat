@@ -38,13 +38,13 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  */
 public class ShenandoahFinalRootsEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
 
-    private static final Pattern pattern = Pattern.compile(ShenandoahFinalRootsEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
+    private static final String _REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
             + ") Pause Final Roots " + JdkRegEx.DURATION_MS + "[ ]*$";
+
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -54,7 +54,7 @@ public class ShenandoahFinalRootsEvent extends ShenandoahCollector implements Bl
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -80,37 +80,34 @@ public class ShenandoahFinalRootsEvent extends ShenandoahCollector implements Bl
      */
     public ShenandoahFinalRootsEvent(String logEntry) {
         this.logEntry = logEntry;
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                duration = JdkMath
-                        .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 2))
-                        .intValue();
-                if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
-                    long endTimestamp;
-                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 14));
-                    } else if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIME)) {
-                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2))
-                                .longValue();
-                    } else {
-                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 15) != null) {
-                            if (matcher.group(JdkUtil.DECORATOR_SIZE + 16).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                                endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 18));
-                            } else {
-                                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 17))
-                                        .longValue();
-                            }
-                        } else {
-                            // Datestamp only.
-                            endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3));
-                        }
-                    }
-                    timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            duration = JdkMath
+                    .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 2))
+                    .intValue();
+            if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
+                long endTimestamp;
+                if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 14));
+                } else if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIME)) {
+                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2))
+                            .longValue();
                 } else {
-                    // JDK8 TBD
+                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 15) != null) {
+                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 16).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 18));
+                        } else {
+                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 17))
+                                    .longValue();
+                        }
+                    } else {
+                        // Datestamp only.
+                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3));
+                    }
                 }
+                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+            } else {
+                // JDK8 TBD
             }
         }
     }

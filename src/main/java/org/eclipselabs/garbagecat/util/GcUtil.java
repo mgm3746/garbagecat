@@ -29,6 +29,12 @@ import java.util.ResourceBundle;
 public final class GcUtil {
 
     /**
+     * Arbitrary date for determining time intervals when gc logging with a datestamp only (i.e. JVM start date
+     * unknown).
+     */
+    public static final Date JVM_START_DATE = parseDateStamp("2000-01-01T00:00:00.000-0500");
+
+    /**
      * Calculate the number of milliseconds between two dates.
      * 
      * @param start
@@ -177,8 +183,7 @@ public final class GcUtil {
     }
 
     /**
-     * Determine whether the first JVM event timestamp indicates a partial log file or events that were not in a
-     * recognizable format.
+     * Determine whether the first JVM event timestamp indicates a partial log file.
      * 
      * @param firstTimestamp
      *            The first JVM event timestamp (milliseconds).

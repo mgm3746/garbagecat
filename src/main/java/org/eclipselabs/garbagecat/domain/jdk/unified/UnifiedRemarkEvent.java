@@ -61,17 +61,17 @@ public class UnifiedRemarkEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging JDK9+.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Remark " + JdkRegEx.SIZE + "->"
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Remark " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + "[ ]*$";
-    private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
     /**
      * Regular expression defining preprocessed logging.
      */
-    private static final String REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Remark " + JdkRegEx.SIZE
+    private static final String _REGEX_PREPROCESSED = "^" + UnifiedRegEx.DECORATOR + " Pause Remark " + JdkRegEx.SIZE
             + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9
             + "[ ]*$";
+    private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
 
-    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(REGEX_PREPROCESSED);
+    private static final Pattern REGEX_PREPROCESSED_PATTERN = Pattern.compile(_REGEX_PREPROCESSED);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

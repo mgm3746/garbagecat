@@ -15,58 +15,39 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * USING_SHENANDOAH
- * 
- * TODO: Move to UnifiedHeaderEvent?
+ * Z_ALLOCATION_STALL
  * </p>
  * 
  * <p>
- * Initial line logging indicating collector family.
+ * A thread that is stalled waiting for an allocation.
  * </p>
  * 
  * <h2>Example Logging</h2>
  * 
- * <p>
- * 1) With <code>-Xlog:gc:file=&lt;file&gt;</code> (no details).
- * </p>
- * 
  * <pre>
- * [0.006s][info][gc] Using Shenandoah
- * </pre>
- * 
- * <p>
- * 2) With <code>-Xlog:gc*:file=&lt;file&gt;</code> (details).
- * </p>
- * 
- * <pre>
- * [0.005s][info][gc     ] Using Shenandoah
- * </pre>
- * 
- * <p>
- * 3) With <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>.
- * </p>
- * 
- * <pre>
- * [2019-02-05T14:47:31.092-0200][4ms] Using Shenandoah
+ * [123456.789s][info][gc          ] Allocation Stall (default task-1234) 1.234ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UsingShenandoahEvent extends ShenandoahCollector implements UnifiedLogging {
-    private static Pattern pattern = Pattern.compile(UsingShenandoahEvent.REGEX);
+public class ZAllocationStallEvent extends ZCollector implements UnifiedLogging {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + UnifiedRegEx.DECORATOR + " Using Shenandoah[ ]*$";
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Allocation Stall \\(.+\\) "
+            + JdkRegEx.DURATION_MS + "[ ]*$";
+
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -76,9 +57,13 @@ public class UsingShenandoahEvent extends ShenandoahCollector implements Unified
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
+    /**
+     * The elapsed clock time for the event in microseconds (rounded).
+     */
+    private long eventTime;
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -95,31 +80,22 @@ public class UsingShenandoahEvent extends ShenandoahCollector implements Unified
      * @param logEntry
      *            The log entry for the event.
      */
-    public UsingShenandoahEvent(String logEntry) {
+    public ZAllocationStallEvent(String logEntry) {
         this.logEntry = logEntry;
-
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    timestamp = Long.parseLong(matcher.group(13));
-                } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
-                } else {
-                    if (matcher.group(15) != null) {
-                        if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            timestamp = Long.parseLong(matcher.group(17));
-                        } else {
-                            timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                        }
-                    } else {
-                        // Datestamp only.
-                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                    }
-                }
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
+            long time = UnifiedUtil.calculateTime(matcher);
+            if (!isEndstamp()) {
+                timestamp = time;
+            } else {
+                timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
         }
+    }
+
+    public long getDurationMicros() {
+        return eventTime;
     }
 
     public String getLogEntry() {
@@ -127,7 +103,7 @@ public class UsingShenandoahEvent extends ShenandoahCollector implements Unified
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.USING_SHENANDOAH.toString();
+        return JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString();
     }
 
     @Override
@@ -139,8 +115,8 @@ public class UsingShenandoahEvent extends ShenandoahCollector implements Unified
         return timestamp;
     }
 
+    @Override
     public boolean isEndstamp() {
-        boolean isEndStamp = false;
-        return isEndStamp;
+        return true;
     }
 }

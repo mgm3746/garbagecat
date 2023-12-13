@@ -678,6 +678,18 @@ class TestAnalysis {
                         + " analysis incorrectly identified.");
     }
 
+    @Test
+    void testPartialLogDatestamps() throws IOException {
+        File testFile = TestUtil.getFile("dataset279.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
+                Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.");
+    }
+
     /**
      * Test physical memory less than heap + perm/metaspace.
      * 

@@ -63,8 +63,8 @@ class TestUnifiedG1YoungPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " collector not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.USING_G1),
-                JdkUtil.LogEventType.USING_G1.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_HEADER),
+                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " collector not identified.");
         UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (3353 - 24), event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -155,8 +155,8 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.USING_G1),
-                "Log line not recognized as " + JdkUtil.LogEventType.USING_G1.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
         UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();

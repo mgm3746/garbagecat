@@ -2900,6 +2900,20 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZAdjustingWorkersForOldGeneration() {
+        String logLine = "[3.394s][info][gc,task     ] Adjusting Workers for Old Generation: 6 -> 5";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testZAdjustingWorkersForYoungGeneration() {
+        String logLine = "[3.394s][info][gc,task     ] Adjusting Workers for Young Generation: 2 -> 4";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZAllocated() {
         String logLine = "[0.134s] GC(0) Allocated:         -                 2M (2%)            2M (2%)            "
                 + "1M (2%)             -                  -";

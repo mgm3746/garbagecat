@@ -33,7 +33,8 @@ public interface LogEvent {
     String getName();
 
     /**
-     * @return The time when the event begins, in milliseconds after JVM startup.
+     * @return The time when the event begins, in milliseconds after JVM startup or from the arbitrary point in time
+     *         {@link org.eclipselabs.garbagecat.util.GcUtil#JVM_START_DATE}, if the JVM startup time is unknown.
      */
     long getTimestamp();
 }

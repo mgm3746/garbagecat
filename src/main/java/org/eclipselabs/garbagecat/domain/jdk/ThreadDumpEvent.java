@@ -106,12 +106,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class ThreadDumpEvent implements ThrowAwayEvent {
 
-    private static final Pattern PATTERN[];
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX[] = {
+    private static final String _REGEX[] = {
             // beginning date/time
             "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
             // title
@@ -147,11 +145,13 @@ public class ThreadDumpEvent implements ThrowAwayEvent {
             //
     };
 
-    static {
-        PATTERN = new Pattern[ThreadDumpEvent.REGEX.length];
+    private static final Pattern PATTERN[];
 
-        for (int i = 0; i < REGEX.length; i++)
-            PATTERN[i] = Pattern.compile(REGEX[i]);
+    static {
+        PATTERN = new Pattern[_REGEX.length];
+
+        for (int i = 0; i < _REGEX.length; i++)
+            PATTERN[i] = Pattern.compile(_REGEX[i]);
     }
 
     /**

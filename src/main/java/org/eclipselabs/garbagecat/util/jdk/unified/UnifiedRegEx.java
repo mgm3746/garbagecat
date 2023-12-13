@@ -134,9 +134,10 @@ public class UnifiedRegEx {
      * 11.0.9+11-LTS
      * 12.0.1+12
      * 17.0.1+12-LTS
+     * 21+35-2513
      * </pre>
      */
-    public static final String RELEASE_STRING = "((9|[12]\\d)\\.\\d\\.(\\d)\\+\\d{1,}(-LTS)?)";
+    public static final String RELEASE_STRING = "((9|[12]\\d)(\\.\\d\\.(\\d))?\\+\\d{1,}(-.+)?)";
 
     /**
      * Regular expression for a `gc,start` event. Used to determine if a timestamp is when the event started or ended.
@@ -159,7 +160,7 @@ public class UnifiedRegEx {
     /**
      * Logging event with only the time decorator (datestamp).
      */
-    public static final String TIME_DECORATOR = "^\\[" + JdkRegEx.DATESTAMP + "\\] .*";
+    public static final String TIME_DECORATOR = "^\\[" + JdkRegEx.DATESTAMP + "\\].*";
 
     /**
      * Seconds since JVM started.

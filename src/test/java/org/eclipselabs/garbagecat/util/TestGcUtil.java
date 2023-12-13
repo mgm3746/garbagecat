@@ -10,70 +10,33 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk.unified;
+package org.eclipselabs.garbagecat.util;
 
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.eclipselabs.garbagecat.domain.jdk.SerialNewEvent;
+import org.junit.jupiter.api.Test;
 
 /**
- * <code>SafepointEvent</code> summary used for reporting
- * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class SafepointEventSummary {
+class TestGcUtil {
 
-    /**
-     * Total number of events.
-     */
-    private long count;
-
-    /**
-     * Max pause time (micrseconds).
-     */
-    private long pauseMax;
-
-    /**
-     * Total pause time (microseconds).
-     */
-    private long pauseTotal;
-
-    /**
-     * The <code>Trigger</code>
-     */
-    private Trigger trigger;
-
-    /**
-     * Default constructor.
-     * 
-     * @param trigger
-     *            The <code>Trigger</code>.
-     * @param count
-     *            Number of events.
-     * @param pauseTotal
-     *            Total pause time of events in microseconds.
-     * @param pauseMax
-     *            Max pause time of events in microseconds.
-     */
-    public SafepointEventSummary(Trigger trigger, long count, long pauseTotal, long pauseMax) {
-        this.trigger = trigger;
-        this.count = count;
-        this.pauseTotal = pauseTotal;
-        this.pauseMax = pauseMax;
+    @Test
+    void testPartialLogDatestamp() {
+        String logLine = "2016-11-22T09:07:01.358+0100: [GC 2016-11-22T09:07:01.358+0100: "
+                + "[DefNew: 37172K->3631K(39296K), 0.0209300 secs] 41677K->10314K(126720K), 0.0210210 secs]";
+        SerialNewEvent firstEvent = new SerialNewEvent(logLine);
+        assertTrue(GcUtil.isPartialLog(firstEvent.getTimestamp()), "Not identified as partial logging.");
     }
 
-    public long getCount() {
-        return count;
-    }
-
-    public long getPauseMax() {
-        return pauseMax;
-    }
-
-    public long getPauseTotal() {
-        return pauseTotal;
-    }
-
-    public Trigger getTrigger() {
-        return trigger;
+    @Test
+    void testPartialLogTimestamp() {
+        String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] 41677K->10314K(126720K), "
+                + "0.0210210 secs]";
+        SerialNewEvent firstEvent = new SerialNewEvent(logLine);
+        assertFalse(GcUtil.isPartialLog(firstEvent.getTimestamp()), "Incorrectly identified as partial logging.");
     }
 }

@@ -109,7 +109,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
             + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) )?" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "?[ ]*$";
 
-    private static Pattern pattern = Pattern.compile(_REGEX);
+    private static final Pattern PATTERN = Pattern.compile(UnifiedG1YoungPauseEvent._REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -119,7 +119,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -203,7 +203,7 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
      */
     public UnifiedG1YoungPauseEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 33)).intValue();
             long time = UnifiedUtil.calculateTime(matcher);

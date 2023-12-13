@@ -46,7 +46,7 @@ public class UnknownEvent implements LogEvent {
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 
 }

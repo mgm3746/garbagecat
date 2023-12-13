@@ -448,14 +448,15 @@ class TestParNewEvent {
     }
 
     /**
-     * Test datestamp only logging with passing in JVM start datetime.
+     * Test datestamp only logging with JVM start datetime passed in.
      * 
      * @throws IOException
      */
     @Test
     void testParNewDatestampNoTimestampJvmStartDate() throws IOException {
         File testFile = TestUtil.getFile("dataset113.txt");
-        Date jvmStartDate = GcUtil.parseDateStamp("2017-02-28T11:26:24.135+0100");
+        // Set jvm start date to 61 seconds before logging
+        Date jvmStartDate = GcUtil.parseDateStamp("2017-02-28T11:25:23.135+0100");
         GcManager gcManager = new GcManager(jvmStartDate);
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
@@ -464,8 +465,8 @@ class TestParNewEvent {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
-                Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
+                Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis not identified.");
     }
 
     /**
@@ -488,6 +489,8 @@ class TestParNewEvent {
                 Analysis.INFO_UNIDENTIFIED_LOG_LINE_LAST + " analysis incorrectly identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT.getKey()),
                 Analysis.WARN_UNIDENTIFIED_LOG_LINE_REPORT + " analysis incorrectly identified.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
+                Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis incorrectly identified.");
     }
 
     /**

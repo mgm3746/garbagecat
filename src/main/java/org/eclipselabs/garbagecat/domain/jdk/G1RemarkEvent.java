@@ -54,13 +54,13 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  */
 public class G1RemarkEvent extends G1Collector implements BlockingEvent, ParallelEvent, TimesData {
-    private static final Pattern pattern = Pattern.compile(G1RemarkEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC remark, " + JdkRegEx.DURATION + "\\]"
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC remark, " + JdkRegEx.DURATION + "\\]"
             + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -70,7 +70,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -111,7 +111,7 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
      */
     public G1RemarkEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
                 timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();

@@ -86,7 +86,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
             + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) )?" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "?[ ]*$";
 
-    private static Pattern pattern = Pattern.compile(_REGEX);
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -97,7 +97,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
      */
     public static final boolean match(String logLine) {
         boolean match = false;
-        Matcher matcher = pattern.matcher(logLine);
+        Matcher matcher = PATTERN.matcher(logLine);
         if (matcher.find()) {
             if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3) == null
                     && matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1) != null) {
@@ -192,7 +192,7 @@ public class UnifiedG1FullGcEvent extends G1Collector
      */
     public UnifiedG1FullGcEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27)).intValue();
             long time = UnifiedUtil.calculateTime(matcher);

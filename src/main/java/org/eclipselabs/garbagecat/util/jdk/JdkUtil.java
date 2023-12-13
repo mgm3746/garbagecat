@@ -92,7 +92,6 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEv
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderVersionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParallelCompactingOldEvent;
@@ -102,13 +101,8 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialNewEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UsingCmsEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UsingG1Event;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UsingParallelEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UsingSerialEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UsingShenandoahEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UsingZEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZAllocationStallEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndYoungEvent;
@@ -118,10 +112,10 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocateStartYoungEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocationStallEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZStatsEvent;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -163,17 +157,15 @@ public final class JdkUtil {
         //
         UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_HEADER,
         //
-        UNIFIED_HEADER_VERSION, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
+        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
         //
-        UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD,
+        UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_YOUNG, UNKNOWN, VERBOSE_GC_OLD,
         //
-        UNIFIED_YOUNG, UNKNOWN, USING_CMS, USING_G1, USING_PARALLEL, USING_SERIAL, USING_SHENANDOAH, USING_Z,
-        //
-        VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_MARK_END, Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START,
+        VERBOSE_GC_YOUNG, VM_WARNING, Z_ALLOCATION_STALL, Z_MARK_END, Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START,
         //
         Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD, Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG,
         //
-        Z_STATS
+        Z_RELOCATION_STALL, Z_STATS
     }
 
     /**
@@ -191,7 +183,7 @@ public final class JdkUtil {
             .matcher("2020-03-10T08:03:29.311-0400: 0.373:").groupCount();
 
     /**
-     * Convert datestamp to milliseconds. For example: Convert 2019-02-05T14:47:34.229-0200 to 23.
+     * Convert datestamp to milliseconds from a point in time.
      * 
      * @param datestamp
      *            Absolute date/time.
@@ -200,7 +192,7 @@ public final class JdkUtil {
     public static long convertDatestampToMillis(String datestamp) {
         // Calculate uptimemillis from random date/time
         Date eventDate = GcUtil.parseDateStamp(datestamp);
-        return GcUtil.dateDiff(UnifiedUtil.JVM_START_DATE, eventDate);
+        return GcUtil.dateDiff(GcUtil.JVM_START_DATE, eventDate);
     }
 
     /**
@@ -412,11 +404,8 @@ public final class JdkUtil {
             return LogEventType.UNIFIED_G1_YOUNG_PAUSE;
         if (UnifiedG1YoungPrepareMixedEvent.match(logLine))
             return LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
-        if (UnifiedHeaderEvent.match(logLine)
-                && (priorLogLine == null || UnifiedHeaderEvent.match(priorLogLine) || !GcInfoEvent.match(priorLogLine)))
+        if (UnifiedHeaderEvent.match(logLine) && (priorLogLine == null || UnifiedHeaderEvent.match(priorLogLine)))
             return LogEventType.UNIFIED_HEADER;
-        if (UnifiedHeaderVersionEvent.match(logLine))
-            return LogEventType.UNIFIED_HEADER_VERSION;
         if (UnifiedOldEvent.match(logLine))
             return LogEventType.UNIFIED_OLD;
         if (UnifiedParallelCompactingOldEvent.match(logLine))
@@ -433,18 +422,8 @@ public final class JdkUtil {
             return LogEventType.UNIFIED_SERIAL_OLD;
         if (UnifiedYoungEvent.match(logLine))
             return LogEventType.UNIFIED_YOUNG;
-        if (UsingCmsEvent.match(logLine))
-            return LogEventType.USING_CMS;
-        if (UsingG1Event.match(logLine))
-            return LogEventType.USING_G1;
-        if (UsingParallelEvent.match(logLine))
-            return LogEventType.USING_PARALLEL;
-        if (UsingSerialEvent.match(logLine))
-            return LogEventType.USING_SERIAL;
-        if (UsingShenandoahEvent.match(logLine))
-            return LogEventType.USING_SHENANDOAH;
-        if (UsingZEvent.match(logLine))
-            return LogEventType.USING_Z;
+        if (ZAllocationStallEvent.match(logLine))
+            return LogEventType.Z_ALLOCATION_STALL;
         if (ZMarkEndEvent.match(logLine))
             return LogEventType.Z_MARK_END;
         if (ZMarkEndOldEvent.match(logLine))
@@ -463,6 +442,8 @@ public final class JdkUtil {
             return LogEventType.Z_RELOCATE_START_OLD;
         if (ZRelocateStartYoungEvent.match(logLine))
             return LogEventType.Z_RELOCATE_START_YOUNG;
+        if (ZRelocationStallEvent.match(logLine))
+            return LogEventType.Z_RELOCATION_STALL;
         if (ZStatsEvent.match(logLine))
             return LogEventType.Z_STATS;
 
@@ -475,8 +456,6 @@ public final class JdkUtil {
         // In order of most common events to limit checking
 
         // G1
-        if (UsingG1Event.match(logLine))
-            return LogEventType.USING_G1;
         if (G1YoungPauseEvent.match(logLine))
             return LogEventType.G1_YOUNG_PAUSE;
         if (G1MixedPauseEvent.match(logLine))
@@ -493,8 +472,6 @@ public final class JdkUtil {
             return LogEventType.G1_CLEANUP;
 
         // CMS
-        if (UsingCmsEvent.match(logLine))
-            return LogEventType.USING_CMS;
         if (ParNewEvent.match(logLine))
             return LogEventType.PAR_NEW;
         if (CmsSerialOldEvent.match(logLine))
@@ -507,8 +484,6 @@ public final class JdkUtil {
             return LogEventType.CMS_CONCURRENT;
 
         // Parallel
-        if (UsingParallelEvent.match(logLine))
-            return LogEventType.USING_PARALLEL;
         if (ParallelScavengeEvent.match(logLine))
             return LogEventType.PARALLEL_SCAVENGE;
         if (ParallelSerialOldEvent.match(logLine))
@@ -517,8 +492,6 @@ public final class JdkUtil {
             return LogEventType.PARALLEL_COMPACTING_OLD;
 
         // Serial
-        if (UsingSerialEvent.match(logLine))
-            return LogEventType.USING_SERIAL;
         if (SerialOldEvent.match(logLine))
             return LogEventType.SERIAL_OLD;
         if (SerialNewEvent.match(logLine))
@@ -637,15 +610,10 @@ public final class JdkUtil {
         case GC_LOCKER_RETRY:
         case UNIFIED_G1_INFO:
         case UNIFIED_HEADER:
-        case UNIFIED_HEADER_VERSION:
         case UNKNOWN:
-        case USING_SERIAL:
-        case USING_PARALLEL:
-        case USING_CMS:
-        case USING_G1:
-        case USING_SHENANDOAH:
-        case USING_Z:
         case VM_WARNING:
+        case Z_ALLOCATION_STALL:
+        case Z_RELOCATION_STALL:
         case Z_STATS:
             return false;
         default:
@@ -769,7 +737,6 @@ public final class JdkUtil {
         case UNIFIED_BLANK_LINE:
         case UNIFIED_G1_INFO:
         case UNIFIED_HEADER:
-        case UNIFIED_HEADER_VERSION:
         case UNKNOWN:
         case VM_WARNING:
         case Z_STATS:
@@ -821,8 +788,6 @@ public final class JdkUtil {
             return new UnifiedG1YoungPrepareMixedEvent(logLine);
         case UNIFIED_HEADER:
             return new UnifiedHeaderEvent(logLine);
-        case UNIFIED_HEADER_VERSION:
-            return new UnifiedHeaderVersionEvent(logLine);
         case UNIFIED_OLD:
             return new UnifiedOldEvent(logLine);
         case UNIFIED_PARALLEL_COMPACTING_OLD:
@@ -839,22 +804,10 @@ public final class JdkUtil {
             return new UnifiedSerialOldEvent(logLine);
         case UNIFIED_YOUNG:
             return new UnifiedYoungEvent(logLine);
-        case USING_CMS:
-            return new UsingCmsEvent(logLine);
-        case USING_G1:
-            return new UsingG1Event(logLine);
-        case USING_SHENANDOAH:
-            return new UsingShenandoahEvent(logLine);
-        case USING_Z:
-            return new UsingZEvent(logLine);
         case HEAP:
             return new HeapEvent(logLine);
         case FOOTER_STATS:
             return new FooterStatsEvent(logLine);
-        case USING_PARALLEL:
-            return new UsingParallelEvent(logLine);
-        case USING_SERIAL:
-            return new UsingSerialEvent(logLine);
 
         // G1
         case G1_CLEANUP:
@@ -903,6 +856,8 @@ public final class JdkUtil {
             return new ShenandoahTriggerEvent();
 
         // Z
+        case Z_ALLOCATION_STALL:
+            return new ZAllocationStallEvent(logLine);
         case Z_MARK_END:
             return new ZMarkEndEvent(logLine);
         case Z_MARK_END_OLD:
@@ -921,6 +876,8 @@ public final class JdkUtil {
             return new ZRelocateStartOldEvent(logLine);
         case Z_RELOCATE_START_YOUNG:
             return new ZRelocateStartYoungEvent(logLine);
+        case Z_RELOCATION_STALL:
+            return new ZRelocationStallEvent(logLine);
         case Z_STATS:
             return new ZStatsEvent(logLine);
 

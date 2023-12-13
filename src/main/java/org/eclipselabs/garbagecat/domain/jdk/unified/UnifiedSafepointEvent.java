@@ -20,8 +20,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
@@ -233,20 +233,20 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
         return timeThreadsStopped + timeToStopThreads;
     }
 
+    public long getDurationMicros() {
+        return JdkMath.convertNanosToMicros(getDuration()).longValue();
+    }
+
+    public long getDurationNanos() {
+        return timeThreadsStopped + timeToStopThreads;
+    }
+
     public String getLogEntry() {
         return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString();
-    }
-
-    public long getDurationMicros() {
-        return (JdkMath.convertNanosToMicros(timeThreadsStopped + timeToStopThreads)).longValue();
-    }
-
-    public long getDurationNanos() {
-        return timeThreadsStopped + timeToStopThreads;
     }
 
     @Override

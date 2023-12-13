@@ -108,16 +108,16 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class G1ConcurrentEvent extends G1Collector implements LogEvent, ParallelEvent {
 
-    private static final Pattern pattern = Pattern.compile(G1ConcurrentEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^" + JdkRegEx.DECORATOR
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR
             + " \\[GC concurrent-(((root-region-scan|mark|cleanup)-(start|end|abort|reset-for-overflow))"
             + "|string-deduplication)(\\])?(,)?( " + JdkRegEx.DURATION + ")?(\\])?( " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?(, avg " + JdkRegEx.PERCENT + ", " + JdkRegEx.DURATION
             + "\\])?" + TimesData.REGEX + "?[ ]*$";
+
+    private static final Pattern PATTERN = Pattern.compile(G1ConcurrentEvent._REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -127,7 +127,7 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -148,19 +148,15 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
      */
     public G1ConcurrentEvent(String logEntry) {
         this.logEntry = logEntry;
-
-        if (logEntry.matches(REGEX)) {
-            Pattern pattern = Pattern.compile(REGEX);
-            Matcher matcher = pattern.matcher(logEntry);
-            if (matcher.find()) {
-                if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
-                } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
-                } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                }
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
+            } else {
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
         }
     }

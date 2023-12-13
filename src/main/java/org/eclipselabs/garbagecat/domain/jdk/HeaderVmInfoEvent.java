@@ -57,14 +57,14 @@ import org.github.joa.domain.Os;
  */
 public class HeaderVmInfoEvent implements LogEvent {
 
-    private static Pattern pattern = Pattern.compile(HeaderVmInfoEvent.REGEX);
-
     /**
      * Regular expressions defining the logging.
      */
-    private static final String REGEX = "^(Java HotSpot\\(TM\\)|OpenJDK)( 64-Bit)? Server VM \\(.+\\) for "
+    private static final String _REGEX = "^(Java HotSpot\\(TM\\)|OpenJDK)( 64-Bit)? Server VM \\(.+\\) for "
             + "(linux|windows|solaris)-(amd64|ppc64|ppc64le|sparc|x86) JRE (\\(Zulu.+\\) )?\\("
             + JdkRegEx.RELEASE_STRING + "\\).+ built on " + JdkRegEx.BUILD_DATE_TIME + ".+$";
+
+    private static Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -74,7 +74,7 @@ public class HeaderVmInfoEvent implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -103,7 +103,7 @@ public class HeaderVmInfoEvent implements LogEvent {
      */
     public Arch getArch() {
         Arch arch = Arch.UNKNOWN;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             int indexArch = 4;
             if (matcher.group(indexArch).equals("amd64") || matcher.group(indexArch).equals("linux64")) {
@@ -124,7 +124,7 @@ public class HeaderVmInfoEvent implements LogEvent {
      */
     public Date getBuildDate() {
         Date date = null;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             date = GcUtil.getDate(matcher.group(8), matcher.group(9), matcher.group(10), matcher.group(11),
                     matcher.group(12), matcher.group(13));
@@ -184,7 +184,7 @@ public class HeaderVmInfoEvent implements LogEvent {
      */
     public String getJdkReleaseString() {
         String jdkReleaseString = null;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             jdkReleaseString = matcher.group(6);
         }
@@ -198,8 +198,8 @@ public class HeaderVmInfoEvent implements LogEvent {
     public int getJdkVersionMajor() {
         int jdkVersionMajor = org.github.joa.domain.JvmContext.UNKNOWN;
         String regex = "^.+JRE \\(1\\.(5|6|7|8|9|10).+$";
+        Pattern pattern = Pattern.compile(regex);
         if (logEntry != null) {
-            Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(logEntry);
             if (matcher.find()) {
                 if (matcher.group(1) != null) {
@@ -242,7 +242,7 @@ public class HeaderVmInfoEvent implements LogEvent {
      */
     public Os getOs() {
         Os osType = Os.UNIDENTIFIED;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             int indexOs = 3;
             if (matcher.group(indexOs).equals("linux")) {

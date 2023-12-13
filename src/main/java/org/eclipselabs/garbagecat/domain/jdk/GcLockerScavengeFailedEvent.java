@@ -44,12 +44,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class GcLockerScavengeFailedEvent implements LogEvent {
 
-    private static final Pattern PATTERN = Pattern.compile(GcLockerScavengeFailedEvent.REGEX);
-
     /**
      * Regular expression defining the logging.
      */
-    private static final String REGEX = "^GC locker: Trying a full collection because scavenge failed$";
+    private static final String _REGEX = "^GC locker: Trying a full collection because scavenge failed$";
+
+    private static final Pattern PATTERN = Pattern.compile(GcLockerScavengeFailedEvent._REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.

@@ -36,7 +36,7 @@ public class Constants {
      * entries with timestamps below the threshold may indicate a partial GC log or GC events that were not a
      * recognizable format.
      */
-    public static final int FIRST_TIMESTAMP_THRESHOLD = 60;
+    public static final long FIRST_TIMESTAMP_THRESHOLD = 60;
 
     /**
      * To-space exhausted block.

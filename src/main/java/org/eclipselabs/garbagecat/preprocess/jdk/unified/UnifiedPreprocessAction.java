@@ -945,6 +945,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + "( O:)? Using \\d{1,} [wW]orkers( for (Old|Young) Generation)?$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " Adjusting Workers for (Old|Young) Generation: \\d{1,} -> \\d{1,}$",
+            //
             "^" + UnifiedRegEx.DECORATOR
                     + "( [OYy]:)?[ ]{1,}(Allocated|Capacity|Final|Forwarding Usage|Free|Garbage|Large Pages|Live|Load|"
                     + "Mark|Mark Stack Usage|(Max|Min) Capacity|Medium Pages|MMU|NMethods|Phantom|Reclaimed|"

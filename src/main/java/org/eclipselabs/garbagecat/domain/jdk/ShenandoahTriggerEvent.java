@@ -134,6 +134,6 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
     }
 
     public long getTimestamp() {
-        throw new UnsupportedOperationException("Event does not include timestamp information");
+        return 0;
     }
 }

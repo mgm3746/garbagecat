@@ -90,7 +90,7 @@ public class GcLockerRetryEvent extends G1Collector implements LogEvent {
     public static final String _REGEX = "^" + UnifiedRegEx.DECORATOR
             + ".+Retried waiting for GCLocker too often allocating \\d{1,} words[ ]*$";
 
-    private static final Pattern pattern = Pattern.compile(_REGEX);
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -100,7 +100,7 @@ public class GcLockerRetryEvent extends G1Collector implements LogEvent {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        return pattern.matcher(logLine).matches();
+        return PATTERN.matcher(logLine).matches();
     }
 
     /**
@@ -121,7 +121,7 @@ public class GcLockerRetryEvent extends G1Collector implements LogEvent {
      */
     public GcLockerRetryEvent(String logEntry) {
         this.logEntry = logEntry;
-        Matcher matcher = pattern.matcher(logEntry);
+        Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
             if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
                 timestamp = Long.parseLong(matcher.group(13));
