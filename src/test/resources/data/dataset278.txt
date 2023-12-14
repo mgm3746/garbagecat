@@ -1,3 +1,4 @@
+[2023-12-12T08:47:56.693+0200][info][gc,init] Version: 21+35-2513 (release)
 [2023-12-12T10:20:45.257+0200][info][gc          ] GC(34) Minor Collection (Allocation Rate)
 [2023-12-12T10:20:45.258+0200][info][gc,task     ] GC(34) Using 16 Workers for Young Generation
 [2023-12-12T10:20:45.258+0200][info][gc,phases   ] GC(34) y: Young Generation
