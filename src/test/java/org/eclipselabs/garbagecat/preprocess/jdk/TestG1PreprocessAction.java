@@ -514,6 +514,17 @@ class TestG1PreprocessAction {
     }
 
     @Test
+    void testExtRootScanningSingleNumber() {
+        String logLine = "      [Ext Root Scanning (ms):  28.7]";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, null, null),
+                "Log line not recognized as " + PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context, null);
+        assertEquals("[Ext Root Scanning (ms): 28.7]", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testFreeCSet() {
         String logLine = "      [Free CSet: 0.0 ms]";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
@@ -720,6 +731,22 @@ class TestG1PreprocessAction {
         String logLine = "2.192: [GC pause (G1 Evacuation Pause) (young)";
         assertTrue(G1PreprocessAction.match(logLine, null, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    @Test
+    void testG1ExtRootScanning() throws IOException {
+        File testFile = TestUtil.getFile("dataset281.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
+                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
     }
 
     /**

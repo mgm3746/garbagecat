@@ -602,11 +602,17 @@ public class G1PreprocessAction implements PreprocessAction {
      * Regular expression for retained external root scanning data. Root scanning is multi-threaded. Use the "Max" value
      * for the duration.
      * 
+     * Max is the time the "slowest" thread took to complete scanning; therefore, it is the (very confusing) total time.
+     * 
      * [Ext Root Scanning (ms): Min: 2.7, Avg: 3.0, Max: 3.5, Diff: 0.8, Sum: 18.1]
+     * 
+     * This looks to be an older pattern where a single value is the average. Not as accurate as "Max".
+     * 
+     * [Ext Root Scanning (ms): 28.7]
      */
-    private static final String REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING = "^[ ]{6}\\[Ext Root Scanning \\(ms\\): "
+    private static final String REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING = "^[ ]{6}\\[Ext Root Scanning \\(ms\\):( "
             + "Min: \\d{1,}[\\.,]\\d, Avg: \\d{1,}[\\.,]\\d, Max: (\\d{1,}[\\.,]\\d), Diff: \\d{1,}[\\.,]\\d, "
-            + "Sum: \\d{1,}[\\.,]\\d\\]$";
+            + "Sum: \\d{1,}[\\.,]\\d|[ ]{1,}(\\d{1,}[\\.,]\\d))\\]$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING);
@@ -1062,7 +1068,11 @@ public class G1PreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = "[Ext Root Scanning (ms): " + matcher.group(1) + "]";
+                if (matcher.group(2) != null) {
+                    this.logEntry = "[Ext Root Scanning (ms): " + matcher.group(2) + "]";
+                } else {
+                    this.logEntry = "[Ext Root Scanning (ms): " + matcher.group(3) + "]";
+                }
                 context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logEntry)).matches()) {
