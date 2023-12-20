@@ -58,13 +58,30 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) JDK81/11 on three lines (timestamp is beginning of safepoint):
+ * 1) JDK8/11 on three lines that wrap the garbage collection ("Entering" timestamp is beginning of safepoint):
  * </p>
  * 
  * <pre>
- * [2021-09-14T11:40:53.379-0500][144.035s][info][safepoint     ] Entering safepoint region: CollectForMetadataAllocation
- * [2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Leaving safepoint region
- * [2021-09-14T11:40:53.379-0500][144.036s][info][safepoint     ] Total time for which application threads were stopped: 0.0004546 seconds, Stopping threads took: 0.0002048 seconds
+ * [2021-09-14T11:38:33.217-0500][3.874s][info][safepoint    ] Entering safepoint region: CollectForMetadataAllocation
+ * [2021-09-14T11:38:33.217-0500][3.874s][info][gc,start     ] GC(0) Pause Young (Concurrent Start) (Metadata GC Threshold)
+ * [2021-09-14T11:38:33.218-0500][3.875s][info][gc,task      ] GC(0) Using 8 workers of 8 for evacuation
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,phases    ] GC(0)   Pre Evacuate Collection Set: 0.0ms
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,phases    ] GC(0)   Evacuate Collection Set: 7.6ms
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,phases    ] GC(0)   Post Evacuate Collection Set: 1.4ms
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,phases    ] GC(0)   Other: 0.9ms
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,heap      ] GC(0) Eden regions: 14-&gt;0(100)
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,heap      ] GC(0) Survivor regions: 0-&gt;2(13)
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,heap      ] GC(0) Old regions: 0-&gt;0
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,heap      ] GC(0) Humongous regions: 0-&gt;0
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,metaspace ] GC(0) Metaspace: 20058K-&gt;20058K(1069056K)
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc           ] GC(0) Pause Young (Concurrent Start) (Metadata GC Threshold) 56M-&gt;7M(8192M) 10.037ms
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,cpu       ] GC(0) User=0.04s Sys=0.00s Real=0.01s
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc           ] GC(1) Concurrent Cycle
+ * [2021-09-14T11:38:33.227-0500][3.884s][info][gc,marking   ] GC(1) Concurrent Clear Claimed Marks
+ * [2021-09-14T11:38:33.228-0500][3.884s][info][gc,marking   ] GC(1) Concurrent Clear Claimed Marks 0.020ms
+ * [2021-09-14T11:38:33.228-0500][3.884s][info][gc,marking   ] GC(1) Concurrent Scan Root Regions
+ * [2021-09-14T11:38:33.228-0500][3.884s][info][safepoint    ] Leaving safepoint region
+ * [2021-09-14T11:38:33.228-0500][3.884s][info][safepoint    ] Total time for which application threads were stopped: 0.0104763 seconds, Stopping threads took: 0.0000101 seconds
  * </pre>
  * 
  * <p>
@@ -76,11 +93,26 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </pre>
  * 
  * <p>
- * 2) JDK17 &lt; update 8 on a single line (timestamp is end of safepoint):
+ * 2) JDK17 on a single line (timestamp is end of safepoint) that comes after garbage collection:
  * </p>
  * 
  * <pre>
- * [0.062s][info][safepoint   ] Safepoint "G1CollectForAllocation", Time since last: 22756680 ns, Reaching safepoint: 19114 ns, At safepoint: 910407 ns, Total: 929521 ns
+ * [0.067s][info][gc,start    ] GC(3) Pause Young (Normal) (G1 Evacuation Pause)
+ * [0.067s][info][gc,task     ] GC(3) Using 2 workers of 10 for evacuation
+ * [0.068s][info][gc,phases   ] GC(3)   Pre Evacuate Collection Set: 0.0ms
+ * [0.068s][info][gc,phases   ] GC(3)   Merge Heap Roots: 0.0ms
+ * [0.068s][info][gc,phases   ] GC(3)   Evacuate Collection Set: 0.5ms
+ * [0.068s][info][gc,phases   ] GC(3)   Post Evacuate Collection Set: 0.1ms
+ * [0.068s][info][gc,phases   ] GC(3)   Other: 0.0ms
+ * [0.068s][info][gc,heap     ] GC(3) Eden regions: 1-&gt;>0(1)
+ * [0.068s][info][gc,heap     ] GC(3) Survivor regions: 1-&gt;1(1)
+ * [0.068s][info][gc,heap     ] GC(3) Old regions: 0-&gt;1
+ * [0.068s][info][gc,heap     ] GC(3) Archive regions: 2-&gt;2
+ * [0.068s][info][gc,heap     ] GC(3) Humongous regions: 0-&gt;0
+ * [0.068s][info][gc,metaspace] GC(3) Metaspace: 1071K(1280K)-&gt;1071K(1280K) NonClass: 981K(1088K)-&gt;981K(1088K) Class: 89K(192K)-&gt;89K(192K)
+ * [0.068s][info][gc          ] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 2M->2M(7M) 0.681ms
+ * [0.068s][info][gc,cpu      ] GC(3) User=0.00s Sys=0.00s Real=0.00s
+ * [0.068s][info][safepoint   ] Safepoint "G1CollectForAllocation", Time since last: 3273659 ns, Reaching safepoint: 12838 ns, At safepoint: 704423 ns, Total: 717261 ns
  * </pre>
  * 
  * 3) JDK17 &gt;= update 8 preprocessed to include "17U8" context.
