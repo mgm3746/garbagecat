@@ -1133,8 +1133,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 if (context.contains(UnifiedPreprocessAction.JDK17U8)) {
-                    this.logEntry = matcher.group(1) + matcher.group(21) + " " + UnifiedPreprocessAction.JDK17U8 + ""
-                            + matcher.group(25);
+                    if (matcher.group(21) != null) {
+                        this.logEntry = matcher.group(1) + matcher.group(21) + " " + UnifiedPreprocessAction.JDK17U8
+                                + "" + matcher.group(25);
+                    } else {
+                        this.logEntry = matcher.group(1) + " " + UnifiedPreprocessAction.JDK17U8 + ""
+                                + matcher.group(25);
+                    }
                 } else {
                     this.logEntry = matcher.group(0);
                 }

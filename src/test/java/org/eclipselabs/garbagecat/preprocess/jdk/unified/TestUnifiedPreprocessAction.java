@@ -2477,7 +2477,7 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testSafepointJdk17u8() {
+    void testSafepointJdk17u8TimeUptime() {
         String logLine = "[2023-08-18T11:40:51.508-0500][1.708s][info][safepoint     ] Safepoint "
                 + "\"G1CollectForAllocation\", Time since last: 11990384 ns, Reaching safepoint: 2496 ns, Cleanup: "
                 + "11042 ns, At safepoint: 623787 ns, " + "Total: 637325 ns";
@@ -2493,6 +2493,24 @@ class TestUnifiedPreprocessAction {
                 + "\"G1CollectForAllocation\", Time since last: 11990384 ns, Reaching safepoint: 2496 ns, Cleanup: "
                 + "11042 ns, At safepoint: 623787 ns, Total: 637325 ns", event.getLogEntry(),
                 "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testSafepointJdk17u9Time() {
+        String logLine = "[2023-12-20T14:15:55.393-0500] Safepoint \"ICBufferFull\", Time since last: 256916975 ns, "
+                + "Reaching safepoint: 2351 ns, Cleanup: 84109 ns, At safepoint: 1590 ns, Total: 88050 ns";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        context.add(UnifiedPreprocessAction.JDK17U8);
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(
+                "[2023-12-20T14:15:55.393-0500] JDK17U8 Safepoint \"ICBufferFull\", Time since last: 256916975 ns, "
+                        + "Reaching safepoint: 2351 ns, Cleanup: 84109 ns, At safepoint: 1590 ns, Total: 88050 ns",
+                event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
