@@ -197,15 +197,15 @@ public class HeapEvent implements ThrowAwayEvent {
             "^(" + UnifiedRegEx.DECORATOR + " )? " + JdkRegEx.SIZE + " (total|max)(, " + JdkRegEx.SIZE + " soft max)?, "
                     + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " |" + JdkRegEx.DECORATOR + " )? Metaspace       used " + JdkRegEx.SIZE
-                    + "(, capacity " + JdkRegEx.SIZE + ")?, committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE
-                    + "$",
+            "^(" + UnifiedRegEx.DECORATOR + "( [OYy]:)? |" + JdkRegEx.DECORATOR + " )? Metaspace       used "
+                    + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE + ")?, committed " + JdkRegEx.SIZE + ", reserved "
+                    + JdkRegEx.SIZE + "$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? \\d{1,} x " + JdkRegEx.SIZE + " regions$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " |" + JdkRegEx.DECORATOR + " )?  class space    used " + JdkRegEx.SIZE
-                    + "(, capacity " + JdkRegEx.SIZE + ")?, " + "committed " + JdkRegEx.SIZE + ", reserved "
-                    + JdkRegEx.SIZE + "$",
+            "^(" + UnifiedRegEx.DECORATOR + "( [OYy]:)? |" + JdkRegEx.DECORATOR + " )?  class space    used "
+                    + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE + ")?, " + "committed " + JdkRegEx.SIZE
+                    + ", reserved " + JdkRegEx.SIZE + "$",
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? ((concurrent mark-sweep|def new|par new|tenured) generation)"
                     + "[ ]{1,}total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS
@@ -230,8 +230,8 @@ public class HeapEvent implements ThrowAwayEvent {
             //
             "^(" + UnifiedRegEx.DECORATOR + " )? - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  ZHeap           used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE
-                    + ", max capacity " + JdkRegEx.SIZE + "$",
+            "^" + UnifiedRegEx.DECORATOR + "( [OYy]:)?  ZHeap           used " + JdkRegEx.SIZE + ", capacity "
+                    + JdkRegEx.SIZE + ", max capacity " + JdkRegEx.SIZE + "$",
             //
             "^No shared spaces configured.$"
             //

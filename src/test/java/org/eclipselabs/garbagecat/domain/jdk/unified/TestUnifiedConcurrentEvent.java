@@ -30,6 +30,13 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedConcurrentEvent {
 
     @Test
+    void testClassLoaderData() {
+        String logLine = "[66.290s][debug][gc,phases       ] GC(0) O: ClassLoaderData 0.036ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testCleanupForNextMark() {
         String logLine = "[16.082s][info][gc,marking    ] GC(969) Concurrent Cleanup for Next Mark";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
@@ -58,6 +65,20 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentClassesPurge() {
+        String logLine = "[66.292s][debug][gc,phases       ] GC(0) O: Concurrent Classes Purge 0.411ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentClassesUnlink() {
+        String logLine = "[66.291s][debug][gc,phases       ] GC(0) O: Concurrent Classes Unlink 1.631ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentMark() {
         String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
@@ -72,7 +93,7 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
-    void testConcurrentMarkContinueZGenerationalMinor() {
+    void testConcurrentMarkContinueZGenerationalYoung() {
         String logLine = "[2023-11-16T09:18:11.215-0500] GC(157) y: Concurrent Mark Continue 0.073ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
@@ -86,8 +107,22 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentMarkFollowZGenerationalOld() {
+        String logLine = "[66.076s][debug][gc,phases       ] GC(0) Y: Concurrent Mark Follow 585.589ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentMarkFree() {
         String logLine = "[0.129s] GC(0) Concurrent Mark Free 0.000ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentMarkRootsZGenerationalOld() {
+        String logLine = "[65.490s][debug][gc,phases       ] GC(0) Y: Concurrent Mark Roots 1.615ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }
@@ -107,7 +142,7 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
-    void testConcurrentMarkZGenerationalMinor() {
+    void testConcurrentMarkZGenerationalYoung() {
         String logLine = "[0.305s][info][gc,phases   ] GC(3) y: Concurrent Mark 8.889ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
@@ -158,8 +193,29 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testConcurrentReferencesEnqueue() {
+        String logLine = "[66.292s][debug][gc,phases       ] GC(0) O: Concurrent References Enqueue 0.004ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentReferencesProcess() {
+        String logLine = "[66.260s][debug][gc,phases       ] GC(0) O: Concurrent References Process 0.022ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testConcurrentRelocate() {
         String logLine = "[0.134s] GC(0) Concurrent Relocate 2.550ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentRelocateRemsetFpZGenerationalOld() {
+        String logLine = "[66.259s][debug][gc,phases       ] GC(0) Y: Concurrent Relocate Remset FP 0.072ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }
@@ -396,6 +452,13 @@ class TestUnifiedConcurrentEvent {
     @Test
     void testScanRootRegionsWithDuration() {
         String logLine = "[16.601s][info][gc,marking   ] GC(1033) Concurrent Scan Root Regions 0.283ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testTriggerCleanups() {
+        String logLine = "[66.290s][debug][gc,phases       ] GC(0) O: Trigger cleanups 0.003ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }

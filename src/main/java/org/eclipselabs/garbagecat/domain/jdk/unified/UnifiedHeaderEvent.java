@@ -191,10 +191,10 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "Heap Backing Filesystem|Heap Backing File|Heap Region (Count|Size)|Heuristics:|"
             + "Heuristics ergonomically sets |Humongous [oO]bject [tT]hreshold|Initialize Shenandoah heap|"
             + "Initializing The Z Garbage Collector|Large Page Support|Max TLAB size|Medium Page Size|Memory|Mode|"
-            + "Narrow klass base|Min heap equals to max heap, disabling ShenandoahUncommit|NUMA Nodes|NUMA Support|"
-            + "Pacer for Idle|Parallel Workers|Periodic GC|Pre-touch|Regions|Runtime Workers|Safepointing mechanism|"
-            + "Shenandoah GC mode|Shenandoah heuristics|TLAB Size Max|Uncommit( Delay)?|"
-            + "Using legacy single-generation mode)(:)?.*$";
+            + "Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|Narrow klass base|NUMA Nodes|"
+            + "NUMA Support|Pacer for Idle|Parallel Workers|Periodic GC|Pre-touch|Regions|Runtime Workers|"
+            + "Safepointing mechanism|Shenandoah GC mode|Shenandoah heuristics|String Deduplication|TLAB Size Max|"
+            + "Uncommit( Delay)?|Using legacy single-generation mode)(:)?.*$";
 
     private static Pattern PATTERN = Pattern.compile(_REGEX);
 

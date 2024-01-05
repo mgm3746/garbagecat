@@ -419,6 +419,16 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testMinimumHeapInitialHeapMaximumHeap() {
+        String logLine = "[0.006s][debug][gc,heap] Minimum heap 28991029248  Initial heap 28991029248  Maximum heap "
+                + "28991029248";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
     void testMode() {
         String logLine = "[0.014s][info][gc,init] Mode: Snapshot-At-The-Beginning (SATB)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
@@ -601,6 +611,15 @@ class TestUnifiedHeaderEvent {
     @Test
     void testShenandoahHeuristics() {
         String logLine = "[2023-02-22T12:31:30.330+0000][2243][gc,init] Shenandoah heuristics: Adaptive";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + "not identified.");
+    }
+
+    @Test
+    void testStringDeduplication() {
+        String logLine = "[20.715s][info ][stringdedup,init] String Deduplication is enabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
                 JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),

@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartYoungAndOldEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
@@ -668,6 +669,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * <pre>
      * Z:
      * 
+     * [65.488s][debug][gc,heap         ] GC(0) Y: Heap before GC invocations=0 (full 0):
+     * 
      * [2021-12-01T10:04:06.358-0500] GC(0) Garbage Collection (Warmup)
      * 
      * [0.126s][info][gc          ] GC(1) Major Collection (Warmup)
@@ -944,8 +947,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: (Exit|Halt)$",
             // ***** Z *****
             "^" + UnifiedRegEx.DECORATOR
-                    + " (Garbage|Major|Minor) Collection \\((Allocation (Rate|Stall)|High Usage|Metadata GC Threshold|"
-                    + "Warmup)\\).*$",
+                    + " (Garbage|Major|Minor) Collection \\((Allocation (Rate|Stall)|CodeCache GC Threshold|High Usage|"
+                    + "Metadata GC Threshold|Proactive|Warmup)\\).*$",
             //
             "^" + UnifiedRegEx.DECORATOR + "( O:)? Using \\d{1,} [wW]orkers( for (Old|Young) Generation)?$",
             //
@@ -986,7 +989,14 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " O:[ ]+Encountered[ ]+Discovered[ ]+Enqueued[ ]*$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " [OYy]: Heap (after|before) GC invocations=\\d{1,} \\(full \\d{1,}\\):$",
+            //
             "^" + UnifiedRegEx.DECORATOR + " Stopping ZGC[ ]*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " [OYy]: Pause (Mark End|Mark Start|Mark Start \\(Major\\)|Relocate Start)$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " O: (ClassLoaderData|Concurrent (Classes Unlink|References Process)|"
+                    + "Trigger cleanups)$",
             // ***** Other *****
             UnifiedBlankLineEvent.REGEX
             //
@@ -1097,7 +1107,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_TO_SPACE_EXHAUSTED_PATTERN.matcher(logLine).matches()
-                || JdkUtil.parseLogLine(logLine, null) instanceof UnifiedConcurrentEvent) {
+                || JdkUtil.parseLogLine(logLine, null) instanceof UnifiedConcurrentEvent
+                || JdkUtil.parseLogLine(logLine, null) instanceof ZMarkStartYoungAndOldEvent) {
             match = true;
         } else if (isThrowaway(logLine)) {
             match = true;
@@ -1446,7 +1457,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             }
             context.remove(PreprocessAction.NEWLINE);
         } else if (JdkUtil.parseLogLine(logEntry, null) instanceof UnifiedConcurrentEvent && !isThrowaway(logEntry)) {
-            // Stand alone eventlogEntry
+            // Stand alone event
             if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
                 this.logEntry = logEntry;
                 context.add(PreprocessAction.NEWLINE);
@@ -1455,6 +1466,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 entangledLogLines.add(logEntry);
                 context.remove(PreprocessAction.NEWLINE);
             }
+        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ZMarkStartYoungAndOldEvent) {
+            // Stand alone event
+            this.logEntry = logEntry;
+            context.add(PreprocessAction.NEWLINE);
         }
     }
 

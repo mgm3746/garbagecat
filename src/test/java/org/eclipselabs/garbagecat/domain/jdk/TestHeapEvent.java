@@ -85,6 +85,30 @@ class TestHeapEvent {
     }
 
     @Test
+    void testClassSpaceZGenerationalMajor() {
+        String logLine = "[65.488s][debug][gc,heap         ] GC(0) Y:   class space    used 523K, committed 640K, "
+                + "reserved 1048576K";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testClassSpaceZGenerationalMinor() {
+        String logLine = "[2994.846s][debug][gc,heap         ] GC(8) y:   class space    used 5444K, committed 6272K, "
+                + "reserved 1048576K";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testClassSpaceZGenerationalOld() {
+        String logLine = "[66.259s][debug][gc,heap         ] GC(0) O:   class space    used 523K, committed 640K, "
+                + "reserved 1048576K";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
     void testCmsGeneration() {
         String logLine = " concurrent mark-sweep generation total 3407872K, used 1640998K "
                 + "[0x00002aac0aab0000, 0x00002aacdaab0000, 0x00002aacdaab0000)";
@@ -349,6 +373,30 @@ class TestHeapEvent {
     void testMetaspaceUnifiedUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]  Metaspace       used 80841K, capacity 89293K, "
                 + "committed 89600K, reserved 331776K";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testMetaspaceZGenerationalOld() {
+        String logLine = "[66.259s][debug][gc,heap         ] GC(0) O:  Metaspace       used 7507K, committed 7808K, "
+                + "reserved 1114112K";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testMetaspaceZGenerationalYoungMajor() {
+        String logLine = "[65.488s][debug][gc,heap         ] GC(0) Y:  Metaspace       used 7505K, committed 7808K, "
+                + "reserved 1114112K";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testMetaspaceZGenerationalYoungMinor() {
+        String logLine = "[2994.846s][debug][gc,heap         ] GC(8) y:  Metaspace       used 55637K, committed "
+                + "57280K, reserved 1114112K";
         assertTrue(HeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
     }
@@ -733,6 +781,30 @@ class TestHeapEvent {
     @Test
     void testZHeap() {
         String logLine = "[2.640s]  ZHeap           used 86M, capacity 96M, max capacity 96M";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testZHeapGenerationalOld() {
+        String logLine = "[66.259s][debug][gc,heap         ] GC(0) O:  ZHeap           used 2228M, capacity 27648M, "
+                + "max capacity 27648M";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testZHeapGenerationalYoungMajor() {
+        String logLine = "[65.488s][debug][gc,heap         ] GC(0) Y:  ZHeap           used 2768M, capacity 27648M, "
+                + "max capacity 27648M";
+        assertTrue(HeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+    }
+
+    @Test
+    void testZHeapGenerationalYoungMinor() {
+        String logLine = "[2994.846s][debug][gc,heap         ] GC(8) y:  ZHeap           used 26230M, capacity 27648M, "
+                + "max capacity 27648M";
         assertTrue(HeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
     }
