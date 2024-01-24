@@ -642,6 +642,7 @@ public class Main {
             // Unidentified log lines
             List<String> unidentifiedLogLines = jvmRun.getUnidentifiedLogLines();
             if (!unidentifiedLogLines.isEmpty()) {
+                printWriter.write(LINEBREAK_DOUBLE);
                 printWriter.write(unidentifiedLogLines.size() + " UNIDENTIFIED LOG LINE(S):" + LINE_SEPARATOR);
                 printWriter.write(LINEBREAK_SINGLE);
 
