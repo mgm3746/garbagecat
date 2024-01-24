@@ -180,41 +180,6 @@ public class Main {
             printWriter.write(gcLogFile.getName());
             printWriter.write(LINE_SEPARATOR);
 
-            // GC Bottlenecks
-            List<String> gcBottlenecks = jvmRun.getGcBottlenecks();
-            if (!gcBottlenecks.isEmpty()) {
-                printWriter.write(LINEBREAK_DOUBLE);
-                printWriter.write("GC throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
-                printWriter.write(LINEBREAK_SINGLE);
-                for (String gcBottleneck : gcBottlenecks) {
-                    if (jvmRun.getStartDate() != null) {
-                        printWriter
-                                .write(JdkUtil.convertLogEntryTimestampsToDateStamp(gcBottleneck, jvmRun.getStartDate())
-                                        + LINE_SEPARATOR);
-                    } else {
-                        printWriter.write(gcBottleneck + LINE_SEPARATOR);
-                    }
-                }
-            }
-
-            // Safepoint Bottlenecks
-            List<String> safepointBottlenecks = jvmRun.getSafepointBottlenecks();
-            if (!safepointBottlenecks.isEmpty()) {
-                printWriter.write(LINEBREAK_DOUBLE);
-                printWriter.write(
-                        "Safepoint throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
-                printWriter.write(LINEBREAK_SINGLE);
-                for (String safepointBottleneck : safepointBottlenecks) {
-                    if (jvmRun.getStartDate() != null) {
-                        printWriter.write(
-                                JdkUtil.convertLogEntryTimestampsToDateStamp(safepointBottleneck, jvmRun.getStartDate())
-                                        + LINE_SEPARATOR);
-                    } else {
-                        printWriter.write(safepointBottleneck + LINE_SEPARATOR);
-                    }
-                }
-            }
-
             // JVM information
             if (jvmRun.getJvmOptions().getJvmContext().getVersionMajor() > 0
                     || jvmRun.getJvmOptions().getJvmContext().getOptions() != null || jvmRun.getMemory() != null) {
@@ -638,6 +603,40 @@ public class Main {
                     printWriter.write(LINE_SEPARATOR);
                 }
                 printWriter.write(LINEBREAK_DOUBLE);
+            }
+
+            // GC Bottlenecks
+            List<String> gcBottlenecks = jvmRun.getGcBottlenecks();
+            if (!gcBottlenecks.isEmpty()) {
+                printWriter.write("GC throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_SINGLE);
+                for (String gcBottleneck : gcBottlenecks) {
+                    if (jvmRun.getStartDate() != null) {
+                        printWriter
+                                .write(JdkUtil.convertLogEntryTimestampsToDateStamp(gcBottleneck, jvmRun.getStartDate())
+                                        + LINE_SEPARATOR);
+                    } else {
+                        printWriter.write(gcBottleneck + LINE_SEPARATOR);
+                    }
+                }
+            }
+
+            // Safepoint Bottlenecks
+            List<String> safepointBottlenecks = jvmRun.getSafepointBottlenecks();
+            if (!safepointBottlenecks.isEmpty()) {
+                printWriter.write(LINEBREAK_DOUBLE);
+                printWriter.write(
+                        "Safepoint throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
+                printWriter.write(LINEBREAK_SINGLE);
+                for (String safepointBottleneck : safepointBottlenecks) {
+                    if (jvmRun.getStartDate() != null) {
+                        printWriter.write(
+                                JdkUtil.convertLogEntryTimestampsToDateStamp(safepointBottleneck, jvmRun.getStartDate())
+                                        + LINE_SEPARATOR);
+                    } else {
+                        printWriter.write(safepointBottleneck + LINE_SEPARATOR);
+                    }
+                }
             }
 
             // Unidentified log lines
