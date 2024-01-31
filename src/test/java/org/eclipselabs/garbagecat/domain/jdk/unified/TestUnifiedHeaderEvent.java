@@ -750,6 +750,16 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testVersionJdk17U10() {
+        String logLine = "[2024-01-30T13:48:05.616-0500] Version: 17.0.10+7-LTS (release)";
+        UnifiedHeaderEvent event = new UnifiedHeaderEvent(logLine);
+        assertTrue(event.isVersion(), "Version information not identified.");
+        assertEquals(17, event.getJdkVersionMajor(), "JDK major version not correct.");
+        assertEquals(10, event.getJdkVersionMinor(), "JDK minor version not correct.");
+        assertEquals("17.0.10+7-LTS", event.getJdkReleaseString(), "JDK release string not correct.");
+    }
+
+    @Test
     void testVersionJdk21() {
         String priorLogLine = "[0.001s][info][gc,init] Initializing The Z Garbage Collector";
         assertTrue(UnifiedHeaderEvent.match(priorLogLine),
