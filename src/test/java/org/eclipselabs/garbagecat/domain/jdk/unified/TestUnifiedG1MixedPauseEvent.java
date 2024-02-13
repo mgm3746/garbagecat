@@ -128,6 +128,15 @@ class TestUnifiedG1MixedPauseEvent {
     }
 
     @Test
+    void testLogLinePreprocessedTriggerG1PreventiveCollection() {
+        String logLine = "[4.529s][info][gc,start       ] GC(24) Pause Young (Mixed) (G1 Preventive Collection) "
+                + "Other: 0.1ms Humongous regions: 0->0 Metaspace: 43948K(44672K)->43948K(44672K) 38M->30M(72M) "
+                + "3.310ms User=0.04s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+    }
+
+    @Test
     void testLogLinePreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[2021-10-14T17:52:08.374+0400][info][gc,start      ] GC(2131) Pause Young (Mixed) (GCLocker "
                 + "Initiated GC) Other: 0.1ms Humongous regions: 13->13 Metaspace: 365476K->365476K(1384448K) "
