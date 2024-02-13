@@ -42,39 +42,48 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedHeaderEvent {
 
     @Test
+    void testActivateRegions() {
+        String logLine = "[0.034s][debug][gc,heap,region] Activate regions [0, 1152)";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testAddressSpaceSize() {
         String logLine = "[0.014s][info][gc,init] Address Space Size: 1536M x 3 = 4608M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testAddressSpaceType() {
         String logLine = "[0.014s][info][gc,init] Address Space Type: Contiguous/Unrestricted/Complete";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testAlignments() {
         String logLine = "[0.013s][info][gc,init] Alignments: Space 512K, Generation 512K, Heap 2M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testAvailableSpaceFilesystem() {
         String logLine = "[0.015s][info][gc,init] Available space on backing filesystem: N/A";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     /**
@@ -84,21 +93,29 @@ class TestUnifiedHeaderEvent {
     void testCardTableEntrySize() {
         String logLine = "[0.016s][info][gc,init] CardTable entry size: 512";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testCdsArchivesMappedAt() {
-        String priorLogLine = "[0.018s][info][gc     ] Using The Z Garbage Collector";
         String logLine = "[0.013s][info][gc,metaspace] CDS archive(s) mapped at: "
                 + "[0x0000000800000000-0x0000000800be2000-0x0000000800be2000), size 12460032, SharedBaseAddress: "
                 + "0x0000000800000000, ArchiveRelocationMode: 0.";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
-        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testCdsArcivesNotMapped() {
+        String logLine = "[0.035s][info ][gc,metaspace  ] CDS archive(s) not mapped";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -106,36 +123,45 @@ class TestUnifiedHeaderEvent {
         String logLine = "[0.013s][info][gc,metaspace] Compressed class space mapped at: "
                 + "0x0000000800c00000-0x0000000840c00000, reserved size: 1073741824";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testCompressedOops() {
         String logLine = "[0.013s][info][gc,init] Compressed Oops: Enabled (32-bit)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testConcGcThreads() {
+        String logLine = "[0.011s][debug][gc           ] ConcGCThreads: 3 offset 29";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testConcurrentRefinementWorkers() {
         String logLine = "[0.014s][info][gc,init] Concurrent Refinement Workers: 10";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testConcurrentWorkers() {
         String logLine = "[0.014s][info][gc,init] Concurrent Workers: 3";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -145,9 +171,19 @@ class TestUnifiedHeaderEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         String logLine = "[0.013s][info][gc,init] CPUs: 12 total, 12 available";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testExpandTheHeap() {
+        String logLine = "[0.011s][debug][gc,ergo,heap ] Expand the heap. requested expansion amount: 19327352832B "
+                + "expansion amount: 19327352832B";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -174,90 +210,100 @@ class TestUnifiedHeaderEvent {
     void testGcThreads() {
         String logLine = "[2023-02-22T12:31:30.330+0000][2243][gc,init] GC threads: 2 parallel, 1 concurrent";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testGcWorkers() {
         String logLine = "[0.014s][info][gc,init] GC Workers: 1 (dynamic)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testHeapAddress() {
+        String logLine = "[0.019s][info][gc,heap,coops] Heap address: 0x00000006c2800000, size: 4056 MB, "
+                + "Compressed Oops mode: Zero based, Oop shift amount: 3";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHeapBackingFile() {
         String logLine = "[0.014s][info][gc,init] Heap Backing File: /memfd:java_heap";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHeapBackingFilesystem() {
         String logLine = "[0.014s][info][gc,init] Heap Backing Filesystem: tmpfs (0x1021994)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHeapInitialCapacity() {
         String logLine = "[0.013s][info][gc,init] Heap Initial Capacity: 2M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHeapMaxCapacity() {
         String logLine = "[0.013s][info][gc,init] Heap Max Capacity: 64M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHeapMinCapacity() {
         String logLine = "[0.013s][info][gc,init] Heap Min Capacity: 2M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHeapRegionCount() {
         String logLine = "[0.014s][info][gc,init] Heap Region Count: 384";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHeapRegionSize() {
         String logLine = "[0.014s][info][gc,init] Heap Region Size: 1M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHeuristicsAdaptive() {
         String logLine = "[0.014s][info][gc,init] Heuristics: Adaptive";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -267,45 +313,54 @@ class TestUnifiedHeaderEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         String logLine = "[0.013s][info][gc] Heuristics ergonomically sets -XX:+ShenandoahImplicitGCInvokesConcurrent";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogLine),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogLine),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHumongousObjectThresholdLowercase() {
         String logLine = "[2023-02-22T12:31:30.329+0000][2243][gc,init] Humongous object threshold: 2048K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testHumongousObjectThresholdUppercase() {
         String logLine = "[0.014s][info][gc,init] Humongous Object Threshold: 256K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[0.015s][info][gc,init] Initial Capacity: 32M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testInitialCapacity() {
         String logLine = "[0.015s][info][gc,init] Initial Capacity: 32M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testInitializeMarkStack() {
+        String logLine = "[0.011s][debug][gc           ] Initialize mark stack with 4096 chunks, maximum 524288";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -313,27 +368,37 @@ class TestUnifiedHeaderEvent {
         String logLine = "[2023-02-22T12:31:32.306+0000][2243][gc,init] Initialize Shenandoah heap: 6144M initial, "
                 + "6144M min, 6144M max";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testInitializingTheZCollector() {
         String logLine = "[0.014s][info][gc,init] Initializing The Z Garbage Collector";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testInitialRefinementZones() {
+        String logLine = "[0.034s][debug][gc,ergo,refine] Initial Refinement Zones: green: 3328, yellow: 9984, "
+                + "red: 16640, min yellow size: 6656";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testLargePageSupport() {
         String logLine = "[0.013s][info][gc,init] Large Page Support: Disabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -342,7 +407,7 @@ class TestUnifiedHeaderEvent {
         assertTrue(UnifiedHeaderEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -353,52 +418,52 @@ class TestUnifiedHeaderEvent {
         UnifiedHeaderEvent event = new UnifiedHeaderEvent(logLine);
         assertEquals((long) 15, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testMaxCapacity() {
         String logLine = "[0.015s][info][gc,init] Max Capacity: 96M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testMaxTlabSize() {
         String logLine = "[2023-02-22T12:31:30.329+0000][2243][gc,init] Max TLAB size: 2048K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testMediumPageSize() {
         String logLine = "[0.015s][info][gc,init] Medium Page Size: N/A";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testMemory() {
         String logLine = "[0.013s][info][gc,init] Memory: 31907M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testMinCapacity() {
         String logLine = "[0.015s][info][gc,init] Min Capacity: 32M";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -406,9 +471,9 @@ class TestUnifiedHeaderEvent {
         String logLine = "[2023-02-22T12:31:30.322+0000][2243][gc] Min heap equals to max heap, disabling "
                 + "ShenandoahUncommit";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
         List<String> logLines = new ArrayList<>();
         logLines.add(logLine);
         GcManager gcManager = new GcManager();
@@ -423,18 +488,18 @@ class TestUnifiedHeaderEvent {
         String logLine = "[0.006s][debug][gc,heap] Minimum heap 28991029248  Initial heap 28991029248  Maximum heap "
                 + "28991029248";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testMode() {
         String logLine = "[0.014s][info][gc,init] Mode: Snapshot-At-The-Beginning (SATB)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -442,9 +507,9 @@ class TestUnifiedHeaderEvent {
         String logLine = "[0.013s][info][gc,metaspace] Narrow klass base: 0x0000000800000000, Narrow klass shift: 0, "
                 + "Narrow klass range: 0x100000000";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -453,7 +518,7 @@ class TestUnifiedHeaderEvent {
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
                 JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " incorrectly indentified as blocking.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -472,9 +537,9 @@ class TestUnifiedHeaderEvent {
     void testNumaSupport() {
         String logLine = "[0.013s][info][gc,init] NUMA Support: Disabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -495,12 +560,21 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testParallelGcThreads() {
+        String logLine = "[0.011s][debug][gc           ] ParallelGCThreads: 13";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testParallelWorkers() {
         String logLine = "[0.013s][info][gc,init] Parallel Workers: 10";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -509,34 +583,34 @@ class TestUnifiedHeaderEvent {
         assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedHeaderEvent,
                 JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " not parsed.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testPeriodicGc() {
         String logLine = "[0.014s][info][gc,init] Periodic GC: Disabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testPreTouch() {
         String logLine = "[0.013s][info][gc,init] Pre-touch: Disabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testRegions() {
         String logLine = "[2023-02-22T12:31:30.329+0000][2243][gc,init] Regions: 3072 x 2048K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -549,18 +623,18 @@ class TestUnifiedHeaderEvent {
     void testRuntimeWorkers() {
         String logLine = "[0.018s][info][gc,init] Runtime Workers: 1";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testSafepointMechanism() {
         String logLine = "[2023-02-22T12:31:32.306+0000][2243][gc,init] Safepointing mechanism: global-page poll";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -603,63 +677,72 @@ class TestUnifiedHeaderEvent {
         String logLine = "[2023-02-22T12:31:30.330+0000][2243][gc,init] Shenandoah GC mode: Snapshot-At-The-Beginning "
                 + "(SATB)";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testShenandoahHeuristics() {
         String logLine = "[2023-02-22T12:31:30.330+0000][2243][gc,init] Shenandoah heuristics: Adaptive";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testStringDeduplication() {
         String logLine = "[20.715s][info ][stringdedup,init] String Deduplication is enabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testTargetOccupancyUpdates() {
+        String logLine = "[0.034s][debug][gc,ihop       ] Target occupancy update: old: 0B, new: 19327352832B";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] TLAB Size Max: 256K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testTlabSizeMax() {
         String logLine = "[0.014s][info][gc,init] TLAB Size Max: 256K";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testUncommit() {
         String logLine = "[0.015s][info][gc,init] Uncommit: Enabled";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testUncommitDelay() {
         String logLine = "[0.015s][info][gc,init] Uncommit Delay: 300s";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -674,9 +757,9 @@ class TestUnifiedHeaderEvent {
     void testUsingCms() {
         String logLine = "[3ms] GC(6) Using Concurrent Mark Sweep";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -698,45 +781,45 @@ class TestUnifiedHeaderEvent {
     void testUsingG1() {
         String logLine = "[2019-05-09T01:38:55.426+0000][18ms] Using G1";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testUsingParallel() {
         String logLine = "[0.002s][info][gc] Using Parallel";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testUsingSerial() {
         String logLine = "[0.003s][info][gc] Using Serial";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testUsingShenandoah() {
         String logLine = "[0.006s][info][gc] Using Shenandoah";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
     void testUsingZ() {
         String logLine = "[0.018s][info][gc     ] Using The Z Garbage Collector";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -804,8 +887,8 @@ class TestUnifiedHeaderEvent {
     void testZJdk21UsingLegacySingleGenerationMode() {
         String logLine = "[2023-11-16T07:13:24.592-0500] Using legacy single-generation mode";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.UNIFIED_HEADER + "not identified.");
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
-                JdkUtil.LogEventType.GC_INFO + "not identified.");
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 }

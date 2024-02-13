@@ -77,8 +77,6 @@ import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.VerboseGcYoungEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.HeapAddressEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.HeapRegionSizeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.MetaspaceUtilsReportEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.OomeMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
@@ -372,10 +370,6 @@ public final class JdkUtil {
         // Unified (alphabetical)
         if (HeapEvent.match(logLine))
             return LogEventType.HEAP;
-        if (HeapAddressEvent.match(logLine))
-            return LogEventType.HEAP_ADDRESS;
-        if (HeapRegionSizeEvent.match(logLine))
-            return LogEventType.HEAP_REGION_SIZE;
         if (MetaspaceUtilsReportEvent.match(logLine))
             return LogEventType.METASPACE_UTILS_REPORT;
         if (OomeMetaspaceEvent.match(logLine))
@@ -758,10 +752,6 @@ public final class JdkUtil {
         LogEventType eventType = identifyEventType(logLine, priorLogLine);
         switch (eventType) {
         // Unified (order of appearance)
-        case HEAP_ADDRESS:
-            return new HeapAddressEvent(logLine);
-        case HEAP_REGION_SIZE:
-            return new HeapRegionSizeEvent(logLine);
         case UNIFIED_SAFEPOINT:
             return new UnifiedSafepointEvent(logLine);
         case UNIFIED_BLANK_LINE:

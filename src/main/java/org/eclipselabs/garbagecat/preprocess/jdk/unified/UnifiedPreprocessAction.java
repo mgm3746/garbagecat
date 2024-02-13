@@ -868,6 +868,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} workers of \\d{1,} for (evacuation|full compaction|"
                     + "marking)$",
             //
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,}Using \\d{1,} of \\d{1,} workers for "
+                    + "concurrent class unloading$",
+            //
             "^" + UnifiedRegEx.DECORATOR + "   (Pre Evacuate|Evacuate( Optional)?|Post Evacuate) Collection Set: "
                     + JdkRegEx.DURATION_MS + "$",
             //
@@ -895,8 +898,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Archive regions:.+$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,}Using \\d{1,} of \\d{1,} workers for "
-                    + "concurrent class unloading$",
+            "^" + UnifiedRegEx.DECORATOR + " G1 Service Thread .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Request concurrent cycle initiation .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Initiate concurrent cycle .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " (Concurrent|Mutator) refinement: .+$",
             // main headings
             "^" + UnifiedRegEx.DECORATOR
                     + " (---|  \\d{1,}|     elapsed|thr|Activated worker|Adaptive IHOP information|Basic information|"
