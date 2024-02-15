@@ -286,6 +286,35 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testAttemptHeapExpansion() {
+        String logLine = "[0.008s][debug][gc,ergo,heap] Attempt heap expansion (allocate archive regions). "
+                + "Total size: 8388608B";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testAttemptHeapShrinking() {
+        String logLine = "[2.740s][debug][gc,ergo,heap] GC(2) Attempt heap shrinking (capacity higher than max "
+                + "desired capacity). Capacity: 2122317824B occupancy: 50331648B live: 30814280B "
+                + "maximum_desired_capacity: 71902354B (30 %)";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testAttemptingMaxCompactingCollection() {
         String logLine = "[2021-03-13T03:45:44.424+0530][80337492ms] Attempting maximally compacting collection";
         assertTrue(UnifiedPreprocessAction.match(logLine),
@@ -685,6 +714,36 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testDidNotExpandTheHeap() {
+        String logLine = "[2.929s][debug][gc,ergo,heap   ] GC(4) Did not expand the heap (heap shrinking operation "
+                + "failed) Humongous regions: 0->0 Metaspace: 23110K(23424K)->23110K(23424K) 23M->23M(48M) 30.469ms "
+                + "User=0.03s Sys=0.00s Real=0.03s";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testDidNotShrinkTheHeap() {
+        String logLine = "[2.881s][debug][gc,ergo,heap   ] GC(4) Did not shrink the heap (heap shrinking operation "
+                + "failed) Humongous regions: 0->0 Metaspace: 24342K(24768K)->24342K(24768K) 16M->16M(40M) 29.267ms "
+                + "User=0.06s Sys=0.00s Real=0.03s";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testElasticSearchDefaultLoggingPattern() throws IOException {
         File testFile = TestUtil.getFile("dataset253.txt");
         GcManager gcManager = new GcManager();
@@ -748,6 +807,20 @@ class TestUnifiedPreprocessAction {
                 + "25.6ms";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testExpandTheHeap() {
+        String logLine = "[3.039s][debug][gc,ergo,heap   ] GC(6) Expand the heap. requested expansion amount: "
+                + "12582912B expansion amount: 16777216B";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -1588,6 +1661,36 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testHeapExpansion() {
+        String logLine = "[0.772s][debug][gc,ergo,heap] GC(0) Heap expansion: short term pause time ratio 0.00% long "
+                + "term pause time ratio 0.00% threshold 2.53% pause time ratio 7.69% fully expanded false resize by "
+                + "0B Other: 0.5ms Humongous regions: 0->0 Metaspace: 10930K(11200K)->10930K(11200K) 103M->19M(2024M) "
+                + "3.940ms User=0.04s Sys=0.01s Real=0.00s";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testHeapExpansionTriggers() {
+        String logLine = "[0.772s][trace][gc,ergo,heap] GC(0) Heap expansion triggers: pauses since start: 0 num prev "
+                + "pauses for heuristics: 10 ratio over threshold count: 0";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testJdk17G1() throws IOException {
         File testFile = TestUtil.getFile("dataset235.txt");
         GcManager gcManager = new GcManager();
@@ -2141,6 +2244,21 @@ class TestUnifiedPreprocessAction {
         String logLine = "[4.065s][info][gc,phases,start] GC(2264) Phase 4: Move objects";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testPredictedBaseTime() {
+        String logLine = "[0.007s][trace][gc,ergo,heap] Predicted base time: total 10.000000 lb_cards 0 rs_length 0 "
+                + "effective_scanned_cards 0 card_merge_time 0.000000 card_scan_time 0.000000 constant_other_time "
+                + "10.000000 survivor_evac_time 0.000000";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -2815,6 +2933,20 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testShrinkTheHeap() {
+        String logLine = "[2.740s][debug][gc,ergo,heap] GC(2) Shrink the heap. requested shrinking amount: 2050415470B "
+                + "aligned shrinking amount: 2046820352B attempted shrinking amount: 2046820352B";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testSkippedPhase() {
         String logLine = "[2022-10-09T13:16:49.288+0000][3792.776s][debug][gc,ref            ] GC(9) Skipped phase1 "
                 + "of Reference Processing due to unavailable references";
@@ -3061,6 +3193,35 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testYoungDesiredLength() {
+        String logLine = "[0.007s][trace][gc,ergo,heap] Young desired length 12 survivor length 0 allocated young "
+                + "length 0 absolute min young length 12 absolute max young length 150 desired eden length by mmu 0 "
+                + "desired eden length by pause 12";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testYoungListLength() {
+        String logLine = "[0.007s][trace][gc,ergo,heap] Young list length update: pending cards 0 rs_length 0 old "
+                + "target 0 desired: 12 target: 12 max: 12";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testYoungSingleLine() {
         String logLine = "[1.507s][info][gc] GC(77) Pause Young (Allocation Failure) 24M->4M(25M) 0.509ms";
         String nextLogLine = null;
@@ -3071,6 +3232,20 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testYoungTargetLength() {
+        String logLine = "[0.007s][trace][gc,ergo,heap] Young target length: No need to use reserve receiving "
+                + "additional eden 12";
+        String nextLogLine = null;
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test

@@ -114,7 +114,7 @@ public class UnifiedRegEx {
      * 
      * For example: [info]
      */
-    public static final String LEVEL = "(\\[(debug|info)[ ]{0,}\\])";
+    public static final String LEVEL = "(\\[(debug|info|trace)[ ]{0,}\\])";
 
     /**
      * Regular expression for the process id block.
@@ -135,6 +135,7 @@ public class UnifiedRegEx {
      * 12.0.1+12
      * 17.0.1+12-LTS
      * 21+35-2513
+     * 21.0.1+12-LTS
      * </pre>
      */
     public static final String RELEASE_STRING = "((9|[12]\\d)(\\.\\d\\.(\\d{1,}))?\\+\\d{1,}(-.+)?)";

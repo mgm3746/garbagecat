@@ -890,6 +890,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Attempting full compaction$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " Attempt heap (expansion|shrinking) .+$",
+            //
             "^" + UnifiedRegEx.DECORATOR + " Attempting maximally compacting collection$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Attempting maximum full compaction clearing soft references$",
@@ -898,13 +900,27 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Archive regions:.+$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " Did not (expand|shrink) the heap .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Expand the heap\\. .+$",
+            //
             "^" + UnifiedRegEx.DECORATOR + " G1 Service Thread .+$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Request concurrent cycle initiation .+$",
+            "^" + UnifiedRegEx.DECORATOR + " Heap expansion: .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Heap expansion triggers: .+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Initiate concurrent cycle .+$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " Predicted base time: .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Request concurrent cycle initiation .+$",
+            //
             "^" + UnifiedRegEx.DECORATOR + " (Concurrent|Mutator) refinement: .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Shrink the heap\\. .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Young (desired|list|target) length.+$",
             // main headings
             "^" + UnifiedRegEx.DECORATOR
                     + " (---|  \\d{1,}|     elapsed|thr|Activated worker|Adaptive IHOP information|Basic information|"
