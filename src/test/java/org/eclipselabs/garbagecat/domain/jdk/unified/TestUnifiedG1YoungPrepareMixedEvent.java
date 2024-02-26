@@ -109,6 +109,35 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     }
 
     @Test
+    void testPreprocessedExtRootScanning() {
+        String logLine = "[1234ms][gc,start] GC(501) Pause Young (Prepare Mixed) (G1 Evacuation Pause) Ext Root "
+                + "Scanning (ms): 27.3 Other: 1.1ms Humongous regions: 16->16 "
+                + "Metaspace: 424009K(898652K)->424009K(898652K) 18221M->3823M(24576M) 153.101ms "
+                + "User=3.35s Sys=0.01s Real=0.15s";
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
+                "Event name incorrect.");
+        assertEquals((long) (1234 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
+        assertEquals(kilobytes(424009), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
+        assertEquals(kilobytes(424009), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
+        assertEquals(kilobytes(898652), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(18221 * 1024), event.getCombinedOccupancyInit(),
+                "Combined begin size not parsed correctly.");
+        assertEquals(kilobytes(3823 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(24576 * 1024), event.getCombinedSpace(),
+                "Combined allocation size not parsed correctly.");
+        assertEquals(1100, event.getOtherTime(), "Other time not parsed correctly.");
+        assertEquals(153101 + 1100, event.getDurationMicros(), "Duration not parsed correctly.");
+        assertEquals(335, event.getTimeUser(), "User time not parsed correctly.");
+        assertEquals(15, event.getTimeReal(), "Real time not parsed correctly.");
+        assertEquals(2240, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
     void testPreprocessedJdk17() {
         String logLine = "[2022-08-05T05:08:51.394+0000][1908][gc,start    ] GC(1360) Pause Young (Prepare Mixed) "
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 "

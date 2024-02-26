@@ -204,12 +204,13 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
             "^" + UnifiedRegEx.DECORATOR
                     + "( [OYy]:)? (ClassLoaderData|Concurrent (Classes Purge|Classes Unlink|Cleanup for Next Mark|"
                     + "Clear Claimed Marks|Create Live Data|Mark|Mark Abort|Mark Continue|Mark Cycle|Mark Follow|"
-                    + "Mark Free|Mark From Roots|Mark Roots|Preclean|Process Non-Strong|Process Non-Strong References|"
-                    + "Rebuild Remembered Sets|Rebuild Remembered Sets and Scrub Regions|References Enqueue|"
-                    + "References Process|Relocate|Relocate Remset FP|Remap Roots|Reset|Reset Relocation Set|"
-                    + "Scan Root Regions|Select Relocation Set|String Deduplication.*|Undo Cycle|Sweep)|"
-                    + "Trigger cleanups)( \\(" + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( "
-                    + JdkRegEx.DURATION_MS + ")?" + TimesData.REGEX_JDK9 + "?[ ]*$",
+                    + "Mark Free|Mark From Roots|Mark Roots|Preclean|Preclean SoftReferences|Process Non-Strong|"
+                    + "Process Non-Strong References|Rebuild Remembered Sets|"
+                    + "Rebuild Remembered Sets and Scrub Regions|References Enqueue|References Process|Relocate|"
+                    + "Relocate Remset FP|Remap Roots|Reset|Reset Relocation Set|Scan Root Regions|"
+                    + "Select Relocation Set|String Deduplication.*|Undo Cycle|Sweep)|Trigger cleanups)( \\("
+                    + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.DURATION_MS + ")?"
+                    + TimesData.REGEX_JDK9 + "?[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$",
             //

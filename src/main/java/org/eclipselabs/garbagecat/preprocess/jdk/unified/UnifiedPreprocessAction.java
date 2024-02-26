@@ -437,8 +437,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * Max: 1.0, Diff: 0.1, Sum: 7.8, Workers: 8
      */
     private static final String REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING = "^" + UnifiedRegEx.DECORATOR
-            + "[ ]{5}Ext Root Scanning \\(ms\\):   Min:  \\d{1,}[\\.,]\\d, Avg:  \\d{1,}[\\.,]\\d, "
-            + "Max:  (\\d{1,}[\\.,]\\d), Diff:  \\d{1,}[\\.,]\\d, Sum:  \\d{1,}[\\.,]\\d, Workers: \\d{1,}$";
+            + "[ ]{5}Ext Root Scanning \\(ms\\):   Min:[ ]{1,}\\d{1,}[\\.,]\\d, Avg:[ ]{1,}\\d{1,}[\\.,]\\d, "
+            + "Max:[ ]{1,}(\\d{1,}[\\.,]\\d), Diff:[ ]{1,}\\d{1,}[\\.,]\\d, Sum:[ ]{1,}\\d{1,}[\\.,]\\d, "
+            + "Workers: \\d{1,}$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING);
@@ -661,7 +662,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             .compile(REGEX_RETAIN_MIDDLE_SPACE_DATA);
 
     /**
-     * Regular expressions for lines thrown away.
+     * Regular expressions for lines own away.
      * 
      * In general, concurrent logging without an ending duration is thrown away, and the corresponding logging with the
      * ending duration is retained with the concurrent event.
@@ -912,6 +913,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " Initiate concurrent cycle .+$",
             //
+            "^" + UnifiedRegEx.DECORATOR
+                    + " Old generation allocation in the last mutator period, old gen allocated: .+$",
+            //
             "^" + UnifiedRegEx.DECORATOR + " Predicted base time: .+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Request concurrent cycle initiation .+$",
@@ -923,18 +927,28 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Young (desired|list|target) length.+$",
             // main headings
             "^" + UnifiedRegEx.DECORATOR
-                    + " (---|  \\d{1,}|     elapsed|thr|Activated worker|Adaptive IHOP information|Basic information|"
-                    + "Finish choosing CSet|GC Termination Stats|Heap (after|before) GC|Mutator Allocation stats|"
-                    + "Old (other|PLAB|sizing)|Running G1|Skipped phase\\d{1,}|TLAB totals|Updated Refinement Zones|"
-                    + "Young (other|PLAB|sizing)).*$",
+                    + " (---|[ ]{1,2}\\d{1,}|     elapsed|thr|Activated worker|Adaptive IHOP information|"
+                    + "Basic information|Class Unloading|Deactivated worker|Dead humongous region|Dictionary|"
+                    + "do not continue mixed GCs|Finalize Concurrent Mark Cleanup|Finalize Marking|"
+                    + "Finish adding old regions to CSet|Finish choosing CSet|Flush Task Caches|GC Termination Stats|"
+                    + "Heap (after|before) GC|Live humongous region|Mark stats|Marking Stats|Mutator Allocation stats|"
+                    + "Old (other|PLAB|sizing)|Performing GC after exiting critical section|Preclean FinalReferences|"
+                    + "Preclean PhantomReferences|Preclean SoftReferences|Preclean WeakReferences|request mixed gcs|"
+                    + "ProtectionDomainCacheTable|Purge Metaspace|Reclaim |Reclaimed |Reference Processing|"
+                    + "Remembered Set Tracking|Report Object Count|Running G1|Setting _needs_gc\\.|"
+                    + "Skipped phase\\d{1,}|TLAB totals|Updated Refinement Zones|Update Remembered Set Tracking|"
+                    + "Weak Processing|Young (other|PLAB|sizing)).*$",
+            // Indented 3 spaces
+            "^" + UnifiedRegEx.DECORATOR + "   (Elapsed time|FinalReference|Mark Stats Cache|Notify|PhantomReference|"
+                    + "Reconsider SoftReferences|SoftReference|Step Times|WeakReference).*$",
             // Indented 5 spaces
-            "^" + UnifiedRegEx.DECORATOR
-                    + "     (AOT Root Scanning|Code Root Scanning|Code Roots Fixup|Choose Collection Set|"
-                    + "Clear Card Table|Code Root Scanning|Code Roots Purge|DerivedPointerTable Update|"
-                    + "Expand Heap After Collection|Free Collection Set|GC Worker (Other|Total)|"
-                    + "Humongous (Reclaim|Register)|Merge Per-Thread State|Object Copy|Prepare TLABs|Redirty Cards|"
-                    + "Reference Processing|Resize TLABs|Scan RS|Start New Collection Set|Termination|Update RS|"
-                    + "Weak Processing).*$",
+            "^" + UnifiedRegEx.DECORATOR + "     (AOT Root Scanning|Balance queues|Code Root Scanning|"
+                    + "Code Roots Fixup|Choose Collection Set|Cleared|Clear Card Table|Clear Claimed Marks|"
+                    + "Code Root Scanning|Code Roots Purge|DerivedPointerTable Update|Discovered|"
+                    + "Expand Heap After Collection|FinalRef|Free Collection Set|GC Worker (Other|Total)|"
+                    + "Humongous (Reclaim|Register)|Merge Per-Thread State|Object Copy|PhantomRef|Prepare TLABs|"
+                    + "Redirty Cards|Reference Processing|Resize TLABs|Scan RS|SoftRef|Start New Collection Set|"
+                    + "Termination|Total|Update RS|WeakRef|Weak Processing).*$",
             // Indented 7 spaces
             "^" + UnifiedRegEx.DECORATOR
                     + "       (Claimed Cards|FinalReference|Notify and keep alive finalizable|Notify PhantomReferences|"
@@ -954,8 +968,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // ***** Concurrent (CMS/G1) *****
             "^" + UnifiedRegEx.DECORATOR
                     + " Concurrent (Clear Claimed (Marks|Roots)|Cycle|Mark|Mark Abort|Mark From Roots|"
-                    + "Mark reset for overflow|Preclean|Reset|Rebuild Remembered Sets and Scrub Regions|"
-                    + "Scan Root Regions|Undo Cycle|Sweep)[ ]{0,}$",
+                    + "Mark reset for overflow|Preclean|Preclean SoftReferences|Reset|"
+                    + "Rebuild Remembered Sets and Scrub Regions|Scan Root Regions|Undo Cycle|Sweep)[ ]{0,}$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Application time:.+$",
             // ***** AdaptiveSizePolicy *****
