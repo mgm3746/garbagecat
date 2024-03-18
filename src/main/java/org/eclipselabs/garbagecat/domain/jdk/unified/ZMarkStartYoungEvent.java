@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -115,6 +116,11 @@ public class ZMarkStartYoungEvent extends ZCollector implements UnifiedLogging, 
 
     public long getDurationMicros() {
         return eventTime;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.ZGC_GENERATIONAL;
     }
 
     public String getLogEntry() {

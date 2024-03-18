@@ -13,7 +13,6 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import org.eclipselabs.garbagecat.domain.jdk.GcEvent;
-import org.github.joa.domain.GarbageCollector;
 
 /**
  * Z collector.
@@ -21,10 +20,6 @@ import org.github.joa.domain.GarbageCollector;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ZCollector extends GcEvent {
+public abstract class ZCollector extends GcEvent {
 
-    @Override
-    public GarbageCollector getGarbageCollector() {
-        return GarbageCollector.ZGC;
-    }
 }

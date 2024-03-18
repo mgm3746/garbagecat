@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -39,7 +40,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ZRelocationStallEvent extends ZCollector implements UnifiedLogging {
+public class ZRelocationStallEvent extends UnknownCollector implements UnifiedLogging {
 
     /**
      * Regular expressions defining the logging.

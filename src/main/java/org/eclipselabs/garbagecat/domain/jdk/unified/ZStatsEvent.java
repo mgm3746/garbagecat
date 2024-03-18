@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
@@ -181,7 +182,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ZStatsEvent extends ZCollector implements ThrowAwayEvent, HeaderEvent {
+public class ZStatsEvent extends UnknownCollector implements ThrowAwayEvent, HeaderEvent {
 
     /**
      * Regular expression for the header.
