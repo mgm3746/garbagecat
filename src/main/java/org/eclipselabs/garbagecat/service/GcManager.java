@@ -1046,7 +1046,7 @@ public class GcManager {
                             && ((TimesData) event).getTimeSys() != TimesData.NO_DATA
                             && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
                         jvmDao.setSerialCount(jvmDao.getSerialCount() + 1);
-                        // Inverted serialism: Ignore real vs user + sys < .1 secs
+                        // Inverted serialism: Ignore real vs (user + sys) < .1 secs
                         if (((TimesData) event).getTimeUser() > 0
                                 && JdkMath.isInvertedSerialism(((TimesData) event).getParallelism())
                                 && (((TimesData) event).getTimeReal() - ((TimesData) event).getTimeUser()
