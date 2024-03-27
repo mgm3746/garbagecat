@@ -1,3 +1,4 @@
+[0.001s][info][gc,init] Version: 21.0.2+13-LTS (release)
 [0.125s] Safepoint "ZMarkStart", Time since last: 103615439 ns, Reaching safepoint: 36832 ns, At safepoint: 2046 ns, Total: 38878 ns
 [0.125s] GC(0) Pause Mark Start 0.004ms
 [0.125s] Safepoint "ZMarkStart", Time since last: 46013 ns, Reaching safepoint: 7945 ns, At safepoint: 10060 ns, Total: 18005 ns

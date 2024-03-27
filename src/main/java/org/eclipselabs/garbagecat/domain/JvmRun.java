@@ -30,7 +30,9 @@ import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_UNIDENTIFIED_LOG
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_CMS_CLASS_UNLOADING_NOT_ENABLED;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_GC_SAFEPOINT_RATIO;
+import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_GC_SAFEPOINT_RATIO_JDK17;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_GC_STOPPED_RATIO;
+import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_GC_STOPPED_RATIO_JDK17;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PARALLELISM_INVERTED;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PERM_MIN_NOT_EQUAL_MAX;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.WARN_PERM_SIZE_NOT_SET;
@@ -465,13 +467,21 @@ public class JvmRun {
         if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
                 && getGcStoppedRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD
                 && getStoppedTimeThroughput() != getGcThroughput()) {
-            analysis.add(WARN_GC_STOPPED_RATIO);
+            if (jvmOptions.getJvmContext().getVersionMajor() >= 17) {
+                analysis.add(WARN_GC_STOPPED_RATIO_JDK17);
+            } else {
+                analysis.add(WARN_GC_STOPPED_RATIO);
+            }
         }
         // Check for significant safepoint time unrelated to GC
         if (eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT)
                 && getGcUnifiedSafepointRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD && getJvmRunDuration() > 0
                 && getUnifiedSafepointThroughput() != getGcThroughput()) {
-            analysis.add(WARN_GC_SAFEPOINT_RATIO);
+            if (jvmOptions.getJvmContext().getVersionMajor() >= 17) {
+                analysis.add(WARN_GC_SAFEPOINT_RATIO_JDK17);
+            } else {
+                analysis.add(WARN_GC_SAFEPOINT_RATIO);
+            }
         }
         // Check if logging indicates gc details missing
         if (!hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING.getKey())

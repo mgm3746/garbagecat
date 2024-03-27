@@ -265,15 +265,27 @@ public enum Analysis {
 
     /**
      * Property key for the ratio of gc time vs. safepoint time showing a significant amount of safepoint time (&gt;20%)
-     * is not GC related.
+     * is not GC related in <JDK17 or JDK version unknown.
      */
     WARN_GC_SAFEPOINT_RATIO("warn.gc.safepoint.ratio"),
 
     /**
+     * Property key for the ratio of gc time vs. safepoint time showing a significant amount of safepoint time (&gt;20%)
+     * is not GC related in JDK17+.
+     */
+    WARN_GC_SAFEPOINT_RATIO_JDK17("warn.gc.safepoint.ratio.jdk17"),
+
+    /**
      * Property key for the ratio of gc time vs. stopped time showing a significant amount of stopped time (&gt;20%) is
-     * not GC related.
+     * not GC related in <JDK17 or JDK version unknown.
      */
     WARN_GC_STOPPED_RATIO("warn.gc.stopped.ratio"),
+
+    /**
+     * Property key for the ratio of gc time vs. stopped time showing a significant amount of stopped time (&gt;20%) is
+     * not GC related in JDK17+.
+     */
+    WARN_GC_STOPPED_RATIO_JDK17("warn.gc.stopped.ratio.jdk17"),
 
     /**
      * Property key for heap dump initiated gc.

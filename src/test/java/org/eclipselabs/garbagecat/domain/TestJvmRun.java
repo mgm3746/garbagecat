@@ -837,13 +837,15 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector incorrectly identified.");
-        assertEquals(3, jvmRun.getEventTypes().size(), "GC Event count not correct.");
+        assertEquals(4, jvmRun.getEventTypes().size(), "GC Event count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_START),
                 JdkUtil.LogEventType.Z_MARK_START.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_END),
                 JdkUtil.LogEventType.Z_MARK_END.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_HEADER),
+                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " event not identified.");
         assertEquals(megabytes(0), jvmRun.getMaxHeapOccupancy(), "Max heap occupancy not calculated correctly.");
         assertEquals(megabytes(0), jvmRun.getMaxHeapAfterGc(), "Max heap after GC not calculated correctly.");
         assertEquals(megabytes(0), jvmRun.getMaxHeapSpace(), "Max heap space not calculated correctly.");
@@ -871,7 +873,7 @@ class TestJvmRun {
         assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_STOPPED_RATIO.getKey()),
                 Analysis.WARN_GC_STOPPED_RATIO + " analysis incorrectly identified.");
         assertEquals((long) 8, jvmRun.getGcUnifiedSafepointRatio(), "GC/Safepoint ratio not correct.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_SAFEPOINT_RATIO.getKey()),
-                Analysis.WARN_GC_SAFEPOINT_RATIO + " analysis incorrectly identified.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_GC_SAFEPOINT_RATIO_JDK17.getKey()),
+                Analysis.WARN_GC_SAFEPOINT_RATIO_JDK17 + " analysis incorrectly identified.");
     }
 }
