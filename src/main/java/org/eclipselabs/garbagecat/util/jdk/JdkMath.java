@@ -49,6 +49,8 @@ public final class JdkMath {
                 calc = Integer.MAX_VALUE;
             }
         } else {
+            // TODO: Should events where user time = 0 be excluded to avoid false positives due to
+            // precision/rounding? For example, is "User=0.00s Sys=0.00s Real=0.01s" worth reporting?
             BigDecimal parallelism = new BigDecimal(timeUser);
             parallelism = parallelism.add(new BigDecimal(timeSys));
             BigDecimal hundred = new BigDecimal("100");

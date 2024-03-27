@@ -966,11 +966,7 @@ public class GcManager {
                             && ((TimesData) event).getTimeSys() != TimesData.NO_DATA
                             && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
                         jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
-                        // Don't include events where user time = 0 to avoid false positives due to
-                        // precision/rounding. For example, I don't think "User=0.00s Sys=0.00s
-                        // Real=0.01s" is worth reporting.
-                        if (((TimesData) event).getTimeUser() > 0
-                                && JdkMath.isInvertedParallelism(((TimesData) event).getParallelism())) {
+                        if (JdkMath.isInvertedParallelism(((TimesData) event).getParallelism())) {
                             jvmDao.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount() + 1);
                             if (jvmDao.getWorstInvertedParallelismEvent() == null) {
                                 jvmDao.setWorstInvertedParallelismEvent(event);
