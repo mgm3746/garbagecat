@@ -136,7 +136,12 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
             + "Stopping threads took: (\\d{1,}[\\.\\,]\\d{7}) seconds[ ]*$";
     /**
      * Regular expressions defining the JDK17 &lt; update 8 logging. Logging included in {@link #timeCleanup} in
-     * {@link #timeToStopThreads}F. Reference: https://bugs.openjdk.org/browse/JDK-8297154
+     * {@link #timeToStopThreads}.
+     * 
+     * Reference: https://bugs.openjdk.org/browse/JDK-8297154
+     * 
+     * [1.708s] JDK17U8 Safepoint \"G1CollectForAllocation\", Time since last: 11990384 ns, " + "Reaching safepoint:
+     * 2496 ns, Cleanup: 11042 ns, At safepoint: 623787 ns, Total: 637325 ns
      */
     private static final String _REGEX_JDK17 = "^" + UnifiedRegEx.DECORATOR + "( (" + UnifiedPreprocessAction.JDK17U8
             + " )?Safepoint \"" + UnifiedSafepoint.triggerRegEx()

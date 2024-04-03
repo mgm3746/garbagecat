@@ -246,7 +246,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     public static final String JDK17U8 = "JDK17U8";
 
     /**
-     * Regular expression for external root scanning block. Enabled with "gc+phases=info" unified logging.
+     * Regular expression for external root scanning block. Enabled with "gc+phases=debug" unified logging.
      *
      * Ext Root Scanning (ms): 1.8
      */
@@ -437,7 +437,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * Max: 1.0, Diff: 0.1, Sum: 7.8, Workers: 8
      */
     private static final String REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING = "^" + UnifiedRegEx.DECORATOR
-            + "[ ]{5}Ext Root Scanning \\(ms\\):   Min:[ ]{1,}\\d{1,}[\\.,]\\d, Avg:[ ]{1,}\\d{1,}[\\.,]\\d, "
+            + "[ ]{5}Ext Root Scanning \\(ms\\):[ ]{1,}Min:[ ]{1,}\\d{1,}[\\.,]\\d, Avg:[ ]{1,}\\d{1,}[\\.,]\\d, "
             + "Max:[ ]{1,}(\\d{1,}[\\.,]\\d), Diff:[ ]{1,}\\d{1,}[\\.,]\\d, Sum:[ ]{1,}\\d{1,}[\\.,]\\d, "
             + "Workers: \\d{1,}$";
 
@@ -907,20 +907,26 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " G1 Service Thread .+$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " Generate dirty cards rate: .+$",
+            //
             "^" + UnifiedRegEx.DECORATOR + " Heap expansion: .+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Heap expansion triggers: .+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Initiate concurrent cycle .+$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " Visited cards .+$",
+            //
             "^" + UnifiedRegEx.DECORATOR
                     + " Old generation allocation in the last mutator period, old gen allocated: .+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Predicted base time: .+$",
             //
+            "^" + UnifiedRegEx.DECORATOR + " ReferenceProcessor.+$",
+            //
             "^" + UnifiedRegEx.DECORATOR + " Request concurrent cycle initiation .+$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " (Concurrent|Mutator) refinement: .+$",
+            "^" + UnifiedRegEx.DECORATOR + " (Concurrent|Mutator|Total) refinement( times)?: .+$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Shrink the heap\\. .+$",
             //
@@ -928,35 +934,23 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // main headings
             "^" + UnifiedRegEx.DECORATOR
                     + " (---|[ ]{1,2}\\d{1,}|     elapsed|thr|Activated worker|Adaptive IHOP information|"
-                    + "Basic information|Class Unloading|Deactivated worker|Dead humongous region|Dictionary|"
-                    + "do not continue mixed GCs|Finalize Concurrent Mark Cleanup|Finalize Marking|"
-                    + "Finish adding old regions to CSet|Finish choosing CSet|Flush Task Caches|GC Termination Stats|"
-                    + "Heap (after|before) GC|Live humongous region|Mark stats|Marking Stats|Mutator Allocation stats|"
-                    + "Old (other|PLAB|sizing)|Performing GC after exiting critical section|Preclean FinalReferences|"
-                    + "Preclean PhantomReferences|Preclean SoftReferences|Preclean WeakReferences|request mixed gcs|"
-                    + "ProtectionDomainCacheTable|Purge Metaspace|Reclaim |Reclaimed |Reference Processing|"
-                    + "Remembered Set Tracking|Report Object Count|Running G1|Setting _needs_gc\\.|"
-                    + "Skipped phase\\d{1,}|TLAB totals|Updated Refinement Zones|Update Remembered Set Tracking|"
-                    + "Weak Processing|Young (other|PLAB|sizing)).*$",
-            // Indented 3 spaces
-            "^" + UnifiedRegEx.DECORATOR + "   (Elapsed time|FinalReference|Mark Stats Cache|Notify|PhantomReference|"
-                    + "Reconsider SoftReferences|SoftReference|Step Times|WeakReference).*$",
-            // Indented 5 spaces
-            "^" + UnifiedRegEx.DECORATOR + "     (AOT Root Scanning|Balance queues|Code Root Scanning|"
-                    + "Code Roots Fixup|Choose Collection Set|Cleared|Clear Card Table|Clear Claimed Marks|"
-                    + "Code Root Scanning|Code Roots Purge|DerivedPointerTable Update|Discovered|"
-                    + "Expand Heap After Collection|FinalRef|Free Collection Set|GC Worker (Other|Total)|"
-                    + "Humongous (Reclaim|Register)|Merge Per-Thread State|Object Copy|PhantomRef|Prepare TLABs|"
-                    + "Redirty Cards|Reference Processing|Resize TLABs|Scan RS|SoftRef|Start New Collection Set|"
-                    + "Termination|Total|Update RS|WeakRef|Weak Processing).*$",
-            // Indented 7 spaces
-            "^" + UnifiedRegEx.DECORATOR
-                    + "       (Claimed Cards|FinalReference|Notify and keep alive finalizable|Notify PhantomReferences|"
-                    + "Notify Soft\\/WeakReferences|Processed Buffers|PhantomReference|Reconsider SoftReferences|"
-                    + "Scanned Cards|Skipped Cards|SoftReference|Termination Attempts|WeakReference).*$",
-            // Indented 9 spaces
-            "^" + UnifiedRegEx.DECORATOR
-                    + "         (Balance queues|Cleared|Discovered|FinalRef|PhantomRef|SoftRef|Total|WeakRef).*$",
+                    + "Basic information|Class Unloading|Concurrent refinemen|Deactivated worker|Dead humongous region|"
+                    + "Dictionary|do not continue mixed GCs|Do not |Finalize|Finish|Flush Task Caches|"
+                    + "GC Termination Stats|Heap (after|before) GC|Humongous region |Live humongous region|Mark stats|"
+                    + "Marking Stats|Mutator Allocation stats|No Remembered Set|Old |Performing GC |Preclean |"
+                    + "request mixed gcs|ProtectionDomainCacheTable|Pruned |Purge Metaspace|Reclaim |Reclaimed |"
+                    + "Reference Processing|Remembered Set Tracking|Report Object Count|request young-only gcs|"
+                    + "Running G1|Setting _needs_gc\\.|Skipped phase|Skipping Remembered Set|Start adding |"
+                    + "TLAB totals|Updated Refinement Zones|Update Remembered Set Tracking|Weak Processing|"
+                    + "Young (other|PLAB|sizing)).*$",
+            // Indented 3 spaces (match only first letter performance optimization)
+            "^" + UnifiedRegEx.DECORATOR + "   [EFJMNOPRSVW].*$",
+            // Indented 5 spaces (match only first letter performance optimization)
+            "^" + UnifiedRegEx.DECORATOR + "     [ABCDEFGHLMOPRSTUW].*$",
+            // Indented 7 spaces (match only first letter performance optimization)
+            "^" + UnifiedRegEx.DECORATOR + "       [CDEFJMNOPRSTUVW].*$",
+            // Indented 9 spaces (match only first letter performance optimization)
+            "^" + UnifiedRegEx.DECORATOR + "         [BCDFHLPRSTW].*$",
             // ***** Parallel *****
             "^" + UnifiedRegEx.DECORATOR + " (Adjust Roots|Compaction Phase|Marking Phase|Post Compact|Summary Phase)( "
                     + JdkRegEx.DURATION_MS + ")?$",

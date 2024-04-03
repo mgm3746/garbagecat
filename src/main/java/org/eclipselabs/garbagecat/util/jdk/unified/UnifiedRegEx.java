@@ -95,6 +95,11 @@ public class UnifiedRegEx {
             + UnifiedRegEx.PID + "?" + UnifiedRegEx.LEVEL + "?)" + UnifiedRegEx.TAGS + "?( "
             + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
 
+    public static final String DEBUG_LOGGING = "(\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
+            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\])?"
+            + UnifiedRegEx.PID + "?" + UnifiedRegEx.LEVEL + "?)" + UnifiedRegEx.TAGS + "?( "
+            + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
+
     /**
      * The number of regex patterns in <code>UnifiedLogging.DECORATOR</code>. Convenience field to make the code
      * resilient to decorator pattern changes.
@@ -154,9 +159,9 @@ public class UnifiedRegEx {
      * 
      * [gc,heap ]
      */
-    public static final String TAGS = "(\\[((age|alloc|cds|coops|cpu|cset|ergo|exit|gc|heap|ihop|init|load|marking|"
-            + "metaspace|mmu|nmethod|phases|plab|ref|reloc|ref|refine|region|safepoint|stats|start|stringtable|"
-            + "stringdedup|task|tlab)[,]{0,1}){1,}[ ]{0,}\\])";
+    public static final String TAGS = "(\\[((age|alloc|cds|coops|cpu|cset|ergo|exit|gc|heap|humongous|ihop|init|load|"
+            + "marking|metaspace|mmu|nmethod|phases|plab|ref|reloc|ref|refine|region|remset|safepoint|stats|start|"
+            + "stringtable|stringdedup|tracking|task|tlab)[,]{0,1}){1,}[ ]{0,}\\])";
 
     /**
      * Logging event with only the time decorator (datestamp).
