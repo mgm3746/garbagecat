@@ -209,7 +209,7 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 37).charAt(0)).convertTo(KILOBYTES);
             permGenAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 38),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 40).charAt(0)).convertTo(KILOBYTES);
-            if (matcher.group(51) != null) {
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 51) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 52)).intValue();
                 timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 53)).intValue();
                 timeReal = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 54)).intValue();

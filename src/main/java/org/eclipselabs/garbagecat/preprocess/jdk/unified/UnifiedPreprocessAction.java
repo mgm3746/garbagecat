@@ -1176,12 +1176,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 if (context.contains(UnifiedPreprocessAction.JDK17U8)) {
-                    if (matcher.group(21) != null) {
-                        this.logEntry = matcher.group(1) + matcher.group(21) + " " + UnifiedPreprocessAction.JDK17U8
-                                + "" + matcher.group(25);
+                    if (matcher.group(22) != null) {
+                        this.logEntry = matcher.group(1) + matcher.group(22) + " " + UnifiedPreprocessAction.JDK17U8
+                                + "" + matcher.group(26);
                     } else {
                         this.logEntry = matcher.group(1) + " " + UnifiedPreprocessAction.JDK17U8 + ""
-                                + matcher.group(25);
+                                + matcher.group(26);
                     }
                 } else {
                     this.logEntry = matcher.group(0);
@@ -1209,9 +1209,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 if (logEntry.matches(UnifiedRegEx.TAG_GC_START)) {
                     this.logEntry = matcher.group(0);
                 } else {
-                    if (matcher.group(22) == null) {
+                    if (matcher.group(23) == null) {
                         // Add gc,start context to indicate the time is a timestamp, not an endstamp.
-                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(25) + matcher.group(26);
+                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(26) + matcher.group(27);
                     }
                 }
             }
@@ -1224,7 +1224,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (context.contains(UnifiedLogging.Tag.GC_START.toString())) {
                 // A young collection triggered a full gc
                 if (matcher.matches()) {
-                    this.logEntry = matcher.group(27);
+                    this.logEntry = matcher.group(28);
                 }
                 context.add(UnifiedLogging.Tag.GC_START.toString());
                 // Don't output on new line
@@ -1234,9 +1234,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     if (logEntry.matches(UnifiedRegEx.TAG_GC_START)) {
                         this.logEntry = matcher.group(1);
                     } else {
-                        if (matcher.group(22) == null) {
+                        if (matcher.group(23) == null) {
                             // Add gc,start context to indicate the time is a timestamp, not an endstamp.
-                            this.logEntry = matcher.group(3) + "[gc,start]" + matcher.group(26) + matcher.group(27);
+                            this.logEntry = matcher.group(3) + "[gc,start]" + matcher.group(27) + matcher.group(28);
                         }
                     }
                 }
@@ -1251,9 +1251,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 if (logEntry.matches(UnifiedRegEx.TAG_GC_START)) {
                     this.logEntry = matcher.group(0);
                 } else {
-                    if (matcher.group(22) == null) {
+                    if (matcher.group(23) == null) {
                         // Add gc,start context to indicate the time is a timestamp, not an endstamp.
-                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(25) + matcher.group(26);
+                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(26) + matcher.group(27);
                     }
                 }
             }
@@ -1267,9 +1267,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 if (logEntry.matches(UnifiedRegEx.TAG_GC_START)) {
                     this.logEntry = matcher.group(0);
                 } else {
-                    if (matcher.group(22) == null) {
+                    if (matcher.group(23) == null) {
                         // Add gc,start context to indicate the time is a timestamp, not an endstamp.
-                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(25) + matcher.group(26);
+                        this.logEntry = matcher.group(2) + "[gc,start]" + matcher.group(26) + matcher.group(27);
                     }
                 }
             }
@@ -1300,13 +1300,13 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(25);
+                this.logEntry = matcher.group(26);
             }
             context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_METASPACE_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(25);
+                this.logEntry = matcher.group(26);
                 context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
@@ -1327,14 +1327,14 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                         || context.contains(TOKEN_BEGINNING_OF_UNIFIED_OLD)) {
                     // Young collection that triggered full gc has heap and event time
                     if (matcher.matches()) {
-                        this.logEntry = matcher.group(26);
+                        this.logEntry = matcher.group(27);
                     }
                     // Don't ouput on new line
                     context.remove(PreprocessAction.NEWLINE);
                 } else {
                     // Middle logging
                     if (matcher.matches()) {
-                        this.logEntry = matcher.group(26);
+                        this.logEntry = matcher.group(27);
                     }
                     context.remove(PreprocessAction.NEWLINE);
                     // context.remove(UnifiedLogging.Tag.GC_START.toString());
@@ -1347,7 +1347,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     // A new collection that triggers a full gc will be wrapped in a single safepoint
                     if (context.contains(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT) && nextLogEntry != null
                             && REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN.matcher(nextLogEntry).matches()) {
-                        this.logEntry = matcher.group(2) + matcher.group(26);
+                        this.logEntry = matcher.group(2) + matcher.group(27);
                         context.add(UnifiedLogging.Tag.GC_START.toString());
                         // Output on new line
                         context.add(PreprocessAction.NEWLINE);
@@ -1369,7 +1369,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                             || !(context.contains(TOKEN_BEGINNING_OF_UNIFIED_OLD)
                                     || context.contains(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC)))) {
                         if (matcher.matches()) {
-                            this.logEntry = matcher.group(29);
+                            this.logEntry = matcher.group(30);
                         }
                     }
                     context.remove(PreprocessAction.NEWLINE);
@@ -1378,7 +1378,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_HUMONGOUS_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(25);
+                this.logEntry = matcher.group(26);
                 context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_G1_YOUNG_DATA_PATTERN.matcher(logEntry)).matches()) {
@@ -1395,8 +1395,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                         } else {
                             if (entangledLogLines.size() == 1
                                     && entangledLogLines.get(0).matches(" " + Constants.G1_TO_SPACE_EXHAUSTED)) {
-                                this.logEntry = Constants.LINE_SEPARATOR + matcher.group(1) + matcher.group(26)
-                                        + entangledLogLines.get(0) + matcher.group(30);
+                                this.logEntry = Constants.LINE_SEPARATOR + matcher.group(1) + matcher.group(27)
+                                        + entangledLogLines.get(0) + matcher.group(31);
                                 entangledLogLines.clear();
                             }
                         }
@@ -1404,7 +1404,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 } else {
                     // Middle logging
                     if (matcher.matches()) {
-                        this.logEntry = matcher.group(30);
+                        this.logEntry = matcher.group(31);
                     }
                 }
             }
@@ -1413,19 +1413,19 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_EXT_ROOT_SCANNING_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = " Ext Root Scanning (ms): " + matcher.group(25);
+                this.logEntry = " Ext Root Scanning (ms): " + matcher.group(26);
                 context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_OTHER_TIME_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = " " + matcher.group(25);
+                this.logEntry = " " + matcher.group(26);
                 context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_PROMOTION_FAILED_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(26);
+                this.logEntry = matcher.group(27);
             }
             context.remove(PreprocessAction.NEWLINE);
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
@@ -1470,7 +1470,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // End logging
             matcher.reset();
             if (matcher.matches()) {
-                this.logEntry = matcher.group(25);
+                this.logEntry = matcher.group(26);
             }
             if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT)) {
                 clearEntangledLines(entangledLogLines);
@@ -1482,9 +1482,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_TO_SPACE_EXHAUSTED_PATTERN.matcher(logEntry)).matches()) {
             if (matcher.matches()) {
                 if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
-                    entangledLogLines.add(matcher.group(25));
+                    entangledLogLines.add(matcher.group(26));
                 } else {
-                    this.logEntry = matcher.group(25);
+                    this.logEntry = matcher.group(26);
                 }
             }
             context.remove(PreprocessAction.NEWLINE);

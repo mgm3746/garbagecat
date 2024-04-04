@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.util.jdk.unified;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,11 @@ class TestUnifiedRegEx {
     void testDecoratorSafepoint() {
         String decorator = "[0.031s][info][safepoint    ]";
         assertTrue(decorator.matches(UnifiedRegEx.DECORATOR), "Decorator " + decorator + " not recognized.");
+    }
+
+    @Test
+    void testDecoratorSize() {
+        assertEquals(25, UnifiedRegEx.DECORATOR_SIZE, "Decorator size not correct.");
     }
 
     @Test
@@ -104,6 +110,18 @@ class TestUnifiedRegEx {
     void testGcEventId7Digits() {
         String id = "GC(1234567)";
         assertTrue(id.matches(UnifiedRegEx.GC_EVENT_NUMBER), "'" + id + "' not recognized as a valid GC event id.");
+    }
+
+    @Test
+    void testHostname() {
+        String hostname = "[localhost.localdomain]";
+        assertTrue(hostname.matches(UnifiedRegEx.HOSTNAME), "Hostname " + hostname + " not recognized.");
+    }
+    
+    @Test
+    void testHostnameWithNumbers() {
+        String hostname = "[myhost123]";
+        assertTrue(hostname.matches(UnifiedRegEx.HOSTNAME), "Hostname " + hostname + " not recognized.");
     }
 
     @Test

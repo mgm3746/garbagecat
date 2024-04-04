@@ -101,7 +101,7 @@ class TestUnifiedParallelScavengeEvent {
 
     @Test
     void testPreprocessed() {
-        String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
+        String logLine = "[0.031s][myhost][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),

@@ -29,6 +29,11 @@ public class UnifiedRegEx {
      */
     public static final String BLANK_LINE = "^" + UnifiedRegEx.DECORATOR + "\\s*$";
 
+    public static final String DEBUG_LOGGING = "(\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
+            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\])?"
+            + UnifiedRegEx.PID + "?" + UnifiedRegEx.LEVEL + "?)" + UnifiedRegEx.TAGS + "?( "
+            + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
+
     /**
      * Regular expression for recognized decorations prepending logging.
      * 
@@ -92,13 +97,8 @@ public class UnifiedRegEx {
      */
     public static final String DECORATOR = "(\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\])?"
-            + UnifiedRegEx.PID + "?" + UnifiedRegEx.LEVEL + "?)" + UnifiedRegEx.TAGS + "?( "
-            + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
-
-    public static final String DEBUG_LOGGING = "(\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
-            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS + ")\\])?"
-            + UnifiedRegEx.PID + "?" + UnifiedRegEx.LEVEL + "?)" + UnifiedRegEx.TAGS + "?( "
-            + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
+            + UnifiedRegEx.HOSTNAME + "?" + UnifiedRegEx.PID + "?" + UnifiedRegEx.LEVEL + "?)" + UnifiedRegEx.TAGS
+            + "?( " + UnifiedRegEx.GC_EVENT_NUMBER + ")?";
 
     /**
      * The number of regex patterns in <code>UnifiedLogging.DECORATOR</code>. Convenience field to make the code
@@ -113,6 +113,13 @@ public class UnifiedRegEx {
      * For example: GC(6)
      */
     public static final String GC_EVENT_NUMBER = "GC\\(\\d{1,}\\)";
+
+    /**
+     * Regular expression for the hostname block.
+     * 
+     * For example: [localhost.localdomain]
+     */
+    public static final String HOSTNAME = "(\\[[A-Za-z\\.\\d]{1,}\\])";
 
     /**
      * Regular expression for the log level.
