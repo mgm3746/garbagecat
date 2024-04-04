@@ -134,8 +134,11 @@ public enum GcTrigger {
     /**
      * Humongous object allocation trigger.
      * 
-     * If it triggers a {@link org.eclipselabs.garbagecat.domain.YoungCollection}, it means the humongous allocation
-     * failed.
+     * Objects larger than 1/2 {@link org.github.joa.JvmOptions#getG1HeapRegionSize()} are treated as humongous and
+     * allocated directly into the contiguous set of humongous regions.
+     * 
+     * If the allocation triggers a {@link org.eclipselabs.garbagecat.domain.YoungCollection}, it means the humongous
+     * allocation failed.
      * 
      * If it triggers a {@link org.eclipselabs.garbagecat.domain.jdk.G1YoungInitialMarkEvent} or
      * {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent}, it means the Initiating
@@ -241,14 +244,13 @@ public enum GcTrigger {
     /**
      * <p>
      * To Space Overflow trigger. A G1_YOUNG_PAUSE, G1_MIXED_PAUSE, or G1_YOUNG_INITIAL_MARK collection cannot happen
-     * due to "to-space oeverflow". There is not enough free space in the heap for survived and/or promoted objects, and
+     * due to "to-space overflow". There is not enough free space in the heap for survived and/or promoted objects, and
      * the heap cannot be expanded. This is a very expensive operation. Sometimes the collector's ergonomics can resolve
      * the issue by dynamically re-sizing heap regions. If it cannot, it invokes a G1_FULL_GC in an attempt to reclaim
      * enough space to continue. All of the following are possible resolutions:
      * </p>
      * 
      * <ol>
-     * 
      * <li>Increase the heap size.</li>
      * <li>Increase <code>-XX:G1ReservePercent</code> and the heap size to increase the amount of to-space reserve
      * memory.</li>
