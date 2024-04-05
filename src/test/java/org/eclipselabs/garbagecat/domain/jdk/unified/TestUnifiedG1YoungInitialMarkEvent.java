@@ -59,10 +59,10 @@ class TestUnifiedG1YoungInitialMarkEvent {
         assertEquals((long) (2752 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_HUMONGOUS_ALLOCATION, "Trigger not parsed correctly.");
         assertEquals(kilobytes(562 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(5 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(1250 * 1024), event.getCombinedSpace(),
-                "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(5 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1250 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(1212, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 

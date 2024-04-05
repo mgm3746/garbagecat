@@ -325,43 +325,43 @@ public class Main {
                     }
                 }
 
-                if (jvmRun.getMaxPermSpace().greaterThan(ZERO)) {
-                    if (jvmRun.getAnalysis() != null && jvmRun.hasAnalysis(INFO_PERM_GEN.getKey())) {
-                        // Max perm occupancy.
-                        printWriter.write("Perm Gen Used Max: " + jvmRun.getMaxPermOccupancy().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
-                        // Max perm after GC.
-                        printWriter.write("Perm Gen After GC Max: " + jvmRun.getMaxPermAfterGc().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
-                        // Max perm space.
-                        printWriter.write("Perm Gen Allocation Max: " + jvmRun.getMaxPermSpace().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
-                    } else {
-                        // Max metaspace occupancy.
-                        printWriter.write("Metaspace Used Max: " + jvmRun.getMaxPermOccupancy().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
-                        // Max metaspace after GC.
-                        printWriter.write("Metaspace After GC Max: " + jvmRun.getMaxPermAfterGc().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
-                        // Max metaspace space.
-                        printWriter.write("Metaspace Allocation Max: " + jvmRun.getMaxPermSpace().convertTo(KILOBYTES)
-                                + LINE_SEPARATOR);
-                    }
-                } else if (jvmRun.getMaxPermSpaceNonBlocking().greaterThan(ZERO)) {
+                if (jvmRun.getMaxClassSpace().greaterThan(ZERO)) {
                     if (jvmRun.getAnalysis() != null && jvmRun.hasAnalysis(INFO_PERM_GEN.getKey())) {
                         // Max perm occupancy.
                         printWriter.write("Perm Gen Used Max: "
-                                + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                                + jvmRun.getMaxClassSpaceOccupancy().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                        // Max perm after GC.
+                        printWriter.write("Perm Gen After GC Max: "
+                                + jvmRun.getMaxClassSpaceAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max perm space.
-                        printWriter.write("Perm Gen Allocation Max: "
-                                + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                        printWriter.write("Perm Gen Allocation Max: " + jvmRun.getMaxClassSpace().convertTo(KILOBYTES)
+                                + LINE_SEPARATOR);
                     } else {
                         // Max metaspace occupancy.
                         printWriter.write("Metaspace Used Max: "
-                                + jvmRun.getMaxPermOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                                + jvmRun.getMaxClassSpaceOccupancy().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                        // Max metaspace after GC.
+                        printWriter.write("Metaspace After GC Max: "
+                                + jvmRun.getMaxClassSpaceAfterGc().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                        // Max metaspace space.
+                        printWriter.write("Metaspace Allocation Max: " + jvmRun.getMaxClassSpace().convertTo(KILOBYTES)
+                                + LINE_SEPARATOR);
+                    }
+                } else if (jvmRun.getMaxClassSpaceNonBlocking().greaterThan(ZERO)) {
+                    if (jvmRun.getAnalysis() != null && jvmRun.hasAnalysis(INFO_PERM_GEN.getKey())) {
+                        // Max perm occupancy.
+                        printWriter.write("Perm Gen Used Max: "
+                                + jvmRun.getMaxClassSpaceOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                        // Max perm space.
+                        printWriter.write("Perm Gen Allocation Max: "
+                                + jvmRun.getMaxClassSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                    } else {
+                        // Max metaspace occupancy.
+                        printWriter.write("Metaspace Used Max: "
+                                + jvmRun.getMaxClassSpaceOccupancyNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                         // Max metaspace space.
                         printWriter.write("Metaspace Allocation Max: "
-                                + jvmRun.getMaxPermSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
+                                + jvmRun.getMaxClassSpaceNonBlocking().convertTo(KILOBYTES) + LINE_SEPARATOR);
                     }
                 }
                 // GC throughput

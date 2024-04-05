@@ -120,19 +120,19 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
     }
 
     /**
-     * Combined generation size at beginning of GC event.
+     * Combined generation occupancy at end of GC event.
      */
-    private Memory combined;
+    private Memory combinedOccupancyEnd;
+
+    /**
+     * Combined generation occupancy at beginning of GC event.
+     */
+    private Memory combinedOccupancyInit;
 
     /**
      * Available space in multiple generation.
      */
-    private Memory combinedAvailable;
-
-    /**
-     * Combined generation size at end of GC event.
-     */
-    private Memory combinedEnd;
+    private Memory combinedSpace;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -201,9 +201,9 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(15));
-                combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyInit = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
+                combinedSpace = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
                 if (matcher.group(29) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
@@ -242,9 +242,9 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
                 } else {
                     otherTime = OtherTime.NO_DATA;
                 }
-                combined = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
-                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(49), matcher.group(51).charAt(0));
-                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(52), matcher.group(54).charAt(0));
+                combinedOccupancyInit = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
+                combinedOccupancyEnd = JdkMath.convertSizeToKilobytes(matcher.group(49), matcher.group(51).charAt(0));
+                combinedSpace = JdkMath.convertSizeToKilobytes(matcher.group(52), matcher.group(54).charAt(0));
                 if (matcher.group(55) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
                     timeSys = JdkMath.convertSecsToCentis(matcher.group(57)).intValue();
@@ -271,15 +271,15 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combined;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAvailable;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

@@ -94,13 +94,14 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 "Event name incorrect.");
         assertEquals((long) (16627 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
-        assertEquals(kilobytes(3801), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(3801), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1056768), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(3801), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(3801), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1056768), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(kilobytes(24 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(13 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(31 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(13 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(31 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(100, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(461, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
@@ -121,15 +122,14 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 "Event name incorrect.");
         assertEquals((long) (1234 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
-        assertEquals(kilobytes(424009), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(424009), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(898652), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(424009), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(424009), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(898652), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(kilobytes(18221 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
         assertEquals(kilobytes(3823 * 1024), event.getCombinedOccupancyEnd(),
-                "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(24576 * 1024), event.getCombinedSpace(),
-                "Combined allocation size not parsed correctly.");
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(24576 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(1100, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(153101 + 1100, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(335, event.getTimeUser(), "User time not parsed correctly.");
@@ -161,13 +161,14 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 "Event name incorrect.");
         assertEquals((long) (113 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(kilobytes(4 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(5 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(30 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(5 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(1419, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(1, event.getTimeUser(), "User time not parsed correctly.");

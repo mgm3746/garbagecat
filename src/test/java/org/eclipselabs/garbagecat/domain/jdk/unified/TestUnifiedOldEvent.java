@@ -66,9 +66,10 @@ class TestUnifiedOldEvent {
         assertEquals((long) (231 - 2), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ERGONOMICS, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(7 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(2969, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
@@ -119,14 +120,14 @@ class TestUnifiedOldEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_OLD.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (173690), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
-        assertEquals(kilobytes(260211), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(260197), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1290240), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+        assertEquals(kilobytes(260211), event.getClassOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(260197), event.getClassOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1290240), event.getClassSpace(), "Metaspace allocation size not parsed correctly.");
         assertEquals(kilobytes(887 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(583 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(1223 * 1024), event.getCombinedSpace(),
-                "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(583 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1223 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(3460196, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(178, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(346, event.getTimeReal(), "Real time not parsed correctly.");

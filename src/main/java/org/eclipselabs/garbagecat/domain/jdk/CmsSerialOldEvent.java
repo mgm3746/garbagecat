@@ -18,10 +18,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
+import org.eclipselabs.garbagecat.domain.ClassSpaceCollection;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -146,9 +146,8 @@ import org.github.joa.domain.GarbageCollector;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  */
-public class CmsSerialOldEvent extends CmsIncrementalModeCollector
-        implements BlockingEvent, YoungCollection, OldCollection, PermMetaspaceCollection, YoungData, OldData,
-        PermMetaspaceData, TriggerData, SerialCollection, TimesData {
+public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements BlockingEvent, YoungCollection,
+        OldCollection, ClassSpaceCollection, YoungData, OldData, ClassData, TriggerData, SerialCollection, TimesData {
 
     /**
      * Regular expression for CMS_REMARK block in some events.
@@ -227,6 +226,21 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     }
 
     /**
+     * Permanent generation or metaspace occupancy at end of GC event.
+     */
+    private Memory classOccupancyEnd = Memory.ZERO;
+
+    /**
+     * Permanent generation or metaspace occupancy at beginning of GC event.
+     */
+    private Memory classOccupancyInit = Memory.ZERO;
+
+    /**
+     * Space allocated to permanent generation or metaspace.
+     */
+    private Memory classSpace = Memory.ZERO;
+
+    /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long duration;
@@ -237,34 +251,19 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     private String logEntry;
 
     /**
-     * Old generation size at beginning of GC event.
+     * Old generation occupancy at end of GC event.
      */
-    private Memory old = Memory.ZERO;
+    private Memory oldOccupancyEnd = Memory.ZERO;
+
+    /**
+     * Old generation occupancy at beginning of GC event.
+     */
+    private Memory oldOccupancyInit = Memory.ZERO;
 
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation = Memory.ZERO;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd = Memory.ZERO;
-
-    /**
-     * Permanent generation size at beginning of GC event.
-     */
-    private Memory permGen = Memory.ZERO;
-
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation = Memory.ZERO;
-
-    /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd = Memory.ZERO;
+    private Memory oldSpace = Memory.ZERO;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -292,19 +291,19 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     private GcTrigger trigger;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory young = Memory.ZERO;
+    private Memory youngOccupancyEnd = Memory.ZERO;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory youngOccupancyInit = Memory.ZERO;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable = Memory.ZERO;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd = Memory.ZERO;
+    private Memory youngSpace = Memory.ZERO;
 
     /**
      * Create event from log entry.
@@ -337,15 +336,15 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
                 } else if (matcher.group(15) != null) {
                     this.trigger = GcTrigger.getTrigger(matcher.group(15));
                 }
-                this.old = kilobytes(matcher.group(122));
-                this.oldEnd = kilobytes(matcher.group(123));
-                this.oldAllocation = kilobytes(matcher.group(124));
-                this.young = kilobytes(matcher.group(148)).minus(this.old);
-                this.youngEnd = kilobytes(matcher.group(149)).minus(this.oldEnd);
-                this.youngAvailable = kilobytes(matcher.group(150)).minus(this.oldAllocation);
-                this.permGen = kilobytes(matcher.group(152));
-                this.permGenEnd = kilobytes(matcher.group(153));
-                this.permGenAllocation = kilobytes(matcher.group(154));
+                this.oldOccupancyInit = kilobytes(matcher.group(122));
+                this.oldOccupancyEnd = kilobytes(matcher.group(123));
+                this.oldSpace = kilobytes(matcher.group(124));
+                this.youngOccupancyInit = kilobytes(matcher.group(148)).minus(this.oldOccupancyInit);
+                this.youngOccupancyEnd = kilobytes(matcher.group(149)).minus(this.oldOccupancyEnd);
+                this.youngSpace = kilobytes(matcher.group(150)).minus(this.oldSpace);
+                this.classOccupancyInit = kilobytes(matcher.group(152));
+                this.classOccupancyEnd = kilobytes(matcher.group(153));
+                this.classSpace = kilobytes(matcher.group(154));
                 if (matcher.group(155) != null) {
                     super.setIncrementalMode(true);
                 }
@@ -379,10 +378,10 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
                     // assume promotion failure
                     this.trigger = GcTrigger.PROMOTION_FAILED;
                 }
-                this.young = kilobytes(matcher.group(33));
+                this.youngOccupancyInit = kilobytes(matcher.group(33));
                 // No data to determine young end size.
-                this.youngEnd = Memory.ZERO;
-                this.youngAvailable = kilobytes(matcher.group(35));
+                this.youngOccupancyEnd = Memory.ZERO;
+                this.youngSpace = kilobytes(matcher.group(35));
 
                 // use young block duration for truncated events
                 if (matcher.group(116) == null) {
@@ -391,25 +390,25 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
 
                 // old block after young
                 if (matcher.group(79) != null) {
-                    this.old = kilobytes(matcher.group(80));
-                    this.oldEnd = kilobytes(matcher.group(81));
-                    this.oldAllocation = kilobytes(matcher.group(82));
+                    this.oldOccupancyInit = kilobytes(matcher.group(80));
+                    this.oldOccupancyEnd = kilobytes(matcher.group(81));
+                    this.oldSpace = kilobytes(matcher.group(82));
                     if (matcher.group(106) != null) {
-                        this.youngEnd = kilobytes(matcher.group(108)).minus(this.oldEnd);
+                        this.youngOccupancyEnd = kilobytes(matcher.group(108)).minus(this.oldOccupancyEnd);
                     }
                 } else {
                     if (matcher.group(106) != null) {
-                        this.old = kilobytes(matcher.group(107)).minus(this.young);
+                        this.oldOccupancyInit = kilobytes(matcher.group(107)).minus(this.youngOccupancyInit);
                         // No data to determine old end size.
-                        this.oldEnd = Memory.ZERO;
-                        this.oldAllocation = kilobytes(matcher.group(109)).minus(this.youngAvailable);
+                        this.oldOccupancyEnd = Memory.ZERO;
+                        this.oldSpace = kilobytes(matcher.group(109)).minus(this.youngSpace);
                     }
                 }
                 // perm/metaspace data
                 if (matcher.group(110) != null) {
-                    this.permGen = kilobytes(matcher.group(112));
-                    this.permGenEnd = kilobytes(matcher.group(113));
-                    this.permGenAllocation = kilobytes(matcher.group(114));
+                    this.classOccupancyInit = kilobytes(matcher.group(112));
+                    this.classOccupancyEnd = kilobytes(matcher.group(113));
+                    this.classSpace = kilobytes(matcher.group(114));
                 }
                 if (matcher.group(115) != null) {
                     super.setIncrementalMode(true);
@@ -442,6 +441,18 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
         this.duration = duration;
     }
 
+    public Memory getClassOccupancyEnd() {
+        return classOccupancyEnd;
+    }
+
+    public Memory getClassOccupancyInit() {
+        return classOccupancyInit;
+    }
+
+    public Memory getClassSpace() {
+        return classSpace;
+    }
+
     public long getDurationMicros() {
         return duration;
     }
@@ -460,31 +471,19 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     }
 
     public Memory getOldOccupancyEnd() {
-        return oldEnd;
+        return oldOccupancyEnd;
     }
 
     public Memory getOldOccupancyInit() {
-        return old;
+        return oldOccupancyInit;
     }
 
     public Memory getOldSpace() {
-        return oldAllocation;
+        return oldSpace;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
     }
 
     public int getTimeReal() {
@@ -508,15 +507,27 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     }
 
     public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+        return youngOccupancyEnd;
     }
 
     public Memory getYoungOccupancyInit() {
-        return young;
+        return youngOccupancyInit;
     }
 
     public Memory getYoungSpace() {
-        return youngAvailable;
+        return youngSpace;
+    }
+
+    protected void setClassSpace(Memory classSpace) {
+        this.classOccupancyInit = classSpace;
+    }
+
+    protected void setClassSpaceAllocation(Memory classSpaceAllocation) {
+        this.classSpace = classSpaceAllocation;
+    }
+
+    protected void setClassSpaceEnd(Memory classSpaceEnd) {
+        this.classOccupancyEnd = classSpaceEnd;
     }
 
     protected void setDuration(int duration) {
@@ -528,27 +539,15 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     }
 
     protected void setOldOccupancyEnd(Memory oldEnd) {
-        this.oldEnd = oldEnd;
+        this.oldOccupancyEnd = oldEnd;
     }
 
     protected void setOldOccupancyInit(Memory old) {
-        this.old = old;
+        this.oldOccupancyInit = old;
     }
 
     protected void setOldSpace(Memory oldAllocation) {
-        this.oldAllocation = oldAllocation;
-    }
-
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+        this.oldSpace = oldAllocation;
     }
 
     protected void setTimestamp(long timestamp) {
@@ -560,14 +559,14 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector
     }
 
     protected void setYoungOccupancyEnd(Memory youngEnd) {
-        this.youngEnd = youngEnd;
+        this.youngOccupancyEnd = youngEnd;
     }
 
     protected void setYoungOccupancyInit(Memory young) {
-        this.young = young;
+        this.youngOccupancyInit = young;
     }
 
     protected void setYoungSpace(Memory youngAvailable) {
-        this.youngAvailable = youngAvailable;
+        this.youngSpace = youngAvailable;
     }
 }

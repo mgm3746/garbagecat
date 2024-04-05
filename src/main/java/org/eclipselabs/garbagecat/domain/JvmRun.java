@@ -192,6 +192,31 @@ public class JvmRun {
     private Date logFileDate;
 
     /**
+     * Maximum perm gen or metaspace size (kilobytes).
+     */
+    private Memory maxClassSpace;
+
+    /**
+     * Maximum perm gen or metaspace after gC (kilobytes).
+     */
+    private Memory maxClassSpaceAfterGc;
+
+    /**
+     * Used for tracking max perm space or metaspace outside of <code>BlockingEvent</code>s.
+     */
+    private Memory maxClassSpaceNonBlocking;
+
+    /**
+     * Maximum perm gen or metaspace occupancy (kilobytes).
+     */
+    private Memory maxClassSpaceOccupancy;
+
+    /**
+     * Used for tracking max perm gen or metaspace occupancy outside of <code>BlockingEvent</code>s.
+     */
+    private Memory maxClassSpaceOccupancyNonBlocking;
+
+    /**
      * Maximum heap after gc.
      */
     private Memory maxHeapAfterGc;
@@ -220,31 +245,6 @@ public class JvmRun {
      * Maximum old space size.
      */
     private Memory maxOldSpace;
-
-    /**
-     * Maximum perm gen after gC (kilobytes).
-     */
-    private Memory maxPermAfterGc;
-
-    /**
-     * Maximum perm gen occupancy (kilobytes).
-     */
-    private Memory maxPermOccupancy;
-
-    /**
-     * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
-     */
-    private Memory maxPermOccupancyNonBlocking;
-
-    /**
-     * Maximum perm gen size (kilobytes).
-     */
-    private Memory maxPermSpace;
-
-    /**
-     * Used for tracking max perm space outside of <code>BlockingEvent</code>s.
-     */
-    private Memory maxPermSpaceNonBlocking;
 
     /**
      * Maximum young space size.
@@ -505,12 +505,12 @@ public class JvmRun {
             if (!org.github.joa.util.JdkUtil.isOptionDisabled(jvmOptions.getUseCompressedOops())
                     && !org.github.joa.util.JdkUtil.isOptionDisabled(jvmOptions.getUseCompressedClassPointers())) {
                 // Using compressed class pointers space
-                jvmMemory = getMaxHeapBytes().plus(getMaxPermBytes()).plus(getMaxMetaspaceBytes())
+                jvmMemory = getMaxHeapBytes().plus(getMaxPermSpaceBytes()).plus(getMaxMetaspaceBytes())
                         .plus(getCompressedClassSpaceSizeBytes());
 
             } else {
                 // Not using compressed class pointers space
-                jvmMemory = getMaxHeapBytes().plus(getMaxPermBytes()).plus(getMaxMetaspaceBytes());
+                jvmMemory = getMaxHeapBytes().plus(getMaxPermSpaceBytes()).plus(getMaxMetaspaceBytes());
             }
             if (jvmMemory.greaterThan(getPhysicalMemory())) {
                 analysis.add(ERROR_PHYSICAL_MEMORY);
@@ -985,6 +985,26 @@ public class JvmRun {
         return logFileDate;
     }
 
+    public Memory getMaxClassSpace() {
+        return maxClassSpace;
+    }
+
+    public Memory getMaxClassSpaceAfterGc() {
+        return maxClassSpaceAfterGc;
+    }
+
+    public Memory getMaxClassSpaceNonBlocking() {
+        return maxClassSpaceNonBlocking;
+    }
+
+    public Memory getMaxClassSpaceOccupancy() {
+        return maxClassSpaceOccupancy;
+    }
+
+    public Memory getMaxClassSpaceOccupancyNonBlocking() {
+        return maxClassSpaceOccupancyNonBlocking;
+    }
+
     public Memory getMaxHeapAfterGc() {
         return maxHeapAfterGc;
     }
@@ -1026,32 +1046,12 @@ public class JvmRun {
         return maxOldSpace;
     }
 
-    public Memory getMaxPermAfterGc() {
-        return maxPermAfterGc;
-    }
-
     /**
      * @return The maximum perm space in bytes, or 0 if not set.
      */
-    public Memory getMaxPermBytes() {
+    public Memory getMaxPermSpaceBytes() {
         return jvmOptions.getMaxPermSize() == null ? Memory.ZERO
                 : Memory.fromOptionSize(org.github.joa.util.JdkUtil.getByteOptionValue(jvmOptions.getMaxPermSize()));
-    }
-
-    public Memory getMaxPermOccupancy() {
-        return maxPermOccupancy;
-    }
-
-    public Memory getMaxPermOccupancyNonBlocking() {
-        return maxPermOccupancyNonBlocking;
-    }
-
-    public Memory getMaxPermSpace() {
-        return maxPermSpace;
-    }
-
-    public Memory getMaxPermSpaceNonBlocking() {
-        return maxPermSpaceNonBlocking;
     }
 
     public Memory getMaxYoungSpace() {
@@ -1367,6 +1367,26 @@ public class JvmRun {
         this.logFileDate = logFileDate;
     }
 
+    public void setMaxClassSpace(Memory maxClassSpace) {
+        this.maxClassSpace = maxClassSpace;
+    }
+
+    public void setMaxClassSpaceAfterGc(Memory maxClassSpaceAfterGc) {
+        this.maxClassSpaceAfterGc = maxClassSpaceAfterGc;
+    }
+
+    public void setMaxClassSpaceNonBlocking(Memory maxClassSpaceNonBlocking) {
+        this.maxClassSpaceNonBlocking = maxClassSpaceNonBlocking;
+    }
+
+    public void setMaxClassSpaceOccupancy(Memory maxClassSpaceOccupancy) {
+        this.maxClassSpaceOccupancy = maxClassSpaceOccupancy;
+    }
+
+    public void setMaxClassSpaceOccupancyNonBlocking(Memory maxClassSpaceOccupancyNonBlocking) {
+        this.maxClassSpaceOccupancyNonBlocking = maxClassSpaceOccupancyNonBlocking;
+    }
+
     public void setMaxHeapAfterGc(Memory maxHeapAfterGc) {
         this.maxHeapAfterGc = maxHeapAfterGc;
     }
@@ -1389,26 +1409,6 @@ public class JvmRun {
 
     public void setMaxOldSpace(Memory maxOldSpace) {
         this.maxOldSpace = maxOldSpace;
-    }
-
-    public void setMaxPermAfterGc(Memory maxPermAfterGc) {
-        this.maxPermAfterGc = maxPermAfterGc;
-    }
-
-    public void setMaxPermOccupancy(Memory maxPermOccupancy) {
-        this.maxPermOccupancy = maxPermOccupancy;
-    }
-
-    public void setMaxPermOccupancyNonBlocking(Memory maxPermOccupancyNonBlocking) {
-        this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
-    }
-
-    public void setMaxPermSpace(Memory maxPermSpace) {
-        this.maxPermSpace = maxPermSpace;
-    }
-
-    public void setMaxPermSpaceNonBlocking(Memory maxPermSpaceNonBlocking) {
-        this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
     }
 
     public void setMaxYoungSpace(Memory maxYoungSpace) {

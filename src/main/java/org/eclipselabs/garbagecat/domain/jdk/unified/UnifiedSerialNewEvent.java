@@ -19,8 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -67,7 +67,7 @@ import org.github.joa.domain.GarbageCollector;
  * 
  */
 public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLogging, BlockingEvent, YoungCollection,
-        SerialCollection, YoungData, OldData, PermMetaspaceData, TriggerData, TimesData {
+        SerialCollection, YoungData, OldData, ClassData, TriggerData, TimesData {
 
     /**
      * Trigger(s) regular expression.
@@ -97,6 +97,21 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
     }
 
     /**
+     * Permanent generation or metaspace occupancy at end of GC event.
+     */
+    private Memory classOccupancyEnd;
+
+    /**
+     * Permanent generation or metaspace occupancy at beginning of GC event.
+     */
+    private Memory classOccupancyInit;
+
+    /**
+     * Space allocated to permanent generation or metaspace.
+     */
+    private Memory classSpace;
+
+    /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long eventTime;
@@ -107,32 +122,17 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
     private String logEntry;
 
     /**
-     * Old generation size at beginning of GC event.
+     * Old generation occupancy at end of GC event.
      */
-    private Memory old;
-
+    private Memory oldOccupancyEnd;
+    /**
+     * Old generation occupancy at beginning of GC event.
+     */
+    private Memory oldOccupancyInit;
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
-
-    /**
-     * Permanent generation size at beginning of GC event.
-     */
-    private Memory permGen;
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation;
-    /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd;
+    private Memory oldSpace;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -160,19 +160,19 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
     private GcTrigger trigger;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory young;
+    private Memory youngOccupancyEnd;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory youngOccupancyInit;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
+    private Memory youngSpace;
 
     /**
      * 
@@ -191,23 +191,23 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
                 timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
             trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-            young = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2),
+            youngOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4).charAt(0)).convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
+            youngOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12),
+            youngSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 14).charAt(0)).convertTo(KILOBYTES);
-            old = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15),
+            oldOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 17).charAt(0)).convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22),
+            oldOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24).charAt(0)).convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 25),
+            oldSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 25),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27).charAt(0)).convertTo(KILOBYTES);
-            permGen = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 28),
+            classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 28),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30).charAt(0)).convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 35),
+            classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 35),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 37).charAt(0)).convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 38),
+            classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 38),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 40).charAt(0)).convertTo(KILOBYTES);
             if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 51) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 52)).intValue();
@@ -233,6 +233,18 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
         this.eventTime = duration;
     }
 
+    public Memory getClassOccupancyEnd() {
+        return classOccupancyEnd;
+    }
+
+    public Memory getClassOccupancyInit() {
+        return classOccupancyInit;
+    }
+
+    public Memory getClassSpace() {
+        return classSpace;
+    }
+
     public long getDurationMicros() {
         return eventTime;
     }
@@ -251,31 +263,19 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
     }
 
     public Memory getOldOccupancyEnd() {
-        return oldEnd;
+        return oldOccupancyEnd;
     }
 
     public Memory getOldOccupancyInit() {
-        return old;
+        return oldOccupancyInit;
     }
 
     public Memory getOldSpace() {
-        return oldAllocation;
+        return oldSpace;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
     }
 
     @Override
@@ -304,15 +304,15 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
     }
 
     public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+        return youngOccupancyEnd;
     }
 
     public Memory getYoungOccupancyInit() {
-        return young;
+        return youngOccupancyInit;
     }
 
     public Memory getYoungSpace() {
-        return youngAvailable;
+        return youngSpace;
     }
 
     public boolean isEndstamp() {
@@ -322,16 +322,16 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
         return isEndStamp;
     }
 
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
+    protected void setClassSpace(Memory classSpace) {
+        this.classOccupancyInit = classSpace;
     }
 
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
+    protected void setClassSpaceAllocation(Memory classSpaceAllocation) {
+        this.classSpace = classSpaceAllocation;
     }
 
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    protected void setClassSpaceEnd(Memory classSpaceEnd) {
+        this.classOccupancyEnd = classSpaceEnd;
     }
 
     protected void setTrigger(GcTrigger trigger) {

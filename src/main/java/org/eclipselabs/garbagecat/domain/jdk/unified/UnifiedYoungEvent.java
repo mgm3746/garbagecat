@@ -99,19 +99,19 @@ public class UnifiedYoungEvent extends UnknownCollector
     }
 
     /**
-     * Combined young + old generation allocation.
+     * Combined young + old generation size at end of GC event.
      */
-    private Memory combinedAllocation;
+    private Memory combinedOccupancyEnd;
 
     /**
      * Combined young + old generation size at beginning of GC event.
      */
-    private Memory combinedBegin;
+    private Memory combinedOccupancyInit;
 
     /**
-     * Combined young + old generation size at end of GC event.
+     * Combined young + old generation allocation.
      */
-    private Memory combinedEnd;
+    private Memory combinedSpace;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -149,11 +149,11 @@ public class UnifiedYoungEvent extends UnknownCollector
                 timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
             trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-            combinedBegin = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3),
+            combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5).charAt(0)).convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6),
+            combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8).charAt(0)).convertTo(KILOBYTES);
-            combinedAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
+            combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
         }
     }
@@ -175,15 +175,15 @@ public class UnifiedYoungEvent extends UnknownCollector
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combinedBegin;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAllocation;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

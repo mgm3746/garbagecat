@@ -67,9 +67,10 @@ class TestUnifiedYoungEvent {
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) (70 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(2 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(1 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(663, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
@@ -83,9 +84,10 @@ class TestUnifiedYoungEvent {
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) (9602 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(32 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(12 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(38 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(12 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(38 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(1812, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
@@ -126,9 +128,10 @@ class TestUnifiedYoungEvent {
         assertEquals((long) (7487 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(16 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(10 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(36 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(10 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(36 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(940, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 

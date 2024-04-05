@@ -35,10 +35,10 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
@@ -167,6 +167,16 @@ public class JvmDao {
     private Date logFileDate;
 
     /**
+     * Used for tracking max perm space or metaspace outside of <code>BlockingEvent</code>s.
+     */
+    private int maxClassSpaceNonBlocking;
+
+    /**
+     * Used for tracking max perm space or metaspace occupancy outside of <code>BlockingEvent</code>s.
+     */
+    private int maxClassSpaceOccupancyNonBlocking;
+
+    /**
      * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
      */
     private int maxHeapOccupancyNonBlocking;
@@ -175,16 +185,6 @@ public class JvmDao {
      * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
      */
     private int maxHeapSpaceNonBlocking;
-
-    /**
-     * Used for tracking max perm occupancy outside of <code>BlockingEvent</code>s.
-     */
-    private int maxPermOccupancyNonBlocking;
-
-    /**
-     * Used for tracking max perm space outside of <code>BlockingEvent</code>s.
-     */
-    private int maxPermSpaceNonBlocking;
 
     /**
      * JVM memory information.
@@ -562,6 +562,47 @@ public class JvmDao {
     }
 
     /**
+     * The maximum perm/metaspace size during the JVM run.
+     * 
+     * @return maximum perm/metaspace footprint (kilobytes).
+     */
+    public synchronized int getMaxClassSpace() {
+        return (int) kilobytes(ClassData.class, ClassData::getClassSpace).max().orElse(0);
+    }
+
+    /**
+     * The maximum perm/metaspace after GC during the JVM run.
+     * 
+     * @return maximum perm/metaspac after GC (kilobytes).
+     */
+    public synchronized int getMaxClassSpaceAfterGc() {
+        return (int) kilobytes(ClassData.class, ClassData::getClassOccupancyEnd).max().orElse(0);
+    }
+
+    /**
+     * @return The maximum perm space or metaspace in non <code>BlockingEvent</code>s.
+     */
+    public int getMaxClassSpaceNonBlocking() {
+        return maxClassSpaceNonBlocking;
+    }
+
+    /**
+     * The maximum perm/metaspace occupancy during the JVM run.
+     * 
+     * @return maximum perm/metaspace occupancy (kilobytes).
+     */
+    public synchronized int getMaxClassSpaceOccupancy() {
+        return (int) kilobytes(ClassData.class, ClassData::getClassOccupancyInit).max().orElse(0);
+    }
+
+    /**
+     * @return The maximum perm occupancy in non <code>BlockingEvent</code>s.
+     */
+    public int getMaxClassSpaceOccupancyNonBlocking() {
+        return maxClassSpaceOccupancyNonBlocking;
+    }
+
+    /**
      * The maximum heap after GC during the JVM run.
      * 
      * @return maximum heap after GC (kilobytes).
@@ -637,47 +678,6 @@ public class JvmDao {
      */
     public synchronized int getMaxOldSpace() {
         return (int) kilobytes(OldData.class, OldData::getOldSpace).max().orElse(0);
-    }
-
-    /**
-     * The maximum perm/metaspace after GC during the JVM run.
-     * 
-     * @return maximum perm/metaspac after GC (kilobytes).
-     */
-    public synchronized int getMaxPermAfterGc() {
-        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyEnd).max().orElse(0);
-    }
-
-    /**
-     * The maximum perm/metaspace occupancy during the JVM run.
-     * 
-     * @return maximum perm/metaspace occupancy (kilobytes).
-     */
-    public synchronized int getMaxPermOccupancy() {
-        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermOccupancyInit).max().orElse(0);
-    }
-
-    /**
-     * @return The maximum perm occupancy in non <code>BlockingEvent</code>s.
-     */
-    public int getMaxPermOccupancyNonBlocking() {
-        return maxPermOccupancyNonBlocking;
-    }
-
-    /**
-     * The maximum perm/metaspace size during the JVM run.
-     * 
-     * @return maximum perm/metaspace footprint (kilobytes).
-     */
-    public synchronized int getMaxPermSpace() {
-        return (int) kilobytes(PermMetaspaceData.class, PermMetaspaceData::getPermSpace).max().orElse(0);
-    }
-
-    /**
-     * @return The maximum perm space in non <code>BlockingEvent</code>s.
-     */
-    public int getMaxPermSpaceNonBlocking() {
-        return maxPermSpaceNonBlocking;
     }
 
     /**
@@ -992,6 +992,22 @@ public class JvmDao {
     }
 
     /**
+     * @param maxClassSpaceNonBlocking
+     *            The maximum perm space or metaspace in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxClassSpaceNonBlocking(int maxClassSpaceNonBlocking) {
+        this.maxClassSpaceNonBlocking = maxClassSpaceNonBlocking;
+    }
+
+    /**
+     * @param maxClassSpaceOccupancyNonBlocking
+     *            The maximum perm space or metaspace occupancy in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxClassSpaceOccupancyNonBlocking(int maxClassSpaceOccupancyNonBlocking) {
+        this.maxClassSpaceOccupancyNonBlocking = maxClassSpaceOccupancyNonBlocking;
+    }
+
+    /**
      * @param maxHeapOccupancyNonBlocking
      *            The maximum heap occupancy in non <code>BlockingEvent</code>s.
      */
@@ -1005,22 +1021,6 @@ public class JvmDao {
      */
     public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
         this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
-    }
-
-    /**
-     * @param maxPermOccupancyNonBlocking
-     *            The maximum perm occupancy in non <code>BlockingEvent</code>s.
-     */
-    public void setMaxPermOccupancyNonBlocking(int maxPermOccupancyNonBlocking) {
-        this.maxPermOccupancyNonBlocking = maxPermOccupancyNonBlocking;
-    }
-
-    /**
-     * @param maxPermSpaceNonBlocking
-     *            The maximum perm space in non <code>BlockingEvent</code>s.
-     */
-    public void setMaxPermSpaceNonBlocking(int maxPermSpaceNonBlocking) {
-        this.maxPermSpaceNonBlocking = maxPermSpaceNonBlocking;
     }
 
     /**

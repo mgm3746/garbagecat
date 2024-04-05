@@ -82,19 +82,19 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     }
 
     /**
-     * Combined young + old generation allocation.
+     * Combined young + old generation size at end of GC event.
      */
-    private Memory combinedAllocation;
+    private Memory combinedOccupancyEnd;
 
     /**
      * Combined young + old generation size at beginning of GC event.
      */
-    private Memory combinedBegin;
+    private Memory combinedOccupancyInit;
 
     /**
-     * Combined young + old generation size at end of GC event.
+     * Combined young + old generation allocation.
      */
-    private Memory combinedEnd;
+    private Memory combinedSpace;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -160,11 +160,11 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
                     }
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-                combinedBegin = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2),
+                combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5),
+                combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8),
+                combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
@@ -192,15 +192,15 @@ public class UnifiedG1YoungInitialMarkEvent extends G1Collector
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combinedBegin;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAllocation;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

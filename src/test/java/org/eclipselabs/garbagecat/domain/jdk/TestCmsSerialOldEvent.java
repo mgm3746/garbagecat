@@ -75,16 +75,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 4300825, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(6256895 - 6014591), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes(6147510 - 6014592), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(6256896 - 6014592), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(6014591), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(6014592), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(6014592), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(206989), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(206977), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(6256896 - 6014592), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(6014591), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(6014592), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(6014592), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(206989), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(206977), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(262144), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(79935662, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -101,14 +101,13 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1901217, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes((2056175 - 1794415)), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((909664 - 909664)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes((2096960 - 1835008)), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1794415), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(909664), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1835008), event.getOldSpace(), "Old allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes((2096960 - 1835008)), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(1794415), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(909664), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1835008), event.getOldSpace(), "Old space size not parsed correctly.");
         assertEquals(124596332, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -158,16 +157,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 471391741, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes(1290167 - 1290167), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(7848704 - 7331840), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(5977264), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(1290167), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(473438), event.getPermOccupancyInit(), "Perm begin size not parsed correctly.");
-        assertEquals(kilobytes(450663), event.getPermOccupancyEnd(), "Perm end size not parsed correctly.");
-        assertEquals(kilobytes(771512), event.getPermSpace(), "Perm allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7848704 - 7331840), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(5977264), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(1290167), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(473438), event.getClassOccupancyInit(), "Perm begin size not parsed correctly.");
+        assertEquals(kilobytes(450663), event.getClassOccupancyEnd(), "Perm end size not parsed correctly.");
+        assertEquals(kilobytes(771512), event.getClassSpace(), "Perm allocation size not parsed correctly.");
         assertEquals(102335790, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
         assertEquals(10625, event.getTimeUser(), "User time not parsed correctly.");
@@ -185,15 +184,15 @@ class TestCmsSerialOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertEquals((long) 5980, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(6106), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(8192), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(5589), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(5796), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(122880), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(13140), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(13124), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(6106), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(8192), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(5589), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(5796), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(122880), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(13140), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(13124), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(131072), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(89127, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -219,16 +218,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertEquals((long) 165805, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes((287075 - 101481)), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes((97352 - 97352)), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes((2080768 - 1572864)), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(101481), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(97352), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1572864), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(68021), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(67965), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes((97352 - 97352)), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes((2080768 - 1572864)), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(101481), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(97352), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1572864), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(68021), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(67965), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(262144), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(1118602, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -246,16 +245,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 706707, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(3973407 - 2655937), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes(2373842 - 2373842), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(4040704 - 2658304), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(2655937), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(2373842), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(2658304), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(72496), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(72496), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1118208), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(4040704 - 2658304), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(2655937), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(2373842), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2658304), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(72496), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(72496), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1118208), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(11677083, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -270,15 +269,15 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals((long) 2425, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(7562), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(14784), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1231), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(2846), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(114688), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(8602), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(8593), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(7562), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(14784), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(1231), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(2846), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(114688), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(8602), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(8593), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(131072), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(82809, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -292,15 +291,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 144501626, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(680066), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(707840), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1971073 - 680066), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(2018560 - 707840), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(680066), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(707840), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(1971073 - 680066), event.getOldOccupancyInit(),
+                "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2018560 - 707840), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(3708405, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -315,12 +315,12 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 3546690, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(532480), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(599040), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(887439), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(893801), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(907264), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(532480), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(599040), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(887439), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(893801), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(907264), event.getOldSpace(), "Old space size not parsed correctly.");
         assertEquals(9641918, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -338,12 +338,13 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 289985117, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(144192), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(978341 - 978341), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(144192), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1281600), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(978341), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1281600), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(144192), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(978341 - 978341), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(144192), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(1281600), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(978341), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1281600), event.getOldSpace(), "Old space size not parsed correctly.");
         assertEquals(3793020, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -358,15 +359,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 1181943, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(145542), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(548489 - 548489), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(149120), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(6656483), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(548489), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(8218240), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(145542), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(548489 - 548489), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(149120), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(6656483), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(548489), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(8218240), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(9256447, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -384,15 +386,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CLASS_HISTOGRAM, "Trigger not parsed correctly.");
         assertEquals((long) 11662232, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(3198859 - 2844387), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(635365 - 635365), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(7848704 - 7331840), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(2844387), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(635365), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(851635), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(408849), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1048576), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(635365 - 635365), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7848704 - 7331840), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(2844387), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(635365), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(851635), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(408849), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1048576), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(94911621, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -410,15 +413,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CLASS_HISTOGRAM, "Trigger not parsed correctly.");
         assertEquals((long) 11662232, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(3198859 - 2844387), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(635365 - 635365), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(7848704 - 7331840), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(2844387), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(635365), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(851635), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(408849), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1048576), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(635365 - 635365), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7848704 - 7331840), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(2844387), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(635365), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(851635), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(408849), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1048576), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(94911621, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -438,15 +442,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 85217903, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(457349 - 423728), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(457254 - 423633), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(4177280 - 4023936), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(423728), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(423633), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(4023936), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(260428), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(260406), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(457254 - 423633), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(4177280 - 4023936), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(423728), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(423633), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(4023936), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(260428), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(260406), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(262144), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(516760, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -462,15 +467,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 44684, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1229657 - 1218548), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(413373 - 413373), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(1581168 - 1465840), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1218548), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(413373), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1465840), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(83805), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(80520), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(83968), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(413373 - 413373), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1581168 - 1465840), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(1218548), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(413373), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1465840), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(83805), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(80520), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(83968), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(1365942, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -487,15 +493,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_INTERRUPTED, "Trigger not parsed correctly.");
         assertEquals((long) 85030389, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1045947 - 861863), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(904027 - 904027), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(2047232 - 1797568), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(861863), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(904027), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1797568), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(252246), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(252202), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(904027 - 904027), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2047232 - 1797568), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(861863), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(904027), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1797568), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(252246), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(252202), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(262144), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(42907027, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -535,15 +542,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.HEAP_INSPECTION_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals((long) 2854464, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1432148 - 945496), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(961540 - 961540), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(6137856 - 4755456), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(945496), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(961540), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(4755456), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(73362), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(73362), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1118208), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(961540 - 961540), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(6137856 - 4755456), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(945496), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(961540), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(4755456), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(73362), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(73362), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1118208), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(855335, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -559,15 +567,17 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_INTERRUPTED, "Trigger not parsed correctly.");
         assertEquals((long) 262372344, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(49392 - 49392), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(48780 - 48780), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(2063104 - 1756416), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(49392), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(48780), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1756416), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(256552), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(256552), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1230848), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(49392 - 49392), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(48780 - 48780), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2063104 - 1756416), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(49392), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(48780), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1756416), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(256552), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(256552), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1230848), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(262479, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -582,15 +592,17 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
         assertEquals((long) 262372130, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(49512 - 49512), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(49392 - 49392), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(2063104 - 1756416), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(49512), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(49392), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1756416), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(256586), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(256586), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1230848), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(49512 - 49512), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(49392 - 49392), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2063104 - 1756416), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(49512), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(49392), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1756416), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(256586), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(256586), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1230848), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(210863, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -606,15 +618,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
         assertEquals((long) 262371895, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(176820 - 42863), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(49512 - 49512), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(2063104 - 1756416), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(42863), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(49512), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1756416), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(256586), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(256586), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1230848), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(49512 - 49512), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2063104 - 1756416), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(42863), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(49512), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1756416), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(256586), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(256586), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1230848), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(234309, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -638,12 +651,12 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 42782086, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(254464), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(254464), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1082057), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(934941), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1082084), event.getOldSpace(), "Old allocation size not parsed correctly.");
+        assertEquals(kilobytes(254464), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(0), event.getYoungOccupancyEnd(), "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(254464), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(1082057), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(934941), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1082084), event.getOldSpace(), "Old space size not parsed correctly.");
         assertEquals(6558777, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -659,16 +672,17 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1817644, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(1382383), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(1382383), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes(2873414 - 2658303), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(4040704 - 2658304), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(2658303), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(2658303), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(2658304), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(72200), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(72200), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1118208), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(4040704 - 2658304), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(2658303), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(2658303), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2658304), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(72200), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(72200), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1118208), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(8798675, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -683,15 +697,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 6102, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(19648), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
-        assertEquals(kilobytes(25946 - 25946), event.getYoungOccupancyEnd(), "Young end size not parsed correctly.");
-        assertEquals(kilobytes(64512 - 44864), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(44849), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(25946), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(44864), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(43759), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(43759), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+        assertEquals(kilobytes(19648), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(25946 - 25946), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(64512 - 44864), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(44849), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(25946), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(44864), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(43759), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(43759), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(262144), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(277307, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -707,14 +722,13 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 26683209, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes((1403308 - 1141548)), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((1078465 - 1078465)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes((1441600 - 1179648)), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1141548), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(1078465), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1179648), event.getOldSpace(), "Old allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes((1441600 - 1179648)), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(1141548), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(1078465), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1179648), event.getOldSpace(), "Old space size not parsed correctly.");
         assertEquals(7383839, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -755,17 +769,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 3070289, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes((6217865 - 6010121)), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((6028029 - 6014591)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes((6256896 - 6014592)), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(6010121), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(6014591), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(6014592), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(206688), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(206662), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(262144), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes((6256896 - 6014592)), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(6010121), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(6014591), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(6014592), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(206688), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(206662), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(262144), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(79050959, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -781,17 +794,17 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 719519, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(1382400), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(1382400), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((2702358 - 2658278)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes((4040704 - 2658304)), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(2542828), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(2658278), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(2658304), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(72175), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(72175), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1118208), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes((4040704 - 2658304)), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(2542828), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(2658278), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2658304), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(72175), event.getClassOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(72175), event.getClassOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1118208), event.getClassSpace(), "Metaspace allocation size not parsed correctly.");
         assertEquals(12348057, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -807,17 +820,17 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1202526, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(1355422), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(1355422), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((2725109 - 2658289)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes((4040704 - 2658304)), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(2656311), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(2658289), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(2658304), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(72111), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(72111), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1118208), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes((4040704 - 2658304)), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(2656311), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(2658289), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2658304), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(72111), event.getClassOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(72111), event.getClassOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1118208), event.getClassSpace(), "Metaspace allocation size not parsed correctly.");
         assertEquals(9361008, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -835,17 +848,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 572264304, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((891234 - 891234)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes((7848704 - 7331840)), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(5350445), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(891234), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(500357), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(443269), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1048576), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes((7848704 - 7331840)), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(5350445), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(891234), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(500357), event.getClassOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(443269), event.getClassOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1048576), event.getClassSpace(), "Metaspace allocation size not parsed correctly.");
         assertEquals(97218882, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -863,17 +875,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 576460444, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((905970 - 905970)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes((7848704 - 7331840)), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(5074711), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(905970), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(498279), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(443366), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1048576), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes((7848704 - 7331840)), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(5074711), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(905970), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(498279), event.getClassOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(443366), event.getClassOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1048576), event.getClassSpace(), "Metaspace allocation size not parsed correctly.");
         assertEquals(83677520, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -889,16 +900,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 395950370, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(53094), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(53094), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((317110 - 317110)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(59008), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(664527), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(317110), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1507328), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(83780), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(83711), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(131072), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(59008), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(664527), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(317110), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1507328), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(83780), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(83711), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(131072), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(3003904, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -914,16 +925,17 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 4595651, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(1304576), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(1304576), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((684015 - 684015)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(1304576), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(967034), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(684015), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(4886528), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(201541), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(201494), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(524288), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1304576), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(967034), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(684015), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(4886528), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(201541), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(201494), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(524288), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(5042168, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -940,16 +952,16 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 182314858, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(516864), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((756393 - 756393)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(516864), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(3354568), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(756393), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(682507), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(442221), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(1048576), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(516864), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(3354568), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(756393), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(7331840), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(682507), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(442221), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1048576), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(107655371, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -988,13 +1000,13 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 25281015, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(261760), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(261760), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((1015603 - 1015603)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(261952), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(1048384), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(1015603), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(1179648), event.getOldSpace(), "Old allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(261952), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(1048384), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(1015603), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1179648), event.getOldSpace(), "Old space size not parsed correctly.");
         assertEquals(7855766, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -1013,17 +1025,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 2057323, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(13363199 - 9216000), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes(9728622 - 9215999), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(13363200 - 9216000), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(9216000), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(9215999), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(9216000), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(376898), event.getPermOccupancyInit(), "Perm begin size not parsed correctly.");
-        assertEquals(kilobytes(376894), event.getPermOccupancyEnd(), "Perm end size not parsed correctly.");
-        assertEquals(kilobytes(524288), event.getPermSpace(), "Perm allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(13363200 - 9216000), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(9216000), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(9215999), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(9216000), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(376898), event.getClassOccupancyInit(), "Perm begin size not parsed correctly.");
+        assertEquals(kilobytes(376894), event.getClassOccupancyEnd(), "Perm end size not parsed correctly.");
+        assertEquals(kilobytes(524288), event.getClassSpace(), "Perm allocation size not parsed correctly.");
         assertEquals(88278527, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -1053,16 +1064,17 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 108537519, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(1409215), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(1409215), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((4554003 - 4554003)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(1567616), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(13135135), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(4554003), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(16914880), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(227503), event.getPermOccupancyInit(), "Perm gen begin size not parsed correctly.");
-        assertEquals(kilobytes(226115), event.getPermOccupancyEnd(), "Perm gen end size not parsed correctly.");
-        assertEquals(kilobytes(378908), event.getPermSpace(), "Perm gen allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1567616), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(13135135), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(4554003), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(16914880), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(227503), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(226115), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(378908), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(15192712, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -1079,13 +1091,14 @@ class TestCmsSerialOldEvent {
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 36843783, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(2304000), event.getYoungOccupancyInit(), "Young begin size not parsed correctly.");
+        assertEquals(kilobytes(2304000), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes((2769354 - 2769354)), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(2304000), event.getYoungSpace(), "Young available size not parsed correctly.");
-        assertEquals(kilobytes(2818067), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(2769354), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(5120000), event.getOldSpace(), "Old allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(2304000), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(2818067), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(2769354), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(5120000), event.getOldSpace(), "Old space size not parsed correctly.");
         assertEquals(4284796, event.getDurationMicros(), "Duration not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }
@@ -1256,17 +1269,16 @@ class TestCmsSerialOldEvent {
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 58626878, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(19349630 - 13441202), event.getYoungOccupancyInit(),
-                "Young begin size not parsed correctly.");
+                "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes(12005469 - 12005469), event.getYoungOccupancyEnd(),
-                "Young end size not parsed correctly.");
-        assertEquals(kilobytes(22020096 - 13631488), event.getYoungSpace(),
-                "Young available size not parsed correctly.");
-        assertEquals(kilobytes(13441202), event.getOldOccupancyInit(), "Old begin size not parsed correctly.");
-        assertEquals(kilobytes(12005469), event.getOldOccupancyEnd(), "Old end size not parsed correctly.");
-        assertEquals(kilobytes(13631488), event.getOldSpace(), "Old allocation size not parsed correctly.");
-        assertEquals(kilobytes(1257346), event.getPermOccupancyInit(), "Perm begin size not parsed correctly.");
-        assertEquals(kilobytes(1257346), event.getPermOccupancyEnd(), "Perm end size not parsed correctly.");
-        assertEquals(kilobytes(2097152), event.getPermSpace(), "Perm allocation size not parsed correctly.");
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(22020096 - 13631488), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(13441202), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(12005469), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(13631488), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(1257346), event.getClassOccupancyInit(), "Perm begin size not parsed correctly.");
+        assertEquals(kilobytes(1257346), event.getClassOccupancyEnd(), "Perm end size not parsed correctly.");
+        assertEquals(kilobytes(2097152), event.getClassSpace(), "Perm allocation size not parsed correctly.");
         assertEquals(23183850, event.getDurationMicros(), "Duration not parsed correctly.");
         assertTrue(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
     }

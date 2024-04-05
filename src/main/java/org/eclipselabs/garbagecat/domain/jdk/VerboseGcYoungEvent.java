@@ -100,19 +100,19 @@ public class VerboseGcYoungEvent extends UnknownCollector
     }
 
     /**
-     * Combined young + old generation allocation.
+     * Combined young + old generation size at end of GC event.
      */
-    private Memory combinedAllocation;
+    private Memory combinedOccupancyEnd;
 
     /**
      * Combined young + old generation size at beginning of GC event.
      */
-    private Memory combinedBegin;
+    private Memory combinedOccupancyInit;
 
     /**
-     * Combined young + old generation size at end of GC event.
+     * Combined young + old generation allocation.
      */
-    private Memory combinedEnd;
+    private Memory combinedSpace;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -154,13 +154,13 @@ public class VerboseGcYoungEvent extends UnknownCollector
             }
             trigger = GcTrigger.getTrigger(matcher.group(15));
             if (matcher.group(18) != null) {
-                combinedBegin = kilobytes(matcher.group(19));
+                combinedOccupancyInit = kilobytes(matcher.group(19));
             } else {
                 // set it to the end
-                combinedBegin = kilobytes(matcher.group(20));
+                combinedOccupancyInit = kilobytes(matcher.group(20));
             }
-            combinedEnd = kilobytes(matcher.group(20));
-            combinedAllocation = kilobytes(matcher.group(21));
+            combinedOccupancyEnd = kilobytes(matcher.group(20));
+            combinedSpace = kilobytes(matcher.group(21));
             duration = JdkMath.convertSecsToMicros(matcher.group(22)).intValue();
         }
     }
@@ -182,15 +182,15 @@ public class VerboseGcYoungEvent extends UnknownCollector
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combinedBegin;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAllocation;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

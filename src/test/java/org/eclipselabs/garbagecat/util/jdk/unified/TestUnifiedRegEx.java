@@ -117,7 +117,7 @@ class TestUnifiedRegEx {
         String hostname = "[localhost.localdomain]";
         assertTrue(hostname.matches(UnifiedRegEx.HOSTNAME), "Hostname " + hostname + " not recognized.");
     }
-    
+
     @Test
     void testHostnameWithNumbers() {
         String hostname = "[myhost123]";

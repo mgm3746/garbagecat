@@ -92,19 +92,19 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     }
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory combined = Memory.ZERO;
+    private Memory combinedOccupancyEnd = Memory.ZERO;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory combinedOccupancyInit = Memory.ZERO;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory combinedAvailable = Memory.ZERO;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory combinedEnd = Memory.ZERO;
+    private Memory combinedSpace = Memory.ZERO;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -155,9 +155,9 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             if (matcher.group(20) != null) {
-                combined = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyInit = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyEnd = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+                combinedSpace = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
             }
             duration = JdkMath.convertSecsToMicros(matcher.group(29)).intValue();
             if (matcher.group(32) != null) {
@@ -185,15 +185,15 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combined;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAvailable;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

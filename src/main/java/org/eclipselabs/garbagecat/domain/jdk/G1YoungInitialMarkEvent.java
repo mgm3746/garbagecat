@@ -121,19 +121,19 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
     }
 
     /**
-     * Combined generation size at beginning of GC event.
+     * Combined generation occupancy at end of GC event.
      */
-    private Memory combined = Memory.ZERO;
+    private Memory combinedOccupancyEnd = Memory.ZERO;
+
+    /**
+     * Combined generation occupancy at beginning of GC event.
+     */
+    private Memory combinedOccupancyInit = Memory.ZERO;
 
     /**
      * Available space in multiple generation.
      */
-    private Memory combinedAvailable = Memory.ZERO;
-
-    /**
-     * Combined generation size at end of GC event.
-     */
-    private Memory combinedEnd = Memory.ZERO;
+    private Memory combinedSpace = Memory.ZERO;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -203,9 +203,9 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(15));
-                combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyInit = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
+                combinedSpace = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
                 if (matcher.group(29) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
@@ -251,9 +251,11 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
                     }
                 }
                 if (matcher.group(28) != null) {
-                    combined = JdkMath.convertSizeToKilobytes(matcher.group(47), matcher.group(49).charAt(0));
-                    combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(53), matcher.group(55).charAt(0));
-                    combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(56), matcher.group(58).charAt(0));
+                    combinedOccupancyInit = JdkMath.convertSizeToKilobytes(matcher.group(47),
+                            matcher.group(49).charAt(0));
+                    combinedOccupancyEnd = JdkMath.convertSizeToKilobytes(matcher.group(53),
+                            matcher.group(55).charAt(0));
+                    combinedSpace = JdkMath.convertSizeToKilobytes(matcher.group(56), matcher.group(58).charAt(0));
                 }
                 if (matcher.group(59) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(60)).intValue();
@@ -281,15 +283,15 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combined;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAvailable;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

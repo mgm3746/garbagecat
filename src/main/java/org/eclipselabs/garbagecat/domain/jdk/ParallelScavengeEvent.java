@@ -124,19 +124,19 @@ public class ParallelScavengeEvent extends ParallelCollector
     private String logEntry;
 
     /**
-     * Old generation size at beginning of GC event.
+     * Old generation occupancy at end of GC event.
      */
-    private Memory old;
+    private Memory oldOccupancyEnd;
+
+    /**
+     * Old generation occupancy at beginning of GC event.
+     */
+    private Memory oldOccupancyInit;
 
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
+    private Memory oldSpace;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -163,19 +163,19 @@ public class ParallelScavengeEvent extends ParallelCollector
     private GcTrigger trigger;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory young;
+    private Memory youngOccupancyEnd;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory youngOccupancyInit;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
+    private Memory youngSpace;
 
     /**
      * Create event from log entry.
@@ -198,12 +198,12 @@ public class ParallelScavengeEvent extends ParallelCollector
                 }
             }
             trigger = GcTrigger.getTrigger(matcher.group(16));
-            young = kilobytes((matcher.group(19)));
-            youngEnd = kilobytes((matcher.group(20)));
-            youngAvailable = kilobytes((matcher.group(21)));
-            old = kilobytes(matcher.group(22)).minus(young);
-            oldEnd = kilobytes(matcher.group(23)).minus(youngEnd);
-            oldAllocation = kilobytes(matcher.group(24)).minus(youngAvailable);
+            youngOccupancyInit = kilobytes((matcher.group(19)));
+            youngOccupancyEnd = kilobytes((matcher.group(20)));
+            youngSpace = kilobytes((matcher.group(21)));
+            oldOccupancyInit = kilobytes(matcher.group(22)).minus(youngOccupancyInit);
+            oldOccupancyEnd = kilobytes(matcher.group(23)).minus(youngOccupancyEnd);
+            oldSpace = kilobytes(matcher.group(24)).minus(youngSpace);
             duration = JdkMath.convertSecsToMicros(matcher.group(25)).intValue();
             if (matcher.group(28) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
@@ -247,15 +247,15 @@ public class ParallelScavengeEvent extends ParallelCollector
     }
 
     public Memory getOldOccupancyEnd() {
-        return oldEnd;
+        return oldOccupancyEnd;
     }
 
     public Memory getOldOccupancyInit() {
-        return old;
+        return oldOccupancyInit;
     }
 
     public Memory getOldSpace() {
-        return oldAllocation;
+        return oldSpace;
     }
 
     public int getParallelism() {
@@ -283,14 +283,14 @@ public class ParallelScavengeEvent extends ParallelCollector
     }
 
     public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+        return youngOccupancyEnd;
     }
 
     public Memory getYoungOccupancyInit() {
-        return young;
+        return youngOccupancyInit;
     }
 
     public Memory getYoungSpace() {
-        return youngAvailable;
+        return youngSpace;
     }
 }

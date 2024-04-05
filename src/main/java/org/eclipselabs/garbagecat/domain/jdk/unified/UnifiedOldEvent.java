@@ -19,11 +19,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
+import org.eclipselabs.garbagecat.domain.ClassSpaceCollection;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
@@ -73,7 +73,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * 
  */
 public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging, BlockingEvent, OldCollection,
-        PermMetaspaceCollection, PermMetaspaceData, CombinedData, TriggerData, ParallelEvent, TimesData {
+        ClassSpaceCollection, ClassData, CombinedData, TriggerData, ParallelEvent, TimesData {
 
     /**
      * Trigger(s) regular expression.
@@ -105,43 +105,43 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
     }
 
     /**
-     * Combined young + old generation allocation.
+     * Permanent generation or metaspace occupancy at end of GC event.
      */
-    private Memory combinedAllocation;
+    private Memory classOccupancyEnd;
 
     /**
-     * Combined young + old generation size at beginning of GC event.
+     * Permanent generation or metaspace occupancy at beginning of GC event.
      */
-    private Memory combinedBegin;
+    private Memory classOccupancyInit;
+
+    /**
+     * Space allocated to permanent generation or metaspace.
+     */
+    private Memory classSpace;
 
     /**
      * Combined young + old generation size at end of GC event.
      */
-    private Memory combinedEnd;
+    private Memory combinedOccupancyEnd;
+
+    /**
+     * Combined young + old generation size at beginning of GC event.
+     */
+    private Memory combinedOccupancyInit;
+
+    /**
+     * Combined young + old generation allocation.
+     */
+    private Memory combinedSpace;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long eventTime;
-
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
-    /**
-     * Permanent generation size at beginning of GC event.
-     */
-    private Memory permGen;
-
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation;
-    /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd;
     /**
      * The wall (clock) time in centiseconds.
      */
@@ -183,18 +183,18 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
             }
             trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
             if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3) != null) {
-                permGen = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4),
+                classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6).charAt(0)).convertTo(KILOBYTES);
-                permGenEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7),
+                classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9).charAt(0)).convertTo(KILOBYTES);
-                permGenAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10),
+                classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12).charAt(0)).convertTo(KILOBYTES);
             }
-            combinedBegin = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 13),
+            combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 13),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15).charAt(0)).convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 16),
+            combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 16),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 18).charAt(0)).convertTo(KILOBYTES);
-            combinedAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 19),
+            combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 19),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 21).charAt(0)).convertTo(KILOBYTES);
             if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 23) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24)).intValue();
@@ -220,16 +220,28 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
         this.eventTime = duration;
     }
 
+    public Memory getClassOccupancyEnd() {
+        return classOccupancyEnd;
+    }
+
+    public Memory getClassOccupancyInit() {
+        return classOccupancyInit;
+    }
+
+    public Memory getClassSpace() {
+        return classSpace;
+    }
+
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combinedBegin;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAllocation;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {
@@ -246,18 +258,6 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
     }
 
     @Override
@@ -292,15 +292,15 @@ public class UnifiedOldEvent extends UnknownCollector implements UnifiedLogging,
         return isEndStamp;
     }
 
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
+    protected void setClassSpace(Memory classSpace) {
+        this.classOccupancyInit = classSpace;
     }
 
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
+    protected void setClassSpaceAllocation(Memory classSpaceAllocation) {
+        this.classSpace = classSpaceAllocation;
     }
 
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    protected void setClassSpaceEnd(Memory classSpaceEnd) {
+        this.classOccupancyEnd = classSpaceEnd;
     }
 }

@@ -119,19 +119,19 @@ public class SerialNewEvent extends SerialCollector
     private String logEntry;
 
     /**
-     * Old generation size at beginning of GC event.
+     * Old generation occupancy at end of GC event.
      */
-    private Memory old;
+    private Memory oldOccupancyEnd;
+
+    /**
+     * Old generation occupancy at beginning of GC event.
+     */
+    private Memory oldOccupancyInit;
 
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
+    private Memory oldSpace;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -159,19 +159,19 @@ public class SerialNewEvent extends SerialCollector
     private GcTrigger trigger;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory young;
+    private Memory youngOccupancyEnd;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory youngOccupancyInit;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
+    private Memory youngSpace;
 
     /**
      * 
@@ -191,12 +191,12 @@ public class SerialNewEvent extends SerialCollector
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             trigger = GcTrigger.getTrigger(matcher.group(18));
-            young = kilobytes(matcher.group(31));
-            youngEnd = kilobytes(matcher.group(32));
-            youngAvailable = kilobytes(matcher.group(33));
-            old = kilobytes(matcher.group(37)).minus(young);
-            oldEnd = kilobytes(matcher.group(38)).minus(youngEnd);
-            oldAllocation = kilobytes(matcher.group(39)).minus(youngAvailable);
+            youngOccupancyInit = kilobytes(matcher.group(31));
+            youngOccupancyEnd = kilobytes(matcher.group(32));
+            youngSpace = kilobytes(matcher.group(33));
+            oldOccupancyInit = kilobytes(matcher.group(37)).minus(youngOccupancyInit);
+            oldOccupancyEnd = kilobytes(matcher.group(38)).minus(youngOccupancyEnd);
+            oldSpace = kilobytes(matcher.group(39)).minus(youngSpace);
             duration = JdkMath.convertSecsToMicros(matcher.group(40)).intValue();
             if (matcher.group(43) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(44)).intValue();
@@ -240,15 +240,15 @@ public class SerialNewEvent extends SerialCollector
     }
 
     public Memory getOldOccupancyEnd() {
-        return oldEnd;
+        return oldOccupancyEnd;
     }
 
     public Memory getOldOccupancyInit() {
-        return old;
+        return oldOccupancyInit;
     }
 
     public Memory getOldSpace() {
-        return oldAllocation;
+        return oldSpace;
     }
 
     public int getParallelism() {
@@ -284,15 +284,15 @@ public class SerialNewEvent extends SerialCollector
     }
 
     public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+        return youngOccupancyEnd;
     }
 
     public Memory getYoungOccupancyInit() {
-        return young;
+        return youngOccupancyInit;
     }
 
     public Memory getYoungSpace() {
-        return youngAvailable;
+        return youngSpace;
     }
 
     protected void setTrigger(GcTrigger trigger) {

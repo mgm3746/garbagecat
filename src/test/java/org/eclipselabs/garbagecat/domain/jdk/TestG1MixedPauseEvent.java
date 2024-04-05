@@ -48,8 +48,10 @@ class TestG1MixedPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 72598, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(525312), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(525312), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(741376), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(168665, event.getDurationMicros(), "Duration not parsed correctly.");
     }
@@ -73,8 +75,9 @@ class TestG1MixedPauseEvent {
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 47788145, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1239 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(949 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(949 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(4096 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(24550, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
@@ -94,8 +97,9 @@ class TestG1MixedPauseEvent {
         assertTrue(event.getTrigger() == GcTrigger.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
         assertEquals((long) 506146808, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(29045555), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(24641536), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(24641536), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(28 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
@@ -125,8 +129,9 @@ class TestG1MixedPauseEvent {
         assertTrue(event.getTrigger() == GcTrigger.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
         assertEquals((long) 615375044, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(18559795), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(18664653), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(18664653), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(18 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
@@ -159,8 +164,9 @@ class TestG1MixedPauseEvent {
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 3082652, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(12373197), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(9275802), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(9275802), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(26 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
@@ -182,8 +188,9 @@ class TestG1MixedPauseEvent {
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 3082652, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(12373197), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(9275802), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(9275802), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(26 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
@@ -205,8 +212,9 @@ class TestG1MixedPauseEvent {
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 449412888, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(2653 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(435 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(435 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(12288 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
@@ -229,8 +237,9 @@ class TestG1MixedPauseEvent {
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals((long) 2973338, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(13526630), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(11848909), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(11848909), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(30 * 1024 * 1024), event.getCombinedSpace(),
                 "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
@@ -342,8 +351,10 @@ class TestG1MixedPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 72598, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(525312), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(525312), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(741376), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(168665, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(100, event.getParallelism(), "Parallelism not calculated correctly.");
@@ -358,9 +369,9 @@ class TestG1MixedPauseEvent {
         assertEquals((long) 81757, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(1584 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
         assertEquals(kilobytes(1390 * 1024), event.getCombinedOccupancyEnd(),
-                "Combined end size not parsed correctly.");
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(8192 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(147288, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
@@ -378,9 +389,9 @@ class TestG1MixedPauseEvent {
         assertEquals((long) 424692063, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(8129 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
         assertEquals(kilobytes(7812 * 1024), event.getCombinedOccupancyEnd(),
-                "Combined end size not parsed correctly.");
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(8192 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(89084, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(TimesData.NO_DATA, event.getTimeUser(), "User time not parsed correctly.");
@@ -400,8 +411,9 @@ class TestG1MixedPauseEvent {
         assertTrue(event.getTrigger() == GcTrigger.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals((long) 55647, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1141 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(1090048), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(1090048), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(1500 * 1024), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(1800, event.getExtRootScanningTime(), "Ext root scanning time not parsed correctly.");
         assertEquals(23000, event.getOtherTime(), "Other time not parsed correctly.");
@@ -420,8 +432,10 @@ class TestG1MixedPauseEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 72598, event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(525312), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
+        assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(525312), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(741376), event.getCombinedSpace(), "Combined available size not parsed correctly.");
         assertEquals(168665, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(22, event.getTimeUser(), "User time not parsed correctly.");

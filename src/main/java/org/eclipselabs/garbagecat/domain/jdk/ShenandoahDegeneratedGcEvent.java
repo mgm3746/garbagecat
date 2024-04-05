@@ -19,9 +19,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
@@ -77,7 +77,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  */
 public class ShenandoahDegeneratedGcEvent extends ShenandoahCollector
-        implements BlockingEvent, ParallelEvent, CombinedData, PermMetaspaceData {
+        implements BlockingEvent, ParallelEvent, CombinedData, ClassData {
 
     /**
      * Regular expressions defining the logging.
@@ -102,19 +102,34 @@ public class ShenandoahDegeneratedGcEvent extends ShenandoahCollector
     }
 
     /**
-     * Combined size at beginning of GC event.
+     * Permanent generation or metaspace occupancy at end of GC event.
      */
-    private Memory combined;
+    private Memory classOccupancyEnd;
 
     /**
-     * Combined available space.
+     * Permanent generation or metaspace occupancy at beginning of GC event.
      */
-    private Memory combinedAvailable;
+    private Memory classOccupancyInit;
+
+    /**
+     * Space allocated to permanent generation or metaspace.
+     */
+    private Memory classSpace;
 
     /**
      * Combined size at end of GC event.
      */
-    private Memory combinedEnd;
+    private Memory combinedOccupancyEnd;
+
+    /**
+     * Combined size at beginning of GC event.
+     */
+    private Memory combinedOccupancyInit;
+
+    /**
+     * Combined available space.
+     */
+    private Memory combinedSpace;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -125,21 +140,6 @@ public class ShenandoahDegeneratedGcEvent extends ShenandoahCollector
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
-    /**
-     * Permanent generation size at beginning of GC event.
-     */
-    private Memory permGen;
-
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation;
-
-    /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd;
 
     /**
      * The time when the GC event started in milliseconds after JVM startup.
@@ -190,23 +190,23 @@ public class ShenandoahDegeneratedGcEvent extends ShenandoahCollector
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
             }
-            combined = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 3),
+            combinedOccupancyInit = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 3),
                     matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 5).charAt(0))
                             .convertTo(KILOBYTES);
-            combinedEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 6),
+            combinedOccupancyEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 6),
                     matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 8).charAt(0))
                             .convertTo(KILOBYTES);
-            combinedAvailable = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 9),
+            combinedSpace = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 9),
                     matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0))
                             .convertTo(KILOBYTES);
             if (matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 13) != null) {
-                permGen = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 14),
+                classOccupancyInit = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 14),
                         matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 16).charAt(0))
                                 .convertTo(KILOBYTES);
-                permGenEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 21),
+                classOccupancyEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 21),
                         matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 23).charAt(0))
                                 .convertTo(KILOBYTES);
-                permGenAllocation = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 24),
+                classSpace = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 24),
                         matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 26).charAt(0))
                                 .convertTo(KILOBYTES);
             }
@@ -229,16 +229,28 @@ public class ShenandoahDegeneratedGcEvent extends ShenandoahCollector
         this.duration = duration;
     }
 
+    public Memory getClassOccupancyEnd() {
+        return classOccupancyEnd;
+    }
+
+    public Memory getClassOccupancyInit() {
+        return classOccupancyInit;
+    }
+
+    public Memory getClassSpace() {
+        return classSpace;
+    }
+
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combined;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAvailable;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {
@@ -253,31 +265,19 @@ public class ShenandoahDegeneratedGcEvent extends ShenandoahCollector
         return JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC.toString();
     }
 
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
 
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
+    protected void setClassSpace(Memory classSpace) {
+        this.classOccupancyInit = classSpace;
     }
 
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
+    protected void setClassSpaceAllocation(Memory classSpaceAllocation) {
+        this.classSpace = classSpaceAllocation;
     }
 
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    protected void setClassSpaceEnd(Memory classSpaceEnd) {
+        this.classOccupancyEnd = classSpaceEnd;
     }
 }

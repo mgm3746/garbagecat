@@ -158,19 +158,19 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private String logEntry;
 
     /**
-     * Old generation size at beginning of GC event.
+     * Old generation occupancy at end of GC event.
      */
-    private Memory old;
+    private Memory oldOccupancyEnd;
+
+    /**
+     * Old generation occupancy at beginning of GC event.
+     */
+    private Memory oldOccupancyInit;
 
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
+    private Memory oldSpace;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -198,19 +198,19 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     private GcTrigger trigger;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory young;
+    private Memory youngOccupancyEnd;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory youngOccupancyInit;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
+    private Memory youngSpace;
 
     /**
      * Create event from log entry.
@@ -247,12 +247,13 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         } else {
             trigger = GcTrigger.getTrigger(matcher.group(35));
         }
-        young = kilobytes(matcher.group(55));
-        youngEnd = kilobytes(matcher.group(56));
-        youngAvailable = kilobytes(matcher.group(57));
-        oldEnd = kilobytes(matcher.group(63)).minus(youngEnd);
-        old = matcher.group(61) == null ? oldEnd : kilobytes(matcher.group(62)).minus(young);
-        oldAllocation = kilobytes(matcher.group(64)).minus(youngAvailable);
+        youngOccupancyInit = kilobytes(matcher.group(55));
+        youngOccupancyEnd = kilobytes(matcher.group(56));
+        youngSpace = kilobytes(matcher.group(57));
+        oldOccupancyEnd = kilobytes(matcher.group(63)).minus(youngOccupancyEnd);
+        oldOccupancyInit = matcher.group(61) == null ? oldOccupancyEnd
+                : kilobytes(matcher.group(62)).minus(youngOccupancyInit);
+        oldSpace = kilobytes(matcher.group(64)).minus(youngSpace);
         duration = JdkMath.convertSecsToMicros(matcher.group(66)).intValue();
         if (matcher.group(65) != null) {
             super.setIncrementalMode(true);
@@ -300,15 +301,15 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     }
 
     public Memory getOldOccupancyEnd() {
-        return oldEnd;
+        return oldOccupancyEnd;
     }
 
     public Memory getOldOccupancyInit() {
-        return old;
+        return oldOccupancyInit;
     }
 
     public Memory getOldSpace() {
-        return oldAllocation;
+        return oldSpace;
     }
 
     public int getParallelism() {
@@ -336,14 +337,14 @@ public class ParNewEvent extends CmsIncrementalModeCollector
     }
 
     public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+        return youngOccupancyEnd;
     }
 
     public Memory getYoungOccupancyInit() {
-        return young;
+        return youngOccupancyInit;
     }
 
     public Memory getYoungSpace() {
-        return youngAvailable;
+        return youngSpace;
     }
 }

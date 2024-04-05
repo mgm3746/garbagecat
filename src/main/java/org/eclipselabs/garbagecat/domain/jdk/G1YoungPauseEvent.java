@@ -171,27 +171,27 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
     }
 
     /**
-     * Combined generation size at beginning of GC event.
+     * Combined generation occupancy at end of GC event.
      */
-    private Memory combined;
+    private Memory combinedOccupancyEnd;
+
+    /**
+     * Combined generation occupancy at beginning of GC event.
+     */
+    private Memory combinedOccupancyInit;
 
     /**
      * Available space in multiple generation.
      */
-    private Memory combinedAvailable;
+    private Memory combinedSpace;
 
     /**
-     * Combined generation size at end of GC event.
-     */
-    private Memory combinedEnd;
-
-    /**
-     * Combined generation size at beginning of GC event.
+     * Combined generation occupancy at beginning of GC event.
      */
     private Memory eden;
 
     /**
-     * Combined generation size at end of GC event.
+     * Combined generation occupancy at end of GC event.
      * 
      */
     private Memory edenEnd;
@@ -262,9 +262,9 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(15));
-                combined = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyInit = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
+                combinedSpace = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
                 if (matcher.group(29) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
@@ -303,9 +303,9 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
                 }
                 eden = JdkMath.convertSizeToKilobytes(matcher.group(25), matcher.group(27).charAt(0));
                 edenEnd = JdkMath.convertSizeToKilobytes(matcher.group(31), matcher.group(33).charAt(0));
-                combined = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
-                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(49), matcher.group(51).charAt(0));
-                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(52), matcher.group(54).charAt(0));
+                combinedOccupancyInit = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
+                combinedOccupancyEnd = JdkMath.convertSizeToKilobytes(matcher.group(49), matcher.group(51).charAt(0));
+                combinedSpace = JdkMath.convertSizeToKilobytes(matcher.group(52), matcher.group(54).charAt(0));
                 if (matcher.group(55) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
                     timeSys = JdkMath.convertSecsToCentis(matcher.group(57)).intValue();
@@ -324,9 +324,9 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(14)).intValue();
-                combined = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
-                combinedAvailable = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyInit = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyEnd = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
+                combinedSpace = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
                 if (matcher.group(28) != null) {
                     timeUser = JdkMath.convertSecsToCentis(matcher.group(29)).intValue();
                     timeSys = JdkMath.convertSecsToCentis(matcher.group(30)).intValue();
@@ -348,11 +348,11 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
                 trigger = GcTrigger.getTrigger(matcher.group(15));
                 // Get duration from times block
                 eventTime = JdkMath.convertSecsToMicros(matcher.group(49)).intValue();
-                combined = JdkMath.convertSizeToKilobytes(matcher.group(34), matcher.group(36).charAt(0));
-                combinedEnd = JdkMath.convertSizeToKilobytes(matcher.group(40), matcher.group(42).charAt(0));
+                combinedOccupancyInit = JdkMath.convertSizeToKilobytes(matcher.group(34), matcher.group(36).charAt(0));
+                combinedOccupancyEnd = JdkMath.convertSizeToKilobytes(matcher.group(40), matcher.group(42).charAt(0));
                 eden = JdkMath.convertSizeToKilobytes(matcher.group(16), matcher.group(18).charAt(0));
                 edenEnd = JdkMath.convertSizeToKilobytes(matcher.group(22), matcher.group(24).charAt(0));
-                combinedAvailable = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
+                combinedSpace = JdkMath.convertSizeToKilobytes(matcher.group(43), matcher.group(45).charAt(0));
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(47)).intValue();
                 timeSys = JdkMath.convertSecsToCentis(matcher.group(48)).intValue();
                 timeReal = JdkMath.convertSecsToCentis(matcher.group(49)).intValue();
@@ -377,15 +377,15 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combined;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAvailable;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

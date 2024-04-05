@@ -93,19 +93,19 @@ public class VerboseGcOldEvent extends UnknownCollector
     }
 
     /**
-     * Combined young + old generation allocation.
+     * Combined young + old generation size at end of GC event.
      */
-    private Memory combinedAllocation;
+    private Memory combinedOccupancyEnd;
 
     /**
      * Combined young + old generation size at beginning of GC event.
      */
-    private Memory combinedBegin;
+    private Memory combinedOccupancyInit;
 
     /**
-     * Combined young + old generation size at end of GC event.
+     * Combined young + old generation allocation.
      */
-    private Memory combinedEnd;
+    private Memory combinedSpace;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -147,19 +147,19 @@ public class VerboseGcOldEvent extends UnknownCollector
             }
             trigger = GcTrigger.getTrigger(matcher.group(15));
             if (matcher.group(17).matches(JdkRegEx.SIZE_K)) {
-                combinedBegin = kilobytes(matcher.group(18));
+                combinedOccupancyInit = kilobytes(matcher.group(18));
             } else {
-                combinedBegin = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyInit = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
             }
             if (matcher.group(22).matches(JdkRegEx.SIZE_K)) {
-                combinedEnd = kilobytes(matcher.group(23));
+                combinedOccupancyEnd = kilobytes(matcher.group(23));
             } else {
-                combinedEnd = memory(matcher.group(24), matcher.group(26).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyEnd = memory(matcher.group(24), matcher.group(26).charAt(0)).convertTo(KILOBYTES);
             }
             if (matcher.group(27).matches(JdkRegEx.SIZE_K)) {
-                combinedAllocation = kilobytes(matcher.group(28));
+                combinedSpace = kilobytes(matcher.group(28));
             } else {
-                combinedAllocation = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
+                combinedSpace = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
             }
             duration = JdkMath.convertSecsToMicros(matcher.group(32)).intValue();
         }
@@ -182,15 +182,15 @@ public class VerboseGcOldEvent extends UnknownCollector
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combinedBegin;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAllocation;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

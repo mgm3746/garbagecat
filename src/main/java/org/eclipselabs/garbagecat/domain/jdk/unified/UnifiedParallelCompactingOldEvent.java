@@ -19,11 +19,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
+import org.eclipselabs.garbagecat.domain.ClassSpaceCollection;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungData;
@@ -79,9 +79,8 @@ import org.github.joa.domain.GarbageCollector;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedParallelCompactingOldEvent extends ParallelCollector
-        implements UnifiedLogging, BlockingEvent, OldCollection, PermMetaspaceCollection, ParallelEvent, YoungData,
-        OldData, PermMetaspaceData, TriggerData, TimesData {
+public class UnifiedParallelCompactingOldEvent extends ParallelCollector implements UnifiedLogging, BlockingEvent,
+        OldCollection, ClassSpaceCollection, ParallelEvent, YoungData, OldData, ClassData, TriggerData, TimesData {
 
     /**
      * Trigger(s) regular expression.
@@ -115,40 +114,40 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     }
 
     /**
+     * Permanent generation or metaspace occupancy at end of GC event.
+     */
+    private Memory classOccupancyEnd;
+    /**
+     * Permanent generation or metaspace occupancy at beginning of GC event.
+     */
+    private Memory classOccupancyInit;
+    /**
+     * Space allocated to permanent generation or metaspace.
+     */
+    private Memory classSpace;
+
+    /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long eventTime;
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-    /**
-     * Old generation size at beginning of GC event.
-     */
-    private Memory old;
 
+    /**
+     * Old generation occupancy at end of GC event.
+     */
+    private Memory oldOccupancyEnd;
+    /**
+     * Old generation occupancy at beginning of GC event.
+     */
+    private Memory oldOccupancyInit;
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
-
-    /**
-     * Permanent generation size at beginning of GC event.
-     */
-    private Memory permGen;
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation;
-    /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd;
+    private Memory oldSpace;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -176,19 +175,19 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     private GcTrigger trigger;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory young;
+    private Memory youngOccupancyEnd;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory youngOccupancyInit;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
+    private Memory youngSpace;
 
     /**
      * 
@@ -207,23 +206,23 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
                 timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
             trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-            young = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2),
+            youngOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4).charAt(0)).convertTo(KILOBYTES);
-            youngEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
+            youngOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
-            youngAvailable = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12),
+            youngSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 14).charAt(0)).convertTo(KILOBYTES);
-            old = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15),
+            oldOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 17).charAt(0)).convertTo(KILOBYTES);
-            oldEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22),
+            oldOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24).charAt(0)).convertTo(KILOBYTES);
-            oldAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 25),
+            oldSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 25),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27).charAt(0)).convertTo(KILOBYTES);
-            permGen = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 28),
+            classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 28),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30).charAt(0)).convertTo(KILOBYTES);
-            permGenEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 35),
+            classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 35),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 37).charAt(0)).convertTo(KILOBYTES);
-            permGenAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 38),
+            classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 38),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 40).charAt(0)).convertTo(KILOBYTES);
             timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 52)).intValue();
             timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 53)).intValue();
@@ -247,6 +246,18 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         this.eventTime = duration;
     }
 
+    public Memory getClassOccupancyEnd() {
+        return classOccupancyEnd;
+    }
+
+    public Memory getClassOccupancyInit() {
+        return classOccupancyInit;
+    }
+
+    public Memory getClassSpace() {
+        return classSpace;
+    }
+
     public long getDurationMicros() {
         return eventTime;
     }
@@ -265,31 +276,19 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     }
 
     public Memory getOldOccupancyEnd() {
-        return oldEnd;
+        return oldOccupancyEnd;
     }
 
     public Memory getOldOccupancyInit() {
-        return old;
+        return oldOccupancyInit;
     }
 
     public Memory getOldSpace() {
-        return oldAllocation;
+        return oldSpace;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
     }
 
     @Override
@@ -318,15 +317,15 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
     }
 
     public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+        return youngOccupancyEnd;
     }
 
     public Memory getYoungOccupancyInit() {
-        return young;
+        return youngOccupancyInit;
     }
 
     public Memory getYoungSpace() {
-        return youngAvailable;
+        return youngSpace;
     }
 
     public boolean isEndstamp() {
@@ -336,16 +335,16 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector
         return isEndStamp;
     }
 
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
+    protected void setClassSpace(Memory classSpace) {
+        this.classOccupancyInit = classSpace;
     }
 
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
+    protected void setClassSpaceAllocation(Memory classSpaceAllocation) {
+        this.classSpace = classSpaceAllocation;
     }
 
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+    protected void setClassSpaceEnd(Memory classSpaceEnd) {
+        this.classOccupancyEnd = classSpaceEnd;
     }
 
     protected void setTrigger(GcTrigger trigger) {

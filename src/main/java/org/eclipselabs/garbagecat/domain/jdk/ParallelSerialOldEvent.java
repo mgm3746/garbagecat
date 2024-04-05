@@ -18,10 +18,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
+import org.eclipselabs.garbagecat.domain.ClassSpaceCollection;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -81,7 +81,7 @@ import org.github.joa.domain.GarbageCollector;
  * 
  */
 public class ParallelSerialOldEvent extends ParallelCollector implements BlockingEvent, YoungCollection, OldCollection,
-        PermMetaspaceCollection, YoungData, OldData, PermMetaspaceData, TriggerData, SerialCollection, TimesData {
+        ClassSpaceCollection, YoungData, OldData, ClassData, TriggerData, SerialCollection, TimesData {
 
     /**
      * Trigger(s) regular expression.
@@ -113,6 +113,21 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     }
 
     /**
+     * Permanent generation or metaspace occupancy at end of GC event.
+     */
+    private Memory classOccupancyEnd;
+
+    /**
+     * Permanent generation or metaspace occupancy at beginning of GC event.
+     */
+    private Memory classOccupancyInit;
+
+    /**
+     * Space allocated to permanent generation or metaspace.
+     */
+    private Memory classSpace;
+
+    /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long duration;
@@ -123,34 +138,19 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     private String logEntry;
 
     /**
-     * Old generation size at beginning of GC event.
+     * Old generation occupancy at end of GC event.
      */
-    private Memory old;
+    private Memory oldOccupancyEnd;
+
+    /**
+     * Old generation occupancy at beginning of GC event.
+     */
+    private Memory oldOccupancyInit;
 
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
-
-    /**
-     * Permanent generation size at beginning of GC event.
-     */
-    private Memory permGen;
-
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation;
-
-    /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd;
+    private Memory oldSpace;
 
     /**
      * /** The wall (clock) time in centiseconds.
@@ -178,19 +178,19 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     private GcTrigger trigger;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory young;
+    private Memory youngOccupancyEnd;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory youngOccupancyInit;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
+    private Memory youngSpace;
 
     /**
      * Create event from log entry.
@@ -215,15 +215,15 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
             if (matcher.group(15) != null) {
                 this.trigger = GcTrigger.getTrigger(matcher.group(15));
             }
-            this.young = kilobytes(matcher.group(17));
-            this.youngEnd = kilobytes(matcher.group(18));
-            this.youngAvailable = kilobytes(matcher.group(19));
-            this.old = kilobytes(matcher.group(20));
-            this.oldEnd = kilobytes(matcher.group(21));
-            this.oldAllocation = kilobytes(matcher.group(22));
-            this.permGen = kilobytes(matcher.group(27));
-            this.permGenEnd = kilobytes(matcher.group(28));
-            this.permGenAllocation = kilobytes(matcher.group(29));
+            this.youngOccupancyInit = kilobytes(matcher.group(17));
+            this.youngOccupancyEnd = kilobytes(matcher.group(18));
+            this.youngSpace = kilobytes(matcher.group(19));
+            this.oldOccupancyInit = kilobytes(matcher.group(20));
+            this.oldOccupancyEnd = kilobytes(matcher.group(21));
+            this.oldSpace = kilobytes(matcher.group(22));
+            this.classOccupancyInit = kilobytes(matcher.group(27));
+            this.classOccupancyEnd = kilobytes(matcher.group(28));
+            this.classSpace = kilobytes(matcher.group(29));
             this.duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
             if (matcher.group(33) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
@@ -249,6 +249,18 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
         this.duration = duration;
     }
 
+    public Memory getClassOccupancyEnd() {
+        return classOccupancyEnd;
+    }
+
+    public Memory getClassOccupancyInit() {
+        return classOccupancyInit;
+    }
+
+    public Memory getClassSpace() {
+        return classSpace;
+    }
+
     public long getDurationMicros() {
         return duration;
     }
@@ -267,31 +279,19 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     }
 
     public Memory getOldOccupancyEnd() {
-        return oldEnd;
+        return oldOccupancyEnd;
     }
 
     public Memory getOldOccupancyInit() {
-        return old;
+        return oldOccupancyInit;
     }
 
     public Memory getOldSpace() {
-        return oldAllocation;
+        return oldSpace;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
     }
 
     public int getTimeReal() {
@@ -315,15 +315,27 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     }
 
     public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+        return youngOccupancyEnd;
     }
 
     public Memory getYoungOccupancyInit() {
-        return young;
+        return youngOccupancyInit;
     }
 
     public Memory getYoungSpace() {
-        return youngAvailable;
+        return youngSpace;
+    }
+
+    protected void setClassSpace(Memory classSpace) {
+        this.classOccupancyInit = classSpace;
+    }
+
+    protected void setClassSpaceAllocation(Memory classSpaceAllocation) {
+        this.classSpace = classSpaceAllocation;
+    }
+
+    protected void setClassSpaceEnd(Memory classSpaceEnd) {
+        this.classOccupancyEnd = classSpaceEnd;
     }
 
     protected void setDuration(int duration) {
@@ -335,27 +347,15 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     }
 
     protected void setOldOccupancyEnd(Memory oldEnd) {
-        this.oldEnd = oldEnd;
+        this.oldOccupancyEnd = oldEnd;
     }
 
     protected void setOldOccupancyInit(Memory old) {
-        this.old = old;
+        this.oldOccupancyInit = old;
     }
 
     protected void setOldSpace(Memory oldAllocation) {
-        this.oldAllocation = oldAllocation;
-    }
-
-    protected void setPermOccupancyEnd(Memory permGenEnd) {
-        this.permGenEnd = permGenEnd;
-    }
-
-    protected void setPermOccupancyInit(Memory permGen) {
-        this.permGen = permGen;
-    }
-
-    protected void setPermSpace(Memory permGenAllocation) {
-        this.permGenAllocation = permGenAllocation;
+        this.oldSpace = oldAllocation;
     }
 
     protected void setTimestamp(long timestamp) {
@@ -367,14 +367,14 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
     }
 
     protected void setYoungOccupancyEnd(Memory youngEnd) {
-        this.youngEnd = youngEnd;
+        this.youngOccupancyEnd = youngEnd;
     }
 
     protected void setYoungOccupancyInit(Memory young) {
-        this.young = young;
+        this.youngOccupancyInit = young;
     }
 
     protected void setYoungSpace(Memory youngAvailable) {
-        this.youngAvailable = youngAvailable;
+        this.youngSpace = youngAvailable;
     }
 }

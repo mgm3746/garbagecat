@@ -53,9 +53,10 @@ class TestUnifiedG1CleanupEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (15101 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
@@ -69,9 +70,10 @@ class TestUnifiedG1CleanupEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (16082 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(28 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(28 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(46 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(28 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(46 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
@@ -88,9 +90,10 @@ class TestUnifiedG1CleanupEvent {
         assertEquals(JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString(), event.getName(), "Event name incorrect.");
         assertEquals((long) (1191010697 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(233 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(233 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(512 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(233 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(512 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(0, event.getTimeUser(), "User time not parsed correctly.");
         assertEquals(0, event.getTimeReal(), "Real time not parsed correctly.");
@@ -125,9 +128,10 @@ class TestUnifiedG1CleanupEvent {
         UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
@@ -139,9 +143,10 @@ class TestUnifiedG1CleanupEvent {
         UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
@@ -161,9 +166,10 @@ class TestUnifiedG1CleanupEvent {
         UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
         assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
@@ -175,9 +181,10 @@ class TestUnifiedG1CleanupEvent {
         UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
@@ -189,9 +196,10 @@ class TestUnifiedG1CleanupEvent {
         UnifiedG1CleanupEvent event = new UnifiedG1CleanupEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyInit(),
-                "Combined begin size not parsed correctly.");
-        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(30 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(44 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
         assertEquals(0, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 }

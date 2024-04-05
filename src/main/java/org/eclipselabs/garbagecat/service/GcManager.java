@@ -28,12 +28,12 @@ import java.util.regex.Matcher;
 import org.eclipselabs.garbagecat.Main;
 import org.eclipselabs.garbagecat.dao.JvmDao;
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
 import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
@@ -280,17 +280,17 @@ public class GcManager {
         jvmRun.setLastLogLineUnprocessed(lastLogLineUnprocessed);
         jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
         jvmRun.setLogFileDate(jvmDao.getLogFileDate());
+        jvmRun.setMaxClassSpace(kilobytes(jvmDao.getMaxClassSpace()));
+        jvmRun.setMaxClassSpaceAfterGc(kilobytes(jvmDao.getMaxClassSpaceAfterGc()));
+        jvmRun.setMaxClassSpaceOccupancy(kilobytes(jvmDao.getMaxClassSpaceOccupancy()));
+        jvmRun.setMaxClassSpaceOccupancyNonBlocking(kilobytes(jvmDao.getMaxClassSpaceOccupancyNonBlocking()));
+        jvmRun.setMaxClassSpaceNonBlocking(kilobytes(jvmDao.getMaxClassSpaceNonBlocking()));
         jvmRun.setMaxHeapAfterGc(kilobytes(jvmDao.getMaxHeapAfterGc()));
         jvmRun.setMaxHeapOccupancy(kilobytes(jvmDao.getMaxHeapOccupancy()));
         jvmRun.setMaxHeapOccupancyNonBlocking(kilobytes(jvmDao.getMaxHeapOccupancyNonBlocking()));
         jvmRun.setMaxHeapSpace(kilobytes(jvmDao.getMaxHeapSpace()));
         jvmRun.setMaxHeapSpaceNonBlocking(kilobytes(jvmDao.getMaxHeapSpaceNonBlocking()));
         jvmRun.setMaxOldSpace(kilobytes(jvmDao.getMaxOldSpace()));
-        jvmRun.setMaxPermAfterGc(kilobytes(jvmDao.getMaxPermAfterGc()));
-        jvmRun.setMaxPermOccupancy(kilobytes(jvmDao.getMaxPermOccupancy()));
-        jvmRun.setMaxPermOccupancyNonBlocking(kilobytes(jvmDao.getMaxPermOccupancyNonBlocking()));
-        jvmRun.setMaxPermSpace(kilobytes(jvmDao.getMaxPermSpace()));
-        jvmRun.setMaxPermSpaceNonBlocking(kilobytes(jvmDao.getMaxPermSpaceNonBlocking()));
         jvmRun.setMaxYoungSpace(kilobytes(jvmDao.getMaxYoungSpace()));
         jvmRun.setMemory(jvmDao.getMemory());
         jvmRun.setOtherTimeMax(jvmDao.getOtherTimeMax());
@@ -1016,7 +1016,7 @@ public class GcManager {
                 }
 
                 // 18) Check for old JDKs using perm gen
-                if (event instanceof PermMetaspaceData && event.getLogEntry() != null
+                if (event instanceof ClassData && event.getLogEntry() != null
                         && event.getLogEntry().matches("^.*Perm.*$")) {
                     if (!jvmDao.getAnalysis().contains(Analysis.INFO_PERM_GEN)) {
                         jvmDao.addAnalysis(Analysis.INFO_PERM_GEN);
@@ -1171,14 +1171,13 @@ public class GcManager {
                     jvmDao.setMaxHeapSpaceNonBlocking(
                             (int) ((CombinedData) event).getCombinedSpace().getValue(KILOBYTES));
                 }
-                if (greater(((PermMetaspaceData) event).getPermOccupancyInit(),
-                        jvmDao.getMaxPermOccupancyNonBlocking())) {
-                    jvmDao.setMaxPermOccupancyNonBlocking(
-                            (int) ((PermMetaspaceData) event).getPermOccupancyInit().getValue(KILOBYTES));
+                if (greater(((ClassData) event).getClassOccupancyInit(),
+                        jvmDao.getMaxClassSpaceOccupancyNonBlocking())) {
+                    jvmDao.setMaxClassSpaceOccupancyNonBlocking(
+                            (int) ((ClassData) event).getClassOccupancyInit().getValue(KILOBYTES));
                 }
-                if (greater(((PermMetaspaceData) event).getPermSpace(), jvmDao.getMaxPermSpaceNonBlocking())) {
-                    jvmDao.setMaxPermSpaceNonBlocking(
-                            (int) ((PermMetaspaceData) event).getPermSpace().getValue(KILOBYTES));
+                if (greater(((ClassData) event).getClassSpace(), jvmDao.getMaxClassSpaceNonBlocking())) {
+                    jvmDao.setMaxClassSpaceNonBlocking((int) ((ClassData) event).getClassSpace().getValue(KILOBYTES));
                 }
             } else if (event instanceof VmWarningEvent) {
                 jvmDao.setLogEndingUnidentified(false);

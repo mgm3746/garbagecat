@@ -88,19 +88,19 @@ public class UnifiedG1CleanupEvent extends G1Collector
     }
 
     /**
-     * Combined young + old generation allocation.
+     * Combined young + old generation size at end of GC event.
      */
-    private Memory combinedAllocation;
+    private Memory combinedOccupancyEnd;
 
     /**
      * Combined young + old generation size at beginning of GC event.
      */
-    private Memory combinedBegin;
+    private Memory combinedOccupancyInit;
 
     /**
-     * Combined young + old generation size at end of GC event.
+     * Combined young + old generation allocation.
      */
-    private Memory combinedEnd;
+    private Memory combinedSpace;
 
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
@@ -164,11 +164,11 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                combinedBegin = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1),
+                combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4),
+                combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7),
+                combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.roundMillis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10)).intValue();
                 timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
@@ -196,11 +196,11 @@ public class UnifiedG1CleanupEvent extends G1Collector
                         timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                     }
                 }
-                combinedBegin = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1),
+                combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3).charAt(0)).convertTo(KILOBYTES);
-                combinedEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4),
+                combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6).charAt(0)).convertTo(KILOBYTES);
-                combinedAllocation = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7),
+                combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9).charAt(0)).convertTo(KILOBYTES);
                 duration = JdkMath.roundMillis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10)).intValue();
                 if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11) != null) {
@@ -232,15 +232,15 @@ public class UnifiedG1CleanupEvent extends G1Collector
     }
 
     public Memory getCombinedOccupancyEnd() {
-        return combinedEnd;
+        return combinedOccupancyEnd;
     }
 
     public Memory getCombinedOccupancyInit() {
-        return combinedBegin;
+        return combinedOccupancyInit;
     }
 
     public Memory getCombinedSpace() {
-        return combinedAllocation;
+        return combinedSpace;
     }
 
     public long getDurationMicros() {

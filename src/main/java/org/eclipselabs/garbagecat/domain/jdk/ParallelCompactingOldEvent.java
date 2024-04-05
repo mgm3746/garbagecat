@@ -18,11 +18,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
+import org.eclipselabs.garbagecat.domain.ClassData;
+import org.eclipselabs.garbagecat.domain.ClassSpaceCollection;
 import org.eclipselabs.garbagecat.domain.OldCollection;
 import org.eclipselabs.garbagecat.domain.OldData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceCollection;
-import org.eclipselabs.garbagecat.domain.PermMetaspaceData;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
 import org.eclipselabs.garbagecat.domain.YoungData;
@@ -87,7 +87,7 @@ import org.github.joa.domain.GarbageCollector;
  * 
  */
 public class ParallelCompactingOldEvent extends ParallelCollector implements BlockingEvent, OldCollection,
-        PermMetaspaceCollection, ParallelEvent, YoungData, OldData, PermMetaspaceData, TriggerData, TimesData {
+        ClassSpaceCollection, ParallelEvent, YoungData, OldData, ClassData, TriggerData, TimesData {
 
     /**
      * Trigger(s) regular expression.
@@ -121,6 +121,21 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     }
 
     /**
+     * Permanent generation or metaspace occupancy at end of GC event.
+     */
+    private Memory classOccupancyEnd;
+
+    /**
+     * Permanent generation or metaspace occupancy at beginning of GC event.
+     */
+    private Memory classOccupancyInit;
+
+    /**
+     * Space allocated to permanent generation or metaspace.
+     */
+    private Memory classSpace;
+
+    /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long duration;
@@ -131,34 +146,19 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     private String logEntry;
 
     /**
-     * Old generation size at beginning of GC event.
+     * Old generation occupancy at end of GC event.
      */
-    private Memory old;
+    private Memory oldOccupancyEnd;
+
+    /**
+     * Old generation occupancy at beginning of GC event.
+     */
+    private Memory oldOccupancyInit;
 
     /**
      * Space allocated to old generation.
      */
-    private Memory oldAllocation;
-
-    /**
-     * Old generation size at end of GC event.
-     */
-    private Memory oldEnd;
-
-    /**
-     * Permanent generation size at beginning of GC event.
-     */
-    private Memory permGen;
-
-    /**
-     * Space allocated to permanent generation.
-     */
-    private Memory permGenAllocation;
-
-    /**
-     * Permanent generation size at end of GC event.
-     */
-    private Memory permGenEnd;
+    private Memory oldSpace;
 
     /**
      * The wall (clock) time in centiseconds.
@@ -186,19 +186,19 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     private GcTrigger trigger;
 
     /**
-     * Young generation size at beginning of GC event.
+     * Young generation occupancy at end of GC event.
      */
-    private Memory young;
+    private Memory youngOccupancyEnd;
+
+    /**
+     * Young generation occupancy at beginning of GC event.
+     */
+    private Memory youngOccupancyInit;
 
     /**
      * Available space in young generation. Equals young generation allocation minus one survivor space.
      */
-    private Memory youngAvailable;
-
-    /**
-     * Young generation size at end of GC event.
-     */
-    private Memory youngEnd;
+    private Memory youngSpace;
 
     /**
      * Create event from log entry.
@@ -221,16 +221,16 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
                 }
             }
             trigger = GcTrigger.getTrigger(matcher.group(15));
-            young = kilobytes(matcher.group(17));
-            youngEnd = kilobytes(matcher.group(18));
-            youngAvailable = kilobytes(matcher.group(19));
-            old = kilobytes(matcher.group(20));
-            oldEnd = kilobytes(matcher.group(21));
-            oldAllocation = kilobytes(matcher.group(22));
+            youngOccupancyInit = kilobytes(matcher.group(17));
+            youngOccupancyEnd = kilobytes(matcher.group(18));
+            youngSpace = kilobytes(matcher.group(19));
+            oldOccupancyInit = kilobytes(matcher.group(20));
+            oldOccupancyEnd = kilobytes(matcher.group(21));
+            oldSpace = kilobytes(matcher.group(22));
             // Do not need total begin/end/allocation, as these can be calculated.
-            permGen = kilobytes(matcher.group(28));
-            permGenEnd = kilobytes(matcher.group(29));
-            permGenAllocation = kilobytes(matcher.group(30));
+            classOccupancyInit = kilobytes(matcher.group(28));
+            classOccupancyEnd = kilobytes(matcher.group(29));
+            classSpace = kilobytes(matcher.group(30));
             duration = JdkMath.convertSecsToMicros(matcher.group(31)).intValue();
             if (matcher.group(34) != null) {
                 timeUser = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
@@ -256,6 +256,18 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
         this.duration = duration;
     }
 
+    public Memory getClassOccupancyEnd() {
+        return classOccupancyEnd;
+    }
+
+    public Memory getClassOccupancyInit() {
+        return classOccupancyInit;
+    }
+
+    public Memory getClassSpace() {
+        return classSpace;
+    }
+
     public long getDurationMicros() {
         return duration;
     }
@@ -274,31 +286,19 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     }
 
     public Memory getOldOccupancyEnd() {
-        return oldEnd;
+        return oldOccupancyEnd;
     }
 
     public Memory getOldOccupancyInit() {
-        return old;
+        return oldOccupancyInit;
     }
 
     public Memory getOldSpace() {
-        return oldAllocation;
+        return oldSpace;
     }
 
     public int getParallelism() {
         return JdkMath.calcParallelism(timeUser, timeSys, timeReal);
-    }
-
-    public Memory getPermOccupancyEnd() {
-        return permGenEnd;
-    }
-
-    public Memory getPermOccupancyInit() {
-        return permGen;
-    }
-
-    public Memory getPermSpace() {
-        return permGenAllocation;
     }
 
     public int getTimeReal() {
@@ -322,14 +322,14 @@ public class ParallelCompactingOldEvent extends ParallelCollector implements Blo
     }
 
     public Memory getYoungOccupancyEnd() {
-        return youngEnd;
+        return youngOccupancyEnd;
     }
 
     public Memory getYoungOccupancyInit() {
-        return young;
+        return youngOccupancyInit;
     }
 
     public Memory getYoungSpace() {
-        return youngAvailable;
+        return youngSpace;
     }
 }

@@ -68,12 +68,13 @@ class TestShenandoahFullGcEvent {
         assertTrue(ShenandoahFullGcEvent.match(logLine), "Log line not recognized as " + SHENANDOAH_FULL_GC + ".");
         ShenandoahFullGcEvent event = new ShenandoahFullGcEvent(logLine);
         assertEquals((long) (120839710), event.getTimestamp(), "Time stamp not parsed correctly.");
-        assertEquals(megabytes(1589), event.getCombinedOccupancyInit(), "Combined begin size not parsed correctly.");
-        assertEquals(megabytes(1002), event.getCombinedOccupancyEnd(), "Combined end size not parsed correctly.");
-        assertEquals(megabytes(1690), event.getCombinedSpace(), "Combined allocation size not parsed correctly.");
-        assertEquals(kilobytes(282195), event.getPermOccupancyInit(), "Metaspace begin size not parsed correctly.");
-        assertEquals(kilobytes(281648), event.getPermOccupancyEnd(), "Metaspace end size not parsed correctly.");
-        assertEquals(kilobytes(1314816), event.getPermSpace(), "Metaspace allocation size not parsed correctly.");
+        assertEquals(megabytes(1589), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(megabytes(1002), event.getCombinedOccupancyEnd(), "Combined end occupancy not parsed correctly.");
+        assertEquals(megabytes(1690), event.getCombinedSpace(), "Combined space size not parsed correctly.");
+        assertEquals(kilobytes(282195), event.getClassOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(281648), event.getClassOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(1314816), event.getClassSpace(), "Metaspace allocation size not parsed correctly.");
         assertEquals(4077274, event.getDurationMicros(), "Duration not parsed correctly.");
     }
 
