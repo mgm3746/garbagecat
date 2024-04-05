@@ -1,0 +1,223 @@
+[2024-02-01T11:09:50.737+0000][0.010s][info ][gc     ] Using G1
+[2024-02-01T11:09:50.761+0000][0.034s][info ][gc,init       ] Version: 17.0.10+7-LTS (release)
+[2024-02-01T11:09:53.291+0000][2.564s][info ][gc                ] GC(3) Concurrent Mark Cycle
+[2024-02-01T11:09:53.291+0000][2.564s][info ][safepoint         ] Safepoint "CollectForMetadataAllocation", Time since last: 166609148 ns, Reaching safepoint: 3849 ns, Cleanup: 53621 ns, At safepoint: 9122390 ns, Total: 9179860 ns
+[2024-02-01T11:09:53.291+0000][2.564s][info ][gc,marking        ] GC(3) Concurrent Clear Claimed Marks
+[2024-02-01T11:09:53.291+0000][2.564s][info ][gc,marking        ] GC(3) Concurrent Clear Claimed Marks 0.060ms
+[2024-02-01T11:09:53.291+0000][2.564s][info ][gc,marking        ] GC(3) Concurrent Scan Root Regions
+[2024-02-01T11:09:53.291+0000][2.564s][debug][gc,ergo           ] GC(3) Running G1 Root Region Scan using 1 workers for 1 work units.
+[2024-02-01T11:09:53.296+0000][2.570s][info ][gc,marking        ] GC(3) Concurrent Scan Root Regions 5.103ms
+[2024-02-01T11:09:53.296+0000][2.570s][info ][gc,marking        ] GC(3) Concurrent Mark
+[2024-02-01T11:09:53.296+0000][2.570s][info ][gc,marking        ] GC(3) Concurrent Mark From Roots
+[2024-02-01T11:09:53.296+0000][2.570s][info ][gc,task           ] GC(3) Using 3 workers of 3 for marking
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 0, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.26ms, Termination time = 0.00ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 55, avg = 0.01ms, sd = 0.04ms max = 0.31ms, total = 0.34ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 1, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.25ms, Termination time = 0.26ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 3, avg = 0.20ms, sd = 0.11ms max = 0.30ms, total = 0.61ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 2, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.25ms, Termination time = 0.00ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 3, avg = 0.01ms, sd = 0.01ms max = 0.03ms, total = 0.03ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][info ][gc,marking        ] GC(3) Concurrent Mark From Roots 0.341ms
+[2024-02-01T11:09:53.297+0000][2.570s][info ][gc,marking        ] GC(3) Concurrent Preclean
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,ref,start      ] GC(3) Preclean SoftReferences
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,ref            ] GC(3) Preclean SoftReferences 0.020ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,ref,start      ] GC(3) Preclean WeakReferences
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,ref            ] GC(3) Preclean WeakReferences 0.015ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,ref,start      ] GC(3) Preclean FinalReferences
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,ref            ] GC(3) Preclean FinalReferences 0.015ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,ref,start      ] GC(3) Preclean PhantomReferences
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,ref            ] GC(3) Preclean PhantomReferences 0.015ms
+[2024-02-01T11:09:53.297+0000][2.570s][info ][gc,marking        ] GC(3) Concurrent Preclean 0.082ms
+[2024-02-01T11:09:53.297+0000][2.570s][info ][gc,start          ] GC(3) Pause Remark
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,phases,start   ] GC(3) Finalize Marking
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 0, calls = 54
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.10ms, Termination time = 0.06ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 108, avg = 0.00ms, sd = 0.03ms max = 0.31ms, total = 0.41ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 1, calls = 2
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.10ms, Termination time = 0.30ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 4, avg = 0.16ms, sd = 0.11ms max = 0.30ms, total = 0.66ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 2, calls = 2
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.10ms, Termination time = 0.03ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 4, avg = 0.02ms, sd = 0.02ms max = 0.03ms, total = 0.06ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 3, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.10ms, Termination time = 0.04ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.04ms, sd = 0.01ms max = 0.04ms, total = 0.07ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 4, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.10ms, Termination time = 0.04ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.03ms, sd = 0.01ms max = 0.04ms, total = 0.06ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 5, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.09ms, Termination time = 0.02ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.02ms, sd = 0.00ms max = 0.03ms, total = 0.05ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 6, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.09ms, Termination time = 0.03ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.02ms, sd = 0.01ms max = 0.03ms, total = 0.05ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 7, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.08ms, Termination time = 0.01ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.02ms, sd = 0.00ms max = 0.02ms, total = 0.03ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 8, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.09ms, Termination time = 0.02ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.02ms, sd = 0.00ms max = 0.02ms, total = 0.04ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ] Marking Stats, task = 9, calls = 1
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Elapsed time = 0.06ms, Termination time = 0.02ms
+[2024-02-01T11:09:53.297+0000][2.570s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.02ms, sd = 0.00ms max = 0.02ms, total = 0.03ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ] Marking Stats, task = 10, calls = 1
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Elapsed time = 0.06ms, Termination time = 0.01ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.01ms, sd = 0.00ms max = 0.01ms, total = 0.03ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ] Marking Stats, task = 11, calls = 1
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Elapsed time = 0.07ms, Termination time = 0.01ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.01ms, sd = 0.00ms max = 0.01ms, total = 0.02ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ] Marking Stats, task = 12, calls = 1
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Elapsed time = 0.04ms, Termination time = 0.00ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Step Times (cum): num = 2, avg = 0.00ms, sd = 0.00ms max = 0.00ms, total = 0.00ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ]   Mark Stats Cache: hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,stats          ] ---------------------------------------------------------------------
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases         ] GC(3) Finalize Marking 0.355ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,start   ] GC(3) Reference Processing
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,ref            ] GC(3) Skipped phase 1 of Reference Processing: no references
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,ref            ] GC(3) Skipped phase 2 of Reference Processing: no references
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,ref            ] GC(3) Skipped phase 3 of Reference Processing: no references
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,ref            ] GC(3) Skipped phase 4 of Reference Processing: no references
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3) Reference Processing: 0.0ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)   Reconsider SoftReferences: 0.0ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     SoftRef (ms):                  skipped
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)   Notify Soft/WeakReferences: 0.0ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     SoftRef (ms):                  skipped
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     WeakRef (ms):                  skipped
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     FinalRef (ms):                 skipped
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Total (ms):                    skipped
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)   Notify and keep alive finalizable: 0.0ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     FinalRef (ms):                 skipped
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)   Notify PhantomReferences: 0.0ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     PhantomRef (ms):               skipped
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)   SoftReference:
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Discovered: 0
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Cleared: 0
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)   WeakReference:
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Discovered: 0
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Cleared: 0
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)   FinalReference:
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Discovered: 0
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Cleared: 0
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)   PhantomReference:
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Discovered: 0
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,ref     ] GC(3)     Cleared: 0
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases         ] GC(3) Reference Processing 0.096ms
+[2024-02-01T11:09:53.297+0000][2.571s][debug][gc,phases,start   ] GC(3) Weak Processing
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   VM Weak                        Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg: 11.5, Max: 149, Diff: 149, Sum: 149, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   ObjectSynchronizer Weak        Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg: 12.6, Max: 128, Diff: 128, Sum: 164, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   JVMTI Tag Weak OopStorage      Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   StringTable Weak               Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.3, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg: 1783.5, Max: 3154, Diff: 3154, Sum: 23186, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   ResolvedMethodTable Weak       Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg: 72.1, Max: 128, Diff: 128, Sum: 937, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   JNI Weak                       Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   StringDedup Table Weak         Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.2, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg: 1622.8, Max: 2281, Diff: 2281, Sum: 21097, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   StringDedup Requests0 Weak     Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.1, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg: 146.5, Max: 256, Diff: 256, Sum: 1905, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   StringDedup Requests1 Weak     Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg:  4.5, Max: 58, Diff: 58, Sum: 58, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)   Weak JFR Old Object Samples    Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Dead                           Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3)     Total                          Min: 0, Avg:  0.0, Max: 0, Diff: 0, Sum: 0, Workers: 13
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3) Weak Processing 0.280ms
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases,start   ] GC(3) Class Unloading
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases,start   ] GC(3) ClassLoaderData
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3) ClassLoaderData 0.019ms
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases,start   ] GC(3) Trigger cleanups
+[2024-02-01T11:09:53.298+0000][2.571s][debug][gc,phases         ] GC(3) Trigger cleanups 0.004ms
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,phases         ] GC(3) Class Unloading 0.775ms
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,phases,start   ] GC(3) Flush Task Caches
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,stats          ] Mark stats cache hits 0 misses 0 ratio 0.000
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,phases         ] GC(3) Flush Task Caches 0.049ms
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,phases,start   ] GC(3) Update Remembered Set Tracking Before Rebuild
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,ergo           ] GC(3) Running G1 Update RemSet Tracking Before Rebuild using 3 workers for 1152 regions in heap
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,remset,tracking] GC(3) Remembered Set Tracking update regions total 1152, selected 0
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,phases         ] GC(3) Update Remembered Set Tracking Before Rebuild 0.082ms
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,phases,start   ] GC(3) Reclaim Empty Regions
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,phases         ] GC(3) Reclaim Empty Regions 0.105ms
+[2024-02-01T11:09:53.299+0000][2.572s][debug][gc,phases,start   ] GC(3) Purge Metaspace
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,phases         ] GC(3) Purge Metaspace 0.980ms
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,phases,start   ] GC(3) Report Object Count
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,phases         ] GC(3) Report Object Count 0.006ms
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,mmu            ] GC(3) MMU: 11.1ms (200.0ms/201.0ms)
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc                ] GC(3) Pause Remark 31M->31M(18432M) 2.842ms
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc,cpu            ] GC(3) User=0.02s Sys=0.00s Real=0.00s
+[2024-02-01T11:09:53.300+0000][2.573s][info ][safepoint         ] Safepoint "G1PauseRemark", Time since last: 5652428 ns, Reaching safepoint: 143335 ns, Cleanup: 15433 ns, At safepoint: 2886202 ns, Total: 3044970 ns
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc,marking        ] GC(3) Concurrent Mark 3.517ms
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc,marking        ] GC(3) Concurrent Rebuild Remembered Sets
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,marking        ] GC(3) Skipping Remembered Set Rebuild. No regions selected for rebuild
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc,marking        ] GC(3) Concurrent Rebuild Remembered Sets 0.009ms
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc,start          ] GC(3) Pause Cleanup
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,phases         ] GC(3) No Remembered Sets to update after rebuild
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,phases,start   ] GC(3) Finalize Concurrent Mark Cleanup
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,mmu            ] GC(3) MMU: 11.1ms (200.0ms/201.0ms)
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,phases         ] GC(3) Finalize Concurrent Mark Cleanup 0.007ms
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc                ] GC(3) Pause Cleanup 31M->31M(18432M) 0.020ms
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc,cpu            ] GC(3) User=0.00s Sys=0.00s Real=0.00s
+[2024-02-01T11:09:53.300+0000][2.573s][info ][safepoint         ] Safepoint "G1PauseCleanup", Time since last: 66104 ns, Reaching safepoint: 80943 ns, Cleanup: 2258 ns, At safepoint: 37947 ns, Total: 121148 ns
+[2024-02-01T11:09:53.300+0000][2.573s][info ][gc,marking        ] GC(3) Concurrent Cleanup for Next Mark
+[2024-02-01T11:09:53.300+0000][2.573s][debug][gc,ergo           ] GC(3) Running G1 Clear Bitmap with 3 workers for 288 work units.
+[2024-02-01T11:09:53.347+0000][2.620s][info ][gc,marking        ] GC(3) Concurrent Cleanup for Next Mark 47.159ms
+[2024-02-01T11:09:53.347+0000][2.620s][info ][gc                ] GC(3) Concurrent Mark Cycle 56.125ms
+[2024-02-01T11:09:53.366+0000][2.639s][debug][gc,task,start     ] G1 Service Thread (Remembered Set Sampling Task) (run)
+[2024-02-01T11:09:53.366+0000][2.639s][debug][gc,task           ] G1 Service Thread (Remembered Set Sampling Task) (run) 0.041ms (cpu: 0.000ms)
+[2024-02-01T11:09:53.591+0000][2.865s][debug][gc,task,start     ] G1 Service Thread (Remembered Set Sampling Task) (run)
+[2024-02-01T11:09:53.591+0000][2.865s][debug][gc,task           ] G1 Service Thread (Remembered Set Sampling Task) (run) 0.046ms (cpu: 0.000ms)
+[2024-02-01T11:09:53.619+0000][2.892s][info ][safepoint         ] Safepoint "ICBufferFull", Time since last: 318212211 ns, Reaching safepoint: 78379 ns, Cleanup: 163535 ns, At safepoint: 12144 ns, Total: 254058 ns
+[2024-02-01T11:09:53.790+0000][3.064s][debug][gc,task,start     ] G1 Service Thread (Periodic GC Task) (run)
+[2024-02-01T11:09:53.790+0000][3.064s][debug][gc,task           ] G1 Service Thread (Periodic GC Task) (run) 0.039ms (cpu: 0.000ms)
+[2024-02-01T11:09:53.892+0000][3.165s][debug][gc,task,start     ] G1 Service Thread (Remembered Set Sampling Task) (run)
+[2024-02-01T11:09:53.892+0000][3.165s][debug][gc,task           ] G1 Service Thread (Remembered Set Sampling Task) (run) 0.066ms (cpu: 0.000ms)
+[2024-02-01T11:09:54.130+0000][3.403s][info ][safepoint         ] Safepoint "ICBufferFull", Time since last: 511609579 ns, Reaching safepoint: 5462 ns, Cleanup: 144896 ns, At safepoint: 2608 ns, Total: 152966 ns
+[2024-02-01T11:09:54.192+0000][3.465s][debug][gc,task,start     ] G1 Service Thread (Remembered Set Sampling Task) (run)
+[2024-02-01T11:09:54.192+0000][3.465s][debug][gc,task           ] G1 Service Thread (Remembered Set Sampling Task) (run) 0.046ms (cpu: 0.000ms)
+[2024-02-01T11:09:54.492+0000][3.765s][debug][gc,task,start     ] G1 Service Thread (Remembered Set Sampling Task) (run)
+[2024-02-01T11:09:54.492+0000][3.765s][debug][gc,task           ] G1 Service Thread (Remembered Set Sampling Task) (run) 0.050ms (cpu: 0.000ms)
