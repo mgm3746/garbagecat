@@ -26,7 +26,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <p>
  * <code>-XX:+PrintHeapAtGC</code> logging. This data is currently not being used for any analysis. The middle logging
- * is is a generic {@link org.eclipselabs.garbagecat.domain.jdk.HeapEvent} used by multiple events.
+ * is is a generic {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapEvent} used by multiple events.
  * </p>
  * 
  * <h2>Example Logging</h2>

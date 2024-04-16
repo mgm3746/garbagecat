@@ -25,6 +25,12 @@ import org.junit.jupiter.api.Test;
 class TestJdkRegEx {
 
     @Test
+    void testBlankLine() {
+        String logLine = "";
+        assertTrue(logLine.matches(JdkRegEx.BLANK_LINE), "Blank log line not identified.");
+    }
+
+    @Test
     void testDatestampEvent() {
         String logLine = "2020-03-10T08:03:29.311-0400: MGM";
         assertTrue(logLine.matches(JdkRegEx.DATESTAMP_EVENT), "'" + logLine + "' " + "is a valid datestamp event.");

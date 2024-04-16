@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -41,9 +42,10 @@ class TestZStatsEvent {
 
     @Test
     void testFooter() {
+        LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.485s] =================================================================================="
                 + "=======================================================================";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
@@ -66,6 +68,15 @@ class TestZStatsEvent {
     }
 
     @Test
+    void testMemoryAllocationRate() {
+        LogEvent priorLogEvent = new ZStatsEvent(null);
+        String logLine = "[10.029s][info][gc,stats    ]      Memory: Allocation Rate                                 "
+                + "941 / 1154            941 / 1154            941 / 1154            941 / 1154        MB/s";
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+                JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
+    }
+
+    @Test
     void testNotBlocking() {
         String logLine = "[10.485s] === Garbage Collection Statistics ================================================"
                 + "=======================================================================";
@@ -82,9 +93,54 @@ class TestZStatsEvent {
     }
 
     @Test
+    void testPhaseConcurrentMark() {
+        LogEvent priorLogEvent = new ZStatsEvent(null);
+        String logLine = "[10.029s][info][gc,stats    ]       Phase: Concurrent Mark                              "
+                + "25.345 / 60.647       25.345 / 60.647       25.345 / 60.647       25.345 / 60.647      ms";
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+                JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
+    }
+
+    @Test
     void testReportable() {
         assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.Z_STATS),
                 JdkUtil.LogEventType.Z_STATS.toString() + " incorrectly indentified as reportable.");
+    }
+
+    @Test
+    void testSubphaseConcurrentMarkTryFlush() {
+        LogEvent priorLogEvent = new ZStatsEvent(null);
+        String logLine = "[10.029s][info][gc,stats    ]    Subphase: Concurrent Mark Try Flush                     "
+                + "0.087 / 1.125         0.087 / 1.125         0.087 / 1.125         0.087 / 1.125       ms";
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+                JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
+    }
+
+    @Test
+    void testSubphaseConcurrentMarkTryTerminate() {
+        LogEvent priorLogEvent = new ZStatsEvent(null);
+        String logLine = "[10.029s][info][gc,stats    ]    Subphase: Concurrent Mark Try Terminate                 "
+                + "0.019 / 0.809         0.019 / 0.809         0.019 / 0.809         0.019 / 0.809       ms";
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+                JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
+    }
+
+    @Test
+    void testTitle1() {
+        LogEvent priorLogEvent = new ZStatsEvent(null);
+        String logLine = "[10.029s][info][gc,stats    ]                                                              "
+                + "Last 10s              Last 10m              Last 10h                Total";
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+                JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
+    }
+
+    @Test
+    void testTitle2() {
+        LogEvent priorLogEvent = new ZStatsEvent(null);
+        String logLine = "[10.029s][info][gc,stats    ]                                                              "
+                + "Avg / Max             Avg / Max             Avg / Max             Avg / Max";
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+                JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
     @Test
@@ -105,13 +161,13 @@ class TestZStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_STATS),
                 JdkUtil.LogEventType.Z_STATS.toString() + " event not identified.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " event incorrectly identified.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " event incorrectly identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -124,12 +180,12 @@ class TestZStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_STATS),
                 JdkUtil.LogEventType.Z_STATS.toString() + " event not identified.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " event incorrectly identified.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " event incorrectly identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 }

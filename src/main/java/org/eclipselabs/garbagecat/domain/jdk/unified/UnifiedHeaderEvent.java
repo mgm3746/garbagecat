@@ -188,15 +188,16 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "|Activate regions|Address Space (Size|Type)|Alignments|Available space on backing filesystem|"
             + "(Initial|Max|Min) Capacity|CardTable entry size|CDS archive\\(s\\) (mapped at|not mapped)|"
             + "Compressed class space mapped at|Compressed Oops|ConcGCThreads|Concurrent( Refinement)? Workers|CPUs|"
-            + "Expand the heap\\.|GC threads|GC Workers|Heap (Initial|Max|Min) Capacity|Heap address|"
-            + "Heap Backing Filesystem|Heap Backing File|Heap Region (Count|Size)|Heuristics|"
-            + "Heuristics ergonomically sets |Humongous [oO]bject [tT]hreshold|Initialize mark stack|"
-            + "Initial Refinement Zones|Initialize Shenandoah heap|Initializing The Z Garbage Collector|"
-            + "Large Page Support|Max TLAB size|Medium Page Size|Memory|Mode|"
-            + "Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|Narrow klass base|NUMA Nodes|"
-            + "NUMA Support|Pacer for Idle|ParallelGCThreads|Parallel Workers|Periodic GC|Pre-touch|Regions|"
-            + "Runtime Workers|Safepointing mechanism|Shenandoah GC mode|Shenandoah heuristics|String Deduplication|"
-            + "Target occupancy update|TLAB Size Max|Uncommit( Delay)?|Using legacy single-generation mode)(:)?.*$";
+            + "Consider \\-XX:\\+ClassUnloadingWithConcurrentMark|Expand the heap\\.|GC threads|GC Workers|"
+            + "Heap (Initial|Max|Min) Capacity|Heap address|Heap Backing Filesystem|Heap Backing File|"
+            + "Heap [Rr]egion (Count|[Ss]ize)|Heuristics|Heuristics ergonomically sets |"
+            + "Humongous [oO]bject [tT]hreshold|Initialize mark stack|Initial Refinement Zones|"
+            + "Initialize Shenandoah heap|Initializing The Z Garbage Collector|Large Page Support|Max TLAB size|"
+            + "Medium Page Size|Memory|Mode|Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|"
+            + "Narrow klass base|NUMA Nodes|NUMA Support|Pacer for Idle|ParallelGCThreads|Parallel Workers|Periodic GC|"
+            + "Pre-touch|Reference processing|Regions|Runtime Workers|Safepointing mechanism|Shenandoah GC mode|"
+            + "Shenandoah heuristics|String Deduplication|Target occupancy update|TLAB Size Max|Uncommit( Delay)?|"
+            + "Using legacy single-generation mode)(:)?.*$";
 
     private static Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -330,9 +331,9 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
         return timestamp;
     }
 
+    @Override
     public boolean isEndstamp() {
-        boolean isEndStamp = false;
-        return isEndStamp;
+        return false;
     }
 
     /**

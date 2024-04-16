@@ -450,7 +450,6 @@ public class JvmDao {
      * @return The first blocking event.
      */
     public synchronized BlockingEvent getFirstGcEvent() {
-        // TODO: JdkUtil#parseLogLine no longer needed?
         return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(0);
     }
 

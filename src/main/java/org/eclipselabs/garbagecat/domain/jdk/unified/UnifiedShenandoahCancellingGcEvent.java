@@ -10,11 +10,12 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
@@ -48,7 +49,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahCancellingGcEvent extends ShenandoahCollector implements ThrowAwayEvent {
+public class UnifiedShenandoahCancellingGcEvent extends ShenandoahCollector implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
@@ -68,12 +69,27 @@ public class ShenandoahCancellingGcEvent extends ShenandoahCollector implements 
         return PATTERN.matcher(logLine).matches();
     }
 
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
+     */
+    public UnifiedShenandoahCancellingGcEvent(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
     public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+        return logEntry;
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_CANCELLING_GC.toString();
+        return JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString();
     }
 
     public long getTimestamp() {

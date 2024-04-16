@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -144,13 +146,6 @@ class TestUnifiedConcurrentEvent {
     @Test
     void testConcurrentMarkZGenerationalYoung() {
         String logLine = "[0.305s][info][gc,phases   ] GC(3) y: Concurrent Mark 8.889ms";
-        assertTrue(UnifiedConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
-    }
-
-    @Test
-    void testConcurrentPreclean() {
-        String logLine = "[0.083s][info][gc] GC(1) Concurrent Preclean";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }
@@ -343,30 +338,6 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
-    void testDiscoveredReferences() {
-        String logLine = "[0.212s][info][gc,ref      ] GC(1) Discovered  references: Soft: 0, Weak: 108, Final: 0, "
-                + "Phantom: 6";
-        assertTrue(UnifiedConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
-    }
-
-    @Test
-    void testEncounteredReferences() {
-        String logLine = "[0.212s][info][gc,ref      ] GC(1) Encountered references: Soft: 3110, Weak: 230, Final: 2, "
-                + "Phantom: 8";
-        assertTrue(UnifiedConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
-    }
-
-    @Test
-    void testEnqueuedReferences() {
-        String logLine = "[0.212s][info][gc,ref      ] GC(1) Enqueued    references: Soft: 0, Weak: 0, Final: 0, "
-                + "Phantom: 0";
-        assertTrue(UnifiedConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
         assertEquals(JdkUtil.LogEventType.UNIFIED_CONCURRENT, JdkUtil.identifyEventType(logLine, null),
@@ -430,6 +401,13 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testProcessNonStrongReferencesWithDuration() {
+        String logLine = "[10.029s][info][gc,phases   ] GC(162) Concurrent Process Non-Strong References 1.902ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testRebuildRememberedSets() {
         String logLine = "[16.053s][info][gc,marking    ] GC(969) Concurrent Rebuild Remembered Sets";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
@@ -443,6 +421,13 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testResetRelocationSetWithDuration() {
+        String logLine = "[10.029s][info][gc,phases   ] GC(162) Concurrent Reset Relocation Set 0.003ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testScanRootRegions() {
         String logLine = "[16.601s][info][gc,marking   ] GC(1033) Concurrent Scan Root Regions";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
@@ -452,6 +437,206 @@ class TestUnifiedConcurrentEvent {
     @Test
     void testScanRootRegionsWithDuration() {
         String logLine = "[16.601s][info][gc,marking   ] GC(1033) Concurrent Scan Root Regions 0.283ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahClassUnloading() {
+        String logLine = "[0.191s][info][gc,start    ] GC(0) Concurrent class unloading";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahClassUnloadingWithDuration() {
+        String logLine = "[0.192s][info][gc          ] GC(0) Concurrent class unloading 0.343ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahCleanupWithSizeAndDuration() {
+        String logLine = "[0.472s][info][gc] GC(0) Concurrent cleanup 18M->15M(64M) 0.036ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+        UnifiedConcurrentEvent event = new UnifiedConcurrentEvent(logLine);
+        assertEquals(472, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(18), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(megabytes(15), event.getCombinedOccupancyEnd(), "Combined end occupancy not parsed correctly.");
+        assertEquals(megabytes(64), event.getCombinedSpace(), "Combined space size not parsed correctly.");
+    }
+
+    @Test
+    void testShenandoahDetailsReset() {
+        String logLine = "[41.893s][info][gc           ] GC(1500) Concurrent reset 50M->50M(64M) 0.126ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahEvacuation() {
+        String logLine = "[0.465s][info][gc] GC(0) Concurrent evacuation 17M->19M(64M) 6.528ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahMarking() {
+        String logLine = "[0.528s][info][gc] GC(1) Concurrent marking 16M->17M(64M) 7.045ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahMarkingProcessWeakrefs() {
+        String logLine = "[0.454s][info][gc] GC(0) Concurrent marking (process weakrefs) 17M->19M(64M) 15.264ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahMarkingProcessWeakrefsUnloadClasses() {
+        String logLine = "[2023-02-22T12:31:34.629+0000][2243][gc           ] GC(0) Concurrent marking "
+                + "(process weakrefs) (unload classes) 24.734ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahMarkingRootsWithDuration() {
+        String logLine = "[0.188s][info][gc          ] GC(0) Concurrent marking roots 0.435ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahMarkingUpdateRefs() {
+        String logLine = "[10.458s][info][gc] GC(279) Concurrent marking (update refs) 47M->48M(64M) 5.559ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahMarkingUpdateRefsProcessWeakrefs() {
+        String logLine = "[11.012s][info][gc] GC(300) Concurrent marking (update refs) (process weakrefs) "
+                + "49M->49M(64M) 5.416ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahPrecleaning() {
+        String logLine = "[0.455s][info][gc] GC(0) Concurrent precleaning 19M->19M(64M) 0.202ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahPreprocessedCombinedMetaspace() {
+        String logLine = "[0.256s][info][gc           ] GC(0) Concurrent cleanup 32M->18M(36M) 0.036ms Metaspace: "
+                + "3867K(7168K)->3872K(7168K)";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+        UnifiedConcurrentEvent event = new UnifiedConcurrentEvent(logLine);
+        assertEquals(256, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(32), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(megabytes(18), event.getCombinedOccupancyEnd(), "Combined end occupancy not parsed correctly.");
+        assertEquals(megabytes(36), event.getCombinedSpace(), "Combined space size not parsed correctly.");
+        assertEquals(kilobytes(3867), event.getClassOccupancyInit(), "Metaspace begin size not parsed correctly.");
+        assertEquals(kilobytes(3872), event.getClassOccupancyEnd(), "Metaspace end size not parsed correctly.");
+        assertEquals(kilobytes(7168), event.getClassSpace(), "Metaspace allocation size not parsed correctly.");
+    }
+
+    @Test
+    void testShenandoahReset() {
+        String logLine = "[0.437s][info][gc] GC(0) Concurrent reset 15M->16M(64M) 4.701ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahResetNoSizes() {
+        String logLine = "[41.892s][info][gc,start     ] GC(1500) Concurrent reset";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahStrongRoots() {
+        String logLine = "[0.192s][info][gc,start    ] GC(0) Concurrent strong roots";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahStrongRootsWithDuration() {
+        String logLine = "[0.192s][info][gc          ] GC(0) Concurrent strong roots 0.302ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahThreadRoots() {
+        String logLine = "[0.191s][info][gc,start    ] GC(0) Concurrent thread roots";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahThreadRootsWithDuration() {
+        String logLine = "[0.191s][info][gc          ] GC(0) Concurrent thread roots 0.442ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahUncommitUptimeMillis() {
+        String logLine = "[2019-02-05T14:52:31.138-0200][300050ms] Concurrent uncommit 874M->874M(1303M) 5.654ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahUnloadClasses() {
+        String logLine = "[5.601s][info][gc           ] GC(99) Concurrent marking (unload classes) 7.346ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahUpdateReferences() {
+        String logLine = "[0.470s][info][gc] GC(0) Concurrent update references 19M->19M(64M) 4.708ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahUpdateThreadRootsWithDuration() {
+        String logLine = "[0.195s][info][gc          ] GC(0) Concurrent update thread roots 0.359ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahWeakReferences() {
+        String logLine = "[0.191s][info][gc,start    ] GC(0) Concurrent weak references";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahWeakRoots() {
+        String logLine = "[0.191s][info][gc,start    ] GC(0) Concurrent weak roots";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahWeakRootsWithDuration() {
+        String logLine = "[0.191s][info][gc          ] GC(0) Concurrent weak roots 0.262ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }
@@ -474,13 +659,6 @@ class TestUnifiedConcurrentEvent {
     @Test
     void testUsingWorkersForMarkFromRoots() {
         String logLine = "[16.601s][info][gc,marking   ] GC(1033) Concurrent Mark From Roots";
-        assertTrue(UnifiedConcurrentEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
-    }
-
-    @Test
-    void testUsingWorkersForMarking() {
-        String logLine = "[16.601s][info][gc,task      ] GC(1033) Using 1 workers of 1 for marking";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + ".");
     }

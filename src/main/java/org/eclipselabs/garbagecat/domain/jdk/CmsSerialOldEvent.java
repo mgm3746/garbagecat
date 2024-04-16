@@ -51,8 +51,6 @@ import org.github.joa.domain.GarbageCollector;
  * (-XX:+UseCMSCompactAtFullCollection) compacts the heap.
  * </p>
  * 
- * TODO: Separate this into 2 events: (1) CMS foreground mode. (2) SERIAL_OLD.
- * 
  * <p>
  * It also seems to happen for undetermined reasons, possibly the JVM requires a certain amount of heap or combination
  * of resources that is not being met, and consequently the concurrent low pause collector is not used despite being

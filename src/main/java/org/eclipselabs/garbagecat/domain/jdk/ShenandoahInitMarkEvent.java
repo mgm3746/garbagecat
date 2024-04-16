@@ -20,7 +20,6 @@ import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -38,7 +37,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) JDK8 standard format:
+ * 1) Standard format:
  * </p>
  * 
  * <pre>
@@ -46,7 +45,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 2) JDK8 process weakrefs:
+ * 2) Process weakrefs:
  * </p>
  * 
  * <pre>
@@ -54,43 +53,11 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 3) JDK8 update refs:
+ * 3) Update refs:
  * </p>
  * 
  * <pre>
  *2020-03-10T08:03:46.273-0400: 17.335: [Pause Init Mark (update refs), 0.345 ms]
- * </pre>
- * 
- * <p>
- * 4) Unified standard format:
- * </p>
- * 
- * <pre>
- * [0.521s][info][gc] GC(1) Pause Init Mark 0.453ms
- * </pre>
- * 
- * <p>
- * 5) Unified process weakrefs:
- * </p>
- * 
- * <pre>
- * [0.456s][info][gc] GC(0) Pause Init Mark (process weakrefs) 0.868ms
- * </pre>
- * 
- * <p>
- * 6) Unified update refs:
- * </p>
- * 
- * <pre>
- *[10.453s][info][gc] GC(279) Pause Init Mark (update refs) 0.244ms
- * </pre>
- * 
- * <p>
- * 7) Unified with <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>:
- * </p>
- * 
- * <pre>
- * [2019-02-05T14:47:34.178-0200][3090ms] GC(0) Pause Init Mark (process weakrefs) 2.904ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -101,9 +68,9 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector implements Bloc
     /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Init Mark( \\((process weakrefs|update refs|unload classes)\\))?"
-            + "( \\((process weakrefs|unload classes)\\))?[,]{0,1} " + JdkRegEx.DURATION_MS + "[\\]]{0,1}[ ]*$";
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR
+            + " \\[Pause Init Mark( \\((process weakrefs|unload classes|update refs)\\))?, " + JdkRegEx.DURATION_MS
+            + "\\][ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -143,39 +110,14 @@ public class ShenandoahInitMarkEvent extends ShenandoahCollector implements Bloc
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            duration = JdkMath
-                    .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 6))
-                    .intValue();
-            if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
-                long endTimestamp;
-                if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 13));
-                } else if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 13)).longValue();
-                } else {
-                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 15) != null) {
-                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 16).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 18));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 17))
-                                    .longValue();
-                        }
-                    } else {
-                        // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3));
-                    }
-                }
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+            duration = JdkMath.convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + 3)).intValue();
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
-                // JDK8
-                if (matcher.group(14) != null && matcher.group(14).matches(JdkRegEx.TIMESTAMP)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
-                } else if (matcher.group(2).matches(JdkRegEx.TIMESTAMP)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
-                } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                }
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
         }
     }

@@ -1,0 +1,67 @@
+[2024-04-09T08:26:09.925-0400] All times are wall-clock times, except per-root-class counters, that are sum over
+[2024-04-09T08:26:09.925-0400] all workers. Dividing the <total> over the root stage time estimates parallelism.
+[2024-04-09T08:26:09.925-0400]
+[2024-04-09T08:26:09.925-0400] Concurrent Reset                     99 us
+[2024-04-09T08:26:09.925-0400] Pause Init Mark (G)                 115 us
+[2024-04-09T08:26:09.925-0400] Pause Init Mark (N)                  21 us
+[2024-04-09T08:26:09.925-0400]   Update Region States                1 us
+[2024-04-09T08:26:09.925-0400] Concurrent Mark Roots               363 us, parallelism: 1.16x
+[2024-04-09T08:26:09.925-0400]   CMR: <total>                      422 us
+[2024-04-09T08:26:09.925-0400]   CMR: Thread Roots                 393 us, workers (us): 281, 112, ---, ---, ---, ---,
+[2024-04-09T08:26:09.925-0400]   CMR: VM Strong Roots                4 us, workers (us):   2,   2, ---, ---, ---, ---,
+[2024-04-09T08:26:09.925-0400]   CMR: CLDG Roots                    25 us, workers (us): ---,  25, ---, ---, ---, ---,
+[2024-04-09T08:26:09.925-0400] Concurrent Marking                 4828 us
+[2024-04-09T08:26:09.925-0400] Pause Final Mark (G)                181 us
+[2024-04-09T08:26:09.925-0400] Pause Final Mark (N)                102 us
+[2024-04-09T08:26:09.925-0400]   Finish Mark                        62 us
+[2024-04-09T08:26:09.925-0400]   Update Region States                2 us
+[2024-04-09T08:26:09.925-0400]   Choose Collection Set              15 us
+[2024-04-09T08:26:09.925-0400]   Rebuild Free Set                    2 us
+[2024-04-09T08:26:09.925-0400] Concurrent Thread Roots             303 us, parallelism: 1.30x
+[2024-04-09T08:26:09.925-0400]   CTR: <total>                      396 us
+[2024-04-09T08:26:09.925-0400]   CTR: Thread Roots                 396 us, workers (us): 278, 118, ---, ---, ---, ---,
+[2024-04-09T08:26:09.925-0400] Concurrent Weak References           32 us, parallelism: 0.20x
+[2024-04-09T08:26:09.925-0400]   CWRF: <total>                       6 us
+[2024-04-09T08:26:09.925-0400]   CWRF: Weak References               6 us, workers (us):   6,   0, ---, ---, ---, ---,
+[2024-04-09T08:26:09.925-0400] Concurrent Weak Roots               341 us
+[2024-04-09T08:26:09.925-0400]   Roots                             276 us, parallelism: 1.69x
+[2024-04-09T08:26:09.925-0400]     CWR: <total>                    468 us
+[2024-04-09T08:26:09.925-0400]     CWR: Code Cache Roots           252 us, workers (us): 154,  98, ---, ---, ---, ---,
+[2024-04-09T08:26:09.925-0400]     CWR: VM Weak Roots              214 us, workers (us): 108, 107, ---, ---, ---, ---,
+[2024-04-09T08:26:09.925-0400]     CWR: CLDG Roots                   2 us, workers (us):   2, ---, ---, ---, ---, ---,
+[2024-04-09T08:26:09.925-0400]   Rendezvous                         47 us
+[2024-04-09T08:26:09.925-0400] Concurrent Cleanup                   27 us
+[2024-04-09T08:26:09.925-0400] Concurrent Class Unloading          420 us 
+[2024-04-09T08:26:09.925-0400]   Unlink Stale                      385 us
+[2024-04-09T08:26:09.925-0400]     System Dictionary                 2 us 
+[2024-04-09T08:26:09.925-0400]     Weak Class Links                  0 us
+[2024-04-09T08:26:09.925-0400]     Code Roots                      382 us
+[2024-04-09T08:26:09.925-0400]   Rendezvous                          8 us
+[2024-04-09T08:26:09.925-0400]   Purge Unlinked                     13 us
+[2024-04-09T08:26:09.925-0400]     Code Roots                       11 us
+[2024-04-09T08:26:09.925-0400]     CLDG                              2 us
+[2024-04-09T08:26:09.925-0400]     Exception Caches                  0 us
+[2024-04-09T08:26:09.925-0400] Concurrent Strong Roots              50 us, parallelism: 0.60x
+[2024-04-09T08:26:09.925-0400]   CSR: <total>                       30 us
+[2024-04-09T08:26:09.926-0400]   CSR: VM Strong Roots                3 us, workers (us):   2,   1, ---, ---, ---, ---,
+[2024-04-09T08:26:09.926-0400]   CSR: CLDG Roots                    27 us, workers (us): ---,  27, ---, ---, ---, ---,
+[2024-04-09T08:26:09.926-0400] Concurrent Evacuation               269 us
+[2024-04-09T08:26:09.926-0400] Pause Init Update Refs (G)          130 us
+[2024-04-09T08:26:09.926-0400] Pause Init Update Refs (N)           17 us
+[2024-04-09T08:26:09.926-0400]   Manage GCLABs                       2 us 
+[2024-04-09T08:26:09.926-0400] Concurrent Update Refs             3719 us
+[2024-04-09T08:26:09.926-0400] Concurrent Update Thread Roots      311 us
+[2024-04-09T08:26:09.926-0400] Pause Final Update Refs (G)         148 us
+[2024-04-09T08:26:09.926-0400] Pause Final Update Refs (N)          23 us
+[2024-04-09T08:26:09.926-0400]   Update Region States                4 us
+[2024-04-09T08:26:09.926-0400]   Trash Collection Set                1 us
+[2024-04-09T08:26:09.926-0400]   Rebuild Free Set                    2 us
+[2024-04-09T08:26:09.926-0400] Concurrent Cleanup                   31 us
+[2024-04-09T08:26:09.926-0400] Pacing                             6476 us
+[2024-04-09T08:26:09.926-0400]
+[2024-04-09T08:26:09.926-0400] Allocation pacing accrued:
+[2024-04-09T08:26:09.926-0400]       6 of    20 ms ( 32.2%): main
+[2024-04-09T08:26:09.926-0400]       6 of    20 ms ( 32.2%): <total>
+[2024-04-09T08:26:09.926-0400]       1 of    20 ms (  2.7%): <average total>
+[2024-04-09T08:26:09.926-0400]       6 of    20 ms ( 32.2%): <average non-zero>
+[2024-04-09T08:26:09.926-0400]

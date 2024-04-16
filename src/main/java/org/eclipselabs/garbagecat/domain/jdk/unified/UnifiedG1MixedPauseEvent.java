@@ -125,6 +125,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
      * Combined young + old generation allocation.
      */
     private Memory combinedSpace;
+
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */

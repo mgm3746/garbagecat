@@ -256,13 +256,13 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
      *            The log entry for the event.
      * @param timestamp
      *            The time when the GC event started in milliseconds after JVM startup.
-     * @param duration
+     * @param eventTime
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public UnifiedG1YoungPauseEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedG1YoungPauseEvent(String logEntry, long timestamp, int eventTime) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.eventTime = duration;
+        this.eventTime = eventTime;
     }
 
     public Memory getClassOccupancyEnd() {

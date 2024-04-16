@@ -10,39 +10,45 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * SHENANDOAH_FINAL_ROOTS
+ * UNIFIED_SHENANDOAH_FINAL_EVAC
+ * </p>
+ * 
+ * <p>
+ * TODO
  * </p>
  * 
  * <h2>Example Logging</h2>
  * 
  * <pre>
- * [2023-08-25T02:15:57.862-0400][233.267s] GC(4) Pause Final Roots 0.019ms
+ * [10.444s][info][gc] GC(278) Pause Final Evac 0.003ms
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahFinalRootsEvent extends ShenandoahCollector implements BlockingEvent, ParallelEvent {
-
+public class UnifiedShenandoahFinalEvacEvent extends ShenandoahCollector
+        implements UnifiedLogging, BlockingEvent, ParallelEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") Pause Final Roots " + JdkRegEx.DURATION_MS + "[ ]*$";
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Final Evac " + JdkRegEx.DURATION_MS
+            + "[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -60,7 +66,7 @@ public class ShenandoahFinalRootsEvent extends ShenandoahCollector implements Bl
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
-    private long duration;
+    private long eventTime;
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -78,41 +84,22 @@ public class ShenandoahFinalRootsEvent extends ShenandoahCollector implements Bl
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahFinalRootsEvent(String logEntry) {
+    public UnifiedShenandoahFinalEvacEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            duration = JdkMath
-                    .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 2))
-                    .intValue();
-            if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
-                long endTimestamp;
-                if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 14));
-                } else if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 13)).longValue();
-                } else {
-                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 15) != null) {
-                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 16).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 18));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 17))
-                                    .longValue();
-                        }
-                    } else {
-                        // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3));
-                    }
-                }
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1)).intValue();
+            long time = UnifiedUtil.calculateTime(matcher);
+            if (!isEndstamp()) {
+                timestamp = time;
             } else {
-                // JDK8 TBD
+                timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
         }
     }
 
     /**
-     * Alternate constructor. Create event from values.
+     * Alternate constructor. Create detail logging event from values.
      * 
      * @param logEntry
      *            The log entry for the event.
@@ -121,14 +108,14 @@ public class ShenandoahFinalRootsEvent extends ShenandoahCollector implements Bl
      * @param duration
      *            The elapsed clock time for the GC event in microseconds.
      */
-    public ShenandoahFinalRootsEvent(String logEntry, long timestamp, int duration) {
+    public UnifiedShenandoahFinalEvacEvent(String logEntry, long timestamp, int duration) {
         this.logEntry = logEntry;
         this.timestamp = timestamp;
-        this.duration = duration;
+        this.eventTime = duration;
     }
 
     public long getDurationMicros() {
-        return duration;
+        return eventTime;
     }
 
     public String getLogEntry() {
@@ -136,10 +123,22 @@ public class ShenandoahFinalRootsEvent extends ShenandoahCollector implements Bl
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_FINAL_ROOTS.toString();
+        return JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString();
+    }
+
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
     }
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isEndstamp() {
+        // default assumes gc,start not logged (e.g. not preprocessed)
+        boolean isEndStamp = true;
+        isEndStamp = !logEntry.matches(UnifiedRegEx.TAG_GC_START);
+        return isEndStamp;
     }
 }

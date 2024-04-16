@@ -409,7 +409,7 @@ public class JvmRun {
         if (!getUnidentifiedLogLines().isEmpty()) {
             if (!preprocessed) {
                 analysis.add(ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE);
-            } else if (isLogEndingUnidentified()) {
+            } else if (getUnidentifiedLogLines().size() == 1 && isLogEndingUnidentified()) {
                 analysis.add(INFO_UNIDENTIFIED_LOG_LINE_LAST);
             } else {
                 analysis.add(0, WARN_UNIDENTIFIED_LOG_LINE_REPORT);
@@ -635,7 +635,7 @@ public class JvmRun {
             analysis.add(Analysis.INFO_THREAD_DUMP);
         }
         // GCLocker retry failed
-        if (getEventTypes().contains(LogEventType.GC_LOCKER_RETRY)) {
+        if (getEventTypes().contains(LogEventType.UNIFIED_GC_LOCKER_RETRY)) {
             analysis.add(Analysis.ERROR_GC_LOCKER_RETRY);
         } else if (!getGcTriggers().isEmpty() && getGcTriggers().contains(GcTrigger.GCLOCKER_INITIATED_GC)) {
             analysis.add(Analysis.WARN_GC_LOCKER);

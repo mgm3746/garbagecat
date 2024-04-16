@@ -1,0 +1,65 @@
+[2024-04-12T17:56:00.622-0400] GC(74) Pause Degenerated GC (Outside of Cycle)
+[2024-04-12T17:56:00.622-0400] GC(74) Using 4 of 6 workers for stw degenerated gc
+[2024-04-12T17:56:00.622-0400] GC(74) Clearing All SoftReferences
+[2024-04-12T17:56:00.630-0400] GC(74) Encountered references: Soft: 3253, Weak: 278, Final: 2, Phantom: 8
+[2024-04-12T17:56:00.630-0400] GC(74) Discovered  references: Soft: 1143, Weak: 137, Final: 0, Phantom: 5
+[2024-04-12T17:56:00.630-0400] GC(74) Enqueued    references: Soft: 1081, Weak: 4, Final: 0, Phantom: 0
+[2024-04-12T17:56:00.631-0400] GC(74) Adaptive CSet Selection. Target Free: 13926K, Actual Free: 5120K, Max CSet: 4096K, Min Garbage: 8806K
+[2024-04-12T17:56:00.631-0400] GC(74) Collectable Garbage: 77095K (98%), Immediate: 0B (0%), CSet: 77095K (98%)
+[2024-04-12T17:56:00.635-0400] GC(74) Good progress for free space: 76927K, need 983K
+[2024-04-12T17:56:00.635-0400] GC(74) Good progress for used space: 76927K, need 256K
+[2024-04-12T17:56:00.635-0400] GC(74) Pause Degenerated GC (Outside of Cycle) 90M->15M(96M) 13.088ms
+[2024-04-12T17:56:00.635-0400] Safepoint "ShenandoahDegeneratedGC", Time since last: 1816981 ns, Reaching safepoint: 2939 ns, Cleanup: 2699 ns, At safepoint: 13106060 ns, Total: 13111698 ns
+[2024-04-12T17:56:00.636-0400] Free: 76927K, Max: 256K regular, 68096K humongous, Frag: 12% external, 0% internal; Reserve: 5120K, Max: 256K
+[2024-04-12T17:56:00.636-0400]
+[2024-04-12T17:56:00.636-0400] All times are wall-clock times, except per-root-class counters, that are sum over
+[2024-04-12T17:56:00.636-0400] all workers. Dividing the <total> over the root stage time estimates parallelism.
+[2024-04-12T17:56:00.636-0400]
+[2024-04-12T17:56:00.636-0400] Pause Degenerated GC (G)          13349 us
+[2024-04-12T17:56:00.636-0400] Pause Degenerated GC (N)          13097 us
+[2024-04-12T17:56:00.636-0400]   Degen STW Mark                   7622 us, parallelism: 3.45x
+[2024-04-12T17:56:00.636-0400]     DSM: <total>                  26324 us
+[2024-04-12T17:56:00.636-0400]     DSM: Thread Roots               658 us, workers (us): 467, 188,   1,   1, ---, ---,
+[2024-04-12T17:56:00.636-0400]     DSM: VM Strong Roots              4 us, workers (us):   0,   3,   0,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]     DSM: CLDG Roots                  51 us, workers (us):   2,  47,   1,   1, ---, ---,
+[2024-04-12T17:56:00.636-0400]     DSM: Parallel Mark            25612 us, workers (us): 6773, 6983, 6007, 5849, ---, ---,
+[2024-04-12T17:56:00.636-0400]     System Purge                   1366 us
+[2024-04-12T17:56:00.636-0400]       Weak References               197 us, parallelism: 0.84x
+[2024-04-12T17:56:00.636-0400]         WRP: <total>                165 us
+[2024-04-12T17:56:00.636-0400]         WRP: Weak References        165 us, workers (us): 156,   7,   2,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]       Unload Classes               1092 us, parallelism: 2.49x
+[2024-04-12T17:56:00.636-0400]         DCU: <total>               2714 us
+[2024-04-12T17:56:00.636-0400]         DCU: Unload Code Caches     1427 us, workers (us): 596, 560, 271,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]         DCU: Unlink CLDs           1287 us, workers (us): 421, 441, 426,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]       Weak Roots                     56 us, parallelism: 1.45x
+[2024-04-12T17:56:00.636-0400]         DWR: <total>                 81 us
+[2024-04-12T17:56:00.636-0400]         DWR: VM Weak Roots           81 us, workers (us):  39,  40,   1,   1, ---, ---,
+[2024-04-12T17:56:00.636-0400]       CLDG                           19 us
+[2024-04-12T17:56:00.636-0400]   Update Region States                5 us
+[2024-04-12T17:56:00.636-0400]   Manage GC/TLABs                     3 us
+[2024-04-12T17:56:00.636-0400]   Choose Collection Set              53 us
+[2024-04-12T17:56:00.636-0400]   Rebuild Free Set                    3 us
+[2024-04-12T17:56:00.636-0400]   Evacuation                        353 us
+[2024-04-12T17:56:00.636-0400]   Manage GCLABs                       2 us
+[2024-04-12T17:56:00.636-0400]   Update References                2598 us
+[2024-04-12T17:56:00.636-0400]   Update Region States                4 us
+[2024-04-12T17:56:00.636-0400]   Trash Collection Set                5 us
+[2024-04-12T17:56:00.636-0400]   Rebuild Free Set                    4 us
+[2024-04-12T17:56:00.636-0400]   Degen Update Roots                626 us, parallelism: 1.93x
+[2024-04-12T17:56:00.636-0400]     DU: <total>                    1206 us
+[2024-04-12T17:56:00.636-0400]     DU: Thread Roots                 40 us, workers (us):  25,  15,   0,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]     DU: Code Cache Roots            968 us, workers (us): 487, 481,   0,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]     DU: VM Strong Roots               3 us, workers (us):   1,   1,   0,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]     DU: VM Weak Roots               173 us, workers (us):  86,  86,   0,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]     DU: CLDG Roots                   22 us, workers (us):   5,  16,   1,   0, ---, ---,
+[2024-04-12T17:56:00.636-0400]   Cleanup                            41 us
+[2024-04-12T17:56:00.636-0400]
+[2024-04-12T17:56:00.636-0400] Allocation pacing accrued:
+[2024-04-12T17:56:00.636-0400]       0 of    15 ms (  0.0%): <total>
+[2024-04-12T17:56:00.636-0400]       0 of    15 ms (  0.0%): <average total>
+[2024-04-12T17:56:00.636-0400]
+[2024-04-12T17:56:00.636-0400] Metaspace: 4162K(4352K)->4153K(4352K) NonClass: 3864K(3968K)->3857K(3968K) Class: 298K(384K)->295K(384K)
+[2024-04-12T17:56:00.636-0400] Pacer for Idle. Initial: 1966K, Alloc Tax Rate: 1.0x
+[2024-04-12T17:56:00.704-0400] Trigger: Average GC time (27.49 ms) is above the time for average allocation rate (68467 KB/s) to deplete free headroom (741K) (margin of error = 1.90)
+[2024-04-12T17:56:00.704-0400] Free headroom: 15487K (free) - 4915K (spike) - 9830K (penalties) = 741K
+[2024-04-12T17:56:00.704-0400] Free: 15487K, Max: 256K regular, 15360K humongous, Frag: 0% external, 2% internal; Reserve: 5120K, Max: 256K

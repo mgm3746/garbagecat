@@ -26,7 +26,6 @@ import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -43,12 +42,8 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  * <h2>Example Logging</h2>
  * 
- * <p>
- * 1) JDK8 preprocessed:
- * </p>
- * 
  * <pre>
- * 2020-03-10T08:03:29.427-0400: 0.489: [Pause Final Mark, 0.313 ms]
+ * [2020-02-14T15:21:55.207-0500][052ms] [Pause Full 1589M->1002M(1690M), 4077.274 ms], [Metaspace: 282195K->281648K(1314816K)]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -60,10 +55,9 @@ public class ShenandoahFullGcEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Pause Full " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} "
-            + JdkRegEx.DURATION_MS + "[]]{0,1}([,]{0,1} [\\[]{0,1}" + "Metaspace: " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[]]{0,1})?[ ]*$";
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[Pause Full " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION_MS + "\\](, \\[Metaspace: "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\])?[ ]*";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -133,59 +127,28 @@ public class ShenandoahFullGcEvent extends ShenandoahCollector
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            duration = JdkMath
-                    .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 11))
-                    .intValue();
-            if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
-                long endTimestamp;
-                if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 14));
-                } else if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 13)).longValue();
-                } else {
-                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 15) != null) {
-                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 16).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 18));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 17))
-                                    .longValue();
-                        }
-                    } else {
-                        // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3));
-                    }
-                }
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+            duration = JdkMath.convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + 10)).intValue();
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
-                // JDK8
-                if (matcher.group(14) != null && matcher.group(14).matches(JdkRegEx.TIMESTAMP)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
-                } else if (matcher.group(2).matches(JdkRegEx.TIMESTAMP)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
-                } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                }
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            combinedOccupancyInit = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 2),
-                    matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 4).charAt(0))
-                            .convertTo(KILOBYTES);
-            combinedOccupancyEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 5),
-                    matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 7).charAt(0))
-                            .convertTo(KILOBYTES);
-            combinedSpace = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 8),
-                    matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 10).charAt(0))
-                            .convertTo(KILOBYTES);
-            if (matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 12) != null) {
-                classOccupancyInit = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 13),
-                        matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 15).charAt(0))
-                                .convertTo(KILOBYTES);
-                classOccupancyEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 16),
-                        matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 18).charAt(0))
-                                .convertTo(KILOBYTES);
-                classSpace = memory(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 19),
-                        matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 21).charAt(0))
-                                .convertTo(KILOBYTES);
+            combinedOccupancyInit = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 1),
+                    matcher.group(JdkUtil.DECORATOR_SIZE + 3).charAt(0)).convertTo(KILOBYTES);
+            combinedOccupancyEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 4),
+                    matcher.group(JdkUtil.DECORATOR_SIZE + 6).charAt(0)).convertTo(KILOBYTES);
+            combinedSpace = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 7),
+                    matcher.group(JdkUtil.DECORATOR_SIZE + 9).charAt(0)).convertTo(KILOBYTES);
+            if (matcher.group(JdkUtil.DECORATOR_SIZE + 11) != null) {
+                classOccupancyInit = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 12),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 14).charAt(0)).convertTo(KILOBYTES);
+                classOccupancyEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 15),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 17).charAt(0)).convertTo(KILOBYTES);
+                classSpace = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 18),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 20).charAt(0)).convertTo(KILOBYTES);
             }
         }
     }

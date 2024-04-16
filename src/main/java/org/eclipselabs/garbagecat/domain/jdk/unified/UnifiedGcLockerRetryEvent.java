@@ -10,23 +10,25 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
 /**
  * <p>
- * GC_LOCKER_RETRY
+ * UNIFIED_GC_LOCKER_RETRY
  * </p>
  * 
  * <p>
- * The GCLocker is used to prevent GC while JNI (native) code is running in a "critical region."
+ * The GCLocker is used to prevent garbage collections while JNI (native) code is running in a "critical region."
  * </p>
  * 
  * <p>
@@ -82,8 +84,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class GcLockerRetryEvent extends G1Collector implements LogEvent {
-
+public class UnifiedGcLockerRetryEvent extends G1Collector implements LogEvent, UnifiedLogging {
     /**
      * Regular expressions defining the logging.
      */
@@ -104,6 +105,11 @@ public class GcLockerRetryEvent extends G1Collector implements LogEvent {
     }
 
     /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private long eventTime = 0;
+
+    /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
@@ -119,25 +125,15 @@ public class GcLockerRetryEvent extends G1Collector implements LogEvent {
      * @param logEntry
      *            The log entry for the event.
      */
-    public GcLockerRetryEvent(String logEntry) {
+    public UnifiedGcLockerRetryEvent(String logEntry) {
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                timestamp = Long.parseLong(matcher.group(13));
-            } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
-                timestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            long time = UnifiedUtil.calculateTime(matcher);
+            if (!isEndstamp()) {
+                timestamp = time;
             } else {
-                if (matcher.group(15) != null) {
-                    if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                        timestamp = Long.parseLong(matcher.group(17));
-                    } else {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
-                    }
-                } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                }
+                timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
         }
     }
@@ -147,10 +143,20 @@ public class GcLockerRetryEvent extends G1Collector implements LogEvent {
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.GC_LOCKER_RETRY.toString();
+        return JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString();
+    }
+
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
     }
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

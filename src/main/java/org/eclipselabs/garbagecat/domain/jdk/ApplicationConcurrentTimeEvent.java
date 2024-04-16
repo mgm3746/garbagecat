@@ -65,8 +65,23 @@ public class ApplicationConcurrentTimeEvent implements ThrowAwayEvent {
         return PATTERN.matcher(logLine).matches();
     }
 
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
+     */
+    public ApplicationConcurrentTimeEvent(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
     public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+        return logEntry;
     }
 
     public String getName() {

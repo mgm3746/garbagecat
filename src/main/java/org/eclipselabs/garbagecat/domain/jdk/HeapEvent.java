@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -27,15 +27,29 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <p>
- * Heap information in {@link org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent} and at the end of a
- * {@link org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent}, aShenandoah gc logging, and unified detailed gc
- * logging (<code>-Xlog:gc*:file=&lt;file&gt;</code>).
+ * Heap information at the end of gc logging.
  * </p>
  * 
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) End of {@link org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent}:
+ * 1) Serial:
+ * </p>
+ * 
+ * <pre>
+ * Heap
+ *  def new generation   total 153600K, used 5463K [0x00000005cda00000, 0x00000005d80a0000, 0x0000000673c00000)
+ *   eden space 136576K,   4% used [0x00000005cda00000, 0x00000005cdf55da8, 0x00000005d5f60000)
+ *   from space 17024K,   0% used [0x00000005d5f60000, 0x00000005d5f60000, 0x00000005d7000000)
+ *   to   space 17024K,   0% used [0x00000005d7000000, 0x00000005d7000000, 0x00000005d80a0000)
+ *  tenured generation   total 341376K, used 0K [0x0000000673c00000, 0x0000000688960000, 0x00000007c0000000)
+ *    the space 341376K,   0% used [0x0000000673c00000, 0x0000000673c00000, 0x0000000673c00200, 0x0000000688960000)
+ *  Metaspace       used 2469K, capacity 4480K, committed 4480K, reserved 1056768K
+ *   class space    used 241K, capacity 384K, committed 384K, reserved 1048576K
+ * </pre>
+ * 
+ * <p>
+ * 2) Parallel:
  * </p>
  * 
  * <pre>
@@ -49,9 +63,24 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  *  Metaspace       used 3080K, capacity 4486K, committed 4864K, reserved 1056768K
  *   class space    used 294K, capacity 386K, committed 512K, reserved 1048576K
  * </pre>
+ *
+ * <p>
+ * 3) CMS:
+ * </p>
+ * 
+ * <pre>
+ * Heap
+ *  par new generation   total 153600K, used 5463K [0x00000005cda00000, 0x00000005d80a0000, 0x0000000601a00000)
+ *   eden space 136576K,   4% used [0x00000005cda00000, 0x00000005cdf55da8, 0x00000005d5f60000)
+ *   from space 17024K,   0% used [0x00000005d5f60000, 0x00000005d5f60000, 0x00000005d7000000)
+ *   to   space 17024K,   0% used [0x00000005d7000000, 0x00000005d7000000, 0x00000005d80a0000)
+ *  concurrent mark-sweep generation total 341376K, used 0K [0x0000000601a00000, 0x0000000616760000, 0x00000007c0000000)
+ *  Metaspace       used 2469K, capacity 4480K, committed 4480K, reserved 1056768K
+ *   class space    used 241K, capacity 384K, committed 384K, reserved 1048576K
+ * </pre>
  * 
  * <p>
- * 2) G1:
+ * 4) G1:
  * </p>
  * 
  * <pre>
@@ -63,185 +92,92 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  *
  * <p>
- * 3) Shenandoah JDK8:
+ * 5) Shenandoah:
  * </p>
  * 
  * <pre>
  * Heap
  * Shenandoah Heap
- *  128M total, 128M committed, 102M used
- *  512 x 256K regions
- * Status: has forwarded objects, cancelled
+ *  7974M max, 7974M soft max, 500M committed, 768K used
+ *  3987 x 2048K regions
+ * Status: cancelled
  * Reserved region:
- *  - [0x00000000f8000000, 0x0000000100000000)
+ *  - [0x00000005cda00000, 0x00000007c0000000)
  * Collection set:
- *  - map (vanilla): 0x00007f271b2e5e00
- *  - map (biased):  0x00007f271b2e2000
- * </pre>
+ *  - map (vanilla): 0x0000000000012e6d
+ *  - map (biased):  0x0000000000010000
  * 
- * <p>
- * 4) Shenandoah Unified:
- * </p>
- * 
- * <pre>
- * [103.682s][info][gc,heap,exit ] Heap
- * [103.682s][info][gc,heap,exit ] Shenandoah Heap
- * [103.682s][info][gc,heap,exit ]  65536K total, 65536K committed, 50162K used
- * [103.682s][info][gc,heap,exit ]  256 x 256K regions
- * [103.682s][info][gc,heap,exit ] Status: has forwarded objects, cancelled
- * [103.682s][info][gc,heap,exit ] Reserved region:
- * [103.682s][info][gc,heap,exit ]  - [0x00000000fc000000, 0x0000000100000000)
- * [103.682s][info][gc,heap,exit ] Collection set:
- * [103.683s][info][gc,heap,exit ]  - map (vanilla): 0x00007fa7ea119f00
- * [103.683s][info][gc,heap,exit ]  - map (biased):  0x00007fa7ea116000
- * [103.683s][info][gc,heap,exit ]
- * [103.683s][info][gc,heap,exit ]  Metaspace       used 4230K, capacity 7436K, committed 7680K, reserved 1056768K
- * [103.683s][info][gc,heap,exit ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
- * </pre>
- * 
- * <p>
- * 5) Serial:
- * </p>
- * 
- * <pre>
- * [32.839s][info][gc,heap,exit   ] Heap
- * [32.839s][info][gc,heap,exit   ]  def new generation   total 11456K, used 4604K [0x00000000fc000000, 0x00000000fcc60000, 0x00000000fd550000)
- * [32.839s][info][gc,heap,exit   ]   eden space 10240K,  43% used [0x00000000fc000000, 0x00000000fc463ed8, 0x00000000fca00000)
- * [32.839s][info][gc,heap,exit   ]   from space 1216K,   8% used [0x00000000fca00000, 0x00000000fca1b280, 0x00000000fcb30000)
- * [32.839s][info][gc,heap,exit   ]   to   space 1216K,   0% used [0x00000000fcb30000, 0x00000000fcb30000, 0x00000000fcc60000)
- * [32.839s][info][gc,heap,exit   ]  tenured generation   total 25240K, used 24218K [0x00000000fd550000, 0x00000000fedf6000, 0x0000000100000000)
- * [32.839s][info][gc,heap,exit   ]    the space 25240K,  95% used [0x00000000fd550000, 0x00000000fecf6b58, 0x00000000fecf6c00, 0x00000000fedf6000)
- * [32.839s][info][gc,heap,exit   ]  Metaspace       used 4109K, capacity 7271K, committed 7296K, reserved 1056768K
- * [32.839s][info][gc,heap,exit   ]   class space    used 299K, capacity 637K, committed 640K, reserved 1048576K
- * </pre>
- * 
- * <p>
- * 6) Parallel Serial:
- * </p>
- * 
- * <pre>
- * [37.098s][info][gc,heap,exit   ] Heap
- * [37.098s][info][gc,heap,exit   ]  PSYoungGen      total 20992K, used 7054K [0x00000000feb00000, 0x0000000100000000, 0x0000000100000000)
- * [37.098s][info][gc,heap,exit   ]   eden space 20480K, 33% used [0x00000000feb00000,0x00000000ff1cb940,0x00000000fff00000)
- * [37.098s][info][gc,heap,exit   ]   from space 512K, 18% used [0x00000000fff80000,0x00000000fff98000,0x0000000100000000)
- * [37.098s][info][gc,heap,exit   ]   to   space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)
- * [37.098s][info][gc,heap,exit   ]  PSOldGen        total 32768K, used 27239K [0x00000000fc000000, 0x00000000fe000000, 0x00000000feb00000)
- * [37.098s][info][gc,heap,exit   ]   object space 32768K, 83% used [0x00000000fc000000,0x00000000fda99f58,0x00000000fe000000)
- * [37.098s][info][gc,heap,exit   ]  Metaspace       used 4222K, capacity 7436K, committed 7680K, reserved 1056768K
- * [37.098s][info][gc,heap,exit   ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
- * </pre>
- * 
- * <p>
- * 7) Parallel Serial Compacting:
- * </p>
- * 
- * <pre>
- * [37.742s][info][gc,heap,exit   ] Heap
- * [37.742s][info][gc,heap,exit   ]  PSYoungGen      total 20992K, used 7500K [0x00000000feb00000, 0x0000000100000000, 0x0000000100000000)
- * [37.742s][info][gc,heap,exit   ]   eden space 20480K, 35% used [0x00000000feb00000,0x00000000ff233060,0x00000000fff00000)
- * [37.742s][info][gc,heap,exit   ]   from space 512K, 25% used [0x00000000fff80000,0x00000000fffa0000,0x0000000100000000)
- * [37.742s][info][gc,heap,exit   ]   to   space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)
- * [37.742s][info][gc,heap,exit   ]  ParOldGen       total 30720K, used 27745K [0x00000000fc000000, 0x00000000fde00000, 0x00000000feb00000)
- * [37.742s][info][gc,heap,exit   ]   object space 30720K, 90% used [0x00000000fc000000,0x00000000fdb18680,0x00000000fde00000)
- * [37.742s][info][gc,heap,exit   ]  Metaspace       used 4218K, capacity 7436K, committed 7680K, reserved 1056768K
- * [37.742s][info][gc,heap,exit   ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
- * </pre>
- * 
- * <p>
- * 8) CMS:
- * </p>
- * 
- * <pre>
- * [59.713s][info][gc,heap,exit ] Heap
- * [59.713s][info][gc,heap,exit ]  par new generation   total 1152K, used 713K [0x00000000fc000000, 0x00000000fc140000, 0x00000000fd550000)
- * [59.713s][info][gc,heap,exit ]   eden space 1024K,  67% used [0x00000000fc000000, 0x00000000fc0ac590, 0x00000000fc100000)
- * [59.713s][info][gc,heap,exit ]   from space 128K,  18% used [0x00000000fc120000, 0x00000000fc1260c0, 0x00000000fc140000)
- * [59.713s][info][gc,heap,exit ]   to   space 128K,   0% used [0x00000000fc100000, 0x00000000fc100000, 0x00000000fc120000)
- * [59.713s][info][gc,heap,exit ]  concurrent mark-sweep generation total 31228K, used 25431K [0x00000000fd550000, 0x00000000ff3cf000, 0x0000000100000000)
- * [59.713s][info][gc,heap,exit ]  Metaspace       used 4223K, capacity 7436K, committed 7680K, reserved 1056768K
- * [59.713s][info][gc,heap,exit ]   class space    used 309K, capacity 671K, committed 768K, reserved 1048576K
- * </pre>
- * 
- * <p>
- * 9) Z unified:
- * </p>
- * 
- * <pre>
- * [2.640s] Heap
- * [2.640s]  ZHeap           used 86M, capacity 96M, max capacity 96M
- * [2.640s]  Metaspace       used 3992K, committed 4160K, reserved 1056768K
- * [2.640s]   class space    used 315K, committed 384K, reserved 1048576K
+ *  Metaspace       used 2469K, capacity 4480K, committed 4480K, reserved 1056768K
+ *   class space    used 241K, capacity 384K, committed 384K, reserved 1048576K
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class HeapEvent implements ThrowAwayEvent {
+public class HeapEvent implements HeaderEvent, ThrowAwayEvent {
+
+    /**
+     * Regular expression for the header.
+     */
+    public static final String _REGEX_HEADER = "^Heap$";
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX[] = {
+    private static final String REGEX[] = {
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )? garbage-first heap   total " + JdkRegEx.SIZE + ", used "
-                    + JdkRegEx.SIZE + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "(, " + JdkRegEx.ADDRESS
-                    + ")?\\)[ ]*$",
+            _REGEX_HEADER,
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  region size " + JdkRegEx.SIZE + ", \\d{1,} young \\(" + JdkRegEx.SIZE
-                    + "\\), \\d{1,} survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
+            "^ garbage-first heap   total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " \\[" + JdkRegEx.ADDRESS
+                    + ", " + JdkRegEx.ADDRESS + "(, " + JdkRegEx.ADDRESS + ")?\\)[ ]*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )? - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
+            "^  region size " + JdkRegEx.SIZE + ", \\d{1,} young \\(" + JdkRegEx.SIZE + "\\), \\d{1,} survivors \\("
+                    + JdkRegEx.SIZE + "\\)[ ]*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?(Shenandoah )?[h|H]eap$",
+            " - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )? " + JdkRegEx.SIZE + " (total|max)(, " + JdkRegEx.SIZE + " soft max)?, "
-                    + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
+            "Shenandoah Heap$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + "( [OYy]:)? |" + JdkRegEx.DECORATOR + " )? Metaspace       used "
-                    + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE + ")?, committed " + JdkRegEx.SIZE + ", reserved "
-                    + JdkRegEx.SIZE + "$",
+            "^ " + JdkRegEx.SIZE + " (total|max)(, " + JdkRegEx.SIZE + " soft max)?, " + JdkRegEx.SIZE + " committed, "
+                    + JdkRegEx.SIZE + " used$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )? \\d{1,} x " + JdkRegEx.SIZE + " regions$",
+            "^(" + JdkRegEx.DECORATOR + " )? Metaspace       used " + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE
+                    + ")?, committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + "( [OYy]:)? |" + JdkRegEx.DECORATOR + " )?  class space    used "
-                    + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE + ")?, " + "committed " + JdkRegEx.SIZE
-                    + ", reserved " + JdkRegEx.SIZE + "$",
+            "^ \\d{1,} x " + JdkRegEx.SIZE + " regions$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )? ((concurrent mark-sweep|def new|par new|tenured) generation)"
+            "^(" + JdkRegEx.DECORATOR + " )?  class space    used " + JdkRegEx.SIZE + "(, capacity " + JdkRegEx.SIZE
+                    + ")?, " + "committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
+            //
+            "^ ((concurrent mark-sweep|def new|par new|tenured) generation)" + "[ ]{1,}total " + JdkRegEx.SIZE
+                    + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + ", "
+                    + JdkRegEx.ADDRESS + "\\)$",
+            //
+            "^ (compacting perm gen|concurrent-mark-sweep perm gen|ParOldGen|PSOldGen|PSPermGen|PSYoungGen)"
                     + "[ ]{1,}total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS
                     + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$",
             //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )? (compacting perm gen|concurrent-mark-sweep perm gen|ParOldGen|PSOldGen|PSPermGen|PSYoungGen)"
-                    + "[ ]{1,}total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS
-                    + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$",
+            "^  (eden|from|object| the|to  ) space " + JdkRegEx.SIZE + ",[ ]{1,3}\\d{1,3}% used \\[" + JdkRegEx.ADDRESS
+                    + ",[ ]{0,1}" + JdkRegEx.ADDRESS + ",[ ]{0,1}" + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS
+                    + ")?\\)$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  (eden|from|object| the|to  ) space " + JdkRegEx.SIZE
-                    + ",[ ]{1,3}\\d{1,3}% used \\[" + JdkRegEx.ADDRESS + ",[ ]{0,1}" + JdkRegEx.ADDRESS + ",[ ]{0,1}"
-                    + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS + ")?\\)$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Status:(,{0,1} (cancelled|concurrent weak roots|evacuating|has forwarded objects|marking|"
+            "^Status:(,{0,1} (cancelled|concurrent weak roots|evacuating|has forwarded objects|marking|"
                     + "updating refs)){1,}$",
+
+            "^Reserved region:$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Reserved region:$",
+            "^Collection set:$",
             //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Collection set:$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )? - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$",
-            //
-            "^" + UnifiedRegEx.DECORATOR + "( [OYy]:)?  ZHeap           used " + JdkRegEx.SIZE + ", capacity "
-                    + JdkRegEx.SIZE + ", max capacity " + JdkRegEx.SIZE + "$",
+            "^ - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$",
             //
             "^No shared spaces configured.$"
             //
-
     };
 
-    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(_REGEX.length);
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
 
     static {
-        for (String regex : _REGEX) {
+        for (String regex : REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }
@@ -296,5 +232,14 @@ public class HeapEvent implements ThrowAwayEvent {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public boolean isHeader() {
+        boolean isHeader = false;
+        if (this.logEntry != null) {
+            isHeader = logEntry.matches(_REGEX_HEADER);
+        }
+        return isHeader;
     }
 }

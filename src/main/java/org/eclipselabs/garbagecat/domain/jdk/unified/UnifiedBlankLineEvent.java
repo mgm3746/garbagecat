@@ -26,13 +26,11 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedBlankLineEvent implements ThrowAwayEvent {
-
+public class UnifiedBlankLineEvent implements UnifiedLogging, ThrowAwayEvent {
     /**
      * Regular expression defining the logging.
      */
     public static final String REGEX = UnifiedRegEx.BLANK_LINE;
-
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
     /**
@@ -75,7 +73,17 @@ public class UnifiedBlankLineEvent implements ThrowAwayEvent {
         return JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public boolean isEndstamp() {
+        return false;
     }
 }

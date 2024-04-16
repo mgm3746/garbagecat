@@ -35,7 +35,7 @@ public final class JdkRegEx {
     /**
      * Blank line.
      */
-    public static final String BLANK_LINE = "^\\s+$";
+    public static final String BLANK_LINE = "^\\s*$";
 
     /**
      * <p>

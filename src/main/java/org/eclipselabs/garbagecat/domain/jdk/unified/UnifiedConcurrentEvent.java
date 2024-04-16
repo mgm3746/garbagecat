@@ -12,13 +12,19 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.eclipselabs.garbagecat.util.Memory.memory;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
+
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.ClassData;
+import org.eclipselabs.garbagecat.domain.CombinedData;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
+import org.eclipselabs.garbagecat.util.Memory;
+import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
@@ -26,11 +32,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 /**
  * <p>
  * UNIFIED_CONCURRENT
- * </p>
- * 
- * <p>
- * {@link org.eclipselabs.garbagecat.domain.jdk.CmsConcurrentEvent} or
- * {@link org.eclipselabs.garbagecat.domain.jdk.G1ConcurrentEvent} with unified logging (JDK9+).
  * </p>
  * 
  * <p>
@@ -137,10 +138,6 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <pre>
- * [16.601s][info][gc,task      ] GC(1033) Using 1 workers of 1 for marking
- * </pre>
- * 
- * <pre>
  * [16.053s][info][gc,marking    ] GC(969) Concurrent Rebuild Remembered Sets
  * </pre>
  * 
@@ -159,6 +156,18 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  * <pre>
  * [0.062s][info][gc          ] GC(2) Concurrent Mark Cycle
+ * </pre>
+ * 
+ * <p>
+ * Shenandoah:
+ * </p>
+ * 
+ * <p>
+ * 1) Preprocessed with combined and metaspace data:
+ * </p>
+ * 
+ * <pre>
+ * [0.256s][info][gc           ] GC(0) Concurrent cleanup 32M-&gt;18M(36M) 0.036ms Metaspace: 3867K(7168K)-&gt;3872K(7168K)
  * </pre>
  * 
  * <p>
@@ -192,37 +201,28 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedLogging, ParallelEvent {
-
+public class UnifiedConcurrentEvent extends UnknownCollector
+        implements UnifiedLogging, ParallelEvent, CombinedData, ClassData {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String[] REGEX = {
-            //
-            "^" + UnifiedRegEx.DECORATOR + " Concurrent Cycle( " + JdkRegEx.DURATION_MS + ")?$",
-            //
-            "^" + UnifiedRegEx.DECORATOR
-                    + "( [OYy]:)? (ClassLoaderData|Concurrent (Classes Purge|Classes Unlink|Cleanup for Next Mark|"
-                    + "Clear Claimed Marks|Create Live Data|Mark|Mark Abort|Mark Continue|Mark Cycle|Mark Follow|"
-                    + "Mark Free|Mark From Roots|Mark Roots|Preclean|Preclean SoftReferences|Process Non-Strong|"
-                    + "Process Non-Strong References|Rebuild Remembered Sets|"
-                    + "Rebuild Remembered Sets and Scrub Regions|References Enqueue|References Process|Relocate|"
-                    + "Relocate Remset FP|Remap Roots|Reset|Reset Relocation Set|Scan Root Regions|"
-                    + "Select Relocation Set|String Deduplication.*|Undo Cycle|Sweep)|Trigger cleanups)( \\("
-                    + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.DURATION_MS + ")?"
-                    + TimesData.REGEX_JDK9 + "?[ ]*$",
-            //
-            "^" + UnifiedRegEx.DECORATOR + " Using \\d workers of \\d for marking$",
-            //
-            "^" + UnifiedRegEx.DECORATOR + " (Discovered |Encountered|Enqueued   ) references: Soft:.+" + "$"
-            //
-    };
-    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
-    static {
-        for (String regex : REGEX) {
-            REGEX_PATTERN_LIST.add(Pattern.compile(regex));
-        }
-    }
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR
+            + "( [OYy]:)? (ClassLoaderData|Concurrent (class unloading|Classes Purge|Classes Unlink|cleanup|"
+            + "Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Cycle|evacuation|Mark|Mark Abort|"
+            + "Mark Continue|Mark Cycle|Mark Follow|Mark Free|Mark From Roots|Mark Roots|marking|"
+            + "marking \\(process weakrefs\\)|marking \\(process weakrefs\\) \\(unload classes\\)|"
+            + "marking roots|marking \\(unload classes\\)|marking \\(update refs\\)||"
+            + "marking \\(update refs\\) \\(process weakrefs\\)|Preclean|Preclean SoftReferences|precleaning|"
+            + "Process Non-Strong|Process Non-Strong References|Rebuild Remembered Sets|"
+            + "Rebuild Remembered Sets and Scrub Regions|References Enqueue|References Process|Relocate|"
+            + "Relocate Remset FP|Remap Roots|[Rr]eset|Reset Relocation Set|Scan Root Regions|"
+            + "Select Relocation Set|String Deduplication.*|strong roots|Sweep|thread roots|uncommit|"
+            + "Undo Cycle|update references|update thread roots|weak references|weak roots)|" + "Trigger cleanups)( \\("
+            + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\))?( " + JdkRegEx.DURATION_MS + ")?" + TimesData.REGEX_JDK9 + "?( Metaspace: "
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[ ]*$";
+
+    private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -232,19 +232,130 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine) {
-        boolean match = false;
-        for (int i = 0; i < REGEX_PATTERN_LIST.size(); i++) {
-            Pattern pattern = REGEX_PATTERN_LIST.get(i);
-            if (pattern.matcher(logLine).matches()) {
-                match = true;
-                break;
+        return PATTERN.matcher(logLine).matches();
+    }
+
+    /**
+     * Permanent generation or metaspace occupancy at end of GC event.
+     */
+    private Memory classOccupancyEnd;
+
+    /**
+     * Permanent generation or metaspace occupancy at beginning of GC event.
+     */
+    private Memory classOccupancyInit;
+
+    /**
+     * Space allocated to permanent generation or metaspace.
+     */
+    private Memory classSpace;
+
+    /**
+     * Combined size at end of GC event.
+     */
+    private Memory combinedOccupancyEnd;
+
+    /**
+     * Combined size at beginning of GC event.
+     */
+    private Memory combinedOccupancyInit;
+
+    /**
+     * Combined available space.
+     */
+    private Memory combinedSpace;
+
+    /**
+     * The elapsed clock time for the GC event in microseconds (rounded).
+     */
+    private long duration;
+
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * The time when the GC event started in milliseconds after JVM startup.
+     */
+    private long timestamp = 0L;
+
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
+     */
+    public UnifiedConcurrentEvent(String logEntry) {
+        this.logEntry = logEntry;
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 19) != null) {
+                duration = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 19)).intValue();
+            }
+            long endTimestamp;
+            if (matcher.group(2).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                endTimestamp = Long.parseLong(matcher.group(13));
+            } else if (matcher.group(2).matches(UnifiedRegEx.UPTIME)) {
+                endTimestamp = JdkMath.convertSecsToMillis(matcher.group(12)).longValue();
+            } else {
+                if (matcher.group(14) != null) {
+                    if (matcher.group(15).matches(UnifiedRegEx.UPTIMEMILLIS)) {
+                        endTimestamp = Long.parseLong(matcher.group(17));
+                    } else {
+                        endTimestamp = JdkMath.convertSecsToMillis(matcher.group(16)).longValue();
+                    }
+                } else {
+                    // Datestamp only.
+                    endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
+                }
+            }
+            timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8) != null) {
+                combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 14).charAt(0)).convertTo(KILOBYTES);
+                combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 17).charAt(0)).convertTo(KILOBYTES);
+            }
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24) != null) {
+                classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 25),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27).charAt(0)).convertTo(KILOBYTES);
+                classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 31),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 33).charAt(0)).convertTo(KILOBYTES);
+                classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 34),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 36).charAt(0)).convertTo(KILOBYTES);
             }
         }
-        return match;
+    }
+
+    public Memory getClassOccupancyEnd() {
+        return classOccupancyEnd;
+    }
+
+    public Memory getClassOccupancyInit() {
+        return classOccupancyInit;
+    }
+
+    public Memory getClassSpace() {
+        return classSpace;
+    }
+
+    public Memory getCombinedOccupancyEnd() {
+        return combinedOccupancyEnd;
+    }
+
+    public Memory getCombinedOccupancyInit() {
+        return combinedOccupancyInit;
+    }
+
+    public Memory getCombinedSpace() {
+        return combinedSpace;
     }
 
     public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+        return logEntry;
     }
 
     public String getName() {
@@ -257,7 +368,7 @@ public class UnifiedConcurrentEvent extends UnknownCollector implements UnifiedL
     }
 
     public long getTimestamp() {
-        return 0;
+        return timestamp;
     }
 
     public boolean isEndstamp() {

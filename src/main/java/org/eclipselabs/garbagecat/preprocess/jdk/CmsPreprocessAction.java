@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess.jdk;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -566,10 +567,247 @@ public class CmsPreprocessAction implements PreprocessAction {
     private static final Pattern REGEX_RETAIN_PAR_NEW_PATTERN = Pattern.compile(REGEX_RETAIN_PAR_NEW);
 
     /**
+     * Regular expressions for lines own away.
+     * 
+     * In general, concurrent logging without an ending duration is thrown away, and the corresponding logging with the
+     * ending duration is retained with the concurrent event.
+     * 
+     * <pre>
+     * Z:
+     * 
+     * [65.488s][debug][gc,heap         ] GC(0) Y: Heap before GC invocations=0 (full 0):
+     * 
+     * [2021-12-01T10:04:06.358-0500] GC(0) Garbage Collection (Warmup)
+     * 
+     * [0.126s][info][gc          ] GC(1) Major Collection (Warmup)
+     * 
+     * [2021-12-01T10:04:06.358-0500] GC(0) Using 1 workers
+     * 
+     * [0.275s] GC(2) Load: 0.53/0.41/0.33
+     *
+     * [0.132s][info][gc,load     ] GC(0) Load: 0.42/0.38/0.32
+     * 
+     * [0.275s] GC(2) MMU: 2ms/99.6%, 5ms/99.8%, 10ms/99.9%, 20ms/99.9%, 50ms/99.9%, 100ms/100.0%
+     * 
+     * [0.275s] GC(2) Mark: 1 stripe(s), 1 proactive flush(es), 1 terminate flush(es), 0 completion(s), 
+     * 0 continuation(s)
+     * 
+     * [0.275s] GC(2) Mark Stack Usage: 32M
+     * 
+     * [0.275s] GC(2) NMethods: 756 registered, 0 unregistered
+     * 
+     * [0.275s] GC(2) Metaspace: 3M used, 3M committed, 1032M reserved
+     * 
+     * [0.134s] GC(0) Soft: 3088 encountered, 0 discovered, 0 enqueued
+     * 
+     * [0.134s] GC(0) Weak: 225 encountered, 203 discovered, 43 enqueued
+     * 
+     * [0.134s] GC(0) Final: 2 encountered, 0 discovered, 0 enqueued
+     * 
+     * [0.134s] GC(0) Phantom: 25 encountered, 22 discovered, 20 enqueued
+     * 
+     * [0.134s] GC(0) Small Pages: 5 / 10M, Empty: 0M, Relocated: 3M, In-Place: 0
+     * 
+     * [0.134s] GC(0) Large Pages: 0 / 0M, Empty: 0M, Relocated: 0M, In-Place: 0
+     * 
+     * [0.134s] GC(0) Forwarding Usage: 0M
+     * 
+     * [0.132s][info][gc,heap     ] GC(0) Min Capacity: 32M(33%)
+     * 
+     * [0.132s][info][gc,heap     ] GC(0) Max Capacity: 96M(100%)     
+     * 
+     * [0.134s] GC(0) Soft Max Capacity: 96M(100%)
+     * 
+     * [0.134s] GC(0)                Mark Start          Mark End        Relocate Start      Relocate End           
+     * High               Low
+     *
+     * [0.134s] GC(0)  Capacity:       32M (33%)          32M (33%)          32M (33%)          32M (33%)          
+     * 32M (33%)          32M (33%)
+     * 
+     * [0.134s] GC(0)      Free:       86M (90%)          84M (88%)          84M (88%)          90M (94%)          
+     * 90M (94%)          82M (85%)
+     * 
+     * [0.134s] GC(0)      Used:       10M (10%)          12M (12%)          12M (12%)           6M (6%)           
+     * 14M (15%)           6M (6%)
+     * 
+     * [0.134s] GC(0)      Live:         -                 3M (4%)            3M (4%)            3M (4%)             
+     * -                  -
+     * 
+     * [0.134s] GC(0) Allocated:         -                 2M (2%)            2M (2%)            1M (2%)             
+     * -                  -
+     * 
+     * [0.134s] GC(0)   Garbage:         -                 6M (7%)            6M (7%)            0M (1%)             
+     * -                  -
+     * 
+     * [0.134s] GC(0) Reclaimed:         -                  -                 0M (0%)            5M (6%)             
+     * -                  -
+     * 
+     * [0.134s] GC(0) Garbage Collection (Warmup) 10M(10%)->6M(6%)
+     * 
+     * [0.119s][info][gc          ] GC(0) Major Collection (Warmup) 10M(10%)->14M(15%) 0.022s    
+     * 
+     * [0.262s] GC(2) Garbage Collection (Allocation Stall)
+     * 
+     * [0.262s] GC(2) Clearing All SoftReferences
+     * 
+     * [0.363s] Allocation Stall (main) 8.723ms
+     * 
+     * [3.394s] Allocation Stall (C1 CompilerThread0) 24.753ms
+     * 
+     * [0.407s] Relocation Stall (main) 0.668ms
+     * 
+     * [3.394s] Relocation Stall (C1 CompilerThread0) 0.334ms
+     *
+     * [0.424s] GC(7) Garbage Collection (Allocation Rate)
+     *
+     * [0.437s] GC(7) Garbage Collection (Allocation Rate) 54M(56%)->34M(35%)
+     * 
+     * [2023-12-02T00:22:33.236+0700][2.783s] GC(0) Garbage Collection (Metadata GC Threshold)
+     * 
+     * G1:
+     * 
+     * [4.057s][info][gc,phases,start] GC(2264) Phase 1: Mark live objects
+     * 
+     * [4.062s][info][gc,phases      ] GC(2264) Phase 1: Mark live objects 4.352ms
+     * 
+     * [4.062s][info][gc,phases,start] GC(2264) Phase 2: Compute new object addresses
+     * 
+     * [4.063s][info][gc,phases      ] GC(2264) Phase 2: Compute new object addresses 1.165ms
+     * 
+     * [4.063s][info][gc,phases,start] GC(2264) Phase 3: Adjust pointers
+     * 
+     * [4.065s][info][gc,phases      ] GC(2264) Phase 3: Adjust pointers 2.453ms
+     * 
+     * [4.065s][info][gc,phases,start] GC(2264) Phase 4: Move objects
+     * 
+     * [4.067s][info][gc,phases      ] GC(2264) Phase 4: Move objects 1.248ms
+     * 
+     * [0.004s][info][gc,cds       ] Mark closed archive regions in map: [0x00000000fff00000, 0x00000000fff69ff8]
+     * 
+     * [0.004s][info][gc,cds       ] Mark open archive regions in map: [0x00000000ffe00000, 0x00000000ffe46ff8]
+     * 
+     * [2021-03-13T03:37:44.312+0530][79857380ms] GC(8651) Using 8 workers of 8 for full compaction
+     * 
+     * [2021-09-14T11:38:33.230-0500][3.887s][info][gc,task      ] GC(1) Using 2 workers of 2 for marking
+     *
+     * [2021-03-13T03:45:44.424+0530][80337492ms] Attempting maximally compacting collection
+     *
+     * [2021-03-13T03:37:44.312+0530][79857381ms] GC(8652) Concurrent Mark From Roots
+     * 
+     * [2021-09-14T11:41:18.173-0500][168.830s][info][gc,mmu        ] GC(26) MMU target violated: 201.0ms 
+     * (200.0ms/201.0ms)
+     * 
+     * [0.038s][info][gc,phases   ] GC(0)   Merge Heap Roots: 0.1ms
+     * 
+     * [0.038s][info][gc,heap     ] GC(0) Archive regions: 2->2
+     * 
+     * [2022-10-09T13:16:39.707+0000][3783.195s][debug][gc,heap ] GC(9) Heap before GC invocations=9 (full 0): 
+     * garbage-first heap total 10743808K, used 1819374K [0x0000000570400000, 0x0000000800000000)
+     * 
+     * [2023-01-11T16:09:59.244+0000][19084.784s] GC(300) Concurrent Undo Cycle 54.191ms
+     * 
+     * [2023-01-11T17:46:35.751+0000][24881.291s] GC(452)   Merge Optional Heap Roots: 0.3m
+     * 
+     * PARALLEL_COMPACTING_OLD:
+     * 
+     * [0.083s][info][gc,phases,start] GC(3) Marking Phase
+     * 
+     * [0.084s][info][gc,phases      ] GC(3) Marking Phase 1.032ms
+     * 
+     * [0.084s][info][gc,phases,start] GC(3) Summary Phase
+     * 
+     * [0.084s][info][gc,phases      ] GC(3) Summary Phase 0.005ms
+     * 
+     * [0.084s][info][gc,phases,start] GC(3) Adjust Roots
+     * 
+     * [0.084s][info][gc,phases      ] GC(3) Adjust Roots 0.666ms
+     * 
+     * [0.084s][info][gc,phases,start] GC(3) Compaction Phase
+     * 
+     * [0.087s][info][gc,phases      ] GC(3) Compaction Phase 2.540ms
+     * 
+     * [0.087s][info][gc,phases,start] GC(3) Post Compact
+     * 
+     * [0.087s][info][gc,phases      ] GC(3) Post Compact 0.012ms
+     * 
+     * CMS:
+     * 
+     * [0.053s][info][gc,start     ] GC(1) Pause Initial Mark
+     * 
+     * [0.056s][info][gc,heap      ] GC(1) Old: 518K->518K(960K)
+     * 
+     * [0.053s][info][gc,start     ] GC(1) Pause Initial Mark
+     *   
+     * Concurrent (CMS/G1):
+     *     
+     * [0.053s][info][gc           ] GC(1) Concurrent Mark
+     * 
+     * [0.054s][info][gc           ] GC(1) Concurrent Preclean
+     * 
+     * [0.055s][info][gc           ] GC(1) Concurrent Sweep
+     * 
+     * [2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Cycle
+     * 
+     * [2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Clear Claimed Marks
+     * 
+     * [2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Scan Root Regions
+     * 
+     * [2021-03-13T03:37:44.312+0530][79857381ms] GC(8652) Concurrent Mark From Roots
+     * 
+     * [2023-11-16T06:43:27.109-0500] GC(5) Concurrent Rebuild Remembered Sets and Scrub Regions
+     * 
+     * [0.055s][info][gc           ] GC(1) Concurrent Reset
+     * 
+     * [0.030s][info][safepoint    ] Application time: 0.0012757 seconds
+     * 
+     * [2021-09-22T10:59:49.112-0500][5455002ms] Entering safepoint region: Exit
+     * 
+     * [0.031s] Entering safepoint region: Halt
+     * </pre>
+     */
+    private static final String[] REGEX_THROWAWAY = {
+            // ***** Heap at GC *****
+            "^ (par new|concurrent mark-sweep) generation .+$",
+            //
+            "^ concurrent-mark-sweep perm gen .+$",
+            //
+            "^  (class|eden|from|to  ) space .+$",
+            //
+            " Metaspace       used " + JdkRegEx.SIZE_K + ", capacity " + JdkRegEx.SIZE_K + ", committed "
+                    + JdkRegEx.SIZE_K + ", reserved " + JdkRegEx.SIZE_K + ""
+            //
+    };
+
+    private static final List<Pattern> THROWAWAY_PATTERN_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
+
+    /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
      * context is necessary to detangle multi-line events where logging patterns are shared among preprocessors.
      */
     public static final String TOKEN = "CMS_PREPROCESS_ACTION_TOKEN";
+
+    static {
+        for (String regex : REGEX_THROWAWAY) {
+            THROWAWAY_PATTERN_LIST.add(Pattern.compile(regex));
+        }
+    }
+
+    /**
+     * Determine if the log line is can be thrown away
+     * 
+     * @return true if the log line matches a throwaway pattern, false otherwise.
+     */
+    private static final boolean isThrowaway(String logLine) {
+        boolean throwaway = false;
+        for (int i = 0; i < THROWAWAY_PATTERN_LIST.size(); i++) {
+            Pattern pattern = THROWAWAY_PATTERN_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
+                throwaway = true;
+                break;
+            }
+        }
+        return throwaway;
+    }
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -583,7 +821,8 @@ public class CmsPreprocessAction implements PreprocessAction {
      * @return true if the log line matches the event pattern, false otherwise.
      */
     public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
-        return REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(logLine).matches()
+        boolean match = false;
+        if (REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_SERIAL_BAILING_PATTERN.matcher(logLine).matches()
@@ -606,7 +845,12 @@ public class CmsPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_PAR_NEW_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()
-                || REGEX_RETAIN_PAR_NEW_PATTERN.matcher(logLine).matches();
+                || REGEX_RETAIN_PAR_NEW_PATTERN.matcher(logLine).matches()) {
+            match = true;
+        } else if (isThrowaway(logLine)) {
+            match = true;
+        }
+        return match;
     }
 
     /**
@@ -877,13 +1121,19 @@ public class CmsPreprocessAction implements PreprocessAction {
      * @return True if the line is the start of a new logging event or a complete logging event.
      */
     private boolean newLoggingEvent(String logLine) {
-        return logLine == null || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)
+        boolean match = false;
+        if (logLine == null || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_CONCURRENT)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL_BAILING)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_SERIAL) || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PARNEW_BAILING)
                 || logLine.matches(REGEX_RETAIN_BEGINNING_PRINT_HEAP_AT_GC)
-                || logLine.matches(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME);
+                || logLine.matches(REGEX_RETAIN_BEGINNING_CMS_CONCURRENT_APPLICATION_CONCURRENT_TIME)) {
+            match = true;
+        } else if (isThrowaway(logLine)) {
+            match = true;
+        }
+        return match;
     }
 }

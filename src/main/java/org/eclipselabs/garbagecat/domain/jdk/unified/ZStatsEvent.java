@@ -182,20 +182,18 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ZStatsEvent extends UnknownCollector implements ThrowAwayEvent, HeaderEvent {
-
+public class ZStatsEvent extends UnknownCollector implements UnifiedLogging, HeaderEvent, ThrowAwayEvent {
     /**
      * Regular expression for the header.
      */
-    public static final String __REGEX_HEADER = "^(" + UnifiedRegEx.DECORATOR
+    public static final String _REGEX_HEADER = "^(" + UnifiedRegEx.DECORATOR
             + ") ={3} Garbage Collection Statistics ={119}$";
-
     /**
      * Regular expression defining standard logging.
      */
-    private static final String _REGEX[] = {
+    private static final String REGEX[] = {
             // Header
-            __REGEX_HEADER,
+            _REGEX_HEADER,
             //
             "^" + UnifiedRegEx.DECORATOR + "[ ]+Last 10s[ ]+Last 10m[ ]+Last 10h[ ]+Total[ ]*$",
             //
@@ -209,11 +207,10 @@ public class ZStatsEvent extends UnknownCollector implements ThrowAwayEvent, Hea
             "^(" + UnifiedRegEx.DECORATOR + ") ={153}$"
             //
     };
-
-    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(_REGEX.length);
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
 
     static {
-        for (String regex : _REGEX) {
+        for (String regex : REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }
@@ -260,15 +257,25 @@ public class ZStatsEvent extends UnknownCollector implements ThrowAwayEvent, Hea
         return JdkUtil.LogEventType.Z_STATS.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return 0;
+    }
+
+    @Override
+    public boolean isEndstamp() {
+        return false;
     }
 
     @Override
     public boolean isHeader() {
         boolean isHeader = false;
         if (this.logEntry != null) {
-            isHeader = logEntry.matches(__REGEX_HEADER);
+            isHeader = logEntry.matches(_REGEX_HEADER);
         }
         return isHeader;
     }

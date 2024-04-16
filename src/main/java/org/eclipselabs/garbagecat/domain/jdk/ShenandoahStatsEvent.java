@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </p>
  * 
  * <p>
- * Output from XX:+PrintGCDetails (JDK8 extended logs) or -Xlog:gc+stats (JDK11 extended statistics).
+ * Output from XX:+PrintGCDetails.
  * </p>
  * 
  * <h2>Example Logging</h2>
@@ -56,88 +56,53 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  *   Rebuild Free Set                   45 us
  * </pre>
  * 
- * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAwayEvent {
+public class ShenandoahStatsEvent extends ShenandoahCollector implements HeaderEvent, ThrowAwayEvent {
 
+    /**
+     * Regular expression for the header.
+     */
+    public static final String _REGEX_HEADER = "^All times are wall-clock times, except per-root-class counters, that "
+            + "are sum over$";
     /**
      * Regular expression defining standard logging.
      */
-    private static final String _REGEX[] = {
+    private static final String REGEX[] = {
             //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + ")?[ ]{0,}All times are wall-clock times, except per-root-class counters, that are sum over$",
+            _REGEX_HEADER,
             //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + ")?[ ]{0,}all workers. Dividing the <total> over the root stage time estimates parallelism.$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Concurrent (Class Unloading|Cleanup|Evacuation|Marking|Reset|Precleaning|"
-                    + "(Mark|Strong|Thread) Roots|Update (Refs|Thread Roots)|Weak (References|Roots))[ ]{1,}.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Final Mark|Final Roots|Init Mark|) \\((G|N)\\)[ ]{1,}.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{1,}(Accumulate Stats|(Code )?Roots|Evacuation|Exception Caches|Finish (Mark|Queues|Work)|"
-                    + "Make Parsable|Manage (GCLABs|GC/TLABs)|Purge Unlinked|(Code )?Roots|Rendezvous|"
-                    + "System (Purge|Dictionary)|Unlink Stale|Update (References|Region States)|"
-                    + "Weak (Class Links|References))[ ]{1,}\\d{1,} us.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Scan|Update) Roots[ ]{1,}.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,}(Choose|Trash) Collection Set[ ]{1,}.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + ")?[ ]{1,}Rebuild Free Set[ ]{1,}.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}Finish Work[ ]{1,}.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pause (Degenerated|Full) GC \\((G|N)\\)[ ]{1,}.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?  Degen (STW Mark|Update Roots)[ ]{1,}.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{1,}(Cleanup|CLDG|Deallocate Metadata|Enqueue|Parallel Cleanup|Process|Unload Classes|"
-                    + "Weak Roots)[ ]{1,}.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}Initial Evacuation[ ]{1,}.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(Resize|Retire|Sync|Trash) (CSet|GCLABs|Pinned|TLABs)"
-                    + "[ ]{1,}.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{1,}(Adjust Pointers|Calculate Addresses|Copy Objects|Prepare|(Post|Pre) Heap Dump|Mark)"
+            "^all workers\\. Dividing the <total> over the root stage time estimates parallelism\\.$",
+            // Main headings
+            "^(Concurrent (Cleanup|Evacuation|Marking|Precleaning|Reset|Update Refs)|Pacing|"
+                    + "Pause Degenerated GC \\([GN]\\)|Pause Final Mark \\([GN]\\)|Pause Final Update Refs \\([GN]\\)|"
+                    + "Pause Init Mark \\([GN]\\)|Pause Init  Update Refs \\([GN]\\)|Pause Full GC \\([GN]\\))"
                     + "[ ]{1,}\\d{1,} us$",
+            // Indented 2 spaces
+            "^  (Accumulate Stats|Adjust Pointers|Calculate Addresses|Choose Collection Set|Copy Objects|"
+                    + "Degen Update Roots|Finish Queues|Finish Work|Initial Evacuation |Make Parsable|Mark|"
+                    + "Post Heap Dump|Pre Heap Dump|Prepare|Rebuild Free Set|Resize TLABs|Retire TLABs|Scan Roots|"
+                    + "System Purge|Trash Collection Set|Weak References|Weak Roots|Update Region States|Update Roots)"
+                    + "[ ]{1,}\\d{1,} us.*$",
+            // Indented 4 spaces: acronyms
+            "^    (DU|E|FA|FS|FU|S|UR|WR): .*$",
+            // Indented 4 spaces: words
+            "^    (CLDG|Deallocate Metadata|Enqueue|Finish Queues|Humongous Objects|Parallel Cleanup|Process|"
+                    + "Rebuild Region Sets|Regular Objects|Reset Complete Bitmap|System Purge|Unload Classes|"
+                    + "Weak References)[ ]{1,}\\d{1,} us$",
+            // Indented 6 spaces
+            "^      (Enqueue|Process|Unload Classes)[ ]{1,}\\d{1,} us$",
             //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{1,}((Humongous|Regular) Objects|Rebuild Region Sets|Reset Complete Bitmap)[ ]{1,}.*$",
+            "^Allocation pacing accrued:$",
             //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?Pause (Init[ ]{0,1}|Final) (Mark|Update Refs|Evac) \\([G|N]\\)[ ]{1,}.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Allocation pacing accrued:$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?Pacing[ ]{1,}.*$",
-            // ,
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{0,}\\d{1,} of[ ]{0,}\\d{1,} ms \\([ ]{0,}\\d{1,}\\.\\d%\\):.+$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR
-                    + " )?[ ]{1,}(DU|E|FA|FS|FU|S|U|UR): (CLDG|Code Cache|Flat Profiler|JNI|JNI Handles|JNI Weak|"
-                    + "Management|String Table|Synchronizer|System Dict|Thread|Universe|JVMTI) Roots[ ]{1,}.*$",
-            //
-            "^(" + UnifiedRegEx.DECORATOR + " )?[ ]{1,}(CMR|CSR|CTR|CU|CWR|CWRF|DCU|DSM|DU|DWR|E|FA|FM|FS|FU|S|UR|WR|"
-                    + "WRP): (<total>|CLDG Roots|Code Cache Cleaning|Code Cache Roots|Flat Profiler Roots|"
-                    + "JFR Weak Roots|JNI Handles Roots|JNI Weak Roots|Parallel Mark|Weak References|"
-                    + "Resolved Table Roots|String Table Roots|Thread Roots|Unload Code Caches|Unlink CLDs|"
-                    + "VM Strong Roots|VM Weak Roots)[ ]{1,}\\d{1,} us.*$"
+            "^[ ]{0,}\\d{1,} of[ ]{0,}\\d{1,} ms \\([ ]{0,}\\d{1,}\\.\\d%\\):.+$"
             //
     };
-
-    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(_REGEX.length);
+    private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
 
     static {
-        for (String regex : _REGEX) {
+        for (String regex : REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }
@@ -161,8 +126,23 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
         return match;
     }
 
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
+     */
+    public ShenandoahStatsEvent(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
     public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+        return logEntry;
     }
 
     public String getName() {
@@ -171,5 +151,14 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements ThrowAw
 
     public long getTimestamp() {
         return 0;
+    }
+
+    @Override
+    public boolean isHeader() {
+        boolean isHeader = false;
+        if (this.logEntry != null) {
+            isHeader = logEntry.matches(_REGEX_HEADER);
+        }
+        return isHeader;
     }
 }

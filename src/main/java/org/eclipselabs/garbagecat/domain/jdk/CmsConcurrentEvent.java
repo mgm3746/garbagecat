@@ -100,13 +100,28 @@ public class CmsConcurrentEvent extends CmsCollector implements LogEvent, Parall
         return PATTERN.matcher(logLine).matches();
     }
 
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
+     */
+    public CmsConcurrentEvent(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.CMS;
     }
 
     public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+        return logEntry;
     }
 
     public String getName() {

@@ -58,7 +58,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) JDK8/11 on three lines that wrap the garbage collection ("Entering" timestamp is beginning of safepoint):
+ * 1) JDK11 on three lines that wrap the garbage collection ("Entering" timestamp is beginning of safepoint):
  * </p>
  * 
  * <pre>
@@ -115,7 +115,9 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * [0.068s][info][safepoint   ] Safepoint "G1CollectForAllocation", Time since last: 3273659 ns, Reaching safepoint: 12838 ns, At safepoint: 704423 ns, Total: 717261 ns
  * </pre>
  * 
- * 3) JDK17 &gt;= update 8 preprocessed to include "17U8" context.
+ * 3) JDK17 &gt;= update 8 preprocessed to include "17U8" context. Prior to JDK17u8, {@link #timeCleanup} was included
+ * in {@link #timeToStopThreads} ("Reaching safepoint"), so it is necessary to know the JDK version to accurately
+ * determine the total time in safepoint. Reference: https://bugs.openjdk.org/browse/JDK-8297154
  * 
  * <pre>
  * [2023-12-12T10:21:02.708+0200][info][safepoint   ] 17U8 Safepoint "Cleanup", Time since last: 1000407638 ns, Reaching safepoint: 18298588 ns, Cleanup: 9032 ns, At safepoint: 461108 ns, Total: 18768728 ns
@@ -154,7 +156,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
-     * RegEx pattern for JDK17+.
+     * RegEx pattern for JDK17+ (output on a single line).
      */
     public static final Pattern PATTERN_JDK17 = Pattern.compile(_REGEX_JDK17);
 

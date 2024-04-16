@@ -134,8 +134,8 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.HEAP),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEAP),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEAP.toString() + ".");
         UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstGcEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (3792764), event.getTimestamp(), "Time stamp not parsed correctly.");

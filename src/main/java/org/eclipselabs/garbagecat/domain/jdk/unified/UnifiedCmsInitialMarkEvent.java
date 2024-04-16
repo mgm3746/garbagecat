@@ -100,6 +100,7 @@ public class UnifiedCmsInitialMarkEvent extends CmsCollector
      * The time when the GC event started in milliseconds after JVM startup.
      */
     private long timestamp;
+
     /**
      * The time of all system (kernel) threads added together in centiseconds.
      */

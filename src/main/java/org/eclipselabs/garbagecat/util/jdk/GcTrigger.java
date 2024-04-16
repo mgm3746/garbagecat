@@ -218,6 +218,35 @@ public enum GcTrigger {
      * </p>
      */
     PROMOTION_FAILED("promotion failed"),
+    /**
+     * TODO:
+     */
+    SHENANDOAH_EVACUATION("Evacuation"),
+    /**
+     * TODO:
+     */
+    SHENANDOAH_EVICTION("Eviction"),
+    /**
+     * TODO:
+     */
+    SHENANDOAH_MARK("Mark"),
+    /**
+     * TODO:
+     */
+    SHENANDOAH_OUTSIDE_OF_CYCLE("Outside of Cycle"),
+    /**
+     * TODO:
+     */
+    SHENANDOAH_PROCESS_WEAKREFS("process weakrefs"),
+
+    /**
+     * TODO:
+     */
+    SHENANDOAH_UNLOAD_CLASSES("unload classes"),
+    /**
+     * TODO:
+     */
+    SHENANDOAH_UPDATE_REFS("[uU]pdate [rR]efs"),
     // Explicit garbage collection invoked.
     SYSTEM_GC("System(.gc\\(\\))?"),
     /**
@@ -313,6 +342,20 @@ public enum GcTrigger {
                 return METADATA_GC_THRESHOLD;
             if (literal.matches(PROMOTION_FAILED.regex))
                 return PROMOTION_FAILED;
+            if (literal.matches(SHENANDOAH_EVACUATION.regex))
+                return SHENANDOAH_EVACUATION;
+            if (literal.matches(SHENANDOAH_EVICTION.regex))
+                return SHENANDOAH_EVICTION;
+            if (literal.matches(SHENANDOAH_MARK.regex))
+                return SHENANDOAH_MARK;
+            if (literal.matches(SHENANDOAH_OUTSIDE_OF_CYCLE.regex))
+                return SHENANDOAH_OUTSIDE_OF_CYCLE;
+            if (literal.matches(SHENANDOAH_PROCESS_WEAKREFS.regex))
+                return SHENANDOAH_PROCESS_WEAKREFS;
+            if (literal.matches(SHENANDOAH_UNLOAD_CLASSES.regex))
+                return SHENANDOAH_UNLOAD_CLASSES;
+            if (literal.matches(SHENANDOAH_UPDATE_REFS.regex))
+                return SHENANDOAH_UPDATE_REFS;
             if (literal.matches(SYSTEM_GC.regex))
                 return SYSTEM_GC;
             if (literal.matches(TO_SPACE_EXHAUSTED.regex))

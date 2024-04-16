@@ -10,60 +10,62 @@
  * Contributors:                                                                                                      *
  *    Mike Millson - initial API and implementation                                                                   *
  *********************************************************************************************************************/
-package org.eclipselabs.garbagecat.domain.jdk;
+package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
-import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * SHENANDOAH_METASPACE
+ * UNIFIED_SHENANDOAH_TRIGGER
  * </p>
  * 
  * <p>
- * JDK17 Metaspace event printed at the bottom of every Shenandoah gc. Looks the same as
- * <code>UnifiedPreprocessAction.REGEX_RETAIN_MIDDLE_METASPACE_DATA</code> except there is no
- * <code>UnifiedRegEx.GC_EVENT_NUMBER</code>.
+ * Trigger information logging. Broken out from {@link org.eclipselabs.garbagecat.domain.jdk.GcInfoEvent} for possible
+ * future analysis.
  * </p>
  * 
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) With log level, tags:
+ * 1) Standard:
  * </p>
  * 
  * <pre>
- * [0.303s][info][gc,metaspace] Metaspace: 3378K(3584K)-&gt;3378K(3584K) NonClass: 3120K(3200K)-&gt;3120K(3200K) Class: 258K(384K)-&gt;258K(384K)
+ * [0.448s][info][gc] Trigger: Learning 1 of 5. Free (44M) is below initial threshold (44M)
  * </pre>
- *
+ * 
+ * <pre>
+ * [0.814s][info][gc] Trigger: Average GC time (18.86 ms) is above the time for allocation rate (328.75 MB/s) to deplete free headroom (5M)
+ * </pre>
+ * 
+ * <pre>
+ * [24.356s][info][gc] Trigger: Free (6M) is below minimum threshold (6M)
+ * </pre>
+ * 
  * <p>
- * 2) Datestamp only:
+ * 2) JDK17:
  * </p>
  * 
  * <pre>
- * [2022-08-09T17:56:59.141-0400] Metaspace: 3448K(3648K)-&gt;3465K(3648K) NonClass: 3163K(3264K)-&gt;3179K(3264K) Class: 285K(384K)-&gt;285K(384K)
+ * [10.508s][info][gc          ] Trigger: Average GC time (16.09 ms) is above the time for average allocation rate (409 MB/s) to deplete free headroom (5742K) (margin of error = 1.80)
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahMetaspaceEvent extends ShenandoahCollector implements ThrowAwayEvent {
+public class UnifiedShenandoahTriggerEvent extends ShenandoahCollector implements UnifiedLogging, ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX = "^^\\[(" + JdkRegEx.DATESTAMP + "|" + UnifiedRegEx.UPTIME + "|"
-            + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
-            + ")\\])?(\\[info\\]\\[gc,metaspace\\])? Metaspace: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) NonClass: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) Class: " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[ ]*$";
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Trigger: .*$";
 
-    private static Pattern PATTERN = Pattern.compile(_REGEX);
+    public static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
      * Determine if the logLine matches the logging pattern(s) for this event.
@@ -87,7 +89,7 @@ public class ShenandoahMetaspaceEvent extends ShenandoahCollector implements Thr
      * @param logEntry
      *            The log entry for the event.
      */
-    public ShenandoahMetaspaceEvent(String logEntry) {
+    public UnifiedShenandoahTriggerEvent(String logEntry) {
         this.logEntry = logEntry;
     }
 
@@ -96,10 +98,20 @@ public class ShenandoahMetaspaceEvent extends ShenandoahCollector implements Thr
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_METASPACE.toString();
+        return JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString();
+    }
+
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
     }
 
     public long getTimestamp() {
         return 0;
+    }
+
+    public boolean isEndstamp() {
+        boolean isEndStamp = false;
+        return isEndStamp;
     }
 }

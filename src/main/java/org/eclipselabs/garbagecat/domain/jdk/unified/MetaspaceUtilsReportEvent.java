@@ -36,8 +36,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class MetaspaceUtilsReportEvent implements ThrowAwayEvent {
-
+public class MetaspaceUtilsReportEvent implements UnifiedLogging, ThrowAwayEvent {
     /**
      * Regular expression defining the logging.
      */
@@ -45,7 +44,6 @@ public class MetaspaceUtilsReportEvent implements ThrowAwayEvent {
             + UnifiedRegEx.UPTIMEMILLIS + ")\\](\\[(" + UnifiedRegEx.UPTIME + "|" + UnifiedRegEx.UPTIMEMILLIS
             + ")\\])?[ ]+(Both|CDS|Chunk freelists|Class( space)?|CompressedClassSpaceSize|"
             + "(Current|Initial) GC threshold|MaxMetaspaceSize|Non-[cC]lass( space)?|Usage|Virtual space):.*$";
-
     private static final Pattern REGEX_PATTERN = Pattern.compile(_REGEX);
 
     /**
@@ -59,15 +57,40 @@ public class MetaspaceUtilsReportEvent implements ThrowAwayEvent {
         return REGEX_PATTERN.matcher(logLine).matches();
     }
 
+    /**
+     * The log entry for the event. Can be used for debugging purposes.
+     */
+    private String logEntry;
+
+    /**
+     * Create event from log entry.
+     * 
+     * @param logEntry
+     *            The log entry for the event.
+     */
+    public MetaspaceUtilsReportEvent(String logEntry) {
+        this.logEntry = logEntry;
+    }
+
     public String getLogEntry() {
-        throw new UnsupportedOperationException("Event does not include log entry information");
+        return logEntry;
     }
 
     public String getName() {
         return JdkUtil.LogEventType.METASPACE_UTILS_REPORT.toString();
     }
 
+    @Override
+    public Tag getTag() {
+        return Tag.UNKNOWN;
+    }
+
     public long getTimestamp() {
         return 0;
+    }
+
+    @Override
+    public boolean isEndstamp() {
+        return false;
     }
 }

@@ -353,9 +353,9 @@ class TestAnalysis {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+        assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEAP),
                 JdkUtil.LogEventType.HEAP.toString() + " not identified.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.HEAP_AT_GC),
@@ -394,7 +394,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.GC_LOCKER_RETRY);
+        eventTypes.add(LogEventType.UNIFIED_GC_LOCKER_RETRY);
         jvmRun.setEventTypes(eventTypes);
         jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_GC_LOCKER_RETRY.getKey()),

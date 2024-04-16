@@ -26,13 +26,10 @@ import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
  * SHENANDOAH_CONCURRENT
- * 
- * TODO: Move to general UnifiedConcurrent event? Some of these are shared w/ G1.
  * </p>
  * 
  * <p>
@@ -44,47 +41,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * <h2>Example Logging</h2>
  * 
  * <p>
- * 1) Standard unified logging:
- * </p>
- * 
- * <pre>
- * [0.437s][info][gc] GC(0) Concurrent reset 15M-&gt;16M(64M) 4.701ms
- * </pre>
- * 
- * <pre>
- * [0.528s][info][gc] GC(1) Concurrent marking 16M-&gt;17M(64M) 7.045ms
- * </pre>
- * 
- * <pre>
- * [0.454s][info][gc] GC(0) Concurrent marking (process weakrefs) 17M-&gt;19M(64M) 15.264ms
- * </pre>
- * 
- * <pre>
- * [0.455s][info][gc] GC(0) Concurrent precleaning 19M-&gt;19M(64M) 0.202ms
- * </pre>
- * 
- * <pre>
- * [0.465s][info][gc] GC(0) Concurrent evacuation 17M-&gt;19M(64M) 6.528ms
- * </pre>
- * 
- * <pre>
- * [0.470s][info][gc] GC(0) Concurrent update references 19M-&gt;19M(64M) 4.708ms
- * </pre>
- * 
- * <pre>
- * [0.472s][info][gc] GC(0) Concurrent cleanup 18M-&gt;15M(64M) 0.036ms
- * </pre>
- * 
- * <p>
- * 2) With <code>-Xlog:gc*:file=&lt;file&gt;:time,uptimemillis</code>.
- * </p>
- * 
- * <pre>
- * [2019-02-05T14:47:34.156-0200][3068ms] GC(0) Concurrent reset
- * </pre>
- * 
- * <p>
- * 3) JDK8:
+ * 1) Standard logging:
  * </p>
  * 
  * <pre>
@@ -120,27 +77,11 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 4) JDK8 preprocessed with Metaspace block:
+ * 2) Preprocessed with Metaspace block:
  * </p>
  * 
  * <pre>
  * 2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K-&gt;4701K(37888K), 0.048 ms], [Metaspace: 6477K-&gt;6481K(1056768K)]
- * </pre>
- * 
- * <p>
- * 5) JDK11:
- * </p>
- * 
- * <pre>
- * [5.601s][info][gc           ] GC(99) Concurrent marking (unload classes) 7.346ms
- * </pre>
- * 
- * <p>
- * 6) JDK11 preprocessed with Metaspace block:
- * </p>
- * 
- * <pre>
- * [0.266s][info][gc           ] GC(0) Concurrent cleanup 34M-&gt;20M(36M) 0.028ms Metaspace: 3692K(7168K)-&gt;3714K(7168K)
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -152,14 +93,11 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX = "^(" + JdkRegEx.DECORATOR + "|" + UnifiedRegEx.DECORATOR
-            + ") [\\[]{0,1}Concurrent (class unloading|cleanup|evacuation|"
-            + "marking( \\((process weakrefs|unload classes|update refs)\\)| roots)?"
-            + "( \\((process weakrefs|unload classes)\\))?|precleaning|reset|uncommit|uncommit, start|"
-            + "(update|weak) references|(strong|thread|update thread|weak) roots)(( " + JdkRegEx.SIZE + "->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[,]{0,1} " + JdkRegEx.DURATION_MS
-            + ")?[\\]]{0,1}([,]{0,1} [\\[]{0,1}Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE + "\\))?->"
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[\\]]{0,1})?[ ]*$";
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR
+            + " \\[Concurrent (cleanup|evacuation|marking|marking \\(process weakrefs\\)|marking \\(unload classes\\)|"
+            + "precleaning|reset|update references)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\))?, " + JdkRegEx.DURATION_MS + "\\](, \\[Metaspace: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\])?[ ]*$";
 
     private static Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -224,60 +162,30 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            int duration = 0;
-            if (matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 20) != null) {
-                duration = JdkMath
-                        .convertMillisToMicros(matcher.group(JdkUtil.DECORATOR_SIZE + UnifiedRegEx.DECORATOR_SIZE + 20))
-                        .intValue();
-            }
-            if (matcher.group(1).matches(UnifiedRegEx.DECORATOR)) {
-                long endTimestamp;
-                if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                    endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 13));
-                } else if (matcher.group(JdkUtil.DECORATOR_SIZE + 3).matches(UnifiedRegEx.UPTIME)) {
-                    endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 13)).longValue();
-                } else {
-                    if (matcher.group(JdkUtil.DECORATOR_SIZE + 15) != null) {
-                        if (matcher.group(JdkUtil.DECORATOR_SIZE + 16).matches(UnifiedRegEx.UPTIMEMILLIS)) {
-                            endTimestamp = Long.parseLong(matcher.group(JdkUtil.DECORATOR_SIZE + 18));
-                        } else {
-                            endTimestamp = JdkMath.convertSecsToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 17))
-                                    .longValue();
-                        }
-                    } else {
-                        // Datestamp only.
-                        endTimestamp = JdkUtil.convertDatestampToMillis(matcher.group(JdkUtil.DECORATOR_SIZE + 3));
-                    }
-                }
-                timestamp = endTimestamp - JdkMath.convertMicrosToMillis(duration).longValue();
+            if (matcher.group(13) != null && matcher.group(13).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(13)).longValue();
+            } else if (matcher.group(1).matches(JdkRegEx.TIMESTAMP)) {
+                timestamp = JdkMath.convertSecsToMillis(matcher.group(1)).longValue();
             } else {
-                // JDK8
-                if (matcher.group(14) != null && matcher.group(14).matches(JdkRegEx.TIMESTAMP)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(14)).longValue();
-                } else if (matcher.group(2).matches(JdkRegEx.TIMESTAMP)) {
-                    timestamp = JdkMath.convertSecsToMillis(matcher.group(2)).longValue();
-                } else {
-                    // Datestamp only.
-                    timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
-                }
+                // Datestamp only.
+                timestamp = JdkUtil.convertDatestampToMillis(matcher.group(1));
             }
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 23) != null) {
-                combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 26).charAt(0)).convertTo(KILOBYTES);
-                combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 29).charAt(0)).convertTo(KILOBYTES);
-                combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 32).charAt(0)).convertTo(KILOBYTES);
-                if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 34) != null) {
-                    classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 35),
-                            matcher.group(UnifiedRegEx.DECORATOR_SIZE + 37).charAt(0)).convertTo(KILOBYTES);
-                    classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 42),
-                            matcher.group(UnifiedRegEx.DECORATOR_SIZE + 44).charAt(0)).convertTo(KILOBYTES);
-                    classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 45),
-                            matcher.group(UnifiedRegEx.DECORATOR_SIZE + 47).charAt(0)).convertTo(KILOBYTES);
-                }
+            if (matcher.group(JdkUtil.DECORATOR_SIZE + 2) != null) {
+                combinedOccupancyInit = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 3),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 5).charAt(0)).convertTo(KILOBYTES);
+                combinedOccupancyEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 6),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 8).charAt(0)).convertTo(KILOBYTES);
+                combinedSpace = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 9),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
             }
-
+            if (matcher.group(JdkUtil.DECORATOR_SIZE + 13) != null) {
+                classOccupancyInit = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 14),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 16).charAt(0)).convertTo(KILOBYTES);
+                classOccupancyEnd = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 17),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 19).charAt(0)).convertTo(KILOBYTES);
+                classSpace = memory(matcher.group(JdkUtil.DECORATOR_SIZE + 20),
+                        matcher.group(JdkUtil.DECORATOR_SIZE + 22).charAt(0)).convertTo(KILOBYTES);
+            }
         }
     }
 
@@ -315,17 +223,5 @@ public class ShenandoahConcurrentEvent extends ShenandoahCollector
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    protected void setClassSpace(Memory classSpace) {
-        this.classOccupancyInit = classSpace;
-    }
-
-    protected void setClassSpaceAllocation(Memory classSpaceAllocation) {
-        this.classSpace = classSpaceAllocation;
-    }
-
-    protected void setClassSpaceEnd(Memory classSpaceEnd) {
-        this.classOccupancyEnd = classSpaceEnd;
     }
 }

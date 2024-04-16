@@ -28,9 +28,9 @@ public interface PreprocessAction {
     }
 
     /**
-     * Indicates the current logging event is the start of a new line (a single line event or the beginning of an event
-     * that spans multiple lines). If the previous entry did not end with a newline, one will need to be appended before
-     * outputting the current entry.
+     * Indicates that the log entry should be output on a new line (e.g. a single line event or the beginning of an
+     * event that spans multiple lines). If the previous log entry did not end with a newline, one will need to be
+     * appended before outputting the current entry.
      */
     public static final String NEWLINE = "NEWLINE";
 

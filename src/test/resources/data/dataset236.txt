@@ -1,3 +1,4 @@
+[0.187s][info] Version: 17.0.10+7-LTS (release)
 [0.187s][info][gc,start    ] GC(0) Concurrent reset
 [0.187s][info][gc,task     ] GC(0) Using 2 of 6 workers for concurrent reset
 [0.187s][info][gc,ergo     ] GC(0) Pacer for Reset. Non-Taxable: 98304K

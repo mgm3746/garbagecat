@@ -26,8 +26,15 @@ import org.junit.jupiter.api.Test;
 class TestTenuringDistributionEvent {
 
     @Test
-    void testAgeLine() {
+    void testAge() {
         String logLine = "- age 1: 3177664 bytes, 3177664 total";
+        assertTrue(TenuringDistributionEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + ".");
+    }
+
+    @Test
+    void testAgeDoubleDigits() {
+        String logLine = "- age  15:    4113376 bytes,  167067264 total";
         assertTrue(TenuringDistributionEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + ".");
     }
