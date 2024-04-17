@@ -102,7 +102,8 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
      * Trigger(s) regular expression.
      */
     private static final String __TRIGGER = "(" + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|"
-            + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")";
+            + GcTrigger.LAST_DITCH_COLLECTION.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.SYSTEM_GC.getRegex() + ")";
 
     /**
      * Regular expressions defining the logging.

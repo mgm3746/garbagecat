@@ -88,6 +88,31 @@ class TestSerialOldEvent {
     }
 
     @Test
+    void testFullGcTriggerLastDitchCollection() {
+        String logLine = "2024-04-16T11:32:48.431+0200: 22634.812: [Full GC (Last ditch collection) "
+                + "2024-04-16T11:32:48.432+0200: 22634.812: [Tenured: 318331K->255907K(890240K), 0.8515132 secs] "
+                + "318331K->255907K(1290816K), [Metaspace: 489383K->489383K(1503232K)], 0.8736644 secs] "
+                + "[Times: user=0.84 sys=0.00, real=0.87 secs]";
+        assertTrue(SerialOldEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+        SerialOldEvent event = new SerialOldEvent(logLine);
+        assertEquals((long) 22634812, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
+        assertEquals(kilobytes(318331 - 318331), event.getYoungOccupancyInit(),
+                "Young initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(255907 - 255907), event.getYoungOccupancyEnd(),
+                "Young end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1290816 - 890240), event.getYoungSpace(), "Young space size not parsed correctly.");
+        assertEquals(kilobytes(318331), event.getOldOccupancyInit(), "Old initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(255907), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
+        assertEquals(kilobytes(890240), event.getOldSpace(), "Old space size not parsed correctly.");
+        assertEquals(kilobytes(489383), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(489383), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1503232), event.getClassSpace(), "Class space size not parsed correctly.");
+        assertEquals(873664, event.getDurationMicros(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testFullGcTriggerMetadatGcThreshold() {
         String logLine = "2.447: [Full GC (Metadata GC Threshold) 2.447: [Tenured: 0K->12062K(524288K), "
                 + "0.1248607 secs] 62508K->12062K(760256K), [Metaspace: 20526K->20526K(1069056K)], 0.1249442 secs] "

@@ -1196,9 +1196,9 @@ public class GcManager {
             } else if (event instanceof UnknownEvent) {
                 jvmDao.setLogEndingUnidentified(true);
                 if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
-                    // jvmDao.getUnidentifiedLogLines().add(logLine);
-                    jvmDao.getUnidentifiedLogLines()
-                            .add(logLine + "::" + priorLogEvent.getName() + "::" + priorLogEvent.getLogEntry());
+                    jvmDao.getUnidentifiedLogLines().add(logLine);
+                    // jvmDao.getUnidentifiedLogLines()
+                    // .add(logLine + "::" + priorLogEvent.getName() + "::" + priorLogEvent.getLogEntry());
                 }
             }
             // Populate events list.
