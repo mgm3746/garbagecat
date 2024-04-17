@@ -537,11 +537,10 @@ public class Main {
                 }
             }
 
-            printWriter.write(LINEBREAK_DOUBLE);
-
             // Analysis
             List<String[]> analysis = jvmRun.getAnalysis();
             if (!analysis.isEmpty()) {
+                printWriter.write(LINEBREAK_DOUBLE);
 
                 // Determine analysis levels
                 List<String[]> error = new ArrayList<String[]>();
@@ -602,12 +601,12 @@ public class Main {
                     printWriter.write(a[1]);
                     printWriter.write(LINE_SEPARATOR);
                 }
-                printWriter.write(LINEBREAK_DOUBLE);
             }
 
             // GC Bottlenecks
             List<String> gcBottlenecks = jvmRun.getGcBottlenecks();
             if (!gcBottlenecks.isEmpty()) {
+                printWriter.write(LINEBREAK_DOUBLE);
                 printWriter.write("GC throughput less than " + jvmRun.getThroughputThreshold() + "%" + LINE_SEPARATOR);
                 printWriter.write(LINEBREAK_SINGLE);
                 for (String gcBottleneck : gcBottlenecks) {
@@ -650,8 +649,8 @@ public class Main {
                     printWriter.write(unidentifiedLogLine);
                     printWriter.write(LINE_SEPARATOR);
                 }
-                printWriter.write(LINEBREAK_DOUBLE);
             }
+            printWriter.write(LINEBREAK_DOUBLE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
