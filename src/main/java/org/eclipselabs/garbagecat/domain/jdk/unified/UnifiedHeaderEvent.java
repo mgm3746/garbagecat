@@ -192,9 +192,10 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "Heap (Initial|Max|Min) Capacity|Heap address|Heap Backing Filesystem|Heap Backing File|"
             + "Heap [Rr]egion (Count|[Ss]ize)|Heuristics|Heuristics ergonomically sets |"
             + "Humongous [oO]bject [tT]hreshold|Initialize mark stack|Initial Refinement Zones|"
-            + "Initialize Shenandoah heap|Initializing The Z Garbage Collector|Large Page Support|Max TLAB size|"
-            + "Medium Page Size|Memory|Mode|Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|"
-            + "Narrow klass base|NUMA Nodes|NUMA Support|Pacer for Idle|ParallelGCThreads|Parallel Workers|Periodic GC|"
+            + "Initialize Shenandoah heap|Initializing The Z Garbage Collector|Large Page Support|"
+            + "Mark (closed|open) archive regions in map|Max TLAB size|Medium Page Size|Memory|Mode|"
+            + "Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|Narrow klass base|NUMA Nodes|"
+            + "NUMA Support|Pacer for Idle|ParallelGCThreads|Parallel Workers|Periodic GC|"
             + "Pre-touch|Reference processing|Regions|Runtime Workers|Safepointing mechanism|Shenandoah GC mode|"
             + "Shenandoah heuristics|String Deduplication|Target occupancy update|TLAB Size Max|Uncommit( Delay)?|"
             + "Using legacy single-generation mode)(:)?.*$";

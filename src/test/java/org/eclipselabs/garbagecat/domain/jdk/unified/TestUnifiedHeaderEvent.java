@@ -519,6 +519,26 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testMarkClosedArchiveRegionsInMap() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[10ms] Mark closed archive regions in map: [0x00000007bfe00000, 0x00000007bfe6cff8]";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogEvent),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogEvent),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testMarkOpenArchiveRegionsInMap() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[10ms] Mark open archive regions in map: [0x00000007bfc00000, 0x00000007bfc47ff8]";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER, JdkUtil.identifyEventType(logLine, priorLogEvent),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, priorLogEvent),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testMaxCapacity() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[0.015s][info][gc,init] Max Capacity: 96M";
