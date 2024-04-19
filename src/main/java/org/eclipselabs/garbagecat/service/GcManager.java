@@ -549,7 +549,10 @@ public class GcManager {
     }
 
     /**
-     * Preprocess. Remove extraneous information and format for parsing.
+     * Preprocess. Remove extraneous information (<code>ThrowAwayEvent</code>s and lines that match
+     * <code>PreprocessAction</code> throwaway patterns) and format for parsing (untangle mixed logging, aggregate
+     * logging that spans multiple lines, and/or add missing context information so each line represents a single
+     * event).
      * 
      * @param logLines
      *            Raw garbage collection logging.
