@@ -19,7 +19,6 @@ import org.eclipselabs.garbagecat.domain.BlankLineEvent;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.NullEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
-import org.eclipselabs.garbagecat.domain.jdk.unified.MetaspaceUtilsReportEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.OomeMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedCmsInitialMarkEvent;
@@ -126,8 +125,6 @@ public final class UnifiedUtil {
             return LogEventType.G1_FULL_GC_PARALLEL;
         if (UnifiedHeapEvent.match(logLine))
             return LogEventType.UNIFIED_HEAP;
-        if (MetaspaceUtilsReportEvent.match(logLine))
-            return LogEventType.METASPACE_UTILS_REPORT;
         if (OomeMetaspaceEvent.match(logLine))
             return LogEventType.OOME_METASPACE;
         if (UnifiedSafepointEvent.match(logLine))
@@ -232,7 +229,6 @@ public final class UnifiedUtil {
             switch (eventType) {
             case HEAP_ADDRESS:
             case HEAP_REGION_SIZE:
-            case METASPACE_UTILS_REPORT:
             case OOME_METASPACE:
             case G1_FULL_GC_PARALLEL:
             case UNIFIED_SHENANDOAH_FINAL_ROOTS:

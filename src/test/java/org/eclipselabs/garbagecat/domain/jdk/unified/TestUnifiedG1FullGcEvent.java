@@ -195,6 +195,28 @@ class TestUnifiedG1FullGcEvent {
     }
 
     @Test
+    void testPreprocessedTriggerMetadataGcClearSoftReferences() {
+        String logLine = "[2024-05-06T13:01:17.696+0300][3619400197ms][gc,start] GC(1018) Pause Full "
+                + "(Metadata GC Clear Soft References) Humongous regions: 0->0 Metaspace: 2081045K(2097152K)->"
+                + "2080952K(2097152K) 777M->767M(3072M) 1291.658ms User=4.58s Sys=0.00s Real=1.29s";
+        assertTrue(UnifiedG1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
+    }
+
+    @Test
+    void testPreprocessedTriggerMetadataGcThreshold() {
+        String logLine = "[2024-05-06T13:01:13.881+0300][3619396382ms][gc,start] GC(1013) Pause Full "
+                + "(Metadata GC Threshold) Humongous regions: 0->0 Metaspace: 2085985K(2097152K)->2080672K(2097152K) "
+                + "1223M->961M(3072M) 2558.763ms User=5.73s Sys=0.16s Real=2.56s";
+        assertTrue(UnifiedG1FullGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString(), event.getName(), "Event name incorrect.");
+    }
+
+    @Test
     void testPreprocessedTriggerSystemGc() {
         String logLine = "[2022-10-26T09:02:09.409-0500][284552496ms][gc,start] GC(73591) Pause Full (System.gc()) "
                 + "Humongous regions: 0->0 Metaspace: 590830K->590830K(1644544K) 2878M->2837M(3072M) 3952.620ms "

@@ -75,7 +75,8 @@ public class UnifiedG1FullGcEvent extends G1Collector implements UnifiedLogging,
     private static final String __TRIGGER = "(" + GcTrigger.G1_COMPACTION_PAUSE.getRegex() + "|"
             + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
             + GcTrigger.DIAGNOSTIC_COMMAND.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
-            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")";
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + "|" + GcTrigger.SYSTEM_GC.getRegex() + ")";
 
     /**
      * Regular expression defining logging.

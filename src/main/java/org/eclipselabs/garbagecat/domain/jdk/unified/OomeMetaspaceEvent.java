@@ -23,6 +23,24 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * OOME_METASPACE
  * </p>
  * 
+ * <h2>Example Logging</h2>
+ *
+ * <p>
+ * 1) Class:
+ * </p>
+ *
+ * <pre>
+ *[2024-05-06T13:01:18.988+0300][3619401490ms] Metaspace (class) allocation failed for size 1459
+ * </pre>
+ *
+ * <p>
+ * 2) Data:
+ * </p>
+ *
+ * <pre>
+ *[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -31,7 +49,14 @@ public class OomeMetaspaceEvent implements UnifiedLogging, ThrowAwayEvent {
      * Regular expression defining the logging.
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR
-            + " Metaspace \\(data\\) allocation failed for size \\d{1,}$";
+            + "[ ]+(Metaspace \\((class|data)\\) allocation failed for size \\d{1,}|"
+            + "(- (commit_granule_bytes|commit_granule_words|enlarge_chunks_in_place|handle_deallocations|"
+            + "new_chunks_are_fully_committed|uncommit_free_chunks|use_allocation_guard|"
+            + "virtual_space_node_default_size)|Both|CDS|Chunk freelists|Class( space)?|CompressedClassSpaceSize|"
+            + "Current GC threshold|Initial GC threshold|Internal statistics|MaxMetaspaceSize|MetaspaceReclaimPolicy|"
+            + "Non-[cC]lass( space)?|num_(allocs_failed_limit|arena_births|arena_deaths|chunk_merges|chunk_splits|"
+            + "chunks_enlarged|chunks_returned_to_freelist|chunks_taken_from_freelist|inconsistent_stats|purges|"
+            + "space_committed|space_uncommitted|vsnodes_births|vsnodes_deaths)|" + "Usage|Virtual space):.*)$";
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
