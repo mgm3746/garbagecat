@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,8 @@ class TestUnifiedSerialOldEvent {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_OLD, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_OLD,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_SERIAL_OLD + "not identified.");
     }
 
@@ -67,7 +69,7 @@ class TestUnifiedSerialOldEvent {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " not indentified as blocking.");
     }
 
@@ -85,7 +87,7 @@ class TestUnifiedSerialOldEvent {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedSerialOldEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedSerialOldEvent,
                 JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " not parsed.");
     }
 

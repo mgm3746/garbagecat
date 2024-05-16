@@ -29,6 +29,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -150,7 +151,8 @@ class TestUnifiedShenandoahStatsEvent {
     void testIdentityEventType() {
         String logLine = "[2024-04-09T08:26:09.935-0400] All times are wall-clock times, except per-root-class "
                 + "counters, that are sum over";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS + "not identified.");
     }
 
@@ -190,7 +192,7 @@ class TestUnifiedShenandoahStatsEvent {
     void testNotBlocking() {
         String logLine = "[2024-04-09T08:26:09.935-0400] All times are wall-clock times, except per-root-class "
                 + "counters, that are sum over";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -198,7 +200,7 @@ class TestUnifiedShenandoahStatsEvent {
     void testParseLogLine() {
         String logLine = "[2024-04-09T08:26:09.935-0400] All times are wall-clock times, except per-root-class "
                 + "counters, that are sum over";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedShenandoahStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahStatsEvent,
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS.toString() + " not parsed.");
     }
 
@@ -337,7 +339,8 @@ class TestUnifiedShenandoahStatsEvent {
         String logLine = "[2024-04-11T20:17:37.413-0400]   Update Region States                5 us";
         assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS, JdkUtil.identifyEventType(logLine, priorLogEvent),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS + "not identified.");
     }
 

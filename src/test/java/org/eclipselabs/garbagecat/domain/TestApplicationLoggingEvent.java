@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -109,7 +110,7 @@ class TestApplicationLoggingEvent {
     @Test
     void testReportable() {
         String logLine = "00:02:05,067 INFO  [STDOUT] log4j: setFile ended";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 APPLICATION_LOGGING + " incorrectly indentified as reportable.");
     }
 

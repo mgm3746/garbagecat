@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,7 +30,9 @@ class TestGcLockerScavengeFailedEvent {
     @Test
     void testIdentifyEventType() {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
-        assertTrue(JdkUtil.identifyEventType(logLine, null) == JdkUtil.LogEventType.GC_LOCKER_SCAVENGE_FAILED,
+        assertTrue(
+                JdkUtil.identifyEventType(logLine, null,
+                        CollectorFamily.UNKNOWN) == JdkUtil.LogEventType.GC_LOCKER_SCAVENGE_FAILED,
                 JdkUtil.LogEventType.GC_LOCKER_SCAVENGE_FAILED.toString() + " event not identified.");
     }
 
@@ -45,14 +48,14 @@ class TestGcLockerScavengeFailedEvent {
     @Test
     void testNotBlocking() {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.GC_LOCKER_SCAVENGE_FAILED.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
-        LogEvent event = JdkUtil.parseLogLine(logLine, null);
+        LogEvent event = JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN);
         assertTrue(event instanceof GcLockerScavengeFailedEvent,
                 JdkUtil.LogEventType.GC_LOCKER_SCAVENGE_FAILED.toString() + " event not identified.");
     }
@@ -60,7 +63,7 @@ class TestGcLockerScavengeFailedEvent {
     @Test
     void testReportable() {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.GC_LOCKER_SCAVENGE_FAILED.toString() + " incorrectly indentified as reportable.");
     }
 }

@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,7 +37,7 @@ class TestHeapAtGcEvent {
         String logLine = "Heap after GC invocations=15661 (full 26):";
         assertTrue(HeapAtGcEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof HeapAtGcEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof HeapAtGcEvent,
                 "JdkUtil.parseLogLine() does not return " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + " event.");
     }
 
@@ -78,14 +79,14 @@ class TestHeapAtGcEvent {
     @Test
     void testNotBlocking() {
         String logLine = "{Heap before gc invocations=1:";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testNotReportable() {
         String logLine = "{Heap before gc invocations=1:";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly indentified as reportable.");
     }
 }

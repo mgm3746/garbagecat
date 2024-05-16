@@ -32,6 +32,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -45,14 +46,15 @@ class TestUnifiedYoungEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_YOUNG + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as blocking.");
     }
 
@@ -101,14 +103,14 @@ class TestUnifiedYoungEvent {
     @Test
     void testNoData() {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure)";
-        assertEquals(JdkUtil.LogEventType.UNKNOWN, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNKNOWN, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedYoungEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedYoungEvent,
                 JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not parsed.");
     }
 
@@ -172,8 +174,8 @@ class TestUnifiedYoungEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_YOUNG),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN.getKey()),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
         UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastGcEvent();
@@ -195,8 +197,8 @@ class TestUnifiedYoungEvent {
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_SAFEPOINT),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_YOUNG),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastGcEvent();
@@ -219,8 +221,8 @@ class TestUnifiedYoungEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_YOUNG),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING.getKey()),
                 Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
         UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastGcEvent();

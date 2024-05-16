@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ class TestShenandoahFullGcEvent {
     void testBlocking() {
         String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 SHENANDOAH_FULL_GC + " not indentified as blocking.");
     }
 
@@ -57,7 +58,7 @@ class TestShenandoahFullGcEvent {
     void testIdentityEventType() {
         String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertEquals(SHENANDOAH_FULL_GC, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(SHENANDOAH_FULL_GC, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 SHENANDOAH_FULL_GC + "not identified.");
     }
 
@@ -107,7 +108,7 @@ class TestShenandoahFullGcEvent {
     void testParseLogLine() {
         String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFullGcEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahFullGcEvent,
                 SHENANDOAH_FULL_GC + " not parsed.");
     }
 

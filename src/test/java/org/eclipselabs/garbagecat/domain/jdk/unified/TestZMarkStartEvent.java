@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,15 @@ class TestZMarkStartEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.124s][info][gc,phases   ] GC(0) Pause Mark Start 0.004ms";
-        assertEquals(JdkUtil.LogEventType.Z_MARK_START, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.Z_MARK_START,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.Z_MARK_START + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.124s][info][gc,phases   ] GC(0) Pause Mark Start 0.004ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.Z_MARK_START.toString() + " not indentified as blocking.");
     }
 
@@ -57,7 +59,7 @@ class TestZMarkStartEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.124s][info][gc,phases   ] GC(0) Pause Mark Start 0.004ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZMarkStartEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZMarkStartEvent,
                 JdkUtil.LogEventType.Z_MARK_START.toString() + " not parsed.");
     }
 

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -33,14 +34,15 @@ class TestZRelocationStallEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[123456.789s][info][gc          ] Relocation Stall (default task-1234) 1.234ms";
-        assertEquals(JdkUtil.LogEventType.Z_RELOCATION_STALL, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.Z_RELOCATION_STALL,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.Z_RELOCATION_STALL + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[123456.789s][info][gc          ] Relocation Stall (default task-1234) 1.234ms";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.Z_RELOCATION_STALL.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -58,7 +60,7 @@ class TestZRelocationStallEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[123456.789s][info][gc          ] Relocation Stall (default task-1234) 1.234ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZRelocationStallEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZRelocationStallEvent,
                 JdkUtil.LogEventType.Z_RELOCATION_STALL.toString() + " not parsed.");
     }
 

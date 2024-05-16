@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -41,21 +42,23 @@ class TestUnifiedShenandoahTriggerEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER + "not identified.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "[3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedShenandoahTriggerEvent,
+        assertTrue(
+                JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahTriggerEvent,
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " not parsed.");
     }
 

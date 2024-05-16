@@ -29,6 +29,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,8 @@ class TestOomeMetaspaceEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
-        assertEquals(JdkUtil.LogEventType.OOME_METASPACE, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
     }
 
@@ -105,21 +107,22 @@ class TestOomeMetaspaceEvent {
     @Test
     void testMetaspaceReclaimPolicy() {
         String logLine = "[2024-05-06T13:40:30.238+0300][3621752739ms] MetaspaceReclaimPolicy: balanced";
-        assertEquals(JdkUtil.LogEventType.OOME_METASPACE, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof OomeMetaspaceEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof OomeMetaspaceEvent,
                 JdkUtil.LogEventType.OOME_METASPACE.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.OOME_METASPACE.toString() + " incorrectly indentified as reportable.");
     }
 
@@ -134,7 +137,8 @@ class TestOomeMetaspaceEvent {
     @Test
     void testUsage() {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
-        assertEquals(JdkUtil.LogEventType.OOME_METASPACE, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
     }
 }

@@ -83,6 +83,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.github.joa.JvmOptions;
@@ -384,7 +385,7 @@ public class GcManager {
         String preprocessedLogLine = null;
 
         if (currentLogLine != null) {
-            LogEvent event = JdkUtil.parseLogLine(currentLogLine, priorLogEvent);
+            LogEvent event = JdkUtil.parseLogLine(currentLogLine, priorLogEvent, CollectorFamily.UNKNOWN);
             if (event instanceof ThrowAwayEvent) {
                 JdkUtil.LogEventType throwAwayEventType = JdkUtil.determineEventType(event.getName());
                 if (!jvmDao.getEventTypes().contains(throwAwayEventType)) {
@@ -574,7 +575,7 @@ public class GcManager {
             LogEvent priorLogEvent = new NullEvent();
             while (iterator.hasNext()) {
                 String logLine = iterator.next();
-                LogEvent event = JdkUtil.parseLogLine(logLine, priorLogEvent);
+                LogEvent event = JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN);
                 if (event instanceof HeaderVmInfoEvent) {
                     jdkVersionMajor = ((HeaderVmInfoEvent) event).getJdkVersionMajor();
                     jdkVersionMinor = ((HeaderVmInfoEvent) event).getJdkVersionMinor();
@@ -608,7 +609,7 @@ public class GcManager {
             }
 
             while (nextLogLine != null) {
-                LogEvent currentEvent = JdkUtil.parseLogLine(currentLogLine, priorLogEvent);
+                LogEvent currentEvent = JdkUtil.parseLogLine(currentLogLine, priorLogEvent, CollectorFamily.UNKNOWN);
                 preprocessedLogLine = getPreprocessedLogEntry(currentLogLine, priorLogEvent, nextLogLine, jvmStartDate,
                         entangledLogLines, context);
                 if (preprocessedLogLine != null) {
@@ -737,11 +738,12 @@ public class GcManager {
         String logLine = null;
         BlockingEvent priorBlockingEvent = null;
         LogEvent priorLogEvent = new NullEvent();
+        CollectorFamily collectorFamily = CollectorFamily.UNKNOWN;
         Iterator<String> iterator = logLines.iterator();
         while (iterator.hasNext()) {
             logLine = iterator.next();
             // If event has no timestamp, use most recent blocking timestamp.
-            LogEvent event = JdkUtil.parseLogLine(logLine, priorLogEvent);
+            LogEvent event = JdkUtil.parseLogLine(logLine, priorLogEvent, collectorFamily);
             if (event instanceof BlockingEvent) {
                 jvmDao.setLogEndingUnidentified(false);
 
@@ -1130,12 +1132,22 @@ public class GcManager {
                 jvmDao.getJvmContext().setBuildDate(((HeaderVmInfoEvent) event).getBuildDate());
                 jvmDao.getJvmContext().setReleaseString(((HeaderVmInfoEvent) event).getJdkReleaseString());
                 jvmDao.setVmInfo(((HeaderVmInfoEvent) event).getLogEntry());
-            } else if (event instanceof UnifiedHeaderEvent && ((UnifiedHeaderEvent) event).isVersion()) {
-                jvmDao.setLogEndingUnidentified(false);
-                jvmDao.getJvmContext().setVersionMajor(((UnifiedHeaderEvent) event).getJdkVersionMajor());
-                jvmDao.getJvmContext().setVersionMinor(((UnifiedHeaderEvent) event).getJdkVersionMinor());
-                jvmDao.getJvmContext().setReleaseString(((UnifiedHeaderEvent) event).getJdkReleaseString());
-                jvmDao.setVmInfo(((UnifiedHeaderEvent) event).getJdkReleaseString());
+            } else if (event instanceof UnifiedHeaderEvent) {
+                if (((UnifiedHeaderEvent) event).isVersion()) {
+                    jvmDao.setLogEndingUnidentified(false);
+                    jvmDao.getJvmContext().setVersionMajor(((UnifiedHeaderEvent) event).getJdkVersionMajor());
+                    jvmDao.getJvmContext().setVersionMinor(((UnifiedHeaderEvent) event).getJdkVersionMinor());
+                    jvmDao.getJvmContext().setReleaseString(((UnifiedHeaderEvent) event).getJdkReleaseString());
+                    jvmDao.setVmInfo(((UnifiedHeaderEvent) event).getJdkReleaseString());
+                } else if (((UnifiedHeaderEvent) event).isGarbageCollector()) {
+                    collectorFamily = ((UnifiedHeaderEvent) event).getCollectorFamily();
+                }
+                if (event.getLogEntry().matches(
+                        "^" + UnifiedRegEx.DECORATOR + " Min heap equals to max heap, disabling ShenandoahUncommit$")) {
+                    if (!jvmDao.getAnalysis().contains(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED)) {
+                        jvmDao.addAnalysis(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED);
+                    }
+                }
             } else if (event instanceof LogFileEvent) {
                 jvmDao.setLogEndingUnidentified(false);
                 if (((LogFileEvent) event).isCreated()) {
@@ -1189,13 +1201,6 @@ public class GcManager {
                         jvmDao.addAnalysis(Analysis.ERROR_SHARED_MEMORY_12);
                     }
                 }
-            } else if (event instanceof UnifiedHeaderEvent) {
-                if (event.getLogEntry().matches(
-                        "^" + UnifiedRegEx.DECORATOR + " Min heap equals to max heap, disabling ShenandoahUncommit$")) {
-                    if (!jvmDao.getAnalysis().contains(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED)) {
-                        jvmDao.addAnalysis(Analysis.INFO_SHENANDOAH_UNCOMMIT_DISABLED);
-                    }
-                }
             } else if (event instanceof UnknownEvent) {
                 jvmDao.setLogEndingUnidentified(true);
                 if (jvmDao.getUnidentifiedLogLines().size() < Main.REJECT_LIMIT) {
@@ -1206,6 +1211,45 @@ public class GcManager {
             }
             // Populate events list.
             JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
+            // Use collectorFamily to identify generic UNIFIED_(OLD|YOUNG)
+            if (eventType == LogEventType.UNIFIED_YOUNG) {
+                switch (collectorFamily) {
+                case G1:
+                    eventType = LogEventType.UNIFIED_G1_YOUNG_PAUSE;
+                    break;
+                case PARALLEL:
+                    eventType = LogEventType.UNIFIED_PARALLEL_SCAVENGE;
+                    break;
+                case SERIAL:
+                    eventType = LogEventType.UNIFIED_SERIAL_NEW;
+                    break;
+                case CMS:
+                case SHENANDOAH:
+                case UNKNOWN:
+                case Z:
+                default:
+                    break;
+                }
+            }
+            if (eventType == LogEventType.UNIFIED_OLD) {
+                switch (collectorFamily) {
+                case G1:
+                    eventType = LogEventType.UNIFIED_G1_FULL_GC_PARALLEL;
+                    break;
+                case PARALLEL:
+                    eventType = LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD;
+                    break;
+                case SERIAL:
+                    eventType = LogEventType.UNIFIED_SERIAL_OLD;
+                    break;
+                case CMS:
+                case SHENANDOAH:
+                case UNKNOWN:
+                case Z:
+                default:
+                    break;
+                }
+            }
             if (!jvmDao.getEventTypes().contains(eventType)) {
                 jvmDao.getEventTypes().add(eventType);
             } else {

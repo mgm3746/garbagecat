@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.junit.jupiter.api.Test;
 
@@ -49,28 +50,30 @@ class TestTenuringDistributionEvent {
     @Test
     void testIdentifyEventType() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertTrue(JdkUtil.identifyEventType(logLine, null).equals(LogEventType.TENURING_DISTRIBUTION),
+        assertTrue(
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)
+                        .equals(LogEventType.TENURING_DISTRIBUTION),
                 JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof TenuringDistributionEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof TenuringDistributionEvent,
                 JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
     }
 
     @Test
     void testReportable() {
         String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as not reportable.");
     }
 

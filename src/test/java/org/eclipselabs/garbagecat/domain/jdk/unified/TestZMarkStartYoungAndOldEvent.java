@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,15 @@ class TestZMarkStartYoungAndOldEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
-        assertEquals(JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not indentified as blocking.");
     }
 
@@ -58,7 +60,7 @@ class TestZMarkStartYoungAndOldEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZMarkStartYoungAndOldEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZMarkStartYoungAndOldEvent,
                 JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not parsed.");
     }
 

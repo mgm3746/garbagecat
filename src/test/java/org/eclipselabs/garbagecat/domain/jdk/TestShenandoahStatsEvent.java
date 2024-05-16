@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,8 @@ class TestShenandoahStatsEvent {
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
         ShenandoahStatsEvent priorLogEvent = new ShenandoahStatsEvent(null);
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_STATS, JdkUtil.identifyEventType(logLine, priorLogEvent),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_STATS,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.SHENANDOAH_STATS + "not identified.");
     }
 
@@ -88,7 +90,8 @@ class TestShenandoahStatsEvent {
         String logLine = "Concurrent Reset                  22380 us";
         assertTrue(ShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + ".");
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_STATS, JdkUtil.identifyEventType(logLine, priorLogEvent),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_STATS,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.SHENANDOAH_STATS + "not identified.");
 
     }
@@ -316,7 +319,8 @@ class TestShenandoahStatsEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "All times are wall-clock times, except per-root-class counters, that are sum over";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_STATS, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_STATS,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.SHENANDOAH_STATS + "not identified.");
     }
 
@@ -337,14 +341,14 @@ class TestShenandoahStatsEvent {
     @Test
     void testNotBlocking() {
         String logLine = "All times are wall-clock times, except per-root-class counters, that are sum over";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "All times are wall-clock times, except per-root-class counters, that are sum over";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahStatsEvent,
                 JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " not parsed.");
     }
 

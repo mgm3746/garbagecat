@@ -29,6 +29,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -42,14 +43,15 @@ class TestZRelocateStartYoungEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.103s][info][gc,phases   ] GC(0) Y: Pause Relocate Start 0.006ms";
-        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.103s][info][gc,phases   ] GC(0) Y: Pause Relocate Start 0.006ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + " not indentified as blocking.");
     }
 
@@ -78,7 +80,7 @@ class TestZRelocateStartYoungEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.103s][info][gc,phases   ] GC(0) Y: Pause Relocate Start 0.006ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZRelocateStartYoungEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZRelocateStartYoungEvent,
                 JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + " not parsed.");
     }
 

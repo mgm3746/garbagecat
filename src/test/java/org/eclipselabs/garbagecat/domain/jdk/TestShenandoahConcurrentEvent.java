@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,8 @@ class TestShenandoahConcurrentEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "2020-03-10T08:03:29.364-0400: 0.426: [Concurrent reset 16434K->16466K(21248K), 0.091 ms]";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_CONCURRENT,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT + "not identified.");
     }
 
@@ -130,14 +132,14 @@ class TestShenandoahConcurrentEvent {
     @Test
     void testNotBlocking() {
         String logLine = "0.426: [Concurrent reset 16434K->16466K(21248K), 0.091 ms]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "0.426: [Concurrent reset 16434K->16466K(21248K), 0.091 ms]";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahConcurrentEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahConcurrentEvent,
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " not parsed.");
     }
 

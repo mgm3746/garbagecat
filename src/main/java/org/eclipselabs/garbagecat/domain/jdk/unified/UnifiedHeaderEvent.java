@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -249,6 +250,36 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
                 }
             }
         }
+    }
+
+    /**
+     * @return The <code>CollectorFamily</code> based on the garbage collector header.
+     */
+    public CollectorFamily getCollectorFamily() {
+        CollectorFamily collectorFamily = CollectorFamily.UNKNOWN;
+        String using = null;
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.matches()) {
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2) != null) {
+                using = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2);
+            }
+        }
+        if (using != null) {
+            if (using.equals("Concurrent Mark Sweep")) {
+                collectorFamily = CollectorFamily.CMS;
+            } else if (using.equals("G1")) {
+                collectorFamily = CollectorFamily.G1;
+            } else if (using.equals("Parallel")) {
+                collectorFamily = CollectorFamily.PARALLEL;
+            } else if (using.equals("Serial")) {
+                collectorFamily = CollectorFamily.SERIAL;
+            } else if (using.equals("Shenandoah")) {
+                collectorFamily = CollectorFamily.SHENANDOAH;
+            } else if (using.equals("The Z Garbage Collector")) {
+                collectorFamily = CollectorFamily.Z;
+            }
+        }
+        return collectorFamily;
     }
 
     /**

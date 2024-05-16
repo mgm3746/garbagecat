@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class TestGcInfoEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "Pacer for Idle. Initial: 122M, Alloc Tax Rate: 1.0x";
-        assertEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.GC_INFO, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + "not identified.");
     }
 
@@ -61,7 +62,7 @@ class TestGcInfoEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.GC_INFO.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -84,7 +85,7 @@ class TestGcInfoEvent {
     @Test
     void testParseLogLine() {
         String logLine = "Pacer for Idle. Initial: 122M, Alloc Tax Rate: 1.0x";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof GcInfoEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof GcInfoEvent,
                 JdkUtil.LogEventType.GC_INFO.toString() + " not parsed.");
     }
 

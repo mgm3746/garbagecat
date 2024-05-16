@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class TestUnifiedShenandoahInitUpdateRefsEvent {
     @Test
     void testBlocking() {
         String logLine = "[5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " not indentified as blocking.");
     }
 
@@ -51,7 +52,8 @@ class TestUnifiedShenandoahInitUpdateRefsEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS + "not identified.");
     }
 
@@ -75,7 +77,9 @@ class TestUnifiedShenandoahInitUpdateRefsEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedShenandoahInitUpdateRefsEvent,
+        assertTrue(
+                JdkUtil.parseLogLine(logLine, null,
+                        CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahInitUpdateRefsEvent,
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " not parsed.");
     }
 

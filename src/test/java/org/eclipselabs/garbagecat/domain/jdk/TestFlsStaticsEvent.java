@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.domain.UnknownEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,14 +29,14 @@ class TestFlsStaticsEvent {
     @Test
     void testJdkUtilParseLogLineDoesNotReturnUnknownEvent() {
         String logLine = "Max   Chunk Size: 536870912";
-        assertFalse(JdkUtil.parseLogLine(logLine, null) instanceof UnknownEvent,
+        assertFalse(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnknownEvent,
                 "JdkUtil.parseLogLine() returns " + JdkUtil.LogEventType.UNKNOWN.toString() + " event.");
     }
 
     @Test
     void testJdkUtilParseLogLineReturnsFlsStatisticsEvent() {
         String logLine = "Max   Chunk Size: 536870912";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof FlsStatisticsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof FlsStatisticsEvent,
                 "JdkUtil.parseLogLine() does not return " + JdkUtil.LogEventType.FLS_STATISTICS.toString() + " event.");
     }
 
@@ -242,14 +243,14 @@ class TestFlsStaticsEvent {
     @Test
     void testNotBlocking() {
         String logLine = "Max   Chunk Size: 536870912";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.FLS_STATISTICS.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testNotReportable() {
         String logLine = "Max   Chunk Size: 536870912";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.FLS_STATISTICS.toString() + " incorrectly indentified as reportable.");
     }
 }

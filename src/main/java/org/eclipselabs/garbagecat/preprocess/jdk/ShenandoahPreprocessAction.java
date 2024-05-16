@@ -29,6 +29,7 @@ import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 
 /**
  * <p>
@@ -331,12 +332,12 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_BEGINNING_EVENT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_METASPACE_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_DURATION_PATTERN.matcher(logLine).matches()
-                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahConcurrentEvent
-                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahDegeneratedGcEvent
-                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitUpdateEvent
-                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitMarkEvent
-                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalMarkEvent
-                || JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalUpdateEvent) {
+                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahConcurrentEvent
+                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahDegeneratedGcEvent
+                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahInitUpdateEvent
+                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahInitMarkEvent
+                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahFinalMarkEvent
+                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahFinalUpdateEvent) {
             match = true;
         } else if (isThrowaway(logLine)) {
             match = true;
@@ -408,16 +409,16 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             }
             context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT);
-        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahDegeneratedGcEvent
-                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalMarkEvent
-                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahFinalUpdateEvent
-                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitMarkEvent
-                || JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahInitUpdateEvent) {
+        } else if (JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ShenandoahDegeneratedGcEvent
+                || JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ShenandoahFinalMarkEvent
+                || JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ShenandoahFinalUpdateEvent
+                || JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ShenandoahInitMarkEvent
+                || JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ShenandoahInitUpdateEvent) {
             this.logEntry = logEntry;
             context.add(PreprocessAction.NEWLINE);
             context.remove(TOKEN_BEGINNING_SHENANDOAH);
             context.remove(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT);
-        } else if (JdkUtil.parseLogLine(logEntry, null) instanceof ShenandoahConcurrentEvent
+        } else if (JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ShenandoahConcurrentEvent
                 && !isThrowaway(logEntry)) {
             // Stand alone event
             if (!(context.contains(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT)

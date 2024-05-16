@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class TestUnifiedShenandoahFullGcEvent {
     @Test
     void testBlocking() {
         String logLine = "[10.478s][info][gc] GC(0) Pause Full 1589M->1002M(1690M), 4077.274 ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 UNIFIED_SHENANDOAH_FULL_GC + " not indentified as blocking.");
     }
 
@@ -52,7 +53,7 @@ class TestUnifiedShenandoahFullGcEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[10.478s][info][gc] GC(0) Pause Full 1589M->1002M(1690M), 4077.274 ms";
-        assertEquals(UNIFIED_SHENANDOAH_FULL_GC, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(UNIFIED_SHENANDOAH_FULL_GC, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 UNIFIED_SHENANDOAH_FULL_GC + "not identified.");
     }
 
@@ -80,7 +81,7 @@ class TestUnifiedShenandoahFullGcEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[10.478s][info][gc] GC(0) Pause Full 1589M->1002M(1690M), 4077.274 ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedShenandoahFullGcEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFullGcEvent,
                 UNIFIED_SHENANDOAH_FULL_GC + " not parsed.");
     }
 

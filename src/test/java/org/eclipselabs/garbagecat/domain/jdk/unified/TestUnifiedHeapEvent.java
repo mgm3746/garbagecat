@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -172,7 +173,8 @@ class TestUnifiedHeapEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEAP, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEAP,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_HEAP + "not identified.");
     }
 
@@ -257,7 +259,7 @@ class TestUnifiedHeapEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_HEAP.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -296,7 +298,7 @@ class TestUnifiedHeapEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedHeapEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedHeapEvent,
                 JdkUtil.LogEventType.UNIFIED_HEAP.toString() + " not parsed.");
     }
 

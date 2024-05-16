@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class TestShenandoahFinalMarkEvent {
     @Test
     void testBlocking() {
         String logLine = "2020-03-10T08:03:29.427-0400: 0.489: [Pause Final Mark, 0.313 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " not indentified as blocking.");
     }
 
@@ -61,7 +62,8 @@ class TestShenandoahFinalMarkEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "2020-03-10T08:03:29.427-0400: 0.489: [Pause Final Mark, 0.313 ms]";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK + "not identified.");
     }
 
@@ -78,7 +80,7 @@ class TestShenandoahFinalMarkEvent {
     @Test
     void testParseLogLine() {
         String logLine = "2020-03-10T08:03:46.283-0400: 17.345: [Pause Final Mark (update refs), 0.659 ms]";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalMarkEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahFinalMarkEvent,
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " not parsed.");
     }
 

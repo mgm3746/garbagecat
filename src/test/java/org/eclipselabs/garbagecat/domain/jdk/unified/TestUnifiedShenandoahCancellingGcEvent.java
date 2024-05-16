@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,8 @@ class TestUnifiedShenandoahCancellingGcEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC + "not identified.");
     }
 
@@ -54,7 +56,7 @@ class TestUnifiedShenandoahCancellingGcEvent {
     @Test
     void testNotBlocking() {
         String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString()
                         + " incorrectly indentified as blocking.");
     }
@@ -62,7 +64,9 @@ class TestUnifiedShenandoahCancellingGcEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedShenandoahCancellingGcEvent,
+        assertTrue(
+                JdkUtil.parseLogLine(logLine, null,
+                        CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahCancellingGcEvent,
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + " not parsed.");
     }
 

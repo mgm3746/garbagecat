@@ -66,6 +66,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.ZRelocationStallEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZStatsEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 
 /**
@@ -110,113 +111,214 @@ public final class UnifiedUtil {
     }
 
     /**
-     * Identify the unified log line event.
+     * Identify the unified log line.
      * 
      * @param logLine
      *            The log line.
      * @param priorLogEvent
      *            The prior log line <code>LogEvent</code>.
+     * @param collectorFamily
+     *            The <code>CollectorFamily</code>.
      * @return The <code>LogEventType</code> of the log entry.
      */
-    public static final LogEventType identifyEventType(String logLine, LogEvent priorLogEvent) {
-
-        // (mostly-alphabetical)
-        if (UnifiedG1FullGcEvent.match(logLine))
-            return LogEventType.G1_FULL_GC_PARALLEL;
-        if (UnifiedHeapEvent.match(logLine))
-            return LogEventType.UNIFIED_HEAP;
-        if (OomeMetaspaceEvent.match(logLine))
-            return LogEventType.OOME_METASPACE;
-        if (UnifiedSafepointEvent.match(logLine))
-            return LogEventType.UNIFIED_SAFEPOINT;
-        if (UnifiedCmsInitialMarkEvent.match(logLine))
-            return LogEventType.UNIFIED_CMS_INITIAL_MARK;
-        if (UnifiedConcurrentEvent.match(logLine))
-            return LogEventType.UNIFIED_CONCURRENT;
-        if (logLine.matches(UnifiedFooterStatsEvent._REGEX_HEADER)
-                || (UnifiedFooterStatsEvent.match(logLine) && priorLogEvent instanceof UnifiedFooterStatsEvent))
-            return LogEventType.UNIFIED_FOOTER_STATS;
-        if (UnifiedG1CleanupEvent.match(logLine))
-            return LogEventType.UNIFIED_G1_CLEANUP;
-        if (UnifiedG1InfoEvent.match(logLine))
-            return LogEventType.UNIFIED_G1_INFO;
-        if (UnifiedG1MixedPauseEvent.match(logLine))
-            return LogEventType.UNIFIED_G1_MIXED_PAUSE;
-        if (UnifiedG1YoungInitialMarkEvent.match(logLine))
-            return LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK;
-        if (UnifiedG1YoungPauseEvent.match(logLine))
-            return LogEventType.UNIFIED_G1_YOUNG_PAUSE;
-        if (UnifiedG1YoungPrepareMixedEvent.match(logLine))
-            return LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
-        if (UnifiedGcLockerRetryEvent.match(logLine))
-            return LogEventType.UNIFIED_GC_LOCKER_RETRY;
-        if (UnifiedHeaderEvent.match(logLine)
-                && (priorLogEvent instanceof NullEvent || priorLogEvent instanceof UnifiedHeaderEvent))
-            return LogEventType.UNIFIED_HEADER;
-        if (UnifiedOldEvent.match(logLine))
-            return LogEventType.UNIFIED_OLD;
-        if (UnifiedParallelCompactingOldEvent.match(logLine))
-            return LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD;
-        if (UnifiedParallelScavengeEvent.match(logLine))
-            return LogEventType.UNIFIED_PARALLEL_SCAVENGE;
-        if (UnifiedParNewEvent.match(logLine))
-            return LogEventType.UNIFIED_PAR_NEW;
-        if (UnifiedRemarkEvent.match(logLine))
-            return LogEventType.UNIFIED_REMARK;
-        if (UnifiedSerialNewEvent.match(logLine))
-            return LogEventType.UNIFIED_SERIAL_NEW;
-        if (UnifiedSerialOldEvent.match(logLine))
-            return LogEventType.UNIFIED_SERIAL_OLD;
-        if (UnifiedShenandoahDegeneratedGcEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_DEGENERATED_GC;
-        if (UnifiedShenandoahFinalEvacEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC;
-        if (UnifiedShenandoahFinalMarkEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK;
-        if (UnifiedShenandoahFinalUpdateRefsEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS;
-        if (UnifiedShenandoahFullGcEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_FULL_GC;
-        if (UnifiedShenandoahInitMarkEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_INIT_MARK;
-        if (UnifiedShenandoahInitUpdateRefsEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS;
-        if (logLine.matches(UnifiedShenandoahStatsEvent._REGEX_HEADER)
-                || (UnifiedShenandoahStatsEvent.match(logLine) && priorLogEvent instanceof UnifiedShenandoahStatsEvent))
-            return LogEventType.UNIFIED_SHENANDOAH_STATS;
-        if (UnifiedShenandoahTriggerEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_TRIGGER;
-        if (UnifiedYoungEvent.match(logLine))
-            return LogEventType.UNIFIED_YOUNG;
-        if (ZAllocationStallEvent.match(logLine))
-            return LogEventType.Z_ALLOCATION_STALL;
-        if (ZMarkEndEvent.match(logLine))
-            return LogEventType.Z_MARK_END;
-        if (ZMarkEndOldEvent.match(logLine))
-            return LogEventType.Z_MARK_END_OLD;
-        if (ZMarkEndYoungEvent.match(logLine))
-            return LogEventType.Z_MARK_END_YOUNG;
-        if (ZMarkStartEvent.match(logLine))
-            return LogEventType.Z_MARK_START;
-        if (ZMarkStartYoungEvent.match(logLine))
-            return LogEventType.Z_MARK_START_YOUNG;
-        if (ZMarkStartYoungAndOldEvent.match(logLine))
-            return LogEventType.Z_MARK_START_YOUNG_AND_OLD;
-        if (ZRelocateStartEvent.match(logLine))
-            return LogEventType.Z_RELOCATE_START;
-        if (ZRelocateStartOldEvent.match(logLine))
-            return LogEventType.Z_RELOCATE_START_OLD;
-        if (ZRelocateStartYoungEvent.match(logLine))
-            return LogEventType.Z_RELOCATE_START_YOUNG;
-        if (ZRelocationStallEvent.match(logLine))
-            return LogEventType.Z_RELOCATION_STALL;
-        if (ZStatsEvent.match(logLine))
-            return LogEventType.Z_STATS;
-        if (UnifiedBlankLineEvent.match(logLine) && !BlankLineEvent.match(logLine))
-            return LogEventType.UNIFIED_BLANK_LINE;
-
-        // no idea what event is
-        return LogEventType.UNKNOWN;
+    public static final LogEventType identifyEventType(String logLine, LogEvent priorLogEvent,
+            CollectorFamily collectorFamily) {
+        LogEventType eventType = LogEventType.UNKNOWN;
+        switch (collectorFamily) {
+        case CMS:
+            if (UnifiedCmsInitialMarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_CMS_INITIAL_MARK;
+            } else if (UnifiedParNewEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_PAR_NEW;
+            }
+            break;
+        case G1:
+            if (UnifiedG1FullGcEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_FULL_GC_PARALLEL;
+            } else if (UnifiedG1CleanupEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_CLEANUP;
+            } else if (UnifiedG1InfoEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_INFO;
+            } else if (UnifiedG1MixedPauseEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_MIXED_PAUSE;
+            } else if (UnifiedG1YoungInitialMarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK;
+            } else if (UnifiedG1YoungPauseEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_YOUNG_PAUSE;
+            } else if (UnifiedG1YoungPrepareMixedEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
+            }
+            break;
+        case PARALLEL:
+            if (UnifiedParallelCompactingOldEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD;
+            } else if (UnifiedParallelScavengeEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_PARALLEL_SCAVENGE;
+            }
+            break;
+        case SERIAL:
+            if (UnifiedSerialNewEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SERIAL_NEW;
+            } else if (UnifiedSerialOldEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SERIAL_OLD;
+            }
+            break;
+        case SHENANDOAH:
+            if (UnifiedShenandoahDegeneratedGcEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_DEGENERATED_GC;
+            } else if (UnifiedShenandoahFinalEvacEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC;
+            } else if (UnifiedShenandoahFinalMarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK;
+            } else if (UnifiedShenandoahFinalUpdateRefsEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS;
+            } else if (UnifiedShenandoahFullGcEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_FULL_GC;
+            } else if (UnifiedShenandoahInitMarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_INIT_MARK;
+            } else if (UnifiedShenandoahInitUpdateRefsEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS;
+            } else if (logLine.matches(UnifiedShenandoahStatsEvent._REGEX_HEADER)
+                    || (UnifiedShenandoahStatsEvent.match(logLine)
+                            && priorLogEvent instanceof UnifiedShenandoahStatsEvent)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_STATS;
+            } else if (UnifiedShenandoahTriggerEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_TRIGGER;
+            }
+            break;
+        case UNKNOWN:
+            if (UnifiedG1FullGcEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_FULL_GC_PARALLEL;
+            } else if (UnifiedCmsInitialMarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_CMS_INITIAL_MARK;
+            } else if (UnifiedG1CleanupEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_CLEANUP;
+            } else if (UnifiedG1InfoEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_INFO;
+            } else if (UnifiedG1MixedPauseEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_MIXED_PAUSE;
+            } else if (UnifiedG1YoungInitialMarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK;
+            } else if (UnifiedG1YoungPauseEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_YOUNG_PAUSE;
+            } else if (UnifiedG1YoungPrepareMixedEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
+            } else if (UnifiedParallelCompactingOldEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD;
+            } else if (UnifiedParallelScavengeEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_PARALLEL_SCAVENGE;
+            } else if (UnifiedParNewEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_PAR_NEW;
+            } else if (UnifiedSerialNewEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SERIAL_NEW;
+            } else if (UnifiedSerialOldEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SERIAL_OLD;
+            } else if (UnifiedShenandoahDegeneratedGcEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_DEGENERATED_GC;
+            } else if (UnifiedShenandoahFinalEvacEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC;
+            } else if (UnifiedShenandoahFinalMarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK;
+            } else if (UnifiedShenandoahFinalUpdateRefsEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS;
+            } else if (UnifiedShenandoahFullGcEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_FULL_GC;
+            } else if (UnifiedShenandoahInitMarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_INIT_MARK;
+            } else if (UnifiedShenandoahInitUpdateRefsEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS;
+            } else if (logLine.matches(UnifiedShenandoahStatsEvent._REGEX_HEADER)
+                    || (UnifiedShenandoahStatsEvent.match(logLine)
+                            && priorLogEvent instanceof UnifiedShenandoahStatsEvent)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_STATS;
+            } else if (UnifiedShenandoahTriggerEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SHENANDOAH_TRIGGER;
+            } else if (ZAllocationStallEvent.match(logLine)) {
+                eventType = LogEventType.Z_ALLOCATION_STALL;
+            } else if (ZMarkEndEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_END;
+            } else if (ZMarkEndOldEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_END_OLD;
+            } else if (ZMarkEndYoungEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_END_YOUNG;
+            } else if (ZMarkStartEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_START;
+            } else if (ZMarkStartYoungEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_START_YOUNG;
+            } else if (ZMarkStartYoungAndOldEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_START_YOUNG_AND_OLD;
+            } else if (ZRelocateStartEvent.match(logLine)) {
+                eventType = LogEventType.Z_RELOCATE_START;
+            } else if (ZRelocateStartOldEvent.match(logLine)) {
+                eventType = LogEventType.Z_RELOCATE_START_OLD;
+            } else if (ZRelocateStartYoungEvent.match(logLine)) {
+                eventType = LogEventType.Z_RELOCATE_START_YOUNG;
+            } else if (ZRelocationStallEvent.match(logLine)) {
+                eventType = LogEventType.Z_RELOCATION_STALL;
+            } else if (logLine.matches(ZStatsEvent._REGEX_HEADER)
+                    || (ZStatsEvent.match(logLine) && priorLogEvent instanceof ZStatsEvent)) {
+                eventType = LogEventType.Z_STATS;
+                break;
+            }
+        case Z:
+            if (ZAllocationStallEvent.match(logLine)) {
+                eventType = LogEventType.Z_ALLOCATION_STALL;
+            } else if (ZMarkEndEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_END;
+            } else if (ZMarkEndOldEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_END_OLD;
+            } else if (ZMarkEndYoungEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_END_YOUNG;
+            } else if (ZMarkStartEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_START;
+            } else if (ZMarkStartYoungEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_START_YOUNG;
+            } else if (ZMarkStartYoungAndOldEvent.match(logLine)) {
+                eventType = LogEventType.Z_MARK_START_YOUNG_AND_OLD;
+            } else if (ZRelocateStartEvent.match(logLine)) {
+                eventType = LogEventType.Z_RELOCATE_START;
+            } else if (ZRelocateStartOldEvent.match(logLine)) {
+                eventType = LogEventType.Z_RELOCATE_START_OLD;
+            } else if (ZRelocateStartYoungEvent.match(logLine)) {
+                eventType = LogEventType.Z_RELOCATE_START_YOUNG;
+            } else if (ZRelocationStallEvent.match(logLine)) {
+                eventType = LogEventType.Z_RELOCATION_STALL;
+            } else if (logLine.matches(ZStatsEvent._REGEX_HEADER)
+                    || (ZStatsEvent.match(logLine) && priorLogEvent instanceof ZStatsEvent)) {
+                eventType = LogEventType.Z_STATS;
+            }
+            break;
+        default:
+            break;
+        }
+        if (eventType == LogEventType.UNKNOWN) {
+            if (UnifiedHeapEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_HEAP;
+            } else if (OomeMetaspaceEvent.match(logLine)) {
+                eventType = LogEventType.OOME_METASPACE;
+            } else if (UnifiedSafepointEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SAFEPOINT;
+            } else if (UnifiedConcurrentEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_CONCURRENT;
+            } else if (logLine.matches(UnifiedFooterStatsEvent._REGEX_HEADER)
+                    || (UnifiedFooterStatsEvent.match(logLine) && priorLogEvent instanceof UnifiedFooterStatsEvent)) {
+                eventType = LogEventType.UNIFIED_FOOTER_STATS;
+            } else if (UnifiedGcLockerRetryEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_GC_LOCKER_RETRY;
+            } else if (UnifiedHeaderEvent.match(logLine)
+                    && (priorLogEvent instanceof NullEvent || priorLogEvent instanceof UnifiedHeaderEvent)) {
+                eventType = LogEventType.UNIFIED_HEADER;
+            } else if (UnifiedOldEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_OLD;
+            } else if (UnifiedRemarkEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_REMARK;
+            } else if (UnifiedYoungEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_YOUNG;
+            } else if (UnifiedBlankLineEvent.match(logLine) && !BlankLineEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_BLANK_LINE;
+            }
+        }
+        return eventType;
     }
 
     /**
@@ -230,7 +332,7 @@ public final class UnifiedUtil {
             case HEAP_ADDRESS:
             case HEAP_REGION_SIZE:
             case OOME_METASPACE:
-            case G1_FULL_GC_PARALLEL:
+            case UNIFIED_G1_FULL_GC_PARALLEL:
             case UNIFIED_SHENANDOAH_FINAL_ROOTS:
             case UNIFIED_BLANK_LINE:
             case UNIFIED_CMS_INITIAL_MARK:

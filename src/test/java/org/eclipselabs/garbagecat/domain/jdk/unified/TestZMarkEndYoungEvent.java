@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,15 @@ class TestZMarkEndYoungEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.100s][info][gc,phases   ] GC(0) Y: Pause Mark End 0.006ms";
-        assertEquals(JdkUtil.LogEventType.Z_MARK_END_YOUNG, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.Z_MARK_END_YOUNG,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.Z_MARK_END_YOUNG + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.100s][info][gc,phases   ] GC(0) Y: Pause Mark End 0.006ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.Z_MARK_END_YOUNG.toString() + " not indentified as blocking.");
     }
 
@@ -68,7 +70,7 @@ class TestZMarkEndYoungEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.100s][info][gc,phases   ] GC(0) Y: Pause Mark End 0.006ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZMarkEndYoungEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZMarkEndYoungEvent,
                 JdkUtil.LogEventType.Z_MARK_END_YOUNG.toString() + " not parsed.");
     }
 

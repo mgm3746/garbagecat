@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,15 @@ class TestZRelocateStartOldEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.228s][info][gc,phases   ] GC(2) O: Pause Relocate Start 0.006ms";
-        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START_OLD, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START_OLD,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.Z_RELOCATE_START_OLD + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.228s][info][gc,phases   ] GC(2) O: Pause Relocate Start 0.006ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.Z_RELOCATE_START_OLD.toString() + " not indentified as blocking.");
     }
 
@@ -57,7 +59,7 @@ class TestZRelocateStartOldEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.228s][info][gc,phases   ] GC(2) O: Pause Relocate Start 0.006ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZRelocateStartOldEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZRelocateStartOldEvent,
                 JdkUtil.LogEventType.Z_RELOCATE_START_OLD.toString() + " not parsed.");
     }
 

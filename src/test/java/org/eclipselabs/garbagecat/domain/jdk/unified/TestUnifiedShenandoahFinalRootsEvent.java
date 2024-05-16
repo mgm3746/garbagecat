@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class TestUnifiedShenandoahFinalRootsEvent {
     @Test
     void testBlocking() {
         String logLine = "[2023-08-25T02:15:57.862-0400][233.267s] GC(4) Pause Final Roots 0.019ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_ROOTS.toString() + " not indentified as blocking.");
     }
 
@@ -51,14 +52,17 @@ class TestUnifiedShenandoahFinalRootsEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[2023-08-25T02:15:57.862-0400][233.267s] GC(4) Pause Final Roots 0.019ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_ROOTS, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_ROOTS,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_ROOTS + "not identified.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "[2023-08-25T02:15:57.862-0400][3161ms] GC(4) Pause Final Roots 0.019ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedShenandoahFinalRootsEvent,
+        assertTrue(
+                JdkUtil.parseLogLine(logLine, null,
+                        CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFinalRootsEvent,
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_ROOTS.toString() + " not parsed.");
     }
 

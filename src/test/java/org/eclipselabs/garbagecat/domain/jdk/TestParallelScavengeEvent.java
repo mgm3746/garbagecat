@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -117,7 +118,7 @@ class TestParallelScavengeEvent {
     void testIsBlocking() {
         String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
                 + "160183K->133159K(585088K), 0.0225213 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + " not indentified as blocking.");
     }
 

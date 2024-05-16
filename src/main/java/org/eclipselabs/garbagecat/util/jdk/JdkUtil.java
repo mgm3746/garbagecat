@@ -137,6 +137,15 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 public final class JdkUtil {
 
     /**
+     * Defined collector families.
+     * 
+     * TODO: Move to joa?
+     */
+    public enum CollectorFamily {
+        CMS, G1, PARALLEL, SERIAL, SHENANDOAH, UNKNOWN, Z
+    }
+
+    /**
      * Defined logging events.
      */
     public enum LogEventType {
@@ -144,43 +153,41 @@ public final class JdkUtil {
         //
         CLASS_UNLOADING, CMS_CONCURRENT, CMS_INITIAL_MARK, CMS_REMARK, CMS_SERIAL_OLD, FLS_STATISTICS, FOOTER_STATS,
         //
-        G1_CLEANUP, G1_CONCURRENT, G1_FULL_GC_PARALLEL, G1_FULL_GC_SERIAL, G1_MIXED_PAUSE, G1_REMARK,
+        G1_CLEANUP, G1_CONCURRENT, G1_FULL_GC_SERIAL, G1_MIXED_PAUSE, G1_REMARK, G1_YOUNG_INITIAL_MARK, G1_YOUNG_PAUSE,
         //
-        G1_YOUNG_INITIAL_MARK, G1_YOUNG_PAUSE, GC_INFO, GC_LOCKER_RETRY_LIMIT, GC_LOCKER_SCAVENGE_FAILED,
+        GC_INFO, GC_LOCKER_RETRY_LIMIT, GC_LOCKER_SCAVENGE_FAILED, GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS,
         //
-        GC_OVERHEAD_LIMIT, HEADER_COMMAND_LINE_FLAGS, HEADER_MEMORY, HEADER_VM_INFO, HEAP, HEAP_ADDRESS, HEAP_AT_GC,
+        HEADER_MEMORY, HEADER_VM_INFO, HEAP, HEAP_ADDRESS, HEAP_AT_GC, HEAP_REGION_SIZE, LOG_FILE, NULL,
         //
-        HEAP_REGION_SIZE, LOG_FILE, NULL, OOME_METASPACE, PAR_NEW, PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE,
+        OOME_METASPACE, PAR_NEW, PARALLEL_COMPACTING_OLD, PARALLEL_SCAVENGE, PARALLEL_SERIAL_OLD, SERIAL_NEW,
         //
-        PARALLEL_SERIAL_OLD, SERIAL_NEW, SERIAL_OLD, SHENANDOAH_CONCURRENT, SHENANDOAH_DEGENERATED_GC,
+        SERIAL_OLD, SHENANDOAH_CONCURRENT, SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK,
         //
-        SHENANDOAH_FINAL_EVAC, SHENANDOAH_FINAL_MARK, SHENANDOAH_FINAL_UPDATE, SHENANDOAH_FULL_GC,
+        SHENANDOAH_FINAL_UPDATE, SHENANDOAH_FULL_GC, SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_STATS,
         //
-        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE, SHENANDOAH_STATS, SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION,
+        SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK,
         //
-        THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK, UNIFIED_CONCURRENT, UNIFIED_FOOTER_STATS,
+        UNIFIED_CONCURRENT, UNIFIED_FOOTER_STATS, UNIFIED_G1_CLEANUP, UNIFIED_G1_FULL_GC_PARALLEL, UNIFIED_G1_INFO,
         //
-        UNIFIED_G1_CLEANUP, UNIFIED_G1_INFO, UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK,
+        UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
-        UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED, UNIFIED_GC_LOCKER_RETRY, UNIFIED_HEADER, UNIFIED_HEAP,
+        UNIFIED_GC_LOCKER_RETRY, UNIFIED_HEADER, UNIFIED_HEAP, UNIFIED_OLD, UNIFIED_PAR_NEW,
         //
-        UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK,
+        UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT,
         //
-        UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_SHENANDOAH_CANCELLING_GC,
+        UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_SHENANDOAH_CANCELLING_GC, UNIFIED_SHENANDOAH_DEGENERATED_GC,
         //
-        UNIFIED_SHENANDOAH_DEGENERATED_GC, UNIFIED_SHENANDOAH_FINAL_EVAC, UNIFIED_SHENANDOAH_FINAL_MARK,
+        UNIFIED_SHENANDOAH_FINAL_EVAC, UNIFIED_SHENANDOAH_FINAL_MARK, UNIFIED_SHENANDOAH_FINAL_ROOTS,
         //
-        UNIFIED_SHENANDOAH_FINAL_ROOTS, UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS, UNIFIED_SHENANDOAH_FULL_GC,
+        UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS, UNIFIED_SHENANDOAH_FULL_GC, UNIFIED_SHENANDOAH_INIT_MARK,
         //
-        UNIFIED_SHENANDOAH_INIT_MARK, UNIFIED_SHENANDOAH_INIT_UPDATE_REFS, UNIFIED_SHENANDOAH_STATS,
+        UNIFIED_SHENANDOAH_INIT_UPDATE_REFS, UNIFIED_SHENANDOAH_STATS, UNIFIED_SHENANDOAH_TRIGGER, UNIFIED_YOUNG,
         //
-        UNIFIED_SHENANDOAH_TRIGGER, UNIFIED_YOUNG, UNKNOWN, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING,
+        UNKNOWN, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_ALLOCATION_STALL, Z_MARK_END, Z_MARK_END_OLD,
         //
-        Z_ALLOCATION_STALL, Z_MARK_END, Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG,
+        Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD, Z_RELOCATE_START,
         //
-        Z_MARK_START_YOUNG_AND_OLD, Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG, Z_RELOCATION_STALL,
-        //
-        Z_STATS
+        Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG, Z_RELOCATION_STALL, Z_STATS
     }
 
     /**
@@ -285,7 +292,7 @@ public final class JdkUtil {
             return new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_CLEANUP:
             return new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
-        case G1_FULL_GC_PARALLEL:
+        case UNIFIED_G1_FULL_GC_PARALLEL:
             return new UnifiedG1FullGcEvent(logEntry, timestamp, duration);
         case UNIFIED_G1_YOUNG_INITIAL_MARK:
             return new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
@@ -394,17 +401,20 @@ public final class JdkUtil {
      *            The log line.
      * @param priorLogEvent
      *            The prior log line <code>LogEvent</code>.
+     * @param collectorFamily
+     *            The <code>CollectorFamily</code>.
      * @return The <code>LogEventType</code> of the log entry.
      */
-    public static final LogEventType identifyEventType(String logLine, LogEvent priorLogEvent) {
+    public static final LogEventType identifyEventType(String logLine, LogEvent priorLogEvent,
+            CollectorFamily collectorFamily) {
         LogEventType logEventType = LogEventType.UNKNOWN;
         if (priorLogEvent instanceof UnifiedLogging) {
             // Unified
-            logEventType = UnifiedUtil.identifyEventType(logLine, priorLogEvent);
+            logEventType = UnifiedUtil.identifyEventType(logLine, priorLogEvent, collectorFamily);
         } else if (priorLogEvent == null || priorLogEvent instanceof NullEvent
                 || priorLogEvent instanceof UnknownEvent) {
             // Unknown
-            logEventType = UnifiedUtil.identifyEventType(logLine, priorLogEvent);
+            logEventType = UnifiedUtil.identifyEventType(logLine, priorLogEvent, collectorFamily);
             if (logEventType == LogEventType.UNKNOWN) {
                 logEventType = identifyLegacyEventType(logLine, priorLogEvent);
             }
@@ -735,10 +745,12 @@ public final class JdkUtil {
      *            The log line.
      * @param priorLogEvent
      *            The prior log line <code>LogEvent</code>.
-     * @return <code>LogEvent</code> for the log line
+     * @param collectorFamily
+     *            The <code>CollectorFamily</code>.
+     * @return The <code>LogEvent</code> for the log line.
      */
-    public static final LogEvent parseLogLine(String logLine, LogEvent priorLogEvent) {
-        LogEventType eventType = identifyEventType(logLine, priorLogEvent);
+    public static final LogEvent parseLogLine(String logLine, LogEvent priorLogEvent, CollectorFamily collectorFamily) {
+        LogEventType eventType = identifyEventType(logLine, priorLogEvent, collectorFamily);
         switch (eventType) {
         // Unified (order of appearance)
         case UNIFIED_SAFEPOINT:
@@ -753,7 +765,7 @@ public final class JdkUtil {
             return new UnifiedFooterStatsEvent(logLine);
         case UNIFIED_G1_CLEANUP:
             return new UnifiedG1CleanupEvent(logLine);
-        case G1_FULL_GC_PARALLEL:
+        case UNIFIED_G1_FULL_GC_PARALLEL:
             return new UnifiedG1FullGcEvent(logLine);
         case UNIFIED_G1_INFO:
             return new UnifiedG1InfoEvent(logLine);

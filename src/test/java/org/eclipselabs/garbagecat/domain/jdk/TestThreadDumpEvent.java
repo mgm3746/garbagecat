@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -83,14 +84,14 @@ class TestThreadDumpEvent {
     @Test
     void testNotBlocking() {
         String logLine = "Full thread dump Java HotSpot(TM) Server VM (11.0-b16 mixed mode):";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.THREAD_DUMP.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
         String logLine = "Full thread dump Java HotSpot(TM) Server VM (11.0-b16 mixed mode):";
-        assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.THREAD_DUMP.toString() + " incorrectly indentified as not reportable.");
     }
 

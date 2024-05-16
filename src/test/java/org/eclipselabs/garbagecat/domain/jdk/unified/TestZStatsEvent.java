@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class TestZStatsEvent {
         LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.485s] =================================================================================="
                 + "=======================================================================";
-        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
@@ -53,7 +54,7 @@ class TestZStatsEvent {
     void testHeader() {
         String logLine = "[10.485s] === Garbage Collection Statistics ================================================"
                 + "=======================================================================";
-        assertEquals(JdkUtil.LogEventType.Z_STATS, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.Z_STATS, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.Z_STATS + "not identified.");
         ZStatsEvent event = new ZStatsEvent(logLine);
         assertTrue(event.isHeader(), "Header not identified.");
@@ -63,7 +64,7 @@ class TestZStatsEvent {
     void testIdentityEventType() {
         String logLine = "[10.485s] === Garbage Collection Statistics ================================================"
                 + "=======================================================================";
-        assertEquals(JdkUtil.LogEventType.Z_STATS, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.Z_STATS, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.Z_STATS + "not identified.");
     }
 
@@ -72,7 +73,7 @@ class TestZStatsEvent {
         LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.029s][info][gc,stats    ]      Memory: Allocation Rate                                 "
                 + "941 / 1154            941 / 1154            941 / 1154            941 / 1154        MB/s";
-        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
@@ -80,7 +81,7 @@ class TestZStatsEvent {
     void testNotBlocking() {
         String logLine = "[10.485s] === Garbage Collection Statistics ================================================"
                 + "=======================================================================";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.Z_STATS.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -88,7 +89,7 @@ class TestZStatsEvent {
     void testParseLogLine() {
         String logLine = "[10.485s] === Garbage Collection Statistics ================================================"
                 + "=======================================================================";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
@@ -97,7 +98,7 @@ class TestZStatsEvent {
         LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.029s][info][gc,stats    ]       Phase: Concurrent Mark                              "
                 + "25.345 / 60.647       25.345 / 60.647       25.345 / 60.647       25.345 / 60.647      ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
@@ -112,7 +113,7 @@ class TestZStatsEvent {
         LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.029s][info][gc,stats    ]    Subphase: Concurrent Mark Try Flush                     "
                 + "0.087 / 1.125         0.087 / 1.125         0.087 / 1.125         0.087 / 1.125       ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
@@ -121,7 +122,7 @@ class TestZStatsEvent {
         LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.029s][info][gc,stats    ]    Subphase: Concurrent Mark Try Terminate                 "
                 + "0.019 / 0.809         0.019 / 0.809         0.019 / 0.809         0.019 / 0.809       ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
@@ -130,7 +131,7 @@ class TestZStatsEvent {
         LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.029s][info][gc,stats    ]                                                              "
                 + "Last 10s              Last 10m              Last 10h                Total";
-        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 
@@ -139,7 +140,7 @@ class TestZStatsEvent {
         LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.029s][info][gc,stats    ]                                                              "
                 + "Avg / Max             Avg / Max             Avg / Max             Avg / Max";
-        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent) instanceof ZStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN) instanceof ZStatsEvent,
                 JdkUtil.LogEventType.Z_STATS.toString() + " not parsed.");
     }
 

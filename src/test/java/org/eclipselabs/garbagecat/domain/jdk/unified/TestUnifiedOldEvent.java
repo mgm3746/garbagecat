@@ -32,6 +32,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -45,14 +46,15 @@ class TestUnifiedOldEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_OLD, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_OLD,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_OLD + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not indentified as blocking.");
     }
 
@@ -83,7 +85,7 @@ class TestUnifiedOldEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[0.231s][info][gc] GC(6) Pause Full (Ergonomics) 1M->1M(7M) 2.969ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedOldEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedOldEvent,
                 JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not parsed.");
     }
 
@@ -154,7 +156,7 @@ class TestUnifiedOldEvent {
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
         UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
-        assertEquals((long) (89 - 3), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals((long) (89 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -184,10 +186,10 @@ class TestUnifiedOldEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_YOUNG),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_SERIAL_OLD),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN.getKey()),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
         UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
@@ -210,8 +212,8 @@ class TestUnifiedOldEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING.getKey()),
                 Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
         UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
@@ -223,7 +225,7 @@ class TestUnifiedOldEvent {
     void testUnpreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[390361.491s][info][gc] GC(1474) Pause Full (GCLocker Initiated GC) 16340M->15902M(16384M) "
                 + "6628.742ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedOldEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedOldEvent,
                 JdkUtil.LogEventType.UNIFIED_OLD.toString() + " not parsed.");
     }
 }

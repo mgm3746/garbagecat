@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class TestUnifiedShenandoahFinalEvacEvent {
     @Test
     void testBlocking() {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
     }
 
@@ -51,7 +52,8 @@ class TestUnifiedShenandoahFinalEvacEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC + "not identified.");
     }
 
@@ -74,7 +76,8 @@ class TestUnifiedShenandoahFinalEvacEvent {
     @Test
     void testParseLogLine() {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedShenandoahFinalEvacEvent,
+        assertTrue(
+                JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFinalEvacEvent,
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
     }
 

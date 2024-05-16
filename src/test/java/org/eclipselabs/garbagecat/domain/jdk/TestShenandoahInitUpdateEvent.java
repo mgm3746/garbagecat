@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class TestShenandoahInitUpdateEvent {
     @Test
     void testBlocking() {
         String logLine = "17.346: [Pause Init Update Refs, 0.017 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not indentified as blocking.");
     }
 
@@ -52,7 +53,8 @@ class TestShenandoahInitUpdateEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "17.346: [Pause Init Update Refs, 0.017 ms]";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE + "not identified.");
     }
 
@@ -95,7 +97,7 @@ class TestShenandoahInitUpdateEvent {
     @Test
     void testParseLogLine() {
         String logLine = "17.346: [Pause Init Update Refs, 0.017 ms]";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahInitUpdateEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahInitUpdateEvent,
                 JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " not parsed.");
     }
 

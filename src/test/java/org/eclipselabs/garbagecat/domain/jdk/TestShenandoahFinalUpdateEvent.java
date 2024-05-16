@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class TestShenandoahFinalUpdateEvent {
     @Test
     void testBlocking() {
         String logLine = "18.504: [Pause Final Update Refs, 0.206 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + " not indentified as blocking.");
     }
 
@@ -62,7 +63,8 @@ class TestShenandoahFinalUpdateEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "18.504: [Pause Final Update Refs, 0.206 ms]";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE + "not identified.");
     }
 
@@ -79,7 +81,7 @@ class TestShenandoahFinalUpdateEvent {
     @Test
     void testParseLogLine() {
         String logLine = "18.504: [Pause Final Update Refs, 0.206 ms]";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahFinalUpdateEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahFinalUpdateEvent,
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_UPDATE.toString() + " not parsed.");
     }
 

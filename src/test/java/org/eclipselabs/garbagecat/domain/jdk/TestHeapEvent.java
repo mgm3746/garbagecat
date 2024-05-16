@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -143,7 +144,7 @@ class TestHeapEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "Heap";
-        assertEquals(JdkUtil.LogEventType.HEAP, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.HEAP, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.HEAP + "not identified.");
     }
 
@@ -187,14 +188,14 @@ class TestHeapEvent {
     @Test
     void testNotBlocking() {
         String logLine = "Heap";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.HEAP.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testObjectSpace() {
         String logLine = "  object space 341504K, 27% used [0x00000005cd600000,0x00000005d322aa70,0x00000005e2380000)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.HEAP.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -210,7 +211,7 @@ class TestHeapEvent {
     void testParOldGen() {
         String logLine = " ParOldGen       total 341504K, used 94378K [0x00000005cd600000, 0x00000005e2380000, "
                 + "0x0000000719d00000)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.HEAP.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -225,7 +226,7 @@ class TestHeapEvent {
     @Test
     void testParseLogLine() {
         String logLine = "Heap";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof HeapEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof HeapEvent,
                 JdkUtil.LogEventType.HEAP.toString() + " not parsed.");
     }
 

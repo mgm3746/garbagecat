@@ -29,6 +29,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,8 @@ class TestFooterStatsEvent {
         String logLine = "  All times are wall-clock times, except per-root-class counters, that are sum over";
         assertTrue(FooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.FOOTER_STATS.toString() + ".");
-        assertEquals(JdkUtil.LogEventType.FOOTER_STATS, JdkUtil.identifyEventType(logLine, priorLogEvent),
+        assertEquals(JdkUtil.LogEventType.FOOTER_STATS,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.FOOTER_STATS + "not identified.");
     }
 
@@ -110,7 +112,8 @@ class TestFooterStatsEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "GC STATISTICS:";
-        assertEquals(JdkUtil.LogEventType.FOOTER_STATS, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.FOOTER_STATS,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.FOOTER_STATS + "not identified.");
     }
 
@@ -141,7 +144,7 @@ class TestFooterStatsEvent {
     @Test
     void testNotBlocking() {
         String logLine = "GC STATISTICS:";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -169,7 +172,7 @@ class TestFooterStatsEvent {
     @Test
     void testParseLogLine() {
         String logLine = "GC STATISTICS:";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof FooterStatsEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof FooterStatsEvent,
                 JdkUtil.LogEventType.FOOTER_STATS.toString() + " not parsed.");
     }
 

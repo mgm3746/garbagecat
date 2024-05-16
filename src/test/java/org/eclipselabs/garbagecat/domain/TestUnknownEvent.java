@@ -15,6 +15,7 @@ package org.eclipselabs.garbagecat.domain;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,7 +27,7 @@ class TestUnknownEvent {
     @Test
     void testLogLine() {
         String logLine = "Mike was here!!!";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnknownEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnknownEvent,
                 "Log line not recognized as " + JdkUtil.LogEventType.UNKNOWN.toString() + ".");
     }
 }

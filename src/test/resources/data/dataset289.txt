@@ -1,0 +1,10 @@
+[0.329s][info][gc] Using Parallel
+[1.673s][info][gc] GC(0) Pause Young (Metadata GC Threshold) 164M->9M(1963M) 18.322ms
+[1.703s][info][gc] GC(1) Pause Full (Metadata GC Threshold) 9M->9M(1963M) 30.723ms
+[2.643s][info][gc] GC(2) Pause Young (Metadata GC Threshold) 193M->21M(1963M) 7.515ms
+[2.749s][info][gc] GC(3) Pause Full (Metadata GC Threshold) 21M->20M(1963M) 105.460ms
+[4.487s][info][gc] GC(4) Pause Young (Metadata GC Threshold) 218M->33M(1963M) 8.654ms
+[4.626s][info][gc] GC(5) Pause Full (Metadata GC Threshold) 33M->32M(1963M) 138.459ms
+[7.365s][info][gc] GC(6) Pause Young (Allocation Failure) 545M->69M(1963M) 25.320ms
+[9.519s][info][gc] GC(7) Pause Young (Metadata GC Threshold) 549M->91M(1963M) 34.965ms
+[9.781s][info][gc] GC(8) Pause Full (Metadata GC Threshold) 91M->89M(1963M) 262.122ms

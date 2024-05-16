@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,8 @@ class TestUnifiedGcLockerRetryEvent {
     void testIdentityEventType() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY,
+                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY + "not identified.");
     }
 
@@ -50,7 +52,7 @@ class TestUnifiedGcLockerRetryEvent {
     void testNotBlocking() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + " incorrectly indentified as blocking.");
     }
 
@@ -58,7 +60,7 @@ class TestUnifiedGcLockerRetryEvent {
     void testParseLogLine() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof UnifiedGcLockerRetryEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedGcLockerRetryEvent,
                 JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + " not parsed.");
     }
 

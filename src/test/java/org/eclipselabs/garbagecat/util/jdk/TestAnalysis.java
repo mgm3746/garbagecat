@@ -287,8 +287,8 @@ class TestAnalysis {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_FULL_GC_PARALLEL),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC.getKey()),
                 Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC + " analysis not identified.");
     }

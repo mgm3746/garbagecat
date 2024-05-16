@@ -276,7 +276,7 @@ public class UnifiedG1FullGcEvent extends G1Collector implements UnifiedLogging,
     }
 
     public String getName() {
-        return JdkUtil.LogEventType.G1_FULL_GC_PARALLEL.toString();
+        return JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString();
     }
 
     public int getParallelism() {

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class TestShenandoahDegeneratedGcEvent {
     @Test
     void testBlocking() {
         String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null)),
+        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
                 SHENANDOAH_DEGENERATED_GC + " not indentified as blocking.");
     }
 
@@ -68,7 +69,7 @@ class TestShenandoahDegeneratedGcEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
-        assertEquals(SHENANDOAH_DEGENERATED_GC, JdkUtil.identifyEventType(logLine, null),
+        assertEquals(SHENANDOAH_DEGENERATED_GC, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 SHENANDOAH_DEGENERATED_GC + "not identified.");
     }
 
@@ -97,7 +98,7 @@ class TestShenandoahDegeneratedGcEvent {
     @Test
     void testParseLogLine() {
         String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
-        assertTrue(JdkUtil.parseLogLine(logLine, null) instanceof ShenandoahDegeneratedGcEvent,
+        assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahDegeneratedGcEvent,
                 SHENANDOAH_DEGENERATED_GC + " not parsed.");
     }
 
