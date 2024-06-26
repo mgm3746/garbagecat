@@ -70,7 +70,7 @@ public interface TimesData {
     int getParallelism();
 
     /**
-     * @return The wall (clock) cpu time in centiseconds when cpu it being used.
+     * @return The wall (clock) cpu time in centiseconds when cpu is being used.
      */
     int getTimeReal();
 
