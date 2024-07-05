@@ -1155,6 +1155,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " O: (ClassLoaderData|Concurrent (Classes Unlink|References Process)|"
                     + "Trigger cleanups)$",
             // ***** Other *****
+            "^" + UnifiedRegEx.DECORATOR + " ... found polling page loop exception at pc .+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR
+                    + " Safepoint synchronization initiated using futex wait barrier. \\(\\d{1,} threads\\)$",
+            //
             UnifiedBlankLineEvent.REGEX
             //
     };

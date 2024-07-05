@@ -1174,6 +1174,18 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testFoundPollingPageLoopExecutionAtPc() {
+        String logLine = "[27.197s] ... found polling page loop exception at pc = 0x00007f95fc518271, "
+                + "stub =0x00007f95fc455c00";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testFreeCollectionSet() {
         String logLine = "[0.838s][debug][gc,phases      ] GC(0)       Free Collection Set (ms):      Min:  0.0, "
                 + "Avg:  0.0, Max:  0.1, Diff:  0.1, Sum:  0.2, Workers: 13";
@@ -3822,6 +3834,17 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " collector not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+    }
+
+    @Test
+    void testSafepointSynchronizationInitiatedUsingFutexWaitBarrier() {
+        String logLine = "[3.459s] Safepoint synchronization initiated using futex wait barrier. (14 threads)";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
