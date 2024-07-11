@@ -209,6 +209,7 @@ class TestUnifiedG1YoungPauseEvent {
         assertEquals(kilobytes(588 * 1024), event.getCombinedOccupancyEnd(),
                 "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(1223 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
+        assertEquals(1600, event.getExtRootScanningTime(), "External root scanning time not parsed correctly.");
         assertEquals(100, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(105641, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(18, event.getTimeUser(), "User time not parsed correctly.");

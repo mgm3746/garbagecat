@@ -1,0 +1,26 @@
+[154.094s][info   ] Entering safepoint region: G1CollectForAllocation
+[154.095s][info   ] GC(21505) Pause Young (Normal) (GCLocker Initiated GC)
+[154.095s][info   ] GC(21505) Using 6 workers of 6 for evacuation
+[154.105s][info   ] GC(21505)   Pre Evacuate Collection Set: 0.1ms
+[154.105s][info   ] GC(21505)   Evacuate Collection Set: 8.8ms
+[154.105s][info   ] GC(21505)   Post Evacuate Collection Set: 0.8ms
+[154.105s][info   ] GC(21505)   Other: 0.5ms
+[154.105s][info   ] GC(21505) Eden regions: 2->0(426)
+[154.105s][info   ] GC(21505) Survivor regions: 5->5(54)
+[154.105s][info   ] GC(21505) Old regions: 1895->1895
+[154.105s][info   ] GC(21505) Humongous regions: 88->88
+[154.105s][info   ] GC(21505) Metaspace: 401919K->401919K(1423360K)
+[154.105s][info   ] GC(21505) Pause Young (Normal) (GCLocker Initiated GC) 7950M->7944M(12000M) 10.147ms
+[154.105s][info   ] GC(21505) User=0.06s Sys=0.00s Real=0.01s
+[154.105s][info   ] Leaving safepoint region
+[154.105s][info   ] Total time for which application threads were stopped: 0.0130080 seconds, Stopping threads took: 0.0021024 seconds
+[154.106s][info   ] Application time: 0.0010553 seconds
+[154.106s][info   ] Entering safepoint region: G1CollectForAllocation
+[154.107s][info   ] Leaving safepoint region
+[154.107s][info   ] Total time for which application threads were stopped: 0.0004594 seconds, Stopping threads took: 0.0000585 seconds
+[154.116s][info   ] Application time: 0.0097939 seconds
+[154.117s][info   ] Entering safepoint region: HeapDumper
+[186.755s][info   ] Leaving safepoint region
+[186.756s][info   ] Total time for which application threads were stopped: 32.6391481 seconds, Stopping threads took: 0.0001145 seconds
+[186.758s][info   ] Application time: 0.0022285 seconds
+[186.759s][info   ] Entering safepoint region: ReportJavaOutOfMemory

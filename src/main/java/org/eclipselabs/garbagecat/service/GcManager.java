@@ -63,6 +63,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
@@ -912,8 +913,10 @@ public class GcManager {
                 if (event instanceof TriggerData) {
                     GcTrigger trigger = ((TriggerData) event).getTrigger();
                     if ((trigger == GcTrigger.TO_SPACE_EXHAUSTED || trigger == GcTrigger.TO_SPACE_OVERFLOW)
-                            || (event instanceof UnifiedG1YoungPauseEvent
-                                    && ((UnifiedG1YoungPauseEvent) event).isToSpaceExhausted())) {
+                            || ((event instanceof UnifiedG1YoungPauseEvent
+                                    && ((UnifiedG1YoungPauseEvent) event).isToSpaceExhausted())
+                                    || (event instanceof UnifiedG1YoungPrepareMixedEvent
+                                            && ((UnifiedG1YoungPrepareMixedEvent) event).isToSpaceExhausted()))) {
                         if (!jvmDao.getAnalysis().contains(Analysis.ERROR_G1_EVACUATION_FAILURE)) {
                             jvmDao.addAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE);
                         }

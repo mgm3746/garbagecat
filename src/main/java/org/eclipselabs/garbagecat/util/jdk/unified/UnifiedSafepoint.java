@@ -42,15 +42,15 @@ public class UnifiedSafepoint {
         //
         NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS,
         //
-        REDEFINE_CLASSES, REVOKE_BIAS, SET_NOTIFY_JVMTI_EVENTS_MODE, SHENANDOAH_DEGENERATED_GC,
+        REDEFINE_CLASSES, REPORT_JAVA_OUT_OF_MEMORY, REVOKE_BIAS, SET_NOTIFY_JVMTI_EVENTS_MODE,
         //
-        SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK,
+        SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS,
         //
-        SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, X_MARK_END, X_MARK_START, X_RELOCATE_START, Z_MARK_END,
+        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, X_MARK_END, X_MARK_START,
         //
-        Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD,
+        X_RELOCATE_START, Z_MARK_END, Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG,
         //
-        Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG
+        Z_MARK_START_YOUNG_AND_OLD, Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG
     };
 
     /**
@@ -359,6 +359,13 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
+     * OutOfMemoryError.
+     * </p>
+     */
+    public static final String REPORT_JAVA_OUT_OF_MEMORY = "ReportJavaOutOfMemory";
+
+    /**
+     * <p>
      * Biased locking is an optimization to reduce the overhead of uncontested locking. It assumes a thread owns a
      * monitor until another thread tries to acquire it.
      * </p>
@@ -598,6 +605,8 @@ public class UnifiedSafepoint {
             return Trigger.PRINT_THREADS;
         if (REDEFINE_CLASSES.matches(triggerLiteral))
             return Trigger.REDEFINE_CLASSES;
+        if (REPORT_JAVA_OUT_OF_MEMORY.matches(triggerLiteral))
+            return Trigger.REPORT_JAVA_OUT_OF_MEMORY;
         if (REVOKE_BIAS.matches(triggerLiteral))
             return Trigger.REVOKE_BIAS;
         if (SET_NOTIFY_JVMTI_EVENTS_MODE.matches(triggerLiteral))
@@ -768,6 +777,9 @@ public class UnifiedSafepoint {
         case REDEFINE_CLASSES:
             triggerLiteral = REDEFINE_CLASSES;
             break;
+        case REPORT_JAVA_OUT_OF_MEMORY:
+            triggerLiteral = REPORT_JAVA_OUT_OF_MEMORY;
+            break;
         case REVOKE_BIAS:
             triggerLiteral = REVOKE_BIAS;
             break;
@@ -919,6 +931,8 @@ public class UnifiedSafepoint {
             return Trigger.PRINT_THREADS;
         if (Trigger.REDEFINE_CLASSES.name().matches(trigger))
             return Trigger.REDEFINE_CLASSES;
+        if (Trigger.REPORT_JAVA_OUT_OF_MEMORY.name().matches(trigger))
+            return Trigger.REPORT_JAVA_OUT_OF_MEMORY;
         if (Trigger.REVOKE_BIAS.name().matches(trigger))
             return Trigger.REVOKE_BIAS;
         if (Trigger.SET_NOTIFY_JVMTI_EVENTS_MODE.name().matches(trigger))

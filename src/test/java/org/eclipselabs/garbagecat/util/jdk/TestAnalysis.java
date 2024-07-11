@@ -274,6 +274,26 @@ class TestAnalysis {
                 org.github.joa.util.Analysis.INFO_DIAGNOSTIC_VM_OPTIONS_ENABLED + " analysis not identified.");
     }
 
+    /**
+     * Test -XX:+HeapDumpOnOutOfMemoryError -XX:+ExitOnOutOfMemoryError
+     * 
+     * @throws IOException
+     */
+    @Test
+    void testExitOnOutOfMemoryError() throws IOException {
+        File testFile = TestUtil.getFile("dataset291.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_OOME_EXIT.getKey()),
+                Analysis.ERROR_OOME_EXIT + " analysis not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+    }
+
     @Test
     void testExplicitGcDiagnostic() throws IOException {
         File testFile = TestUtil.getFile("dataset249.txt");

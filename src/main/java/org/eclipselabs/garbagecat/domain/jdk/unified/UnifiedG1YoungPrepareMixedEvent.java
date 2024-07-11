@@ -29,6 +29,7 @@ import org.eclipselabs.garbagecat.domain.YoungCollection;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.domain.jdk.G1ExtRootScanningData;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -65,6 +66,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * [16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) Other: 0.1ms Humongous regions: 0-&gt;0 Metaspace: 3801K-&gt;3801K(1056768K) 24M-&gt;13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s
  * </pre>
  * 
+ * <p>
+ * 3) Preprocessed with "To-space" exhausted.
+ * </p>
+ * 
+ * <pre>
+ * [14.232s][info][gc,start] GC(17368) Pause Young (Prepare Mixed) (G1 Humongous Allocation) To-space exhausted Other: 1.3ms Humongous regions: 312-&gt;70 Metaspace: 401628K-&gt;401628K(1421312K) 11481M-&gt;8717M(12000M) 1125.930ms User=6.31s Sys=0.13s Real=1.13s
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -83,10 +92,10 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector
      * Regular expression defining logging.
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(Prepare Mixed\\) \\("
-            + __TRIGGER + "\\) " + UnifiedPreprocessAction.REGEX_G1_EXT_ROOT_SCANNING + "?(" + OtherTime.REGEX
-            + " )?(Humongous regions: \\d{1,}->\\d{1,} )?(Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
-            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) )?" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "?[ ]*$";
+            + __TRIGGER + "\\) " + UnifiedPreprocessAction.REGEX_G1_EXT_ROOT_SCANNING + "?(To\\-space exhausted )?("
+            + OtherTime.REGEX + " )?(Humongous regions: \\d{1,}->\\d{1,} )?(Metaspace: " + JdkRegEx.SIZE + "(\\("
+            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) )?" + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -130,6 +139,7 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector
      * Combined young + old generation allocation.
      */
     private Memory combinedSpace;
+
     /**
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
@@ -146,7 +156,6 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector
      * Time spent outside of garbage collection in microseconds (rounded).
      */
     private long otherTime;
-
     /**
      * The wall (clock) time in centiseconds.
      */
@@ -182,7 +191,7 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30)).intValue();
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 31)).intValue();
             long time = UnifiedUtil.calculateTime(matcher);
             if (!isEndstamp()) {
                 timestamp = time;
@@ -190,35 +199,35 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector
                 timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
             trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4) != null) {
-                extRootScanningTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5))
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2) != null) {
+                extRootScanningTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3))
                         .intValue();
             } else {
                 extRootScanningTime = G1ExtRootScanningData.NO_DATA;
             }
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5) != null) {
-                otherTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5)).intValue();
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6) != null) {
+                otherTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6)).intValue();
             } else {
                 otherTime = OtherTime.NO_DATA;
             }
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7) != null) {
-                classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10).charAt(0)).convertTo(KILOBYTES);
-                classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 17).charAt(0)).convertTo(KILOBYTES);
-                classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 18),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 20).charAt(0)).convertTo(KILOBYTES);
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8) != null) {
+                classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
+                classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 16),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 18).charAt(0)).convertTo(KILOBYTES);
+                classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 19),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 21).charAt(0)).convertTo(KILOBYTES);
             }
-            combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 21),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 23).charAt(0)).convertTo(KILOBYTES);
-            combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 26).charAt(0)).convertTo(KILOBYTES);
-            combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 29).charAt(0)).convertTo(KILOBYTES);
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 31) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 32)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 33)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 34)).intValue();
+            combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24).charAt(0)).convertTo(KILOBYTES);
+            combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 25),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27).charAt(0)).convertTo(KILOBYTES);
+            combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 28),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30).charAt(0)).convertTo(KILOBYTES);
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 32) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 33)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 34)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 35)).intValue();
             } else {
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;
@@ -321,6 +330,15 @@ public class UnifiedG1YoungPrepareMixedEvent extends G1Collector
         boolean isEndStamp = true;
         isEndStamp = !logEntry.matches(UnifiedRegEx.TAG_GC_START);
         return isEndStamp;
+    }
+
+    /**
+     * @return True if "To-space" is exhausted, false otherwise.
+     */
+    public boolean isToSpaceExhausted() {
+        boolean isTooSpaceExhausted = false;
+        isTooSpaceExhausted = logEntry.matches("^.+ " + Constants.G1_TO_SPACE_EXHAUSTED + ".*");
+        return isTooSpaceExhausted;
     }
 
     protected void setClassSpace(Memory classSpace) {

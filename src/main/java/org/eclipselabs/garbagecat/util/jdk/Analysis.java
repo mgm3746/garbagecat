@@ -83,6 +83,13 @@ public enum Analysis {
     ERROR_METASPACE_ALLOCATION_FAILURE("error.metaspace.allocation.failure"),
 
     /**
+     * Property key for the JVM exiting due to
+     * {@link org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger#REPORT_JAVA_OUT_OF_MEMORY} (e.g.
+     * -XX:+ExitOnOutOfMemoryError).
+     */
+    ERROR_OOME_EXIT("error.oome.exit"),
+
+    /**
      * Property key for Metaspace::report_metadata_oome at the end of gc.log.
      */
     ERROR_OOME_METASPACE("error.oome.metaspace"),

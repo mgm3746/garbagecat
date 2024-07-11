@@ -133,6 +133,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         assertEquals(kilobytes(3823 * 1024), event.getCombinedOccupancyEnd(),
                 "Combined end occupancy not parsed correctly.");
         assertEquals(kilobytes(24576 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
+        assertEquals(27300, event.getExtRootScanningTime(), "External root scanning time not parsed correctly.");
         assertEquals(1100, event.getOtherTime(), "Other time not parsed correctly.");
         assertEquals(153101 + 1100, event.getDurationMicros(), "Duration not parsed correctly.");
         assertEquals(335, event.getTimeUser(), "User time not parsed correctly.");
@@ -196,6 +197,18 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         String logLine = "[2021-10-29T20:56:08.426+0000][info][gc,start      ] GC(734) Pause Young (Prepare Mixed) "
                 + "(G1 Humongous Allocation) Other: 0.1ms Humongous regions: 13->13 "
                 + "Metaspace: 66401K->66401K(151552K) 15678M->1575M(16384M) 24.193ms User=0.12s Sys=0.00s Real=0.03s";
+        assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
+                "Event name incorrect.");
+    }
+
+    @Test
+    void testPreprocessedTriggerG1HumongousAllocationTooSpaceExhausted() {
+        String logLine = "[14.232s][info][gc,start] GC(17368) Pause Young (Prepare Mixed) (G1 Humongous Allocation) "
+                + "To-space exhausted Other: 1.3ms Humongous regions: 312->70 Metaspace: 401628K->401628K(1421312K) "
+                + "11481M->8717M(12000M) 1125.930ms User=6.31s Sys=0.13s Real=1.13s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);

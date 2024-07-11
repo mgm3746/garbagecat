@@ -18,6 +18,7 @@ import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_EXPLICIT_GC_SERIAL_G1;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_G1_HUMONGOUS_JDK_OLD;
+import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_OOME_EXIT;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_PHYSICAL_MEMORY;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.ERROR_UNIDENTIFIED_LOG_LINES_PREPARSE;
 import static org.eclipselabs.garbagecat.util.jdk.Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED;
@@ -59,6 +60,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
+import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.Memory;
@@ -66,9 +68,12 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 import org.github.joa.JvmOptions;
 import org.github.joa.domain.GarbageCollector;
 import org.github.joa.domain.JvmContext;
@@ -405,6 +410,24 @@ public class JvmRun {
         if (jvmOptions != null) {
             jvmOptions.doAnalysis();
         }
+
+        // Check for OOME with -XX:+ExitOnOutOfMemoryError
+        if (!getUnidentifiedLogLines().isEmpty()) {
+            String lastUnidentifiedLogLine = getUnidentifiedLogLines().get(getUnidentifiedLogLines().size() - 1);
+            Matcher matcher = UnifiedPreprocessAction.REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN
+                    .matcher(lastUnidentifiedLogLine);
+            if (matcher.find()) {
+                Trigger trigger = UnifiedSafepoint.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2));
+                if (trigger == Trigger.REPORT_JAVA_OUT_OF_MEMORY) {
+                    analysis.add(0, ERROR_OOME_EXIT);
+                    getUnidentifiedLogLines().remove(getUnidentifiedLogLines().size() - 1);
+                    if (getUnidentifiedLogLines().isEmpty()) {
+                        getEventTypes().remove(JdkUtil.LogEventType.UNKNOWN);
+                    }
+                }
+            }
+        }
+
         // Unidentified logging lines
         if (!getUnidentifiedLogLines().isEmpty()) {
             if (!preprocessed) {

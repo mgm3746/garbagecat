@@ -1,0 +1,27 @@
+[157.465s][info] Entering safepoint region: G1CollectForAllocation
+[157.465s][info] Leaving safepoint region
+[157.465s][info] GC(15294) Concurrent Clear Claimed Marks 1.132ms
+[157.466s][info] GC(15294) Concurrent Scan Root Regions
+[157.466s][info] Total time for which application threads were stopped: 0.0011214 seconds, Stopping threads took: 0.0001301 seconds
+[157.490s][info] GC(15294) Concurrent Scan Root Regions 24.155ms
+[157.490s][info] GC(15294) Concurrent Mark (94357.490s)
+[157.490s][info] GC(15294) Concurrent Mark From Roots
+[157.490s][info] GC(15294) Using 2 workers of 2 for marking
+[158.466s][info] Application time: 1.0004537 seconds
+[158.466s][info] Entering safepoint region: Cleanup
+[158.467s][info] Leaving safepoint region
+[158.467s][info] Total time for which application threads were stopped: 0.0005815 seconds, Stopping threads took: 0.0001450 seconds
+[159.232s][info] GC(15294) Concurrent Mark From Roots 1741.911ms
+[159.232s][info] GC(15294) Concurrent Preclean
+[159.233s][info] GC(15294) Concurrent Preclean 0.891ms
+[159.233s][info] GC(15294) Concurrent Mark (94357.490s, 94359.233s) 1742.856ms
+[159.233s][info] Application time: 0.7660086 seconds
+[159.233s][info] Entering safepoint region: CGC_Operation
+[159.234s][info] GC(15294) Pause Remark
+[159.268s][info] GC(15294) Cleaned string and symbol table, strings: 128672 processed, 12 removed, symbols: 588654 processed, 1 removed
+[159.268s][info] GC(15294) Pause Remark 7479M->6639M(10580M) 34.454ms
+[159.268s][info] GC(15294) User=0.15s Sys=0.00s Real=0.03s
+[159.268s][info] Leaving safepoint region
+[159.268s][info] Total time for which application threads were stopped: 0.0355095 seconds, Stopping threads took: 0.0001278 seconds
+[159.268s][info] GC(15294) Concurrent Rebuild Remembered Sets
+[160.475s][info] Application time: 1.2071155 seconds

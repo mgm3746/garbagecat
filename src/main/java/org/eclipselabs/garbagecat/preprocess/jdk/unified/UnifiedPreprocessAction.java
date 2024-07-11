@@ -363,7 +363,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     private static final String REGEX_RETAIN_BEGINNING_SAFEPOINT = "^(" + UnifiedRegEx.DECORATOR
             + " Entering safepoint region: " + UnifiedSafepoint.triggerRegEx() + ")$";
 
-    private static final Pattern REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN = Pattern
+    public static final Pattern REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_SAFEPOINT);
 
     /**
@@ -1421,14 +1421,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_BEGINNING_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                if (nextLogEntry == null || REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(nextLogEntry).matches()) {
-                    // Non GC safepoint
-                    this.logEntry = matcher.group(1);
-                    context.add(PreprocessAction.NEWLINE);
-                } else {
-                    // GC safepoint, output after GC event
-                    entangledLogLines.add(matcher.group(1));
-                }
+                entangledLogLines.add(matcher.group(1));
             }
             context.add(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT);
             context.add(TOKEN);
@@ -1566,18 +1559,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SAFEPOINT_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
             if (matcher.matches()) {
-                boolean haveBeginningSafepointLogging = false;
-                for (String logLine : entangledLogLines) {
-                    if (logLine.matches(REGEX_RETAIN_BEGINNING_SAFEPOINT)) {
-                        haveBeginningSafepointLogging = true;
-                    }
-                }
-                if (haveBeginningSafepointLogging) {
-                    entangledLogLines.add(matcher.group(1));
-                } else {
-                    this.logEntry = matcher.group(1);
-                    context.remove(PreprocessAction.NEWLINE);
-                }
+                entangledLogLines.add(matcher.group(1));
             }
         } else if ((matcher = REGEX_RETAIN_MIDDLE_SHENANDOAH_DATA_PATTERN.matcher(logEntry)).matches()) {
             matcher.reset();
