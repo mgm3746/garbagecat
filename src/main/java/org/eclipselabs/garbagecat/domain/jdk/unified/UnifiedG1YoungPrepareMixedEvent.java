@@ -55,7 +55,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </p>
  * 
  * <pre>
- * [217224.994s][info][gc] GC(137) Pause Young (Prepare Mixed) (G1 Evacuation Pause) 13840M->7940M(16384M) 44.565ms"
+ * [217224.994s][info][gc] GC(137) Pause Young (Prepare Mixed) (G1 Evacuation Pause) 13840M-&gt;7940M(16384M) 44.565ms"
  * </pre>
  * 
  * <p>

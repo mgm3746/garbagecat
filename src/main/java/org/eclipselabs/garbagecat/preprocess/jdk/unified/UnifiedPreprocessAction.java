@@ -1480,13 +1480,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                         entangledLogLines.add(logEntry);
                     } else {
                         // Single log event or beginning of multi-line event
-                        if (priorLogEntry == null) {
-                            // first line in log file
-                            this.logEntry = logEntry;
-                        } else {
-                            this.logEntry = Constants.LINE_SEPARATOR + logEntry;
-                        }
-                        // context.add(UnifiedLogging.Tag.GC_START.toString());
+                        this.logEntry = logEntry;
                         context.add(PreprocessAction.NEWLINE);
                     }
                 } else {

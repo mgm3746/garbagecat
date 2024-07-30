@@ -43,7 +43,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * <h2>Example Logging</h2>
  * 
  * <pre>
- * [2020-02-14T15:21:55.207-0500][052ms] [Pause Full 1589M->1002M(1690M), 4077.274 ms], [Metaspace: 282195K->281648K(1314816K)]
+ * [2020-02-14T15:21:55.207-0500][052ms] [Pause Full 1589M-&gt;1002M(1690M), 4077.274 ms], [Metaspace: 282195K-&gt;281648K(1314816K)]
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

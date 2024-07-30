@@ -52,7 +52,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </p>
  * 
  * <pre>
- * [89968.517s][info][gc] GC(1344) Pause Full (G1 Evacuation Pause) 16382M->13777M(16384M) 6796.352ms
+ * [89968.517s][info][gc] GC(1344) Pause Full (G1 Evacuation Pause) 16382M-&gt;13777M(16384M) 6796.352ms
  * </pre>
  * 
  * <p>

@@ -2737,7 +2737,21 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testPauseYoungInfoConcurrentStartTriggerG1HumongousAllocation() {
+    void testPauseYoungInfoConcurrentStartTriggerG1HumongousAllocationFull() {
+        String logLine = "[390354.671s][info][gc] GC(1471) Pause Young (Concurrent Start) (G1 Humongous Allocation) "
+                + "16113M->15932M(16384M) 36.022ms";
+        String nextLogLine = "[390354.671s][info][gc] GC(1472) Concurrent Cycle";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testPauseYoungInfoConcurrentStartTriggerG1HumongousAllocationMiddle() {
         String logLine = "[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) Pause Young (Concurrent Start) "
                 + "(G1 Humongous Allocation) 882M->842M(1223M) 19.777ms";
         String nextLogLine = "[2020-06-24T19:24:56.395-0700][4442390ms] GC(126) User=0.04s Sys=0.00s Real=0.02s";
@@ -2752,7 +2766,7 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testPauseYoungInfoConcurrentStartTriggerGcLockerInitiatedGc() {
+    void testPauseYoungInfoConcurrentStartTriggerGcLockerInitiatedGcMiddle() {
         String logLine = "[2023-02-12T01:16:20.227+0200][info][gc             ] GC(3296) Pause Young "
                 + "(Concurrent Start) (GCLocker Initiated GC) 614121M->614121M(614400M) 52.062ms";
         String nextLogLine = "[2023-02-12T01:16:20.228+0200][info][gc,cpu         ] GC(3296) User=3.24s Sys=0.03s "
@@ -2795,6 +2809,21 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context);
         assertEquals(" 1M->1M(4M) 0.792ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testPauseYoungInfoNormalTriggerGcLockerInitiatedGcFull() {
+        String logLine = "[390354.862s][info][gc] GC(1473) Pause Young (Normal) (GCLocker Initiated GC) "
+                + "16340M->16340M(16384M) 47.840ms";
+        String nextLogLine = "[390361.491s][info][gc] GC(1474) Pause Full (GCLocker Initiated GC) "
+                + "16340M->15902M(16384M) 6628.742ms";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test

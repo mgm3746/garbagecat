@@ -104,13 +104,13 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * [0.068s][info][gc,phases   ] GC(3)   Evacuate Collection Set: 0.5ms
  * [0.068s][info][gc,phases   ] GC(3)   Post Evacuate Collection Set: 0.1ms
  * [0.068s][info][gc,phases   ] GC(3)   Other: 0.0ms
- * [0.068s][info][gc,heap     ] GC(3) Eden regions: 1-&gt;>0(1)
+ * [0.068s][info][gc,heap     ] GC(3) Eden regions: 1-&gt;0(1)
  * [0.068s][info][gc,heap     ] GC(3) Survivor regions: 1-&gt;1(1)
  * [0.068s][info][gc,heap     ] GC(3) Old regions: 0-&gt;1
  * [0.068s][info][gc,heap     ] GC(3) Archive regions: 2-&gt;2
  * [0.068s][info][gc,heap     ] GC(3) Humongous regions: 0-&gt;0
  * [0.068s][info][gc,metaspace] GC(3) Metaspace: 1071K(1280K)-&gt;1071K(1280K) NonClass: 981K(1088K)-&gt;981K(1088K) Class: 89K(192K)-&gt;89K(192K)
- * [0.068s][info][gc          ] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 2M->2M(7M) 0.681ms
+ * [0.068s][info][gc          ] GC(3) Pause Young (Normal) (G1 Evacuation Pause) 2M-&gt;2M(7M) 0.681ms
  * [0.068s][info][gc,cpu      ] GC(3) User=0.00s Sys=0.00s Real=0.00s
  * [0.068s][info][safepoint   ] Safepoint "G1CollectForAllocation", Time since last: 3273659 ns, Reaching safepoint: 12838 ns, At safepoint: 704423 ns, Total: 717261 ns
  * </pre>
