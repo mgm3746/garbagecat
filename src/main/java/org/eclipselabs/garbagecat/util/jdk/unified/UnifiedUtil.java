@@ -154,6 +154,8 @@ public final class UnifiedUtil {
                 eventType = LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD;
             } else if (UnifiedParallelScavengeEvent.match(logLine)) {
                 eventType = LogEventType.UNIFIED_PARALLEL_SCAVENGE;
+            } else if (UnifiedSerialOldEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_SERIAL_OLD;
             }
             break;
         case SERIAL:
