@@ -246,13 +246,13 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals("-XX:MaxHeapSize=45097156608", jvmRun.getJvmOptions().getMaxHeapSize(),
                 "Max heap value not parsed correctly.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LTE.getKey()),
-                org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LTE
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LT.getKey()),
+                org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LT
                         + " analysis incorrectly identified.");
-        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_32G_GT.getKey()),
-                org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_32G_GT + " analysis incorrectly identified.");
-        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_CLASS_SIZE_HEAP_32G_GT.getKey()),
-                org.github.joa.util.Analysis.WARN_COMP_CLASS_SIZE_HEAP_32G_GT + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_32G_GTE.getKey()),
+                org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_32G_GTE + " analysis incorrectly identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_CLASS_SIZE_HEAP_32G_GTE.getKey()),
+                org.github.joa.util.Analysis.WARN_COMP_CLASS_SIZE_HEAP_32G_GTE + " analysis not identified.");
     }
 
     /**
