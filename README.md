@@ -7,7 +7,7 @@ A command line tool that parses Java garbage collection logging and does analysi
 OpenJDK derivatives:
 * Adoptium/AdoptOpenJDK
 * Azul
-* Microsoft Build of OpenJDK
+* Microsoft build of OpenJDK
 * Oracle JDK
 * Red Hat build of OpenJDK
 * etc.
@@ -397,6 +397,6 @@ info
 
 ## Copyright ##
 
-Copyright (c) 2008-2023 Mike Millson
+Copyright (c) 2008-2024 Mike Millson
 
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at [http://www.eclipse.org/legal/epl-v10.html](http://www.eclipse.org/legal/epl-v10.html).
