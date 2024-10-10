@@ -82,8 +82,8 @@ public class UnifiedYoungEvent extends UnknownCollector
      * Regular expression defining the logging.
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(" + __TRIGGER + "\\) "
-            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
-            + TimesData.REGEX_JDK9 + "?[ ]*$";
+            + "(Promotion failed )?" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) "
+            + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -141,20 +141,20 @@ public class UnifiedYoungEvent extends UnknownCollector
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12)).intValue();
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 13)).intValue();
             long time = UnifiedUtil.calculateTime(matcher);
             if (!isEndstamp()) {
                 timestamp = time;
             } else {
                 timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
-            trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-            combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5).charAt(0)).convertTo(KILOBYTES);
-            combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8).charAt(0)).convertTo(KILOBYTES);
-            combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
+            trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE +  1));
+            combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6).charAt(0)).convertTo(KILOBYTES);
+            combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9).charAt(0)).convertTo(KILOBYTES);
+            combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12).charAt(0)).convertTo(KILOBYTES);
         }
     }
 

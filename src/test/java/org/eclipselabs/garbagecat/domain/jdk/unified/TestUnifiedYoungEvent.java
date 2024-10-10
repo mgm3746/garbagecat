@@ -115,6 +115,24 @@ class TestUnifiedYoungEvent {
     }
 
     @Test
+    void testPromotionFailed() {
+        String logLine = "[2024-10-09T20:53:08.713+0000][gc,start] GC(11649) Pause Young (Allocation Failure) "
+                + "Promotion failed 1454M->1504M(1585M) 101.900ms User=0.08s Sys=0.01s Real=0.10s";
+        assertTrue(UnifiedYoungEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + ".");
+        UnifiedYoungEvent event = new UnifiedYoungEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.UNIFIED_YOUNG.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(781804388713L, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
+        assertEquals(kilobytes(1454 * 1024), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(kilobytes(1504 * 1024), event.getCombinedOccupancyEnd(),
+                "Combined end occupancy not parsed correctly.");
+        assertEquals(kilobytes(1585 * 1024), event.getCombinedSpace(), "Combined space size not parsed correctly.");
+        assertEquals(101900, event.getDurationMicros(), "Duration not parsed correctly.");
+    }
+
+    @Test
     void testReportable() {
         assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_YOUNG),
                 JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " not indentified as reportable.");

@@ -1154,6 +1154,20 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR + " O: (ClassLoaderData|Concurrent (Classes Unlink|References Process)|"
                     + "Trigger cleanups)$",
+            // ***** Class Histogram *****
+            "^" + UnifiedRegEx.DECORATOR + " Class Histogram \\((after|before) full gc\\)$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + "  num     #instances         #bytes  class name \\(module\\)$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " -------------------------------------------------------$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + "[ ]+\\d{1,}:[ ]{1,}\\d{1,}[ ]{1,}\\d{1,}[ ]{1,}"
+                    + "[a-zA-Z0-9<>\\[\\$\\._;\\/@\\(\\) -]+$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Total[ ]{1,}\\d{1,}[ ]{1,}\\d{1,}$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + " Class Histogram \\((after|before) full gc\\) " + JdkRegEx.DURATION_MS
+                    + "$",
             // ***** Other *****
             "^" + UnifiedRegEx.DECORATOR + " ... found polling page loop exception at pc .+$",
             //
