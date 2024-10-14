@@ -978,12 +978,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "Basic information|Class Unloading|Concurrent refinemen|Deactivated worker|Dead humongous region|"
                     + "Dictionary|do not continue mixed GCs|Do not |Finalize|Finish|Flush Task Caches|"
                     + "GC Termination Stats|Heap (after|before) GC|Humongous region |Live humongous region|Mark stats|"
-                    + "Marking Stats|Mutator Allocation stats|No Remembered Set|Old |Performing GC |Preclean |"
-                    + "request mixed gcs|ProtectionDomainCacheTable|Pruned |Purge Metaspace|Reclaim |Reclaimed |"
-                    + "Reference Processing|Remembered Set Tracking|Report Object Count|request young-only gcs|"
-                    + "Running G1|Setting _needs_gc\\.|Skipped phase|Skipping Remembered Set|Start adding |"
-                    + "TLAB totals|Updated Refinement Zones|Update Remembered Set Tracking|Weak Processing|"
-                    + "Young (other|PLAB|sizing)).*$",
+                    + "Marking Stats|Mutator Allocation stats|No Remembered Set|Old |Par Mark|Performing GC |"
+                    + "Preclean |request mixed gcs|Pre Compact|ProtectionDomainCacheTable|Pruned |Purge Metaspace|"
+                    + "Reclaim |Reclaimed |Reference Processing|Remembered Set Tracking|Report Object Count|"
+                    + "request young-only gcs|Running G1|Scavenge|Setting _needs_gc\\.|Skipped phase|"
+                    + "Skipping Remembered Set|Start adding |TLAB totals|Updated Refinement Zones|"
+                    + "Update Remembered Set Tracking|VM-Thread |Weak Processing|Young (other|PLAB|sizing)).*$",
             // Indented 3 spaces
             "^" + UnifiedRegEx.DECORATOR
                     + "   (Elapsed time|JNI Weak|JVMTI Tag Weak OopStorage|FinalReference:|Mark Stats Cache:|"
