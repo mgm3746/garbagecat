@@ -2424,6 +2424,42 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testMetaspaceArena() {
+        String logLine = "[18.190s][info ][metaspace               ] Arena @0x000000001289d820 (non-class sm): failed "
+                + "to allocate new chunk for requested word size 2045.";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testMetaspaceChkMgr() {
+        String logLine = "[18.190s][info ][metaspace               ] ChkMgr @0x00000000127f0400 (non-class-space): "
+                + "failed to commit 2045 words on chunk @0x00000000140f0cb0, f, base 0x00007fa21d370000, level lv10.";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testMetaspaceClms() {
+        String logLine = "[18.286s][info ][metaspace               ] CLMS @0x0000000014342b80 : GC threshold "
+                + "increased: 23330816->23658496.";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testMetaspaceData() {
         String logLine = "[0.032s][info][gc,metaspace ] GC(0) Metaspace: 120K->120K(1056768K)";
         Set<String> context = new HashSet<String>();
@@ -2505,6 +2541,18 @@ class TestUnifiedPreprocessAction {
                 + "201.0ms (200.0ms/201.0ms)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testMutatorAllocationRate() {
+        String logLine = "[15.784s][debug][gc,alloc                ] Mutator Allocation Rate: 19.9MB/s Predicted: "
+                + "19.9MB/s, Avg: 19.9(+/-0.0)MB/s";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -3002,6 +3050,17 @@ class TestUnifiedPreprocessAction {
     @Test
     void testPerformingGcAfterExcitingCriticalSection() {
         String logLine = "[1234ms] Performing GC after exiting critical section. Thread \"default task-12\" 0 locked.";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testPgeCacheFlushed() {
+        String logLine = "[6.040s][debug][gc,heap                 ] Page Cache Flushed: 2M";
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -5824,6 +5883,55 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testStringDeduplication() throws IOException {
+        File testFile = TestUtil.getFile("dataset292.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
+                "Log line not recognized as " + LogEventType.UNIFIED_CONCURRENT.toString() + ".");
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                LogEventType.UNKNOWN.toString() + " collector identified.");
+    }
+
+    @Test
+    void testStringDeduplicationLastResizeTable() {
+        String logLine = "[18.903s][debug][stringdedup             ]   Last Resize Table: 1/0.629ms";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testStringDeduplicationResizeTable() {
+        String logLine = "[18.640s][debug][stringdedup,phases,start] Resize Table: 503 -> 1009 (7043)";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testStringDeduplicationTotalResizeTable() {
+        String logLine = "[18.903s][debug][stringdedup             ]   Total Resize Table: 1/0.629ms";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testStringDedupTableWeak3Spaces() {
         String logLine = "[0.843s][debug][gc,phases      ] GC(1)   StringDedup Table Weak         Min:  0.0, "
                 + "Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.1, Workers: 13";
@@ -5933,6 +6041,28 @@ class TestUnifiedPreprocessAction {
     void testTotalRefinement() {
         String logLine = "[0.834s][debug][gc,refine,stats] GC(0) Total refinement: 0.00ms, refined: 0, precleaned: 0, "
                 + "dirtied: 0";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testUncommitted() {
+        String logLine = "[7.180s][info ][gc,heap                 ] Uncommitted: 1012M(4%)";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testUncommitTimout() {
+        String logLine = "[301.961s][debug][gc,heap                 ] Uncommit Timeout: 300s";
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");

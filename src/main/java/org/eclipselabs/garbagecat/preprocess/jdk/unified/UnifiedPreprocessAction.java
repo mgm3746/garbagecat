@@ -974,46 +974,51 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             "^" + UnifiedRegEx.DECORATOR + " Young (desired|list|target) length.+$",
             // main headings
             "^" + UnifiedRegEx.DECORATOR
-                    + " (---|[ ]{1,2}\\d{1,}|     elapsed|thr|Activated worker|Adaptive IHOP information|"
-                    + "Basic information|Class Unloading|Concurrent refinemen|Deactivated worker|Dead humongous region|"
-                    + "Dictionary|do not continue mixed GCs|Do not |Finalize|Finish|Flush Task Caches|"
-                    + "GC Termination Stats|Heap (after|before) GC|Humongous region |Live humongous region|Mark stats|"
-                    + "Marking Stats|Mutator Allocation stats|No Remembered Set|Old |Par Mark|Performing GC |"
-                    + "Preclean |request mixed gcs|Pre Compact|ProtectionDomainCacheTable|Pruned |Purge Metaspace|"
-                    + "Reclaim |Reclaimed |Reference Processing|Remembered Set Tracking|Report Object Count|"
-                    + "request young-only gcs|Running G1|Scavenge|Setting _needs_gc\\.|Skipped phase|"
-                    + "Skipping Remembered Set|Start adding |TLAB totals|Updated Refinement Zones|"
-                    + "Update Remembered Set Tracking|VM-Thread |Weak Processing|Young (other|PLAB|sizing)).*$",
+                    + " (---|[ ]{1,2}\\d{1,}|     elapsed|thr|Active|Activated worker|Adaptive IHOP information|Arena|"
+                    + "Basic information|ChkMgr|CLMS|Class Unloading|Concurrent refinemen|Deactivated worker|"
+                    + "Dead humongous region|Dictionary|do not continue mixed GCs|Do not |Finalize|Finish|"
+                    + "Flush Task Caches|GC Termination Stats|Heap (after|before) GC|Humongous region |Idle|"
+                    + "Live humongous region|Mark stats|Marking Stats|Mutator Allocation |No Remembered Set|Old |"
+                    + "Page Cache Flushed:|Par Mark|Performing GC |Preclean |Process|request mixed gcs|Pre Compact|"
+                    + "ProtectionDomainCacheTable|Pruned |Purge Metaspace|Reclaim |Reclaimed |Reference Processing|"
+                    + "Remembered Set Tracking|Report Object Count|Resize Table|request young-only gcs|Running G1|"
+                    + "Scavenge|Setting _needs_gc\\.|Skipped phase|Skipping Remembered Set|"
+                    + "Starting string deduplication thread|Start adding |Table|TLAB totals|Updated Refinement Zones|"
+                    + "Uncommitted:|Uncommit Timeout|Update Remembered Set Tracking|VM-Thread |Weak Processing|"
+                    + "Young (other|PLAB|sizing)).*$",
             // Indented 3 spaces
             "^" + UnifiedRegEx.DECORATOR
-                    + "   (Elapsed time|JNI Weak|JVMTI Tag Weak OopStorage|FinalReference:|Mark Stats Cache:|"
-                    + "Notify and keep alive finalizable:|Notify PhantomReferences:|Notify Soft/WeakReferences:|"
-                    + "ObjectSynchronizer Weak|PhantomReference:|Reconsider SoftReferences:|ResolvedMethodTable Weak|"
-                    + "SoftReference:|Step Times \\(cum\\):|StringDedup Requests|StringDedup Table Weak|"
-                    + "StringTable Weak|VM Weak|Weak JFR Old Object Samples|WeakReference:).*$",
+                    + "   (Elapsed time|JNI Weak|JVMTI Tag Weak OopStorage|FinalReference:|Last Process|"
+                    + "Last Resize Table:|Mark Stats Cache:|Notify and keep alive finalizable:|"
+                    + "Notify PhantomReferences:|Notify Soft/WeakReferences:|ObjectSynchronizer Weak|PhantomReference:|"
+                    + "Reconsider SoftReferences:|ResolvedMethodTable Weak|SoftReference:|Step Times \\(cum\\):|"
+                    + "StringDedup Requests|StringDedup Table Weak|StringTable Weak|Total Process:|Total Resize Table:|"
+                    + "VM Weak|Weak JFR Old Object Samples|WeakReference:).*$",
             // Indented 5 spaces
             "^" + UnifiedRegEx.DECORATOR + "     (AOT Root Scanning \\(ms\\):|Balance queues:|Choose Collection Set:|"
                     + "Clear Claimed Marks:|Clear Card Table:|Cleared:|Code Root Scan \\(ms\\):|"
-                    + "Code Root Scanning \\(ms\\):|Code Roots|Concatenate Dirty Card Logs:|Dead|"
+                    + "Code Root Scanning \\(ms\\):|Code Roots|Concatenate Dirty Card Logs:|Dead|Deduplicated:|"
                     + "DerivedPointerTable Update:|Discovered|Eager Reclaim \\(ms\\):|Expand Heap After Collection|"
                     + "FinalRef \\(ms\\):|Free Collection Set:|GC Worker (Other|Total) \\(ms\\):|"
-                    + "Hot Card Cache \\(ms\\):|Humongous Reclaim:|Humongous Register:|Log Buffers \\(ms\\):|"
-                    + "Merge Per-Thread State:|Object Copy \\(ms\\):|PhantomRef \\(ms\\):|Post Evacuate Cleanup|"
-                    + "Prepare Heap Roots:|Prepare Merge Heap Roots:|Prepare TLABs:|Rebuild Free List:|Redirty Cards:|"
-                    + "Reference Processing:|Region Register:|Remembered Sets \\(ms\\):|Resize TLABs:|"
-                    + "Scan Heap Roots \\(ms\\):|Scan RS \\(ms\\):|SoftRef \\(ms\\)|Start New Collection Set:|"
-                    + "Termination \\(ms\\):|Total|Weak Processing:|Update RS \\(ms\\):|WeakRef \\(ms\\):).*$",
+                    + "Hot Card Cache \\(ms\\):|Humongous Reclaim:|Humongous Register:|Inspected:|"
+                    + "Log Buffers \\(ms\\):|Merge Per-Thread State:|Object Copy \\(ms\\):|PhantomRef \\(ms\\):|"
+                    + "Post Evacuate Cleanup|Prepare Heap Roots:|Prepare Merge Heap Roots:|Prepare TLABs:|"
+                    + "Rebuild Free List:|Redirty Cards:|Reference Processing:|Region Register:|"
+                    + "Remembered Sets \\(ms\\):|Resize TLABs:|Scan Heap Roots \\(ms\\):|Scan RS \\(ms\\):|Skipped|"
+                    + "SoftRef \\(ms\\)|Start New Collection Set:|Termination \\(ms\\):|Total|Weak Processing:|"
+                    + "Update RS \\(ms\\):|WeakRef \\(ms\\):).*$",
             // Indented 7 spaces
-            "^" + UnifiedRegEx.DECORATOR + "       (Claimed (Cards|Chunks):|Clear Logged Cards \\(ms\\):|Dirty Cards:|"
+            "^" + UnifiedRegEx.DECORATOR
+                    + "       (Claimed (Cards|Chunks):|Clear Logged Cards \\(ms\\):|Deleted:|Dirty Cards:|"
                     + "Eagerly Reclaim Humongous Objects \\(ms\\):|FinalReference:|Free Collection Set \\(ms\\):|"
-                    + "JNI Weak|JVMTI Tag Weak OopStorage|Merge Per-Thread State \\(ms\\):|"
-                    + "Merged (Coarse|Fine|Sparse):|Notify and keep alive finalizable:|Notify PhantomReferences:|"
+                    + "JNI Weak|JVMTI Tag Weak OopStorage|Known:|Merge Per-Thread State \\(ms\\):|"
+                    + "Merged (Coarse|Fine|Sparse):|New:|Notify and keep alive finalizable:|Notify PhantomReferences:|"
                     + "Notify Soft/WeakReferences:|ObjectSynchronizer Weak|PhantomReference:|Processed Buffers:|"
                     + "Purge Code Roots \\(ms\\):|Recalculate Used Memory \\(ms\\):|Reconsider SoftReferences:|"
-                    + "Redirty Logged Cards \\(ms\\):|Reset Hot Card Cache \\(ms\\):|ResolvedMethodTable Weak|"
-                    + "Scanned Blocks:|Scanned Cards:|Skipped Cards:|SoftReference:|StringDedup Requests|"
-                    + "StringDedup Table Weak|StringTable Weak|Termination Attempts:|Update Derived Pointers \\(ms\\):|"
-                    + "VM Weak|Weak JFR Old Object Samples|WeakReference:).*$",
+                    + "Redirty Logged Cards \\(ms\\):|Replaced:|Reset Hot Card Cache \\(ms\\):|"
+                    + "ResolvedMethodTable Weak|Scanned Blocks:|Scanned Cards:|Shared:|Skipped Cards:|SoftReference:|"
+                    + "StringDedup Requests|StringDedup Table Weak|StringTable Weak|Termination Attempts:|"
+                    + "Update Derived Pointers \\(ms\\):|VM Weak|Weak JFR Old Object Samples|WeakReference:).*$",
             // Indented 9 spaces (match only first letter performance optimization)
             "^" + UnifiedRegEx.DECORATOR + "         [BCDFHLPRSTW].*$",
             // ***** Parallel *****

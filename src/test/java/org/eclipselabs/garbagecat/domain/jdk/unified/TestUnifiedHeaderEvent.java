@@ -562,9 +562,58 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testJavaClassPathInitial() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][arguments] java_class_path (initial): java/.:java/my.jar";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+    
+    @Test
+    void testJavaCommand() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][arguments] java_command: <unknown>";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    
+    @Test
+    void testJvmArgs() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][arguments] jvm_args: -Djava.awt.headless=true";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+    
+    @Test
     void testLargePageSupport() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[0.013s][info][gc,init] Large Page Support: Disabled";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testLauncherType() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][arguments] Launcher Type: generic";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
@@ -1227,6 +1276,18 @@ class TestUnifiedHeaderEvent {
         assertNotEquals(JdkUtil.LogEventType.GC_INFO,
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + "incorrectly identified.");
+    }
+
+    @Test
+    void testVmArguments() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][arguments] VM Arguments:";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
 
     @Test
