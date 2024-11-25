@@ -99,7 +99,7 @@ class TestUnifiedOldEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
@@ -146,14 +146,14 @@ class TestUnifiedOldEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_YOUNG),
-                JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " collector not identified.");
+                JdkUtil.LogEventType.UNIFIED_YOUNG.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_OLD),
-                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " collector not identified.");
+                JdkUtil.LogEventType.UNIFIED_OLD.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
         UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (89 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -183,7 +183,7 @@ class TestUnifiedOldEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW),
@@ -206,10 +206,10 @@ class TestUnifiedOldEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),

@@ -111,6 +111,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahTriggerEve
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZAllocationStallEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndYoungEvent;
@@ -183,11 +184,11 @@ public final class JdkUtil {
         //
         UNIFIED_SHENANDOAH_INIT_UPDATE_REFS, UNIFIED_SHENANDOAH_STATS, UNIFIED_SHENANDOAH_TRIGGER, UNIFIED_YOUNG,
         //
-        UNKNOWN, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_ALLOCATION_STALL, Z_MARK_END, Z_MARK_END_OLD,
+        UNKNOWN, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_ALLOCATION_STALL, Z_CONCURRENT, Z_MARK_END,
         //
-        Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD, Z_RELOCATE_START,
+        Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD,
         //
-        Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG, Z_RELOCATION_STALL, Z_STATS
+        Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG, Z_RELOCATION_STALL, Z_STATS
     }
 
     /**
@@ -865,6 +866,8 @@ public final class JdkUtil {
         // Z
         case Z_ALLOCATION_STALL:
             return new ZAllocationStallEvent(logLine);
+        case Z_CONCURRENT:
+            return new ZConcurrentEvent(logLine);
         case Z_MARK_END:
             return new ZMarkEndEvent(logLine);
         case Z_MARK_END_OLD:

@@ -133,12 +133,12 @@ class TestFooterStatsEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.FOOTER_STATS),
-                JdkUtil.LogEventType.FOOTER_STATS.toString() + " collector not identified.");
+                JdkUtil.LogEventType.FOOTER_STATS.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.BLANK_LINE),
-                JdkUtil.LogEventType.BLANK_LINE.toString() + " collector not identified.");
+                JdkUtil.LogEventType.BLANK_LINE.toString() + " event not identified.");
     }
 
     @Test

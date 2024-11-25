@@ -52,10 +52,10 @@ class TestG1YoungInitialMarkEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_INITIAL_MARK),
                 "Log line not recognized as " + LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1.getKey()),

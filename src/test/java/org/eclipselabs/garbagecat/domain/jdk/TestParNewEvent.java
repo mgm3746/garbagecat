@@ -528,7 +528,7 @@ class TestParNewEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");

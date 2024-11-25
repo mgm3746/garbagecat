@@ -406,14 +406,14 @@ class TestG1YoungPauseEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_CONCURRENT),
-                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
+                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.G1_CONCURRENT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.G1_CONCURRENT.toString() + " event not identified.");
     }
 
     /**
@@ -432,12 +432,12 @@ class TestG1YoungPauseEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " collector not identified.");
+                JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
     }

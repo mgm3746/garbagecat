@@ -25,6 +25,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahFinalRootsEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartYoungAndOldEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
@@ -1110,7 +1111,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // ***** Z *****
             "^" + UnifiedRegEx.DECORATOR
                     + " (Garbage|Major|Minor) Collection \\((Allocation (Rate|Stall)|CodeCache GC Threshold|"
-                    + "High Usage|Metadata GC Threshold|Proactive|Warmup)\\).*$",
+                    + "High Usage|Metadata GC Threshold|Proactive|Warmup)\\)$",
             //
             "^" + UnifiedRegEx.DECORATOR + "( O:)? Using \\d{1,} [wW]orkers( for (Old|Young) Generation)?$",
             //
@@ -1120,9 +1121,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "( [OYy]:)?[ ]{1,}(Allocated|Capacity|Final|Forwarding Usage|Free|Garbage|Large Pages|Live|Load|"
                     + "Mark|Mark Stack Usage|(Max|Min) Capacity|Medium Pages|MMU|NMethods|Phantom|Reclaimed|"
                     + "Small Pages|Soft|Soft Max Capacity|Used|Weak):.+$",
-            //
-            "^" + UnifiedRegEx.DECORATOR + "( [OYy]:)? Metaspace: " + JdkRegEx.SIZE + " used, " + JdkRegEx.SIZE
-                    + " committed, " + JdkRegEx.SIZE + " reserved$",
             //
             "^" + UnifiedRegEx.DECORATOR
                     + "( [OYy]:)?[ ]+Mark Start[ ]+Mark End[ ]+Relocate Start[ ]+Relocate End([ ]+High[ ]+Low)?[ ]*$",
@@ -1298,6 +1296,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || JdkUtil.parseLogLine(logLine, null,
                         CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFinalRootsEvent
                 || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedConcurrentEvent
+                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZConcurrentEvent
                 || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZMarkStartYoungAndOldEvent) {
             match = true;
         } else if (isThrowaway(logLine)) {
@@ -1648,7 +1647,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 entangledLogLines.add(logEntry);
                 context.remove(PreprocessAction.NEWLINE);
             }
-        } else if (JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof UnifiedConcurrentEvent
+        } else if ((JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof UnifiedConcurrentEvent
+                || JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ZConcurrentEvent)
                 && !isThrowaway(logEntry)) {
             // Stand alone event
             if (!context.contains(UnifiedLogging.Tag.GC_START.toString())

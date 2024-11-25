@@ -136,10 +136,10 @@ class TestShenandoahPreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -754,10 +754,10 @@ class TestShenandoahPreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -770,14 +770,14 @@ class TestShenandoahPreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
-                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " collector not identified.");
+                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
     }
 
     @Test
@@ -790,10 +790,10 @@ class TestShenandoahPreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -806,10 +806,10 @@ class TestShenandoahPreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -822,22 +822,22 @@ class TestShenandoahPreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(10, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_DEGENERATED_GC),
-                JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
-                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " collector not identified.");
+                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_UPDATE),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
-                JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " collector not identified.");
+                JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " event not identified.");
     }
 
     @Test

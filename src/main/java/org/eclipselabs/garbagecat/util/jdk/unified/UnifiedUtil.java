@@ -53,6 +53,7 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahStatsEvent
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahTriggerEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZAllocationStallEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkEndYoungEvent;
@@ -237,6 +238,8 @@ public final class UnifiedUtil {
                 eventType = LogEventType.UNIFIED_SHENANDOAH_TRIGGER;
             } else if (ZAllocationStallEvent.match(logLine)) {
                 eventType = LogEventType.Z_ALLOCATION_STALL;
+            } else if (ZConcurrentEvent.match(logLine)) {
+                eventType = LogEventType.Z_CONCURRENT;
             } else if (ZMarkEndEvent.match(logLine)) {
                 eventType = LogEventType.Z_MARK_END;
             } else if (ZMarkEndOldEvent.match(logLine)) {
@@ -265,6 +268,8 @@ public final class UnifiedUtil {
         case Z:
             if (ZAllocationStallEvent.match(logLine)) {
                 eventType = LogEventType.Z_ALLOCATION_STALL;
+            } else if (ZConcurrentEvent.match(logLine)) {
+                eventType = LogEventType.Z_CONCURRENT;
             } else if (ZMarkEndEvent.match(logLine)) {
                 eventType = LogEventType.Z_MARK_END;
             } else if (ZMarkEndOldEvent.match(logLine)) {

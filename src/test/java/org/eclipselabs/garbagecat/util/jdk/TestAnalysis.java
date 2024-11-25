@@ -194,10 +194,10 @@ class TestAnalysis {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
@@ -247,8 +247,7 @@ class TestAnalysis {
         assertEquals("-XX:MaxHeapSize=45097156608", jvmRun.getJvmOptions().getMaxHeapSize(),
                 "Max heap value not parsed correctly.");
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LT.getKey()),
-                org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LT
-                        + " analysis incorrectly identified.");
+                org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LT + " analysis incorrectly identified.");
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_32G_GTE.getKey()),
                 org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_32G_GTE + " analysis incorrectly identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_CLASS_SIZE_HEAP_32G_GTE.getKey()),
@@ -291,7 +290,7 @@ class TestAnalysis {
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_OOME_EXIT.getKey()),
                 Analysis.ERROR_OOME_EXIT + " analysis not identified.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
     }
 
     @Test
@@ -306,7 +305,7 @@ class TestAnalysis {
         jvmRun.doAnalysis();
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC.getKey()),
@@ -323,9 +322,9 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.VM_WARNING),
-                JdkUtil.LogEventType.VM_WARNING.toString() + " collector identified.");
+                JdkUtil.LogEventType.VM_WARNING.toString() + " event identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SHARED_MEMORY_12.getKey()),
                 Analysis.ERROR_SHARED_MEMORY_12 + " analysis identified.");
     }
@@ -374,7 +373,7 @@ class TestAnalysis {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEAP),
                 JdkUtil.LogEventType.HEAP.toString() + " not identified.");
@@ -619,7 +618,7 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
     }
 
     @Test
@@ -633,7 +632,7 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_OOME_METASPACE.getKey()),
                 Analysis.ERROR_OOME_METASPACE + " analysis identified.");
     }
@@ -653,7 +652,7 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_SCAVENGE),
                 "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PARALLEL_COMPACTING_OLD),
@@ -680,7 +679,7 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW),
                 "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK),
@@ -873,7 +872,7 @@ class TestAnalysis {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG),
-                JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " collector not identified.");
+                JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED.getKey()),
                 org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED + " analysis not identified.");
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING.getKey()),

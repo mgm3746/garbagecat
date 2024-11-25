@@ -148,7 +148,7 @@ public class UnifiedYoungEvent extends UnknownCollector
             } else {
                 timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
-            trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE +  1));
+            trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
             combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4),
                     matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6).charAt(0)).convertTo(KILOBYTES);
             combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7),

@@ -94,10 +94,12 @@ class TestZRelocateStartYoungEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
-        assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(7, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.Z_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.LogEventType.Z_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG),
                 "Log line not recognized as " + JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_CONCURRENT),

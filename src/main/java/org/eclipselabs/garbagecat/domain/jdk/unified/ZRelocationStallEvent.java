@@ -65,6 +65,7 @@ public class ZRelocationStallEvent extends UnknownCollector implements UnifiedLo
      * The elapsed clock time for the event in microseconds (rounded).
      */
     private long eventTime;
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */

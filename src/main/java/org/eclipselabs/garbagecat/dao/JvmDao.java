@@ -184,7 +184,17 @@ public class JvmDao {
     /**
      * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
      */
-    private int maxHeapSpaceNonBlocking;
+    private int maxHeapNonBlocking;
+
+    /**
+     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxHeapAfterGcNonBlocking;
+
+    /**
+     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxClassSpaceAfterGcNonBlocking;
 
     /**
      * JVM memory information.
@@ -578,6 +588,10 @@ public class JvmDao {
         return (int) kilobytes(ClassData.class, ClassData::getClassOccupancyEnd).max().orElse(0);
     }
 
+    public int getMaxClassSpaceAfterGcNonBlocking() {
+        return maxClassSpaceAfterGcNonBlocking;
+    }
+
     /**
      * @return The maximum perm space or metaspace in non <code>BlockingEvent</code>s.
      */
@@ -602,6 +616,27 @@ public class JvmDao {
     }
 
     /**
+     * The maximum heap space size during the JVM run.
+     * 
+     * @return maximum heap size (kilobytes).
+     */
+    public synchronized int getMaxHeap() {
+        return (int) this.blockingEvents.stream() //
+                .map(e -> {
+                    if (e instanceof OldData) {
+                        OldData old = (OldData) e;
+                        return add(old.getYoungSpace(), old.getOldSpace());
+                    } else if (e instanceof CombinedData) {
+                        return ((CombinedData) e).getCombinedSpace();
+                    } else {
+                        return ZERO;
+                    }
+                }) //
+                .filter(Objects::nonNull) //
+                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
+    }
+
+    /**
      * The maximum heap after GC during the JVM run.
      * 
      * @return maximum heap after GC (kilobytes).
@@ -612,6 +647,17 @@ public class JvmDao {
         int combinedMaxHeapAfterGc = (int) kilobytes(CombinedData.class, CombinedData::getCombinedOccupancyEnd).max()
                 .orElse(0);
         return Math.max(oldMaxHeapAfterGc, combinedMaxHeapAfterGc);
+    }
+
+    public int getMaxHeapAfterGcNonBlocking() {
+        return maxHeapAfterGcNonBlocking;
+    }
+
+    /**
+     * @return The maximum heap space in non <code>BlockingEvent</code>s.
+     */
+    public int getMaxHeapNonBlocking() {
+        return maxHeapNonBlocking;
     }
 
     /**
@@ -640,34 +686,6 @@ public class JvmDao {
      */
     public int getMaxHeapOccupancyNonBlocking() {
         return maxHeapOccupancyNonBlocking;
-    }
-
-    /**
-     * The maximum heap space size during the JVM run.
-     * 
-     * @return maximum heap size (kilobytes).
-     */
-    public synchronized int getMaxHeapSpace() {
-        return (int) this.blockingEvents.stream() //
-                .map(e -> {
-                    if (e instanceof OldData) {
-                        OldData old = (OldData) e;
-                        return add(old.getYoungSpace(), old.getOldSpace());
-                    } else if (e instanceof CombinedData) {
-                        return ((CombinedData) e).getCombinedSpace();
-                    } else {
-                        return ZERO;
-                    }
-                }) //
-                .filter(Objects::nonNull) //
-                .mapToLong(m -> m.getValue(KILOBYTES)).max().orElse(0);
-    }
-
-    /**
-     * @return The maximum heap space in non <code>BlockingEvent</code>s.
-     */
-    public int getMaxHeapSpaceNonBlocking() {
-        return maxHeapSpaceNonBlocking;
     }
 
     /**
@@ -990,6 +1008,10 @@ public class JvmDao {
         this.logFileDate = logFileDate;
     }
 
+    public void setMaxClassSpaceAfterGcNonBlocking(int maxClassSpaceAfterGcNonBlocking) {
+        this.maxClassSpaceAfterGcNonBlocking = maxClassSpaceAfterGcNonBlocking;
+    }
+
     /**
      * @param maxClassSpaceNonBlocking
      *            The maximum perm space or metaspace in non <code>BlockingEvent</code>s.
@@ -1006,20 +1028,24 @@ public class JvmDao {
         this.maxClassSpaceOccupancyNonBlocking = maxClassSpaceOccupancyNonBlocking;
     }
 
+    public void setMaxHeapAfterGcNonBlocking(int maxHeapAfterGcNonBlocking) {
+        this.maxHeapAfterGcNonBlocking = maxHeapAfterGcNonBlocking;
+    }
+
+    /**
+     * @param maxHeapNonBlocking
+     *            The maximum heap space in non <code>BlockingEvent</code>s.
+     */
+    public void setMaxHeapNonBlocking(int maxHeapNonBlocking) {
+        this.maxHeapNonBlocking = maxHeapNonBlocking;
+    }
+
     /**
      * @param maxHeapOccupancyNonBlocking
      *            The maximum heap occupancy in non <code>BlockingEvent</code>s.
      */
     public void setMaxHeapOccupancyNonBlocking(int maxHeapOccupancyNonBlocking) {
         this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
-    }
-
-    /**
-     * @param maxHeapSpaceNonBlocking
-     *            The maximum heap space in non <code>BlockingEvent</code>s.
-     */
-    public void setMaxHeapSpaceNonBlocking(int maxHeapSpaceNonBlocking) {
-        this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
     }
 
     /**

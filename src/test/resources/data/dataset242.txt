@@ -37,4 +37,4 @@
 [0.132s][info][gc,heap     ] GC(0) Allocated:         -                 2M (2%)            2M (2%)            1M (2%)             -                  -
 [0.132s][info][gc,heap     ] GC(0)   Garbage:         -                 6M (7%)            6M (7%)            2M (3%)             -                  -
 [0.132s][info][gc,heap     ] GC(0) Reclaimed:         -                  -                 0M (0%)            3M (4%)             -                  -
-[0.132s][info][gc          ] GC(0) Garbage Collection (Warmup) 10M(10%)->8M(8%)
+[0.132s][info][gc          ] GC(0) Garbage Collection (Warmup) 10M(10%)->8M(8%) 0.010s

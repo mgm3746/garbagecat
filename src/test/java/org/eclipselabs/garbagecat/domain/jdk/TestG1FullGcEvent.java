@@ -52,9 +52,9 @@ class TestG1FullGcEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL),
-                JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " collector not identified.");
+                JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " event not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }
@@ -399,9 +399,9 @@ class TestG1FullGcEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " collector identified.");
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL),
-                JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " collector not identified.");
+                JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " event not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }

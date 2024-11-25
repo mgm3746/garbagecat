@@ -202,9 +202,19 @@ public class JvmRun {
     private Memory maxClassSpace;
 
     /**
-     * Maximum perm gen or metaspace after gC (kilobytes).
+     * Maximum perm gen or metaspace after GC (kilobytes).
      */
     private Memory maxClassSpaceAfterGc;
+
+    /**
+     * Used for tracking max perm space or metaspace after GC outside of <code>BlockingEvent</code>s.
+     */
+    private Memory maxClassSpaceAfterGcNonBlocking;
+
+    /**
+     * Used for tracking max heap after GC outside of <code>BlockingEvent</code>s.
+     */
+    private Memory maxHeapAfterGcNonBlocking;
 
     /**
      * Used for tracking max perm space or metaspace outside of <code>BlockingEvent</code>s.
@@ -239,12 +249,12 @@ public class JvmRun {
     /**
      * Maximum heap size.
      */
-    private Memory maxHeapSpace;
+    private Memory maxHeap;
 
     /**
      * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
      */
-    private Memory maxHeapSpaceNonBlocking;
+    private Memory maxHeapNonBlocking;
 
     /**
      * Maximum old space size.
@@ -1016,6 +1026,10 @@ public class JvmRun {
         return maxClassSpaceAfterGc;
     }
 
+    public Memory getMaxClassSpaceAfterGcNonBlocking() {
+        return maxClassSpaceAfterGcNonBlocking;
+    }
+
     public Memory getMaxClassSpaceNonBlocking() {
         return maxClassSpaceNonBlocking;
     }
@@ -1028,8 +1042,16 @@ public class JvmRun {
         return maxClassSpaceOccupancyNonBlocking;
     }
 
+    public Memory getMaxHeap() {
+        return maxHeap;
+    }
+
     public Memory getMaxHeapAfterGc() {
         return maxHeapAfterGc;
+    }
+
+    public Memory getMaxHeapAfterGcNonBlocking() {
+        return maxHeapAfterGcNonBlocking;
     }
 
     /**
@@ -1040,20 +1062,16 @@ public class JvmRun {
                 : Memory.fromOptionSize(org.github.joa.util.JdkUtil.getByteOptionValue(jvmOptions.getMaxHeapSize()));
     }
 
+    public Memory getMaxHeapNonBlocking() {
+        return maxHeapNonBlocking;
+    }
+
     public Memory getMaxHeapOccupancy() {
         return maxHeapOccupancy;
     }
 
     public Memory getMaxHeapOccupancyNonBlocking() {
         return maxHeapOccupancyNonBlocking;
-    }
-
-    public Memory getMaxHeapSpace() {
-        return maxHeapSpace;
-    }
-
-    public Memory getMaxHeapSpaceNonBlocking() {
-        return maxHeapSpaceNonBlocking;
     }
 
     /**
@@ -1398,6 +1416,10 @@ public class JvmRun {
         this.maxClassSpaceAfterGc = maxClassSpaceAfterGc;
     }
 
+    public void setMaxClassSpaceAfterGcNonBlocking(Memory maxClassSpaceAfterGcNonBlocking) {
+        this.maxClassSpaceAfterGcNonBlocking = maxClassSpaceAfterGcNonBlocking;
+    }
+
     public void setMaxClassSpaceNonBlocking(Memory maxClassSpaceNonBlocking) {
         this.maxClassSpaceNonBlocking = maxClassSpaceNonBlocking;
     }
@@ -1410,8 +1432,20 @@ public class JvmRun {
         this.maxClassSpaceOccupancyNonBlocking = maxClassSpaceOccupancyNonBlocking;
     }
 
+    public void setMaxHeap(Memory maxHeap) {
+        this.maxHeap = maxHeap;
+    }
+
     public void setMaxHeapAfterGc(Memory maxHeapAfterGc) {
         this.maxHeapAfterGc = maxHeapAfterGc;
+    }
+
+    public void setMaxHeapAfterGcNonBlocking(Memory maxHeapAfterGcNonBlocking) {
+        this.maxHeapAfterGcNonBlocking = maxHeapAfterGcNonBlocking;
+    }
+
+    public void setMaxHeapNonBlocking(Memory maxHeapNonBlocking) {
+        this.maxHeapNonBlocking = maxHeapNonBlocking;
     }
 
     public void setMaxHeapOccupancy(Memory maxHeapOccupancy) {
@@ -1420,14 +1454,6 @@ public class JvmRun {
 
     public void setMaxHeapOccupancyNonBlocking(Memory maxHeapOccupancyNonBlocking) {
         this.maxHeapOccupancyNonBlocking = maxHeapOccupancyNonBlocking;
-    }
-
-    public void setMaxHeapSpace(Memory maxHeapSpace) {
-        this.maxHeapSpace = maxHeapSpace;
-    }
-
-    public void setMaxHeapSpaceNonBlocking(Memory maxHeapSpaceNonBlocking) {
-        this.maxHeapSpaceNonBlocking = maxHeapSpaceNonBlocking;
     }
 
     public void setMaxOldSpace(Memory maxOldSpace) {
