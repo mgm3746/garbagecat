@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -66,11 +67,9 @@ class TestOomeMetaspaceEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.OOME_METASPACE),
                 JdkUtil.LogEventType.OOME_METASPACE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
-                JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " event not identified.");
     }
 
     @Test
@@ -97,18 +96,26 @@ class TestOomeMetaspaceEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.OOME_METASPACE),
                 JdkUtil.LogEventType.OOME_METASPACE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_BLANK_LINE),
-                JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString() + " event not identified.");
     }
 
     @Test
     void testMetaspaceReclaimPolicy() {
+        LogEvent priorLogEvent = new OomeMetaspaceEvent(null);
         String logLine = "[2024-05-06T13:40:30.238+0300][3621752739ms] MetaspaceReclaimPolicy: balanced";
         assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
-                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
+    }
+
+    @Test
+    void testBlankLine() {
+        LogEvent priorLogEvent = new OomeMetaspaceEvent(null);
+        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms]";
+        assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
     }
 
@@ -136,9 +143,10 @@ class TestOomeMetaspaceEvent {
 
     @Test
     void testUsage() {
+        LogEvent priorLogEvent = new OomeMetaspaceEvent(null);
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Usage:";
         assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
-                JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
     }
 }

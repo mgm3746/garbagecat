@@ -301,7 +301,8 @@ public final class UnifiedUtil {
         if (eventType == LogEventType.UNKNOWN) {
             if (UnifiedHeapEvent.match(logLine)) {
                 eventType = LogEventType.UNIFIED_HEAP;
-            } else if (OomeMetaspaceEvent.match(logLine)) {
+            } else if (logLine.matches(OomeMetaspaceEvent._REGEX_HEADER)
+                    || (OomeMetaspaceEvent.match(logLine) && priorLogEvent instanceof OomeMetaspaceEvent)) {
                 eventType = LogEventType.OOME_METASPACE;
             } else if (UnifiedSafepointEvent.match(logLine)) {
                 eventType = LogEventType.UNIFIED_SAFEPOINT;

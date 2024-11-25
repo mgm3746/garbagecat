@@ -186,21 +186,22 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " (" + __REGEX_GARBAGE_COLLECTOR + "|"
             + __REGEX_VERSION
-            + "|Activate regions|Address Space (Size|Type)|Alignments|Available space on backing filesystem|"
-            + "(Initial|Max|Min) Capacity|CardTable entry size|CDS archive\\(s\\) (mapped at|not mapped)|"
-            + "Compressed class space mapped at|Compressed Oops|ConcGCThreads|Concurrent( Refinement)? Workers|CPUs|"
-            + "Consider \\-XX:\\+ClassUnloadingWithConcurrentMark|Expand the heap\\.|GC threads|GC Workers|"
-            + "Heap (Initial|Max|Min) Capacity|Heap address|Heap Backing Filesystem|Heap Backing File|"
-            + "Heap [Rr]egion (Count|[Ss]ize)|Heuristics|Heuristics ergonomically sets |"
-            + "Humongous [oO]bject [tT]hreshold|Initialize mark stack|Initial Refinement Zones|"
-            + "Initialize Shenandoah heap|Initializing The Z Garbage Collector|java_class_path \\(initial\\)|"
-            + "java_command|jvm_args|Large Page Support|Launcher Type|Mark (closed|open) archive regions in map|"
-            + "Max TLAB size|Medium Page Size|Memory|Mode|Min heap equals to max heap, disabling ShenandoahUncommit|"
-            + "Minimum heap|Narrow klass base|NUMA Nodes|NUMA Support|Pacer for Idle|ParallelGCThreads|"
-            + "Parallel Workers|Periodic GC|Pre-touch|Reference processing|Regions|Runtime Workers|"
-            + "Safepointing mechanism|Shenandoah GC mode|Shenandoah heuristics|String Deduplication|"
-            + "Target occupancy update|TLAB Size Max|Uncommit( Delay)?|Using legacy single-generation mode|"
-            + "VM Arguments)(:)?.*$";
+            + "| - (commit_granule_bytes|commit_granule_words|enlarge_chunks_in_place|use_allocation_guard|"
+            + "virtual_space_node_default_size)|Activate regions|Address Space (Size|Type)|Alignments|"
+            + "Available space on backing filesystem|(Initial|Max|Min) Capacity|CardTable entry size|"
+            + "CDS archive\\(s\\) (mapped at|not mapped)|Compressed class space mapped at|Compressed Oops|"
+            + "ConcGCThreads|Concurrent( Refinement)? Workers|CPUs|Consider \\-XX:\\+ClassUnloadingWithConcurrentMark|"
+            + "Expand the heap\\.|GC threads|GC Workers|Heap (Initial|Max|Min) Capacity|Heap address|"
+            + "Heap Backing Filesystem|Heap Backing File|Heap [Rr]egion (Count|[Ss]ize)|Heuristics|"
+            + "Heuristics ergonomically sets |Humongous [oO]bject [tT]hreshold|Initialize mark stack|"
+            + "Initial Refinement Zones|Initialize Shenandoah heap|Initializing The Z Garbage Collector|"
+            + "java_class_path \\(initial\\)|java_command|jvm_args|Large Page Support|Launcher Type|"
+            + "Mark (closed|open) archive regions in map|Max TLAB size|Medium Page Size|Memory|Mode|"
+            + "Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|Narrow klass base|NUMA Nodes|"
+            + "NUMA Support|Pacer for Idle|ParallelGCThreads|Parallel Workers|Periodic GC|Pre-touch|"
+            + "Reference processing|Regions|Runtime Workers|Safepointing mechanism|Shenandoah GC mode|"
+            + "Shenandoah heuristics|String Deduplication|Target occupancy update|TLAB Size Max|Uncommit( Delay)?|"
+            + "Using legacy single-generation mode|VM Arguments)(:)?.*$";
 
     private static Pattern PATTERN = Pattern.compile(_REGEX);
 

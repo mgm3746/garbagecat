@@ -620,7 +620,7 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
-
+    
     @Test
     void testLineWithSpaces() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
@@ -631,7 +631,6 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
-
     @Test
     void testLogLine() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
@@ -644,7 +643,6 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
-
     @Test
     void testMarkClosedArchiveRegionsInMap() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
@@ -656,7 +654,6 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
-
     @Test
     void testMarkOpenArchiveRegionsInMap() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
@@ -716,6 +713,66 @@ class TestUnifiedHeaderEvent {
     void testMemory() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[0.013s][info][gc,init] Memory: 31907M";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testMetaspaceCommitGranuleBytes() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][metaspace]  - commit_granule_bytes: 65536.";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testMetaspaceCommitGranuleWords() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][metaspace]  - commit_granule_words: 8192.";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testMetaspaceEnlargeChunksInPlace() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][metaspace]  - enlarge_chunks_in_place: 1.";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testMetaspaceUseAllocationGuard() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][metaspace]  - use_allocation_guard: 0.";
+        assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.LogEventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testMetaspaceVirtualSpaceNodeDefaultSize() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s][info][metaspace]  - virtual_space_node_default_size: 8388608.";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");

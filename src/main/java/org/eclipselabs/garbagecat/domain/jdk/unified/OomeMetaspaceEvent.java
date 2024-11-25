@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
@@ -44,19 +45,27 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class OomeMetaspaceEvent implements UnifiedLogging, ThrowAwayEvent {
+public class OomeMetaspaceEvent implements UnifiedLogging, HeaderEvent, ThrowAwayEvent {
+
+    /**
+     * Regular expression for the header.
+     */
+    public static final String _REGEX_HEADER = UnifiedRegEx.DECORATOR
+            + "[ ]+Metaspace \\((class|data)\\) allocation failed for size \\d{1,}";
+
     /**
      * Regular expression defining the logging.
      */
-    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR
-            + "[ ]+(Metaspace \\((class|data)\\) allocation failed for size \\d{1,}|"
-            + "(- (commit_granule_bytes|commit_granule_words|enlarge_chunks_in_place|handle_deallocations|"
+    private static final String _REGEX = "^(" + _REGEX_HEADER + "|" + UnifiedRegEx.BLANK_LINE + "|"
+            + UnifiedRegEx.DECORATOR
+            + "[ ]+(- (commit_granule_bytes|commit_granule_words|enlarge_chunks_in_place|handle_deallocations|"
             + "new_chunks_are_fully_committed|uncommit_free_chunks|use_allocation_guard|"
             + "virtual_space_node_default_size)|Both|CDS|Chunk freelists|Class( space)?|CompressedClassSpaceSize|"
             + "Current GC threshold|Initial GC threshold|Internal statistics|MaxMetaspaceSize|MetaspaceReclaimPolicy|"
             + "Non-[cC]lass( space)?|num_(allocs_failed_limit|arena_births|arena_deaths|chunk_merges|chunk_splits|"
             + "chunks_enlarged|chunks_returned_to_freelist|chunks_taken_from_freelist|inconsistent_stats|purges|"
-            + "space_committed|space_uncommitted|vsnodes_births|vsnodes_deaths)|" + "Usage|Virtual space):.*)$";
+            + "space_committed|space_uncommitted|vsnodes_births|vsnodes_deaths)|Usage|Virtual space):.*)$";
+
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
@@ -105,5 +114,14 @@ public class OomeMetaspaceEvent implements UnifiedLogging, ThrowAwayEvent {
     @Override
     public boolean isEndstamp() {
         return false;
+    }
+
+    @Override
+    public boolean isHeader() {
+        boolean isHeader = false;
+        if (this.logEntry != null) {
+            isHeader = logEntry.matches(_REGEX_HEADER);
+        }
+        return isHeader;
     }
 }

@@ -1,3 +1,5 @@
+[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (class) allocation failed for size 1459
+[2022-02-08T07:33:14.540+0000][7732788ms]
 [2022-02-08T07:33:14.540+0000][7732788ms] Usage:
 [2022-02-08T07:33:14.540+0000][7732788ms]   Non-class:    218.74 MB capacity,   209.07 MB ( 96%) used,     9.05 MB (  4%) free+waste,   636.56 KB ( <1%) overhead.
 [2022-02-08T07:33:14.540+0000][7732788ms]       Class:     33.97 MB capacity,    28.95 MB ( 85%) used,     4.71 MB ( 14%) free+waste,   310.88 KB ( <1%) overhead.
