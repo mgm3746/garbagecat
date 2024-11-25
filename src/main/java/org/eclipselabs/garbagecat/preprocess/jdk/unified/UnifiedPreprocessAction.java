@@ -1111,7 +1111,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // ***** Z *****
             "^" + UnifiedRegEx.DECORATOR
                     + " (Garbage|Major|Minor) Collection \\((Allocation (Rate|Stall)|CodeCache GC Threshold|"
-                    + "High Usage|Metadata GC Threshold|Proactive|Warmup)\\)$",
+                    + "High Usage|Metadata GC Threshold|Proactive|Warmup)\\)( Aborted)?$",
             //
             "^" + UnifiedRegEx.DECORATOR + "( O:)? Using \\d{1,} [wW]orkers( for (Old|Young) Generation)?$",
             //

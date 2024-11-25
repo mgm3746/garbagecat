@@ -74,8 +74,8 @@ public class ZConcurrentEvent extends UnknownCollector implements UnifiedLogging
      * Regular expression metaspace collection.
      */
     private static final String _REGEX_HEAP = "(Garbage|Major|Minor) Collection \\((Allocation Rate|"
-            + "CodeCache GC Threshold|High Usage|Metadata GC Threshold|Proactive|Warmup)\\) " + JdkRegEx.SIZE
-            + "\\(\\d{1,3}%\\)->" + JdkRegEx.SIZE + "\\((\\d{1,3})%\\) (\\d{0,}[\\.\\,]\\d{3})s";
+            + "Allocation Stall|CodeCache GC Threshold|High Usage|Metadata GC Threshold|Proactive|Warmup)\\) "
+            + JdkRegEx.SIZE + "\\(\\d{1,3}%\\)->" + JdkRegEx.SIZE + "\\((\\d{1,3})%\\)( (\\d{0,}[\\.\\,]\\d{3})s)?";
 
     /**
      * Regular expressions defining the logging.
@@ -159,7 +159,9 @@ public class ZConcurrentEvent extends UnknownCollector implements UnifiedLogging
                 classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8).charAt(0)).convertTo(KILOBYTES);
             } else if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1).matches(_REGEX_HEAP)) {
-                eventTime = JdkMath.convertSecsToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 21)).intValue();
+                if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 21) != null) {
+                    eventTime = JdkMath.convertSecsToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22)).intValue();
+                }
                 long time = UnifiedUtil.calculateTime(matcher);
                 if (!isEndstamp()) {
                     timestamp = time;

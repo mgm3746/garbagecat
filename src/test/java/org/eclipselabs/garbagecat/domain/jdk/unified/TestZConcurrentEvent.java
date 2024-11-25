@@ -27,6 +27,30 @@ import org.junit.jupiter.api.Test;
 class TestZConcurrentEvent {
 
     @Test
+    void testGarbageCollectionTriggerAllocationStallNoTime() {
+        String logLine = "[2024-11-25T17:18:20.331-0500] GC(3) Garbage Collection (Allocation Stall) "
+                + "96M(100%)->24M(25%)";
+        assertTrue(ZConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.Z_CONCURRENT.toString() + ".");
+        ZConcurrentEvent event = new ZConcurrentEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.Z_CONCURRENT.toString(), event.getName(), "Event name incorrect.");
+    }
+
+    @Test
+    void testGarbageCollectionTriggerWarmupNoTime() {
+        String logLine = "[1.234s] GC(0) Garbage Collection (Warmup) 20M(21%)->16M(17%)";
+        assertTrue(ZConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.Z_CONCURRENT.toString() + ".");
+        ZConcurrentEvent event = new ZConcurrentEvent(logLine);
+        assertEquals(JdkUtil.LogEventType.Z_CONCURRENT.toString(), event.getName(), "Event name incorrect.");
+        assertEquals((long) (1234 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(20), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(megabytes(16), event.getCombinedOccupancyEnd(), "Combined end occupancy not parsed correctly.");
+        assertEquals(megabytes(94), event.getCombinedSpace(), "Combined space size not parsed correctly.");
+    }
+
+    @Test
     void testMajorCollectionTriggerMetadataGcThreshold() {
         String logLine = "[18.668s][info ][gc                      ] GC(0) Major Collection (Metadata GC Threshold) "
                 + "460M(2%)->892M(4%) 0.478s";

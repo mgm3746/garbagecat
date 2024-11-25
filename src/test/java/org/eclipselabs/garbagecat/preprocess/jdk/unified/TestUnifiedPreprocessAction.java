@@ -6979,6 +6979,13 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testZMinorCollectionAllocationRateGenerationalAborted() {
+        String logLine = "[2.656s][info][gc          ] GC(374) Minor Collection (Allocation Rate) Aborted";
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
     void testZMinorCollectionHighUsageGenerational() {
         String logLine = "[1.962s][info][gc          ] GC(382) Minor Collection (High Usage)";
         assertTrue(UnifiedPreprocessAction.match(logLine),
