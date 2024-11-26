@@ -42,6 +42,15 @@ import org.junit.jupiter.api.Test;
 class TestOomeMetaspaceEvent {
 
     @Test
+    void testBlankLine() {
+        LogEvent priorLogEvent = new OomeMetaspaceEvent(null);
+        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms]";
+        assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
+    }
+
+    @Test
     void testClassAllocation() {
         String logLine = "[2024-05-06T13:01:18.988+0300][3619401490ms] Metaspace (class) allocation failed for size "
                 + "1459";
@@ -105,15 +114,6 @@ class TestOomeMetaspaceEvent {
     void testMetaspaceReclaimPolicy() {
         LogEvent priorLogEvent = new OomeMetaspaceEvent(null);
         String logLine = "[2024-05-06T13:40:30.238+0300][3621752739ms] MetaspaceReclaimPolicy: balanced";
-        assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
-                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.OOME_METASPACE + "not identified.");
-    }
-
-    @Test
-    void testBlankLine() {
-        LogEvent priorLogEvent = new OomeMetaspaceEvent(null);
-        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms]";
         assertEquals(JdkUtil.LogEventType.OOME_METASPACE,
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.OOME_METASPACE + "not identified.");

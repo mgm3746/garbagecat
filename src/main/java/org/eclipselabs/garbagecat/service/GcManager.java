@@ -1147,6 +1147,8 @@ public class GcManager {
                     jvmDao.setVmInfo(((UnifiedHeaderEvent) event).getJdkReleaseString());
                 } else if (((UnifiedHeaderEvent) event).isGarbageCollector()) {
                     collectorFamily = ((UnifiedHeaderEvent) event).getCollectorFamily();
+                } else if (((UnifiedHeaderEvent) event).isJvmArgs()) {
+                    jvmDao.getJvmContext().setOptions((((UnifiedHeaderEvent) event).getJvmArgs()));
                 }
                 if (event.getLogEntry().matches(
                         "^" + UnifiedRegEx.DECORATOR + " Min heap equals to max heap, disabling ShenandoahUncommit$")) {

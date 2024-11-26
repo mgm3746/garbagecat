@@ -588,13 +588,16 @@ class TestUnifiedHeaderEvent {
     @Test
     void testJvmArgs() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
-        String logLine = "[0.005s][info][arguments] jvm_args: -Djava.awt.headless=true";
+        String logLine = "[0.005s][info][arguments] jvm_args: -Xmx1g";
         assertEquals(JdkUtil.LogEventType.UNIFIED_HEADER,
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.UNIFIED_HEADER + " not identified.");
         assertNotEquals(JdkUtil.LogEventType.GC_INFO,
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
+        UnifiedHeaderEvent event = new UnifiedHeaderEvent(logLine);
+        assertTrue(event.isJvmArgs(), "jvm_args information not identified.");
+        assertEquals("-Xmx1g", event.getJvmArgs(), "jvm_args not correct.");
     }
 
     @Test
@@ -620,7 +623,7 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
-    
+
     @Test
     void testLineWithSpaces() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
@@ -631,6 +634,7 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
+
     @Test
     void testLogLine() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
@@ -643,6 +647,7 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
+
     @Test
     void testMarkClosedArchiveRegionsInMap() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
@@ -654,6 +659,7 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.LogEventType.GC_INFO + " not identified.");
     }
+
     @Test
     void testMarkOpenArchiveRegionsInMap() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");

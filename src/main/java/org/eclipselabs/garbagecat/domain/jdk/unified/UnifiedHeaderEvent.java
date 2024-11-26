@@ -171,21 +171,26 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
 
     /**
-     * Regular expressions defining the garbage collector information.
+     * Regular expression for garbage collector information.
      */
     private static final String __REGEX_GARBAGE_COLLECTOR = "Using (Concurrent Mark Sweep|G1|Parallel|Serial|"
             + "Shenandoah|The Z Garbage Collector)";
 
     /**
-     * Regular expressions defining JDK version information.
+     * Regular expression for JDK version information.
      */
     private static final String __REGEX_VERSION = "Version: " + UnifiedRegEx.RELEASE_STRING + " \\(release\\)";
+
+    /**
+     * Regular expression for jvm_args information.
+     */
+    private static final String __REGEX_JVM_ARGS = "jvm_args:[ ]{0,1}(.*)";
 
     /**
      * Regular expressions defining the logging.
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " (" + __REGEX_GARBAGE_COLLECTOR + "|"
-            + __REGEX_VERSION
+            + __REGEX_VERSION + "|" + __REGEX_JVM_ARGS
             + "| - (commit_granule_bytes|commit_granule_words|enlarge_chunks_in_place|use_allocation_guard|"
             + "virtual_space_node_default_size)|Activate regions|Address Space (Size|Type)|Alignments|"
             + "Available space on backing filesystem|(Initial|Max|Min) Capacity|CardTable entry size|"
@@ -195,7 +200,7 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "Heap Backing Filesystem|Heap Backing File|Heap [Rr]egion (Count|[Ss]ize)|Heuristics|"
             + "Heuristics ergonomically sets |Humongous [oO]bject [tT]hreshold|Initialize mark stack|"
             + "Initial Refinement Zones|Initialize Shenandoah heap|Initializing The Z Garbage Collector|"
-            + "java_class_path \\(initial\\)|java_command|jvm_args|Large Page Support|Launcher Type|"
+            + "java_class_path \\(initial\\)|java_command|Large Page Support|Launcher Type|"
             + "Mark (closed|open) archive regions in map|Max TLAB size|Medium Page Size|Memory|Mode|"
             + "Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|Narrow klass base|NUMA Nodes|"
             + "NUMA Support|Pacer for Idle|ParallelGCThreads|Parallel Workers|Periodic GC|Pre-touch|"
@@ -348,6 +353,18 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
         return jdkVersionMinor;
     }
 
+    /**
+     * @return The jvm_args string.
+     */
+    public String getJvmArgs() {
+        String jvmArgs = null;
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.find()) {
+            jvmArgs = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8);
+        }
+        return jvmArgs;
+    }
+
     public String getLogEntry() {
         return logEntry;
     }
@@ -382,6 +399,20 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             }
         }
         return isGarbageCollector;
+    }
+
+    /**
+     * @return true if the header contains jvm_args information, false otherwise.
+     */
+    public boolean isJvmArgs() {
+        boolean isJvmArgs = false;
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.matches()) {
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1) != null) {
+                isJvmArgs = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1).matches(__REGEX_JVM_ARGS);
+            }
+        }
+        return isJvmArgs;
     }
 
     /**
