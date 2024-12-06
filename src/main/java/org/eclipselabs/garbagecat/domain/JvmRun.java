@@ -54,10 +54,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
@@ -262,6 +263,11 @@ public class JvmRun {
     private Memory maxOldSpace;
 
     /**
+     * Safepoint metrics.
+     */
+    private List<Map.Entry<Trigger, LongSummaryStatistics>> safepointMetrics;
+
+    /**
      * Maximum young space size.
      */
     private Memory maxYoungSpace;
@@ -310,11 +316,6 @@ public class JvmRun {
      * <code>SafepointEvent</code>s where throughput does not meet the throughput goal.
      */
     private List<String> safepointBottlenecks;
-
-    /**
-     * <code>SafepointEventSummary</code> used for reporting.
-     */
-    private List<SafepointEventSummary> safepointEventSummaries = null;
 
     /**
      * Number of <code>SerialCollection</code> events.
@@ -1159,8 +1160,8 @@ public class JvmRun {
         return safepointBottlenecks;
     }
 
-    public List<SafepointEventSummary> getSafepointEventSummaries() {
-        return safepointEventSummaries;
+    public List<Map.Entry<Trigger, LongSummaryStatistics>> getSafepointMetrics() {
+        return safepointMetrics;
     }
 
     public long getSerialCount() {
@@ -1504,8 +1505,8 @@ public class JvmRun {
         this.safepointBottlenecks = safepointBottlenecks;
     }
 
-    public void setSafepointEventSummaries(List<SafepointEventSummary> safepointEventSummaries) {
-        this.safepointEventSummaries = safepointEventSummaries;
+    public void setSafepointMetrics(List<Map.Entry<Trigger, LongSummaryStatistics>> safepointMetrics) {
+        this.safepointMetrics = safepointMetrics;
     }
 
     public void setSerialCount(long serialCount) {

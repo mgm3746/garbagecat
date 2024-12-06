@@ -19,18 +19,15 @@ import static java.util.stream.Collectors.toList;
 import static org.eclipselabs.garbagecat.util.Memory.ZERO;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
@@ -43,14 +40,12 @@ import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.CmsIncrementalModeCollector;
-import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
-import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 import org.github.joa.domain.JvmContext;
 
@@ -64,23 +59,17 @@ import org.github.joa.domain.JvmContext;
  */
 public class JvmDao {
 
-    private static final Comparator<BlockingEvent> COMPARE_BY_TIMESTAMP = comparing(BlockingEvent::getTimestamp);
+    private static final Comparator<LogEvent> COMPARE_BY_TIMESTAMP = comparing(LogEvent::getTimestamp);
 
-    /**
-     * The database connection.
-     */
-    private static Connection connection;
-
-    private static boolean created;
-
-    /**
-     * SQL statement(s) to create table.
-     */
-    private static final String[] TABLES_CREATE_SQL = {
-            "create table safepoint_event (id integer identity, time_stamp bigint, trigger_type varchar(64), "
-                    + "duration bigint, log_entry varchar(500))" };
-
-    private static final String[] TABLES_DELETE_SQL = { "delete from safepoint_event " };
+    private static final Comparator<Map.Entry<Trigger, LongSummaryStatistics>> COMPARE_BY_SUM =
+            //
+            new Comparator<Map.Entry<Trigger, LongSummaryStatistics>>() {
+                @Override
+                public int compare(Map.Entry<Trigger, LongSummaryStatistics> left,
+                        Map.Entry<Trigger, LongSummaryStatistics> right) {
+                    return Long.valueOf(right.getValue().getSum()).compareTo(Long.valueOf(left.getValue().getSum()));
+                }
+            };
 
     private static Memory add(Memory m1, Memory m2) {
         return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
@@ -288,52 +277,6 @@ public class JvmDao {
      */
     private LogEvent worstSysGtUserEvent;
 
-    public JvmDao() {
-        if (created) {
-            cleanup();
-        } else {
-            created = true;
-        }
-        try {
-            // Load database driver.
-            Class.forName("org.hsqldb.jdbcDriver");
-        } catch (ClassNotFoundException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Failed to load HSQLDB JDBC driver.");
-        }
-
-        try {
-            // Connect to database.
-            connection = DriverManager.getConnection("jdbc:hsqldb:mem:vmdb", "sa", "");
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error accessing database.");
-        }
-
-        // Create tables
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            for (int i = 0; i < TABLES_CREATE_SQL.length; i++) {
-                statement.executeUpdate(TABLES_CREATE_SQL[i]);
-            }
-        } catch (SQLException e) {
-            if (e.getMessage().startsWith("Table already exists")) {
-                cleanup();
-            } else {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error creating tables.");
-            }
-        } finally {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-    }
-
     public void addAnalysis(Analysis analysis) {
         if (!this.analysis.contains(analysis)) {
             this.analysis.add(analysis);
@@ -350,32 +293,6 @@ public class JvmDao {
 
     public void addStoppedTimeEvent(ApplicationStoppedTimeEvent event) {
         stoppedTimeEvents.add(event);
-    }
-
-    /**
-     * Cleanup operations.
-     */
-    public synchronized void cleanup() {
-        this.blockingEvents.clear();
-        JvmDao.created = false;
-        // TODO: Remove below when hsqldb dependency removed
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            for (int i = 0; i < TABLES_DELETE_SQL.length; i++) {
-                statement.executeUpdate(TABLES_DELETE_SQL[i]);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error deleting rows from tables.");
-        } finally {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
     }
 
     public List<Analysis> getAnalysis() {
@@ -760,79 +677,18 @@ public class JvmDao {
     }
 
     /**
-     * Generate <code>SafepointEventSummary</code>s.
-     * 
-     * @return <code>List</code> of <code>SafepointEventSummary</code>s.
+     * @return <code>UnifiedSafepointEvent</code> metrics.
      */
-    public synchronized List<SafepointEventSummary> getSafepointEventSummaries() {
-        List<SafepointEventSummary> safepointEventSummaries = new ArrayList<SafepointEventSummary>();
-
-        PreparedStatement pst = null;
-        try {
-            String sqlInsertSafepointEvent = "insert into safepoint_event (time_stamp, trigger_type, duration, "
-                    + "log_entry) values (?, ?, ?, ?)";
-
-            final int TIME_STAMP_INDEX = 1;
-            final int TRIGGER_TYPE_INDEX = 2;
-            final int DURATION_INDEX = 3;
-            final int LOG_ENTRY_INDEX = 4;
-
-            pst = connection.prepareStatement(sqlInsertSafepointEvent);
-
-            for (int i = 0; i < unifiedSafepointEvents.size(); i++) {
-                UnifiedSafepointEvent event = unifiedSafepointEvents.get(i);
-                pst.setLong(TIME_STAMP_INDEX, event.getTimestamp());
-                // Use trigger for event name
-                pst.setString(TRIGGER_TYPE_INDEX, event.getTrigger().toString());
-                pst.setLong(DURATION_INDEX, event.getDurationMicros());
-                pst.setString(LOG_ENTRY_INDEX, event.getLogEntry());
-                pst.addBatch();
-            }
-            pst.executeBatch();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error inserting safepoint event.");
-        } finally {
-            try {
-                pst.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closingPreparedStatement.");
-            }
-        }
-
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = connection.createStatement();
-            StringBuffer sql = new StringBuffer();
-            sql.append("select trigger_type, count(id), sum(duration), max(duration) from safepoint_event group by "
-                    + "trigger_type order by sum(duration) desc");
-            rs = statement.executeQuery(sql.toString());
-            while (rs.next()) {
-                Trigger trigger = UnifiedSafepoint.identifyTrigger(rs.getString(1));
-                SafepointEventSummary summary = new SafepointEventSummary(trigger, rs.getLong(2), rs.getLong(3),
-                        rs.getLong(4));
-                safepointEventSummaries.add(summary);
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException("Error retrieving safepoint event summaries.");
-        } finally {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing ResultSet.");
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                throw new RuntimeException("Error closing Statement.");
-            }
-        }
-        return safepointEventSummaries;
+    public synchronized List<Map.Entry<Trigger, LongSummaryStatistics>> getSafepointMetrics() {
+        Map<Trigger, LongSummaryStatistics> summaries = unifiedSafepointEvents.stream()
+                .collect(Collectors.groupingBy(UnifiedSafepointEvent::getTrigger,
+                        Collectors.summarizingLong(UnifiedSafepointEvent::getDurationMicros)));
+        List<Map.Entry<Trigger, LongSummaryStatistics>> metrics =
+                //
+                new ArrayList<Map.Entry<Trigger, LongSummaryStatistics>>();
+        metrics.addAll(summaries.entrySet());
+        metrics.sort(COMPARE_BY_SUM);
+        return metrics;
     }
 
     /**

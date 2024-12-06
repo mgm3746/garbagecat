@@ -307,7 +307,7 @@ public class GcManager {
         jvmRun.setPhysicalMemory(new Memory(jvmDao.getPhysicalMemory(), BYTES));
         jvmRun.setPhysicalMemoryFree(new Memory(jvmDao.getPhysicalMemoryFree(), BYTES));
         jvmRun.setSafepointBottlenecks(getSafepointBottlenecks(jvmStartDate, throughputThreshold));
-        jvmRun.setSafepointEventSummaries(jvmDao.getSafepointEventSummaries());
+        jvmRun.setSafepointMetrics(jvmDao.getSafepointMetrics());
         jvmRun.setSerialCount(jvmDao.getSerialCount());
         jvmRun.setStoppedTimeEventCount(jvmDao.getStoppedTimeEventCount());
         jvmRun.setStoppedTimeMax(jvmDao.getStoppedTimeMax());

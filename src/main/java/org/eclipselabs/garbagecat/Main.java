@@ -50,12 +50,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.eclipselabs.garbagecat.domain.JvmRun;
-import org.eclipselabs.garbagecat.domain.jdk.unified.SafepointEventSummary;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
@@ -63,6 +64,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 
 /**
  * <p>
@@ -483,11 +485,11 @@ public class Main {
                 printWriter.write(LINEBREAK_DOUBLE);
                 printWriter.printf("%-30s%10s%12s%7s%12s%n", "SAFEPOINT:", "#", "Time (s)", "", "Max (s)");
                 printWriter.write(LINEBREAK_SINGLE);
-                List<SafepointEventSummary> summaries = jvmRun.getSafepointEventSummaries();
-                Iterator<SafepointEventSummary> iterator = summaries.iterator();
+                List<Map.Entry<Trigger, LongSummaryStatistics>> metrics = jvmRun.getSafepointMetrics();
+                Iterator<Map.Entry<Trigger, LongSummaryStatistics>> iterator = metrics.iterator();
                 while (iterator.hasNext()) {
-                    SafepointEventSummary summary = iterator.next();
-                    BigDecimal pauseTotal = JdkMath.convertMicrosToSecs(summary.getPauseTotal());
+                    Map.Entry<Trigger, LongSummaryStatistics> entry = iterator.next();
+                    BigDecimal pauseTotal = JdkMath.convertMicrosToSecs(entry.getValue().getSum());
                     String pauseTotalString = null;
                     if (pauseTotal.toString().equals("0.000")) {
                         // give rounding hint
@@ -497,7 +499,7 @@ public class Main {
                     }
                     BigDecimal percent;
                     if (jvmRun.getUnifiedSafepointTimeTotal() > 0) {
-                        percent = new BigDecimal(summary.getPauseTotal());
+                        percent = new BigDecimal(entry.getValue().getSum());
                         percent = percent.divide(JdkMath.convertNanosToMicros(jvmRun.getUnifiedSafepointTimeTotal()), 2,
                                 RoundingMode.HALF_EVEN);
                         percent = percent.movePointRight(2);
@@ -511,7 +513,7 @@ public class Main {
                     } else {
                         percentString = percent.toString();
                     }
-                    BigDecimal pauseMax = JdkMath.convertMicrosToSecs(summary.getPauseMax());
+                    BigDecimal pauseMax = JdkMath.convertMicrosToSecs(entry.getValue().getMax());
                     String pauseMaxString = null;
                     if (pauseMax.toString().equals("0.000")) {
                         // give rounding hint
@@ -519,9 +521,8 @@ public class Main {
                     } else {
                         pauseMaxString = pauseMax.toString();
                     }
-                    printWriter.printf("%-30s%10s%12s%6s%%%12s%n",
-                            UnifiedSafepoint.getTriggerLiteral(summary.getTrigger()), summary.getCount(),
-                            pauseTotalString, percentString, pauseMaxString);
+                    printWriter.printf("%-30s%10s%12s%6s%%%12s%n", UnifiedSafepoint.getTriggerLiteral(entry.getKey()),
+                            entry.getValue().getCount(), pauseTotalString, percentString, pauseMaxString);
                 }
             }
 
