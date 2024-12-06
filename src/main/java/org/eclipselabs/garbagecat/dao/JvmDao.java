@@ -59,8 +59,14 @@ import org.github.joa.domain.JvmContext;
  */
 public class JvmDao {
 
+    /**
+     * Used for sorting logging events.
+     */
     private static final Comparator<LogEvent> COMPARE_BY_TIMESTAMP = comparing(LogEvent::getTimestamp);
 
+    /**
+     * Used for sorting safepoint statistics by total time, in reverse order.
+     */
     private static final Comparator<Map.Entry<Trigger, LongSummaryStatistics>> COMPARE_BY_SUM =
             //
             new Comparator<Map.Entry<Trigger, LongSummaryStatistics>>() {
