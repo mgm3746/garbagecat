@@ -22,6 +22,8 @@ import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapDumpAfterFullGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapDumpBeforeFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahFinalRootsEvent;
@@ -1094,7 +1096,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "Discovered  references|Encountered references|Enqueued    references|Evacuation Reserve|"
                     + "Free headroom|Good progress for (external fragmentation|free space|used space)|"
                     + "Immediate Garbage|Reference processing): .*$",
-            // Other
+            // ***** Other *****
+            // Heap dump without duration
+            "^" + UnifiedRegEx.DECORATOR + " Heap Dump \\((after|before) full gc\\)$",
             "^" + UnifiedRegEx.DECORATOR + " Failed to allocate( (Shared|TLAB),)? " + JdkRegEx.SIZE + "$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Pacer for (Precleaning|Reset). Non-Taxable: " + JdkRegEx.SIZE + "$",
@@ -1297,6 +1301,10 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                         CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFinalRootsEvent
                 || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedConcurrentEvent
                 || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZConcurrentEvent
+                || JdkUtil.parseLogLine(logLine, null,
+                        CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpAfterFullGcEvent
+                || JdkUtil.parseLogLine(logLine, null,
+                        CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpBeforeFullGcEvent
                 || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZMarkStartYoungAndOldEvent) {
             match = true;
         } else if (isThrowaway(logLine)) {
@@ -1648,12 +1656,15 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 context.remove(PreprocessAction.NEWLINE);
             }
         } else if ((JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof UnifiedConcurrentEvent
-                || JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ZConcurrentEvent)
+                || JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ZConcurrentEvent
+                || JdkUtil.parseLogLine(logEntry, null,
+                        CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpAfterFullGcEvent
+                || JdkUtil.parseLogLine(logEntry, null,
+                        CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpBeforeFullGcEvent)
                 && !isThrowaway(logEntry)) {
             // Stand alone event
             if (!context.contains(UnifiedLogging.Tag.GC_START.toString())
                     || context.contains(TOKEN_BEGINNING_OF_UNIFIED_SHENANDOAH)) {
-
                 this.logEntry = logEntry;
                 context.add(PreprocessAction.NEWLINE);
             } else {

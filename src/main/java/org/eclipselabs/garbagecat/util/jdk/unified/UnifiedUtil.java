@@ -33,6 +33,8 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedGcLockerRetryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapDumpAfterFullGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapDumpBeforeFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedParNewEvent;
@@ -313,6 +315,10 @@ public final class UnifiedUtil {
                 eventType = LogEventType.UNIFIED_FOOTER_STATS;
             } else if (UnifiedGcLockerRetryEvent.match(logLine)) {
                 eventType = LogEventType.UNIFIED_GC_LOCKER_RETRY;
+            } else if (UnifiedHeapDumpAfterFullGcEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_HEAP_DUMP_AFTER_FULL_GC;
+            } else if (UnifiedHeapDumpBeforeFullGcEvent.match(logLine)) {
+                eventType = LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC;
             } else if (UnifiedHeaderEvent.match(logLine)
                     && (priorLogEvent instanceof NullEvent || priorLogEvent instanceof UnifiedHeaderEvent)) {
                 eventType = LogEventType.UNIFIED_HEADER;

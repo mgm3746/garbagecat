@@ -459,6 +459,23 @@ class TestAnalysis {
     }
 
     @Test
+    void testHeapDumpBeforeAndAfterFullGc() throws IOException {
+        File testFile = TestUtil.getFile("dataset293.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines, null);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
+                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_AFTER_FULL_GC.getKey()),
+                org.github.joa.util.Analysis.WARN_HEAP_DUMP_AFTER_FULL_GC + " analysis not identified.");
+        assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_BEFORE_FULL_GC.getKey()),
+                org.github.joa.util.Analysis.WARN_HEAP_DUMP_BEFORE_FULL_GC + " analysis not identified.");
+    }
+
+    @Test
     void testHeapDumpPathFilename() throws IOException {
         File testFile = TestUtil.getFile("dataset95.txt");
         GcManager gcManager = new GcManager();

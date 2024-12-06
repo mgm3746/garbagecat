@@ -1,0 +1,44 @@
+[2024-12-06T09:50:52.067-0500] CardTable entry size: 512
+[2024-12-06T09:50:52.067-0500] Using G1
+[2024-12-06T09:50:52.069-0500] Version: 21.0.5+10-LTS (release)
+[2024-12-06T09:50:52.069-0500] CPUs: 12 total, 12 available
+[2024-12-06T09:50:52.069-0500] Memory: 31900M
+[2024-12-06T09:50:52.069-0500] Large Page Support: Disabled
+[2024-12-06T09:50:52.069-0500] NUMA Support: Disabled
+[2024-12-06T09:50:52.069-0500] Compressed Oops: Enabled (Zero based)
+[2024-12-06T09:50:52.069-0500] Heap Region Size: 4M
+[2024-12-06T09:50:52.069-0500] Heap Min Capacity: 8M
+[2024-12-06T09:50:52.069-0500] Heap Initial Capacity: 500M
+[2024-12-06T09:50:52.069-0500] Heap Max Capacity: 7976M
+[2024-12-06T09:50:52.069-0500] Pre-touch: Disabled
+[2024-12-06T09:50:52.069-0500] Parallel Workers: 10
+[2024-12-06T09:50:52.069-0500] Concurrent Workers: 3
+[2024-12-06T09:50:52.069-0500] Concurrent Refinement Workers: 10
+[2024-12-06T09:50:52.069-0500] Periodic GC: Disabled
+[2024-12-06T09:50:52.075-0500] CDS archive(s) mapped at: [0x00007fe493000000-0x00007fe493c99000-0x00007fe493c99000), size 13209600, SharedBaseAddress: 0x00007fe493000000, ArchiveRelocationMode: 1.
+[2024-12-06T09:50:52.075-0500] Compressed class space mapped at: 0x00007fe494000000-0x00007fe4d4000000, reserved size: 1073741824
+[2024-12-06T09:50:52.075-0500] Narrow klass base: 0x00007fe493000000, Narrow klass shift: 0, Narrow klass range: 0x100000000
+[2024-12-06T09:51:07.201-0500] GC(0) Pause Full (Diagnostic Command)
+[2024-12-06T09:51:07.201-0500] GC(0) Heap Dump (before full gc)
+[2024-12-06T09:51:07.208-0500] GC(0) Heap Dump (before full gc) 7.107ms
+[2024-12-06T09:51:07.208-0500] GC(0) Using 2 workers of 10 for full compaction
+[2024-12-06T09:51:07.208-0500] GC(0) Phase 1: Mark live objects
+[2024-12-06T09:51:07.209-0500] GC(0) Phase 1: Mark live objects 0.735ms
+[2024-12-06T09:51:07.209-0500] GC(0) Phase 2: Prepare compaction
+[2024-12-06T09:51:07.209-0500] GC(0) Phase 2: Prepare compaction 0.183ms
+[2024-12-06T09:51:07.209-0500] GC(0) Phase 3: Adjust pointers
+[2024-12-06T09:51:07.209-0500] GC(0) Phase 3: Adjust pointers 0.389ms
+[2024-12-06T09:51:07.209-0500] GC(0) Phase 4: Compact heap
+[2024-12-06T09:51:07.210-0500] GC(0) Phase 4: Compact heap 0.443ms
+[2024-12-06T09:51:07.210-0500] GC(0) Phase 5: Reset Metadata
+[2024-12-06T09:51:07.210-0500] GC(0) Phase 5: Reset Metadata 0.076ms
+[2024-12-06T09:51:07.211-0500] GC(0) Eden regions: 1->0(2)
+[2024-12-06T09:51:07.211-0500] GC(0) Survivor regions: 0->0(0)
+[2024-12-06T09:51:07.211-0500] GC(0) Old regions: 1->2
+[2024-12-06T09:51:07.211-0500] GC(0) Humongous regions: 0->0
+[2024-12-06T09:51:07.211-0500] GC(0) Metaspace: 71K(320K)->71K(320K) NonClass: 68K(192K)->68K(192K) Class: 3K(128K)->3K(128K)
+[2024-12-06T09:51:07.211-0500] GC(0) Heap Dump (after full gc)
+[2024-12-06T09:51:07.218-0500] GC(0) Heap Dump (after full gc) 6.727ms
+[2024-12-06T09:51:07.218-0500] GC(0) Pause Full (Diagnostic Command) 3M->1M(28M) 16.755ms
+[2024-12-06T09:51:07.218-0500] GC(0) User=0.02s Sys=0.00s Real=0.01s
+[2024-12-06T09:51:07.218-0500] Safepoint "G1CollectFull", Time since last: 15121500258 ns, Reaching safepoint: 66090 ns, Cleanup: 3741 ns, At safepoint: 16777474 ns, Total: 16847305 ns

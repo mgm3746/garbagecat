@@ -264,7 +264,6 @@ public class GcManager {
             jvmDao.getJvmContext().setOptions(jvmOptions);
         }
         jvmRun.setJvmOptions(new JvmOptions(jvmDao.getJvmContext()));
-
         jvmRun.setAllocationRate(getAllocationRate());
         jvmRun.setAnalysis(jvmDao.getAnalysis());
         jvmRun.setBlockingEventCount(jvmDao.getBlockingEventCount());

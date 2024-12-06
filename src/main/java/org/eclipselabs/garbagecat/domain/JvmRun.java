@@ -421,7 +421,6 @@ public class JvmRun {
         if (jvmOptions != null) {
             jvmOptions.doAnalysis();
         }
-
         // Check for OOME with -XX:+ExitOnOutOfMemoryError
         if (!getUnidentifiedLogLines().isEmpty()) {
             String lastUnidentifiedLogLine = getUnidentifiedLogLines().get(getUnidentifiedLogLines().size() - 1);
@@ -438,7 +437,6 @@ public class JvmRun {
                 }
             }
         }
-
         // Unidentified logging lines
         if (!getUnidentifiedLogLines().isEmpty()) {
             if (!preprocessed) {
@@ -698,6 +696,15 @@ public class JvmRun {
                 && !((getJvmContext().getVersionMajor() == 17 && getJvmContext().getVersionMinor() >= 8)
                         || getJvmContext().getVersionMajor() >= 21)) {
             analysis.add(Analysis.WARN_SAFEPOINT_STATS);
+        }
+        // Check for heap dump before/after full gc
+        if (getEventTypes().contains(LogEventType.UNIFIED_HEAP_DUMP_AFTER_FULL_GC)
+                && !hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_AFTER_FULL_GC.getKey())) {
+            jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_AFTER_FULL_GC);
+        }
+        if (getEventTypes().contains(LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC)
+                && !hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_BEFORE_FULL_GC.getKey())) {
+            jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_BEFORE_FULL_GC);
         }
     }
 

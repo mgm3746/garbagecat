@@ -2202,6 +2202,50 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testHeapDumpAfterFullGc() {
+        String logLine = "[2024-12-06T05:57:30.298-0500] GC(0) Heap Dump (after full gc)";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testHeapDumpAfterFullGcWithTime() {
+        String logLine = "[2024-12-06T05:57:30.303-0500] GC(0) Heap Dump (after full gc) 5.254ms";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testHeapDumpBeforeFullGc() {
+        String logLine = "[2024-12-06T10:15:56.118-0500] GC(0) Heap Dump (before full gc)";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testHeapDumpBeforeFullGcWithTime() {
+        String logLine = "[2024-12-06T10:15:56.126-0500] GC(0) Heap Dump (before full gc) 7.667ms";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testHeapExpansion() {
         String logLine = "[0.772s][debug][gc,ergo,heap] GC(0) Heap expansion: short term pause time ratio 0.00% long "
                 + "term pause time ratio 0.00% threshold 2.53% pause time ratio 7.69% fully expanded false resize by "

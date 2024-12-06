@@ -87,6 +87,8 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedGcLockerRetryEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapDumpAfterFullGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapDumpBeforeFullGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
@@ -172,23 +174,25 @@ public final class JdkUtil {
         //
         UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
-        UNIFIED_GC_LOCKER_RETRY, UNIFIED_HEADER, UNIFIED_HEAP, UNIFIED_OLD, UNIFIED_PAR_NEW,
+        UNIFIED_GC_LOCKER_RETRY, UNIFIED_HEADER, UNIFIED_HEAP, UNIFIED_HEAP_DUMP_AFTER_FULL_GC,
         //
-        UNIFIED_PARALLEL_COMPACTING_OLD, UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT,
+        UNIFIED_HEAP_DUMP_BEFORE_FULL_GC, UNIFIED_OLD, UNIFIED_PAR_NEW, UNIFIED_PARALLEL_COMPACTING_OLD,
         //
-        UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD, UNIFIED_SHENANDOAH_CANCELLING_GC, UNIFIED_SHENANDOAH_DEGENERATED_GC,
+        UNIFIED_PARALLEL_SCAVENGE, UNIFIED_REMARK, UNIFIED_SAFEPOINT, UNIFIED_SERIAL_NEW, UNIFIED_SERIAL_OLD,
         //
-        UNIFIED_SHENANDOAH_FINAL_EVAC, UNIFIED_SHENANDOAH_FINAL_MARK, UNIFIED_SHENANDOAH_FINAL_ROOTS,
+        UNIFIED_SHENANDOAH_CANCELLING_GC, UNIFIED_SHENANDOAH_DEGENERATED_GC, UNIFIED_SHENANDOAH_FINAL_EVAC,
         //
-        UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS, UNIFIED_SHENANDOAH_FULL_GC, UNIFIED_SHENANDOAH_INIT_MARK,
+        UNIFIED_SHENANDOAH_FINAL_MARK, UNIFIED_SHENANDOAH_FINAL_ROOTS, UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS,
         //
-        UNIFIED_SHENANDOAH_INIT_UPDATE_REFS, UNIFIED_SHENANDOAH_STATS, UNIFIED_SHENANDOAH_TRIGGER, UNIFIED_YOUNG,
+        UNIFIED_SHENANDOAH_FULL_GC, UNIFIED_SHENANDOAH_INIT_MARK, UNIFIED_SHENANDOAH_INIT_UPDATE_REFS,
         //
-        UNKNOWN, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG, VM_WARNING, Z_ALLOCATION_STALL, Z_CONCURRENT, Z_MARK_END,
+        UNIFIED_SHENANDOAH_STATS, UNIFIED_SHENANDOAH_TRIGGER, UNIFIED_YOUNG, UNKNOWN, VERBOSE_GC_OLD, VERBOSE_GC_YOUNG,
         //
-        Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD,
+        VM_WARNING, Z_ALLOCATION_STALL, Z_CONCURRENT, Z_MARK_END, Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START,
         //
-        Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG, Z_RELOCATION_STALL, Z_STATS
+        Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD, Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG,
+        //
+        Z_RELOCATION_STALL, Z_STATS
     }
 
     /**
@@ -576,6 +580,8 @@ public final class JdkUtil {
         case CMS_CONCURRENT:
         case FLS_STATISTICS:
         case UNIFIED_HEAP:
+        case UNIFIED_HEAP_DUMP_AFTER_FULL_GC:
+        case UNIFIED_HEAP_DUMP_BEFORE_FULL_GC:
         case FOOTER_STATS:
         case G1_CONCURRENT:
         case GC_INFO:
@@ -708,6 +714,8 @@ public final class JdkUtil {
         case CLASS_UNLOADING:
         case FLS_STATISTICS:
         case UNIFIED_HEAP:
+        case UNIFIED_HEAP_DUMP_AFTER_FULL_GC:
+        case UNIFIED_HEAP_DUMP_BEFORE_FULL_GC:
         case FOOTER_STATS:
         case GC_INFO:
         case GC_LOCKER_SCAVENGE_FAILED:
@@ -818,6 +826,10 @@ public final class JdkUtil {
             return new UnifiedGcLockerRetryEvent(logLine);
         case UNIFIED_HEAP:
             return new UnifiedHeapEvent(logLine);
+        case UNIFIED_HEAP_DUMP_AFTER_FULL_GC:
+            return new UnifiedHeapDumpAfterFullGcEvent(logLine);
+        case UNIFIED_HEAP_DUMP_BEFORE_FULL_GC:
+            return new UnifiedHeapDumpBeforeFullGcEvent(logLine);
         case FOOTER_STATS:
             return new FooterStatsEvent(logLine);
 
