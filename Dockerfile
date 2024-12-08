@@ -20,7 +20,7 @@ RUN apt-get update && \
 RUN groupadd -g 30001 garbagecat && \
   useradd --no-log-init -m -d /home/garbagecat -u 30001 -g 30001 garbagecat
 
-COPY --from=build /usr/src/app/target/garbagecat-4.0.2-SNAPSHOT.jar /home/garbagecat/garbagecat.jar
+COPY --from=build /usr/src/app/target/garbagecat-4.0.3-SNAPSHOT.jar /home/garbagecat/garbagecat.jar
 
 # Run everything as garbagecat
 USER garbagecat
