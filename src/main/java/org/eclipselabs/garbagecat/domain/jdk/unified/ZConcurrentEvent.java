@@ -56,7 +56,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </p>
  * 
  * <pre>
- * [2024-11-19T04:02:29.854+0800][41508.445s][info ][gc                      ] GC(131) Major Collection (Proactive) 15120M(64%)->12048M(51%) 17.390s
+ * [2024-11-19T04:02:29.854+0800][41508.445s][info ][gc                      ] GC(131) Major Collection (Proactive) 15120M(64%)-&gt;12048M(51%) 17.390s
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>

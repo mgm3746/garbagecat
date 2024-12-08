@@ -42,14 +42,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [2024-12-06T05:57:30.296-0500] GC(0) Phase 4: Compact heap 0.469ms
  * [2024-12-06T05:57:30.296-0500] GC(0) Phase 5: Reset Metadata
  * [2024-12-06T05:57:30.297-0500] GC(0) Phase 5: Reset Metadata 0.107ms
- * [2024-12-06T05:57:30.297-0500] GC(0) Eden regions: 1->0(2)
- * [2024-12-06T05:57:30.298-0500] GC(0) Survivor regions: 0->0(0)
- * [2024-12-06T05:57:30.298-0500] GC(0) Old regions: 1->2
- * [2024-12-06T05:57:30.298-0500] GC(0) Humongous regions: 0->0
- * [2024-12-06T05:57:30.298-0500] GC(0) Metaspace: 71K(320K)->71K(320K) NonClass: 68K(192K)->68K(192K) Class: 3K(128K)->3K(128K)
+ * [2024-12-06T05:57:30.297-0500] GC(0) Eden regions: 1-&gt;0(2)
+ * [2024-12-06T05:57:30.298-0500] GC(0) Survivor regions: 0-&gt;0(0)
+ * [2024-12-06T05:57:30.298-0500] GC(0) Old regions: 1-&gt;2
+ * [2024-12-06T05:57:30.298-0500] GC(0) Humongous regions: 0-&gt;0
+ * [2024-12-06T05:57:30.298-0500] GC(0) Metaspace: 71K(320K)-&gt;71K(320K) NonClass: 68K(192K)-&gt;68K(192K) Class: 3K(128K)-&gt;3K(128K)
  * [2024-12-06T05:57:30.298-0500] GC(0) Heap Dump (after full gc)
  * [2024-12-06T05:57:30.303-0500] GC(0) Heap Dump (after full gc) 5.254ms
- * [2024-12-06T05:57:30.303-0500] GC(0) Pause Full (Diagnostic Command) 3M->1M(28M) 18.086ms
+ * [2024-12-06T05:57:30.303-0500] GC(0) Pause Full (Diagnostic Command) 3M-&gt;1M(28M) 18.086ms
  * [2024-12-06T05:57:30.303-0500] GC(0) User=0.00s Sys=0.01s Real=0.02s
  * [2024-12-06T05:57:30.303-0500] Safepoint "G1CollectFull", Time since last: 22762437431 ns, Reaching safepoint: 67307 ns, Cleanup: 3200 ns, At safepoint: 18107896 ns, Total: 18178403 ns
  * </pre>
