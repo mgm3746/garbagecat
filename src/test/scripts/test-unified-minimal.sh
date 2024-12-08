@@ -7,7 +7,7 @@
 #
 
 GARBAGECAT_HOME=~/workspace/garbagecat/target
-GARBAGECAT_VERSION=-4.0.2-SNAPSHOT
+GARBAGECAT_VERSION=-4.0.3-SNAPSHOT
 
 ##### JDK11 #####
 
