@@ -18,12 +18,22 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
+import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 
 /**
  * <p>
@@ -176,7 +186,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             //
     };
 
-    private static final List<Pattern> REGEX_THROWAWAY_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
+    private static final List<Pattern> THROWAWAY_PATTERN_LIST = new ArrayList<>(REGEX_THROWAWAY.length);
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
@@ -186,18 +196,35 @@ public class ParallelPreprocessAction implements PreprocessAction {
 
     static {
         for (String regex : REGEX_THROWAWAY) {
-            REGEX_THROWAWAY_LIST.add(Pattern.compile(regex));
+            THROWAWAY_PATTERN_LIST.add(Pattern.compile(regex));
         }
     }
 
     /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
+     * Determine if the log line is can be thrown away
      * 
+     * @return true if the log line matches a throwaway pattern, false otherwise.
+     */
+    private static final boolean isThrowaway(String logLine) {
+        boolean throwaway = false;
+        for (int i = 0; i < THROWAWAY_PATTERN_LIST.size(); i++) {
+            Pattern pattern = THROWAWAY_PATTERN_LIST.get(i);
+            if (pattern.matcher(logLine).matches()) {
+                throwaway = true;
+                break;
+            }
+        }
+        return throwaway;
+    }
+
+    /**
      * @param logLine
      *            The log line to test.
+     * @param priorLogEvent
+     *            The previous log line event.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static final boolean match(String logLine, LogEvent priorLogEvent) {
         boolean match = false;
         if (REGEX_BEGINNING_UNLOADING_CLASS_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN.matcher(logLine).matches()
@@ -206,14 +233,12 @@ public class ParallelPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_BEGINNING_OLD_ADAPTIVE_SIZE_POLICY_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_PATTERN.matcher(logLine).matches()) {
             match = true;
+        } else if (isThrowaway(logLine)) {
+            match = true;
         } else {
-            // TODO: Get rid of this and make them throwaway events?
-            for (int i = 0; i < REGEX_THROWAWAY_LIST.size(); i++) {
-                Pattern pattern = REGEX_THROWAWAY_LIST.get(i);
-                if (pattern.matcher(logLine).matches()) {
-                    match = true;
-                    break;
-                }
+            LogEvent event = JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN);
+            if (event instanceof ThrowAwayEvent) {
+                match = true;
             }
         }
         return match;
@@ -226,20 +251,22 @@ public class ParallelPreprocessAction implements PreprocessAction {
 
     /**
      * Create event from log entry.
-     *
-     * @param priorLogEntry
-     *            The prior log line.
+     * 
+     * @param priorLogEvent
+     *            The previous log line event.
      * @param logEntry
-     *            The log line.
+     *            The current log line.
      * @param nextLogEntry
      *            The next log line.
      * @param entangledLogLines
      *            Log lines to be output out of order.
      * @param context
      *            Information to make preprocessing decisions.
+     * @param preprocessEvents
+     *            Preprocessing events used in later analysis.
      */
-    public ParallelPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
-            List<String> entangledLogLines, Set<String> context) {
+    public ParallelPreprocessAction(LogEvent priorLogEvent, String logEntry, String nextLogEntry,
+            List<String> entangledLogLines, Set<String> context, List<PreprocessEvent> preprocessEvents) {
 
         Matcher matcher;
         // Beginning logging
@@ -298,6 +325,27 @@ public class ParallelPreprocessAction implements PreprocessAction {
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
+        } else {
+            LogEvent event = JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN);
+            if (event instanceof ApplicationConcurrentTimeEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.APPLICATION_CONCURRENT_TIME)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.APPLICATION_CONCURRENT_TIME);
+            } else if (event instanceof ApplicationLoggingEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.APPLICATION_LOGGING)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.APPLICATION_LOGGING);
+            } else if (event instanceof ClassHistogramEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.CLASS_HISTOGRAM)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.CLASS_HISTOGRAM);
+            } else if (event instanceof ClassUnloadingEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.CLASS_UNLOADING)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.CLASS_UNLOADING);
+            } else if (event instanceof HeapAtGcEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.HEAP_AT_GC)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.HEAP_AT_GC);
+            } else if (event instanceof TenuringDistributionEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION);
+            }
         }
     }
 
@@ -325,7 +373,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
         return logEntry;
     }
 
-    public String getName() {
-        return JdkUtil.PreprocessActionType.PARALLEL.toString();
+    public PreprocessActionType getType() {
+        return PreprocessActionType.PARALLEL;
     }
 }

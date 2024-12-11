@@ -47,11 +47,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Bad progress for free space: 11750K, need 17305K";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -59,9 +59,9 @@ class TestShenandoahPreprocessAction {
     void testBeginConcurrentMarking() {
         String logLine = "2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking";
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, null, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, null, null, context, null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -70,9 +70,10 @@ class TestShenandoahPreprocessAction {
         String logLine = "19.373: [Concurrent update references";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context,
+                null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -81,11 +82,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Cancelling GC: Allocation Failure";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -94,11 +95,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Cancelling GC: Stopping VM";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -107,11 +108,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Cancelling GC: Upgrade To Full GC";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -120,9 +121,10 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-08-21T09:40:29.929-0400: 0.467: [Concurrent cleanup 21278K->4701K(37888K), 0.048 ms]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context,
+                null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -137,7 +139,7 @@ class TestShenandoahPreprocessAction {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
@@ -147,11 +149,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:01.020-0400: 0.517: [Concurrent cleanup, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -159,19 +161,19 @@ class TestShenandoahPreprocessAction {
     void testConcurrentEvacuationPartial() {
         String logLine = "2021-10-27T19:37:39.139-0400: [Concurrent evacuation";
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, null, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, null, null, context, null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
     void testConcurrentMarkingPartial() {
         String logLine = "2020-08-18T14:05:39.789+0000: 854865.439: [Concurrent marking";
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
         Set<String> context = new HashSet<String>();
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, null, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, null, null, context, null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -180,11 +182,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:01.007-0400: 0.505: [Concurrent marking (process weakrefs), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -193,11 +195,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2024-04-12T13:21:24.037-0400: 4.907: [Concurrent marking (unload classes), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -206,11 +208,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:51.479-0400: 50.976: [Concurrent marking (update refs), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -220,21 +222,21 @@ class TestShenandoahPreprocessAction {
                 + "start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
     void testConcurrentUpdateReferencesPartial() {
         String logLine = "19.373: [Concurrent update references";
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
         Set<String> context = new HashSet<String>();
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, null, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, null, null, context, null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -243,11 +245,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2021-03-23T20:19:44.496+0000: 2871.170: [Pause Degenerated GC (Evacuation), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -256,11 +258,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2021-03-23T20:57:22.923+0000: 120816.207: [Pause Degenerated GC (Mark), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -269,11 +271,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2021-03-23T20:57:30.141+0000: 120823.424: [Pause Degenerated GC (Update Refs), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -282,9 +284,10 @@ class TestShenandoahPreprocessAction {
         String logLine = ", 2714.003 ms]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context,
+                null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -293,9 +296,10 @@ class TestShenandoahPreprocessAction {
         String logLine = ", [Metaspace: 6477K->6481K(1056768K)]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context,
+                null);
         // Random metaspace lines are thrown away
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
@@ -305,11 +309,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:01.020-0400: 0.517: [Concurrent evacuation, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -318,11 +322,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Failed to allocate Shared, 45072B";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -331,11 +335,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Failed to allocate TLAB, 4096K";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -344,11 +348,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:50.985-0400: 50.482: [Pause Final Evac, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -357,11 +361,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2024-04-05T16:31:23.569-0400: 0.526: [Pause Final Mark (process weakrefs), 0.498 ms]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -371,11 +375,11 @@ class TestShenandoahPreprocessAction {
                 + "Garbage: 0B";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
         ;
     }
@@ -385,11 +389,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Collectable Garbage: 5964M (95% of total), 102031K CSet, 1516 CSet regions";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -398,11 +402,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Collectable Garbage: 30279K (99%), Immediate: 16640K (54%), CSet: 13639K (44%)";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -412,11 +416,11 @@ class TestShenandoahPreprocessAction {
                 + "Alloc Tax Rate: 1.1x";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -426,11 +430,11 @@ class TestShenandoahPreprocessAction {
                 + "Alloc Tax Rate: 17.2x";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -438,7 +442,7 @@ class TestShenandoahPreprocessAction {
     void testFinalMarkPacerRate4Digit() {
         String logLine = "    Pacer for Evacuation. Used CSet: 656M, Free: 853K, Non-Taxable: 87437B, "
                 + "Alloc Tax Rate: 1923.2x";
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
     }
 
@@ -447,11 +451,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:01.015-0400: 0.512: [Pause Final Mark (process weakrefs), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -460,11 +464,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Using 2 of 2 workers for final marking";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -473,11 +477,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:04.856-0400: 4.353: [Pause Final Update Refs, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -487,11 +491,11 @@ class TestShenandoahPreprocessAction {
                 + "Internal frag: 0%";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -500,11 +504,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "Free headroom: 16207K (free) - 3276K (spike) - 0B (penalties) = 12930K";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -513,9 +517,10 @@ class TestShenandoahPreprocessAction {
         String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SHENANDOAH.toString() + ".");
-        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context);
+        ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, null, context,
+                null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -524,11 +529,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2021-03-23T20:57:42.349+0000: 120835.633: [Pause Full, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -537,11 +542,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Good progress for free space: 495M, need 17305K";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -550,11 +555,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Good progress for used space: 486M, need 512K";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -563,11 +568,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:00.999-0400: 0.496: [Pause Init Mark (process weakrefs), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -577,11 +582,11 @@ class TestShenandoahPreprocessAction {
                 + "Alloc Tax Rate: 1.1x";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -591,11 +596,11 @@ class TestShenandoahPreprocessAction {
                 + "Alloc Tax Rate: 14.5x";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -604,11 +609,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Pacer for Update Refs. Used: 1615M, Free: 0B, Non-Taxable: 0B, Alloc Tax Rate: infx";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -617,11 +622,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2024-04-05T16:31:23.570-0400: 0.527: [Pause Init Update Refs, 0.011 ms]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -630,11 +635,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:04.771-0400: 4.268: [Pause Init Update Refs, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -643,11 +648,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2022-10-28T10:58:59.284-0400: [Concurrent marking, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -657,11 +662,11 @@ class TestShenandoahPreprocessAction {
                 + "Alloc Tax Rate: 0.5x";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -671,11 +676,11 @@ class TestShenandoahPreprocessAction {
                 + "Alloc Tax Rate: 112.0x";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -684,11 +689,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Pacer for Precleaning. Non-Taxable: 128M";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -697,11 +702,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Pacer for Reset. Non-Taxable: 128M";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -710,11 +715,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2024-04-12T13:21:24.042-0400: 4.911: [Pause Final Mark (unload classes), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -723,11 +728,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2024-04-12T13:21:24.037-0400: 4.906: [Pause Init Mark (unload classes), start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -736,11 +741,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:01.014-0400: 0.512: [Concurrent precleaning, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -807,7 +812,7 @@ class TestShenandoahPreprocessAction {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
@@ -823,7 +828,7 @@ class TestShenandoahPreprocessAction {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(10, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
                 JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_DEGENERATED_GC),
@@ -836,8 +841,6 @@ class TestShenandoahPreprocessAction {
                 JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_UPDATE),
                 JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_STATS),
-                JdkUtil.LogEventType.SHENANDOAH_STATS.toString() + " event not identified.");
     }
 
     @Test
@@ -845,11 +848,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:00.997-0400: 0.494: [Concurrent reset, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -858,11 +861,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2021-03-12T06:36:18.692+0000: 58175.759: [Concurrent uncommit, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -871,11 +874,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "2020-03-11T07:00:01.023-0400: 0.520: [Concurrent update references, start]";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -884,11 +887,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Using 1 of 2 workers for concurrent reset";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -897,11 +900,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Using 3 of 3 workers for full gc";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -910,11 +913,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Using 2 of 2 workers for init marking";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -923,11 +926,11 @@ class TestShenandoahPreprocessAction {
         String logLine = "    Using 3 of 3 workers for stw degenerated gc";
         String nextLogLine = null;
         Set<String> context = new HashSet<String>();
-        assertTrue(ShenandoahPreprocessAction.match(logLine),
+        assertTrue(ShenandoahPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.SHENANDOAH.toString() + ".");
         List<String> entangledLogLines = new ArrayList<String>();
         ShenandoahPreprocessAction event = new ShenandoahPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
-                context);
+                context, null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 }

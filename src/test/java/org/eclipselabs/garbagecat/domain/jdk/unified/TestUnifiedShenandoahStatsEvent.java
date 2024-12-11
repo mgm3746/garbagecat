@@ -48,6 +48,14 @@ class TestUnifiedShenandoahStatsEvent {
     }
 
     @Test
+    void testAllWorkers() {
+        String logLine = "[2024-04-12T17:56:00.636-0400] all workers. Dividing the <total> over the root stage time "
+                + "estimates parallelism.";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
     void testCleanup3Spaces() {
         String logLine = "[2024-04-12T13:14:26.319-0400]   Cleanup                            36 us";
         assertTrue(UnifiedShenandoahStatsEvent.match(logLine),

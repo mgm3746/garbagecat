@@ -90,11 +90,9 @@ class TestClassUnloadingEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
                 JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CLASS_UNLOADING),
-                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING.getKey()),
                 org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING + " analysis not identified.");
     }

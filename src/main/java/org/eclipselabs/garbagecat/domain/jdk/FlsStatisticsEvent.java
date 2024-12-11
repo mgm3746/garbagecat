@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -132,7 +133,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class FlsStatisticsEvent implements ThrowAwayEvent {
+public class FlsStatisticsEvent extends CmsCollector implements ThrowAwayEvent {
 
     /**
      * Regular expressions defining the logging.
@@ -244,6 +245,11 @@ public class FlsStatisticsEvent implements ThrowAwayEvent {
     public FlsStatisticsEvent(String logEntry) {
         this.logEntry = logEntry;
         this.timestamp = 0L;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.CMS;
     }
 
     public String getLogEntry() {

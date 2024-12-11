@@ -17,10 +17,20 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
+import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 
 /**
  * <p>
@@ -84,14 +94,23 @@ public class SerialPreprocessAction implements PreprocessAction {
     public static final String TOKEN = "SERIAL_PREPROCESS_ACTION_TOKEN";
 
     /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     * 
      * @param logLine
      *            The log line to test.
+     * @param priorLogEvent
+     *            The previous log line event.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
-        return logLine.matches(REGEX_RETAIN_BEGINNING) || logLine.matches(REGEX_RETAIN_END);
+    public static final boolean match(String logLine, LogEvent priorLogEvent) {
+        boolean match = false;
+        if (logLine.matches(REGEX_RETAIN_BEGINNING) || logLine.matches(REGEX_RETAIN_END)) {
+            match = true;
+        } else {
+            LogEvent event = JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN);
+            if (event instanceof ThrowAwayEvent) {
+                match = true;
+            }
+        }
+        return match;
     }
 
     /**
@@ -101,20 +120,22 @@ public class SerialPreprocessAction implements PreprocessAction {
 
     /**
      * Create event from log entry.
-     *
-     * @param priorLogEntry
-     *            The prior log line.
+     * 
+     * @param priorLogEvent
+     *            The previous log line event.
      * @param logEntry
-     *            The log line.
+     *            The current log line.
      * @param nextLogEntry
      *            The next log line.
      * @param entangledLogLines
      *            Log lines to be output out of order.
      * @param context
      *            Information to make preprocessing decisions.
+     * @param preprocessEvents
+     *            Preprocessing events used in later analysis.
      */
-    public SerialPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
-            List<String> entangledLogLines, Set<String> context) {
+    public SerialPreprocessAction(LogEvent priorLogEvent, String logEntry, String nextLogEntry,
+            List<String> entangledLogLines, Set<String> context, List<PreprocessEvent> preprocessEvents) {
 
         // Beginning logging
         if (logEntry.matches(REGEX_RETAIN_BEGINNING)) {
@@ -134,7 +155,27 @@ public class SerialPreprocessAction implements PreprocessAction {
             }
             clearEntangledLines(entangledLogLines);
             context.remove(PreprocessAction.NEWLINE);
-            context.remove(TOKEN);
+        } else {
+            LogEvent event = JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN);
+            if (event instanceof ApplicationConcurrentTimeEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.APPLICATION_CONCURRENT_TIME)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.APPLICATION_CONCURRENT_TIME);
+            } else if (event instanceof ApplicationLoggingEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.APPLICATION_LOGGING)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.APPLICATION_LOGGING);
+            } else if (event instanceof ClassHistogramEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.CLASS_HISTOGRAM)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.CLASS_HISTOGRAM);
+            } else if (event instanceof ClassUnloadingEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.CLASS_UNLOADING)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.CLASS_UNLOADING);
+            } else if (event instanceof HeapAtGcEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.HEAP_AT_GC)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.HEAP_AT_GC);
+            } else if (event instanceof TenuringDistributionEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION);
+            }
         }
     }
 
@@ -162,7 +203,7 @@ public class SerialPreprocessAction implements PreprocessAction {
         return logEntry;
     }
 
-    public String getName() {
-        return JdkUtil.PreprocessActionType.SERIAL.toString();
+    public PreprocessActionType getType() {
+        return PreprocessActionType.SERIAL;
     }
 }

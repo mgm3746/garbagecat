@@ -311,9 +311,7 @@ class TestG1MixedPauseEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE),
                 JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED.getKey()),

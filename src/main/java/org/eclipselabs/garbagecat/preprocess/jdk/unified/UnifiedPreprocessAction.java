@@ -18,8 +18,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.OtherTime;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.jdk.unified.OomeMetaspaceEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedBlankLineEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeapDumpAfterFullGcEvent;
@@ -29,12 +32,14 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahFinalRootsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZMarkStartYoungAndOldEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZStatsEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 
@@ -1270,9 +1275,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
     /**
      * @param logLine
      *            The log line to test.
+     * @param priorLogEvent
+     *            The previous log line event.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static final boolean match(String logLine, LogEvent priorLogEvent) {
         boolean match = false;
         if (UnifiedSafepointEvent.PATTERN_JDK17.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_CMS_INITIAL_MARK_PATTERN.matcher(logLine).matches()
@@ -1296,19 +1303,19 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 || REGEX_RETAIN_MIDDLE_SHENANDOAH_DATA_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_SAFEPOINT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_END_TIMES_DATA_PATTERN.matcher(logLine).matches()
-                || REGEX_TO_SPACE_EXHAUSTED_PATTERN.matcher(logLine).matches()
-                || JdkUtil.parseLogLine(logLine, null,
-                        CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFinalRootsEvent
-                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedConcurrentEvent
-                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZConcurrentEvent
-                || JdkUtil.parseLogLine(logLine, null,
-                        CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpAfterFullGcEvent
-                || JdkUtil.parseLogLine(logLine, null,
-                        CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpBeforeFullGcEvent
-                || JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZMarkStartYoungAndOldEvent) {
+                || REGEX_TO_SPACE_EXHAUSTED_PATTERN.matcher(logLine).matches()) {
             match = true;
         } else if (isThrowaway(logLine)) {
             match = true;
+        } else {
+            LogEvent event = JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN);
+            if ((event instanceof ThrowAwayEvent && event instanceof UnifiedLogging)
+                    || event instanceof UnifiedConcurrentEvent || event instanceof UnifiedShenandoahFinalRootsEvent
+                    || event instanceof UnifiedHeapDumpAfterFullGcEvent
+                    || event instanceof UnifiedHeapDumpBeforeFullGcEvent || event instanceof ZConcurrentEvent
+                    || event instanceof ZMarkStartYoungAndOldEvent) {
+                match = true;
+            }
         }
         return match;
     }
@@ -1320,20 +1327,22 @@ public class UnifiedPreprocessAction implements PreprocessAction {
 
     /**
      * Create event from log entry.
-     *
-     * @param priorLogEntry
-     *            The prior log line.
+     * 
+     * @param priorLogEvent
+     *            The previous log line event.
      * @param logEntry
-     *            The log line.
+     *            The current log line.
      * @param nextLogEntry
      *            The next log line.
      * @param entangledLogLines
      *            Log lines to be output out of order.
      * @param context
      *            Information to make preprocessing decisions.
+     * @param preprocessEvents
+     *            Preprocessing events used in later analysis.
      */
-    public UnifiedPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
-            List<String> entangledLogLines, Set<String> context) {
+    public UnifiedPreprocessAction(LogEvent priorLogEvent, String logEntry, String nextLogEntry,
+            List<String> entangledLogLines, Set<String> context, List<PreprocessEvent> preprocessEvents) {
 
         Matcher matcher;
 
@@ -1537,7 +1546,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     context.remove(PreprocessAction.NEWLINE);
                 } else {
                     // Single log event or beginning of multi-line event
-                    if (priorLogEntry == null) {
+                    if (priorLogEvent == null) {
                         // first line in log file
                         this.logEntry = logEntry;
                     } else {
@@ -1590,7 +1599,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     // Output on new line
                     context.add(PreprocessAction.NEWLINE);
                     context.add(TOKEN_BEGINNING_OF_UNIFIED_SHENANDOAH);
-
                 } else {
                     // Middle logging
                     this.logEntry = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10);
@@ -1644,39 +1652,42 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 }
             }
             context.remove(PreprocessAction.NEWLINE);
-        } else if (JdkUtil.parseLogLine(logEntry, null,
-                CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFinalRootsEvent) {
-            // Stand alone event
-            if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
+        } else {
+            LogEvent event = JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN);
+            if (event instanceof OomeMetaspaceEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.OOME_METASPACE)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.OOME_METASPACE);
+            } else if (event instanceof UnifiedShenandoahFinalRootsEvent) {
+                // Stand alone event
+                if (!context.contains(UnifiedLogging.Tag.GC_START.toString())) {
+                    this.logEntry = logEntry;
+                    context.add(PreprocessAction.NEWLINE);
+                } else {
+                    // output intermingled lines at end
+                    entangledLogLines.add(logEntry);
+                    context.remove(PreprocessAction.NEWLINE);
+                }
+            } else if ((event instanceof UnifiedConcurrentEvent || event instanceof ZConcurrentEvent
+                    || event instanceof UnifiedHeapDumpAfterFullGcEvent
+                    || event instanceof UnifiedHeapDumpBeforeFullGcEvent) && !isThrowaway(logEntry)) {
+                // Stand alone event
+                if (!context.contains(UnifiedLogging.Tag.GC_START.toString())
+                        || context.contains(TOKEN_BEGINNING_OF_UNIFIED_SHENANDOAH)) {
+                    this.logEntry = logEntry;
+                    context.add(PreprocessAction.NEWLINE);
+                } else {
+                    // output intermingled lines at end
+                    entangledLogLines.add(logEntry);
+                    context.remove(PreprocessAction.NEWLINE);
+                }
+            } else if (event instanceof ZMarkStartYoungAndOldEvent) {
+                // Stand alone event
                 this.logEntry = logEntry;
                 context.add(PreprocessAction.NEWLINE);
-            } else {
-                // output intermingled lines at end
-                entangledLogLines.add(logEntry);
-                context.remove(PreprocessAction.NEWLINE);
+            } else if (event instanceof ZStatsEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.Z_STATS)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.Z_STATS);
             }
-        } else if ((JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof UnifiedConcurrentEvent
-                || JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN) instanceof ZConcurrentEvent
-                || JdkUtil.parseLogLine(logEntry, null,
-                        CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpAfterFullGcEvent
-                || JdkUtil.parseLogLine(logEntry, null,
-                        CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpBeforeFullGcEvent)
-                && !isThrowaway(logEntry)) {
-            // Stand alone event
-            if (!context.contains(UnifiedLogging.Tag.GC_START.toString())
-                    || context.contains(TOKEN_BEGINNING_OF_UNIFIED_SHENANDOAH)) {
-                this.logEntry = logEntry;
-                context.add(PreprocessAction.NEWLINE);
-            } else {
-                // output intermingled lines at end
-                entangledLogLines.add(logEntry);
-                context.remove(PreprocessAction.NEWLINE);
-            }
-        } else if (JdkUtil.parseLogLine(logEntry, null,
-                CollectorFamily.UNKNOWN) instanceof ZMarkStartYoungAndOldEvent) {
-            // Stand alone event
-            this.logEntry = logEntry;
-            context.add(PreprocessAction.NEWLINE);
         }
     }
 
@@ -1707,7 +1718,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
         return logEntry;
     }
 
-    public String getName() {
-        return JdkUtil.PreprocessActionType.UNIFIED.toString();
+    public PreprocessActionType getType() {
+        return PreprocessActionType.UNIFIED;
     }
 }

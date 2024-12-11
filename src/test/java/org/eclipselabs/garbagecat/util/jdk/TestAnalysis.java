@@ -374,9 +374,7 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEAP),
-                JdkUtil.LogEventType.HEAP.toString() + " not identified.");
+        assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.HEAP_AT_GC),
                 JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly identified.");
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC.getKey()),
@@ -647,9 +645,9 @@ class TestAnalysis {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_OOME_METASPACE.getKey()),
                 Analysis.ERROR_OOME_METASPACE + " analysis identified.");
     }

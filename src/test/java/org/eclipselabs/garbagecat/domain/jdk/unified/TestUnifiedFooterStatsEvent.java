@@ -396,9 +396,7 @@ class TestUnifiedFooterStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_FOOTER_STATS),
-                JdkUtil.LogEventType.UNIFIED_FOOTER_STATS.toString() + " event not identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test

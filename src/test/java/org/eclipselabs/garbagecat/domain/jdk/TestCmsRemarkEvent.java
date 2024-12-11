@@ -428,15 +428,13 @@ class TestCmsRemarkEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS),
                 JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_MEMORY),
                 JdkUtil.LogEventType.HEADER_MEMORY.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEADER_VM_INFO),
                 JdkUtil.LogEventType.HEADER_VM_INFO.toString() + " not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEAP_AT_GC),
-                JdkUtil.LogEventType.HEAP_AT_GC.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.PAR_NEW),
                 JdkUtil.LogEventType.PAR_NEW.toString() + " not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_REMARK),

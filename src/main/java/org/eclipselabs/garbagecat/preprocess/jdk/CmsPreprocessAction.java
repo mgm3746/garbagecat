@@ -18,12 +18,23 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
+import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
+import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
+import org.eclipselabs.garbagecat.domain.jdk.FlsStatisticsEvent;
+import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 
 /**
  * <p>
@@ -810,17 +821,13 @@ public class CmsPreprocessAction implements PreprocessAction {
     }
 
     /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     *
      * @param logLine
      *            The log line to test.
-     * @param priorLogLine
-     *            The last log entry processed.
-     * @param nextLogLine
-     *            The next log entry processed.
+     * @param priorLogEvent
+     *            The previous log line event.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine, String priorLogLine, String nextLogLine) {
+    public static final boolean match(String logLine, LogEvent priorLogEvent) {
         boolean match = false;
         if (REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(logLine).matches()
                 || REGEX_RETAIN_BEGINNING_PARNEW_FLS_STATISTICS_PATTERN.matcher(logLine).matches()
@@ -849,6 +856,11 @@ public class CmsPreprocessAction implements PreprocessAction {
             match = true;
         } else if (isThrowaway(logLine)) {
             match = true;
+        } else {
+            LogEvent event = JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN);
+            if (event instanceof ThrowAwayEvent) {
+                match = true;
+            }
         }
         return match;
     }
@@ -860,20 +872,22 @@ public class CmsPreprocessAction implements PreprocessAction {
 
     /**
      * Create event from log entry.
-     *
-     * @param priorLogEntry
-     *            The prior log line.
+     * 
+     * @param priorLogEvent
+     *            The previous log line event.
      * @param logEntry
-     *            The log line.
+     *            The current log line.
      * @param nextLogEntry
      *            The next log line.
      * @param entangledLogLines
      *            Log lines to be output out of order.
      * @param context
      *            Information to make preprocessing decisions.
+     * @param preprocessEvents
+     *            Preprocessing events used in later analysis.
      */
-    public CmsPreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
-            List<String> entangledLogLines, Set<String> context) {
+    public CmsPreprocessAction(LogEvent priorLogEvent, String logEntry, String nextLogEntry,
+            List<String> entangledLogLines, Set<String> context, List<PreprocessEvent> preprocessEvents) {
 
         Matcher matcher;
         // Beginning logging
@@ -1050,8 +1064,9 @@ public class CmsPreprocessAction implements PreprocessAction {
                 clearEntangledLines(entangledLogLines);
             }
             context.remove(PreprocessAction.NEWLINE);
-        } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches() && !(priorLogEntry != null
-                && REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(priorLogEntry).matches())) {
+        } else if ((matcher = REGEX_RETAIN_END_PATTERN.matcher(logEntry)).matches() && !(priorLogEvent != null
+                && priorLogEvent.getLogEntry() != null
+                && REGEX_RETAIN_MIDDLE_PRINT_CLASS_HISTOGRAM_PATTERN.matcher(priorLogEvent.getLogEntry()).matches())) {
             // End of logging event
             matcher.reset();
             if (matcher.matches()) {
@@ -1067,8 +1082,9 @@ public class CmsPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(1);
             }
             clearEntangledLines(entangledLogLines);
-            if (context.contains(TOKEN) && !(priorLogEntry != null
-                    && REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(priorLogEntry).matches())) {
+            if (context.contains(TOKEN) && !(priorLogEvent != null && priorLogEvent.getLogEntry() != null
+                    && REGEX_RETAIN_BEGINNING_PARNEW_CONCURRENT_PATTERN.matcher(priorLogEvent.getLogEntry())
+                            .matches())) {
                 // End of multi-line event or PAR_NEW truncated
                 context.remove(PreprocessAction.NEWLINE);
             } else {
@@ -1082,6 +1098,30 @@ public class CmsPreprocessAction implements PreprocessAction {
             }
             context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
+        } else {
+            LogEvent event = JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN);
+            if (event instanceof ApplicationConcurrentTimeEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.APPLICATION_CONCURRENT_TIME)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.APPLICATION_CONCURRENT_TIME);
+            } else if (event instanceof ApplicationLoggingEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.APPLICATION_LOGGING)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.APPLICATION_LOGGING);
+            } else if (event instanceof ClassHistogramEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.CLASS_HISTOGRAM)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.CLASS_HISTOGRAM);
+            } else if (event instanceof ClassUnloadingEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.CLASS_UNLOADING)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.CLASS_UNLOADING);
+            } else if (event instanceof FlsStatisticsEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.FLS_STATISTICS)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.FLS_STATISTICS);
+            } else if (event instanceof HeapAtGcEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.HEAP_AT_GC)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.HEAP_AT_GC);
+            } else if (event instanceof TenuringDistributionEvent
+                    && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION)) {
+                preprocessEvents.add(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION);
+            }
         }
     }
 
@@ -1108,8 +1148,8 @@ public class CmsPreprocessAction implements PreprocessAction {
         return logEntry;
     }
 
-    public String getName() {
-        return JdkUtil.PreprocessActionType.CMS.toString();
+    public PreprocessActionType getType() {
+        return PreprocessActionType.CMS;
     }
 
     /**

@@ -17,10 +17,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationStoppedTimeEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 
 /**
  * <p>
@@ -248,13 +249,13 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
     public static final String TOKEN = "APPLICATION_STOPPED_TIME_PREPROCESS_ACTION_TOKEN";
 
     /**
-     * Determine if the logLine matches the logging pattern(s) for this event.
-     *
      * @param logLine
      *            The log line to test.
+     * @param priorLogEvent
+     *            The previous log line event.
      * @return true if the log line matches the event pattern, false otherwise.
      */
-    public static final boolean match(String logLine) {
+    public static final boolean match(String logLine, LogEvent priorLogEvent) {
         return REGEX_NO_PREPROCESSING_PATTERN.matcher(logLine).matches()
                 || REGEX_DECORATOR_MISSING_PATTERN.matcher(logLine).matches()
                 || REGEX_TIMESTAMP_PATTERN.matcher(logLine).matches()
@@ -272,20 +273,22 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
 
     /**
      * Create event from log entry.
-     *
-     * @param priorLogEntry
-     *            The prior log line.
+     * 
+     * @param priorLogEvent
+     *            The previous log line event.
      * @param logEntry
-     *            The log line.
+     *            The current log line.
      * @param nextLogEntry
      *            The next log line.
      * @param entangledLogLines
      *            Log lines to be output out of order.
      * @param context
      *            Information to make preprocessing decisions.
+     * @param preprocessEvents
+     *            Preprocessing events used in later analysis.
      */
-    public ApplicationStoppedTimePreprocessAction(String priorLogEntry, String logEntry, String nextLogEntry,
-            List<String> entangledLogLines, Set<String> context) {
+    public ApplicationStoppedTimePreprocessAction(LogEvent priorLogEvent, String logEntry, String nextLogEntry,
+            List<String> entangledLogLines, Set<String> context, List<PreprocessEvent> preprocessEvents) {
 
         Matcher matcher;
         if ((matcher = REGEX_NO_PREPROCESSING_PATTERN.matcher(logEntry)).matches()) {
@@ -344,7 +347,7 @@ public class ApplicationStoppedTimePreprocessAction implements PreprocessAction 
         return logEntry;
     }
 
-    public String getName() {
-        return JdkUtil.PreprocessActionType.APPLICATION_STOPPED_TIME.toString();
+    public PreprocessActionType getType() {
+        return PreprocessActionType.APPLICATION_STOPPED_TIME;
     }
 }

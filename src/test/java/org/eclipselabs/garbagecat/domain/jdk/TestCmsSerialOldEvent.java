@@ -980,9 +980,9 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
@@ -1247,13 +1247,11 @@ class TestCmsSerialOldEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
                 "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
                 "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.HEAP_AT_GC),
-                "Log line not recognized as " + LogEventType.HEAP_AT_GC.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC.getKey()),
                 org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC + " analysis not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),

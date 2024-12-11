@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
+
 /**
  * Base preprocessing action: (1) Separate entangled logging. (2) Condense multiple lines to a single line.
  * 
@@ -21,10 +23,12 @@ package org.eclipselabs.garbagecat.preprocess;
 public interface PreprocessAction {
 
     /**
-     * Defined preprocessing events.
+     * Defined events identified during preprocessing that are used for analysis (e.g. <code>ThrowAwayEvent</code>s).
      */
     public enum PreprocessEvent {
-        REFERENCE_GC
+        APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, CLASS_HISTOGRAM, CLASS_UNLOADING, FLS_STATISTICS, HEAP_AT_GC,
+        //
+        OOME_METASPACE, REFERENCE_GC, TENURING_DISTRIBUTION, Z_STATS
     }
 
     /**
@@ -35,12 +39,17 @@ public interface PreprocessAction {
     public static final String NEWLINE = "NEWLINE";
 
     /**
+     * <code>PreprocessActionType</code> context identifier.
+     */
+    public static final String PREPROCESS_ACTION_TYPE = "PREPROCESS_ACTION_TYPE";
+
+    /**
      * @return The log entry for the action.
      */
     String getLogEntry();
 
     /**
-     * @return The action identifier.
+     * @return The action type identifier.
      */
-    String getName();
+    PreprocessActionType getType();
 }

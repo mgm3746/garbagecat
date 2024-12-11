@@ -199,7 +199,7 @@ public final class JdkUtil {
      * Defined preprocessing actions.
      */
     public enum PreprocessActionType {
-        APPLICATION_STOPPED_TIME, CMS, DATE_STAMP, G1, PARALLEL, SERIAL, SHENANDOAH, UNIFIED, UNIFIED_G1
+        APPLICATION_STOPPED_TIME, CMS, DATE_STAMP, G1, PARALLEL, SERIAL, SHENANDOAH, UNIFIED
     }
 
     /**

@@ -616,19 +616,21 @@ public class JvmRun {
             }
         }
         // Check events for outputting application concurrent time
-        if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME) &&
-
-                getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)) {
+        if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME)
+                && (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)
+                        || getPreprocessEvents().contains(PreprocessEvent.APPLICATION_CONCURRENT_TIME))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME);
         }
         // Check events for trace class unloading enabled
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING)
-                && getEventTypes().contains(LogEventType.CLASS_UNLOADING)) {
+                && (getEventTypes().contains(LogEventType.CLASS_UNLOADING)
+                        || getPreprocessEvents().contains(PreprocessEvent.CLASS_UNLOADING))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING);
         }
         // Detect PrintFLSStatistics if no JVM options
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_FLS_STATISTICS)
-                && getEventTypes().contains(LogEventType.FLS_STATISTICS)) {
+                && (getEventTypes().contains(LogEventType.FLS_STATISTICS)
+                        || getPreprocessEvents().contains(PreprocessEvent.FLS_STATISTICS))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_FLS_STATISTICS);
         }
         // Detect -XX:+PrintReferenceGC if no JVM options
@@ -638,7 +640,8 @@ public class JvmRun {
         }
         // Detect -XX:+PrintTenuringDistribution if no JVM options
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_TENURING_DISTRIBUTION)
-                && getEventTypes().contains(LogEventType.TENURING_DISTRIBUTION)) {
+                && (getEventTypes().contains(LogEventType.TENURING_DISTRIBUTION)
+                        || getPreprocessEvents().contains(PreprocessEvent.TENURING_DISTRIBUTION))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_TENURING_DISTRIBUTION);
         }
         // Detect -XX:+PrintClassHistogram, -XX:+PrintClassHistogramBeforeFullGC, -XX:+PrintClassHistogramAfterFullGC
@@ -646,20 +649,24 @@ public class JvmRun {
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.WARN_PRINT_CLASS_HISTOGRAM)
                 && !jvmOptions.hasAnalysis(org.github.joa.util.Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC)
                 && !jvmOptions.hasAnalysis(org.github.joa.util.Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC)
-                && getEventTypes().contains(LogEventType.CLASS_HISTOGRAM)) {
+                && (getEventTypes().contains(LogEventType.CLASS_HISTOGRAM)
+                        || getPreprocessEvents().contains(PreprocessEvent.CLASS_HISTOGRAM))) {
             analysis.add(Analysis.WARN_CLASS_HISTOGRAM);
         }
         // Detect -XX:+PrintHeapAtGC if no JVM options
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC)
-                && getEventTypes().contains(LogEventType.HEAP_AT_GC)) {
+                && (getEventTypes().contains(LogEventType.HEAP_AT_GC)
+                        || getPreprocessEvents().contains(PreprocessEvent.HEAP_AT_GC))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC);
         }
         // Application logging
-        if (getEventTypes().contains(LogEventType.APPLICATION_LOGGING)) {
+        if (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)
+                || getPreprocessEvents().contains(PreprocessEvent.APPLICATION_LOGGING)) {
             analysis.add(Analysis.WARN_APPLICATION_LOGGING);
         }
         // OOME Metaspace
-        if (getEventTypes().contains(LogEventType.OOME_METASPACE)) {
+        if (getEventTypes().contains(LogEventType.OOME_METASPACE)
+                || getPreprocessEvents().contains(PreprocessEvent.OOME_METASPACE)) {
             analysis.add(Analysis.ERROR_OOME_METASPACE);
         }
         // Thread dump
@@ -705,6 +712,10 @@ public class JvmRun {
         if (getEventTypes().contains(LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC)
                 && !hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_BEFORE_FULL_GC.getKey())) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_BEFORE_FULL_GC);
+        }
+        // Detect diagnostic ZGC statistics being output every ZStatisticsInterval interval
+        if (getEventTypes().contains(LogEventType.Z_STATS) || getPreprocessEvents().contains(PreprocessEvent.Z_STATS)) {
+            analysis.add(Analysis.INFO_Z_STATISTICS_INTERVAL);
         }
     }
 

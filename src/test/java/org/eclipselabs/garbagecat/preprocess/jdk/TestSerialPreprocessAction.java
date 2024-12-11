@@ -43,9 +43,9 @@ class TestSerialPreprocessAction {
     void testLogLineBeginSerialNew() {
         String logLine = "10.204: [GC 10.204: [DefNew";
         Set<String> context = new HashSet<String>();
-        assertTrue(SerialPreprocessAction.match(logLine),
+        assertTrue(SerialPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SERIAL.toString() + ".");
-        SerialPreprocessAction event = new SerialPreprocessAction(null, logLine, null, null, context);
+        SerialPreprocessAction event = new SerialPreprocessAction(null, logLine, null, null, context, null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -53,9 +53,9 @@ class TestSerialPreprocessAction {
     void testLogLineEndSerialNew() {
         String logLine = ": 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]";
         Set<String> context = new HashSet<String>();
-        assertTrue(SerialPreprocessAction.match(logLine),
+        assertTrue(SerialPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.SERIAL.toString() + ".");
-        SerialPreprocessAction event = new SerialPreprocessAction(null, logLine, null, null, context);
+        SerialPreprocessAction event = new SerialPreprocessAction(null, logLine, null, null, context, null);
         assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
@@ -70,7 +70,7 @@ class TestSerialPreprocessAction {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.SERIAL_NEW),
