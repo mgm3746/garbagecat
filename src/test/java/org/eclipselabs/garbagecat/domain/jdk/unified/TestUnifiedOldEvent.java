@@ -107,7 +107,7 @@ class TestUnifiedOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
-        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
+        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastBlockingEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (390361491 - 6628), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -154,7 +154,7 @@ class TestUnifiedOldEvent {
                 JdkUtil.LogEventType.UNIFIED_OLD.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
+        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastBlockingEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (89 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -192,7 +192,7 @@ class TestUnifiedOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN.getKey()),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
-        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
+        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastBlockingEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (7187 - 31), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -216,7 +216,7 @@ class TestUnifiedOldEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING.getKey()),
                 Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
-        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastGcEvent();
+        UnifiedOldEvent event = (UnifiedOldEvent) jvmRun.getLastBlockingEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (139 - 5), event.getTimestamp(), "Time stamp not parsed correctly.");
     }

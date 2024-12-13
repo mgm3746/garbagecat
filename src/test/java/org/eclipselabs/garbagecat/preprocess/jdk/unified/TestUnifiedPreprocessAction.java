@@ -3663,7 +3663,7 @@ class TestUnifiedPreprocessAction {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_OLD),
                 JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " event not identified.");
-        UnifiedSerialOldEvent event = (UnifiedSerialOldEvent) jvmRun.getFirstGcEvent();
+        UnifiedSerialOldEvent event = (UnifiedSerialOldEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (73), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -4659,7 +4659,8 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.LogEventType.UNIFIED_SHENANDOAH_DEGENERATED_GC.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        UnifiedShenandoahDegeneratedGcEvent event = (UnifiedShenandoahDegeneratedGcEvent) jvmRun.getFirstGcEvent();
+        UnifiedShenandoahDegeneratedGcEvent event = (UnifiedShenandoahDegeneratedGcEvent) jvmRun
+                .getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals(766256160635L - 13L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(megabytes(90), event.getCombinedOccupancyInit(),

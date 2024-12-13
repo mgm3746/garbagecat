@@ -141,8 +141,6 @@ public final class JdkUtil {
 
     /**
      * Defined collector families.
-     * 
-     * TODO: Move to joa?
      */
     public enum CollectorFamily {
         CMS, G1, PARALLEL, SERIAL, SHENANDOAH, UNKNOWN, Z
@@ -660,7 +658,6 @@ public final class JdkUtil {
             } else if (eventTimestampNanos < priorEventTimestampNanos + priorEventDurationNanos - 5000000000L) {
                 // Only report if overlap > 5 sec to account for overlaps due to JDK threading issues and use of
                 // -XX:+UseFastUnorderedTimeStamps
-                // TODO: Make this configurable w/ a command line option?
                 throw new TimeWarpException("Event overlap: " + Constants.LINE_SEPARATOR + priorEvent.getLogEntry()
                         + Constants.LINE_SEPARATOR + event.getLogEntry());
             } else {

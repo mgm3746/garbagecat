@@ -255,7 +255,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
-        UnifiedG1YoungPrepareMixedEvent event = (UnifiedG1YoungPrepareMixedEvent) jvmRun.getFirstGcEvent();
+        UnifiedG1YoungPrepareMixedEvent event = (UnifiedG1YoungPrepareMixedEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (16627), event.getTimestamp(), "Time stamp not parsed correctly.");
     }

@@ -110,7 +110,7 @@ class TestZRelocateStartYoungEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_SAFEPOINT),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + ".");
-        ZRelocateStartYoungEvent event = (ZRelocateStartYoungEvent) jvmRun.getLastGcEvent();
+        ZRelocateStartYoungEvent event = (ZRelocateStartYoungEvent) jvmRun.getLastBlockingEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (755666465303L - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
     }

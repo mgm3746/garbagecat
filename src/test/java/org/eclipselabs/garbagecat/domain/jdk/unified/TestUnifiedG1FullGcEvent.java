@@ -252,7 +252,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
-        UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getFirstGcEvent();
+        UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (79853119), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -271,7 +271,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
-        UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getFirstGcEvent();
+        UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (1217172136), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -406,7 +406,7 @@ class TestUnifiedG1FullGcEvent {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
-        UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getLastGcEvent();
+        UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getLastBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (173690), event.getTimestamp(), "Time stamp not parsed correctly.");
     }

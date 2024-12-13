@@ -267,7 +267,7 @@ public class GcManager {
         jvmRun.setEventTypes(jvmDao.getEventTypes());
         jvmRun.setExtRootScanningTimeMax(jvmDao.getExtRootScanningTimeMax());
         jvmRun.setExtRootScanningTimeTotal(jvmDao.getExtRootScanningTimeTotal());
-        jvmRun.setFirstGcEvent(jvmDao.getFirstGcEvent());
+        jvmRun.setFirstBlockingEvent(jvmDao.getFirstBlockingEvent());
         jvmRun.setFirstLogEvent(jvmDao.getFirstLogEvent());
         jvmRun.setFirstSafepointEvent(jvmDao.getFirstSafepointEvent());
         jvmRun.setGcBottlenecks(getGcBottlenecks(throughputThreshold));
@@ -278,7 +278,7 @@ public class GcManager {
         jvmRun.setInvertedSerialismCount(jvmDao.getInvertedSerialismCount());
         jvmRun.setJvmContext(jvmDao.getJvmContext());
         jvmRun.setLogEndingUnidentified(jvmDao.isLogEndingUnidentified());
-        jvmRun.setLastGcEvent(jvmDao.getLastGcEvent());
+        jvmRun.setLastBlockingEvent(jvmDao.getLastBlockingEvent());
         jvmRun.setLastLogLineUnprocessed(lastLogLineUnprocessed);
         jvmRun.setLastSafepointEvent(jvmDao.getLastSafepointEvent());
         jvmRun.setLogFileDate(jvmDao.getLogFileDate());

@@ -378,11 +378,9 @@ public class JvmDao {
     /**
      * The first blocking event.
      * 
-     * TODO: Should this consider non-blocking events?
-     * 
      * @return The first blocking event.
      */
-    public synchronized BlockingEvent getFirstGcEvent() {
+    public synchronized BlockingEvent getFirstBlockingEvent() {
         return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(0);
     }
 
@@ -448,11 +446,9 @@ public class JvmDao {
     /**
      * Retrieve the last blocking event.
      * 
-     * TODO: Should this consider non-blocking events?
-     * 
      * @return The last blocking event.
      */
-    public synchronized BlockingEvent getLastGcEvent() {
+    public synchronized BlockingEvent getLastBlockingEvent() {
         return this.blockingEvents.isEmpty() ? null : this.blockingEvents.get(blockingEvents.size() - 1);
     }
 

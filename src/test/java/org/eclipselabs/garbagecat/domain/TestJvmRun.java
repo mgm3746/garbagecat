@@ -64,9 +64,9 @@ class TestJvmRun {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals((long) 2097502, jvmRun.getDurationTotal(), "GC pause total not correct.");
-        assertEquals((long) 16517, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
-        assertEquals((long) 31432, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
-        assertEquals(271019, jvmRun.getLastGcEvent().getDurationMicros(), "GC last duration not correct.");
+        assertEquals((long) 16517, jvmRun.getFirstBlockingEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 31432, jvmRun.getLastBlockingEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(271019, jvmRun.getLastBlockingEvent().getDurationMicros(), "GC last duration not correct.");
         assertEquals(1830511, jvmRun.getStoppedTimeTotal(), "Stopped time total not correct.");
         assertEquals((long) 0, jvmRun.getFirstSafepointEvent().getTimestamp(), "Stopped first timestamp not correct.");
         assertEquals((long) 0, jvmRun.getLastSafepointEvent().getTimestamp(), "Stopped last timestamp not correct.");
@@ -266,7 +266,7 @@ class TestJvmRun {
         List<String> logLines = null;
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertNull(jvmRun.getLastGcEvent(), "Last GC event not correct.");
+        assertNull(jvmRun.getLastBlockingEvent(), "Last GC event not correct.");
     }
 
     /**
@@ -559,9 +559,9 @@ class TestJvmRun {
         assertEquals(3, jvmRun.getEventTypes().size(), "GC event type count not correct.");
         assertEquals(160, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
         assertEquals((long) 2568199604L, jvmRun.getDurationTotal(), "GC pause total not correct.");
-        assertEquals((long) 4364, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
-        assertEquals((long) 2801954, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
-        assertEquals(25963804, jvmRun.getLastGcEvent().getDurationMicros(), "GC last duration not correct.");
+        assertEquals((long) 4364, jvmRun.getFirstBlockingEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 2801954, jvmRun.getLastBlockingEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(25963804, jvmRun.getLastBlockingEvent().getDurationMicros(), "GC last duration not correct.");
         assertEquals(151, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
         assertEquals(2721420359L, jvmRun.getStoppedTimeTotal(), "Stopped time total not correct.");
         assertEquals((long) 0, jvmRun.getFirstSafepointEvent().getTimestamp(), "Stopped first timestamp not correct.");
@@ -700,9 +700,9 @@ class TestJvmRun {
         assertEquals(2, jvmRun.getEventTypes().size(), "GC event type count not correct.");
         assertEquals(2, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
         assertEquals((long) 82616, jvmRun.getDurationTotal(), "GC pause total not correct.");
-        assertEquals((long) 1002192, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
-        assertEquals((long) 1002847, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
-        assertEquals(53453, jvmRun.getLastGcEvent().getDurationMicros(), "GC last duration not correct.");
+        assertEquals((long) 1002192, jvmRun.getFirstBlockingEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 1002847, jvmRun.getLastBlockingEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(53453, jvmRun.getLastBlockingEvent().getDurationMicros(), "GC last duration not correct.");
         assertEquals(6, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
         assertEquals(1064937, jvmRun.getStoppedTimeTotal(), "Stopped time total not correct.");
         assertEquals((long) 1000964, jvmRun.getFirstSafepointEvent().getTimestamp(),
@@ -762,9 +762,9 @@ class TestJvmRun {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE),
                 JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString() + " event not identified.");
         assertEquals((long) 82616, jvmRun.getDurationTotal(), "GC pause total not correct.");
-        assertEquals((long) 2192, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
-        assertEquals((long) 2847, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
-        assertEquals(53453, jvmRun.getLastGcEvent().getDurationMicros(), "GC last duration not correct.");
+        assertEquals((long) 2192, jvmRun.getFirstBlockingEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 2847, jvmRun.getLastBlockingEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(53453, jvmRun.getLastBlockingEvent().getDurationMicros(), "GC last duration not correct.");
         assertEquals(6, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
         assertEquals(1064937, jvmRun.getStoppedTimeTotal(), "Stopped time total not correct.");
         assertEquals((long) 964, jvmRun.getFirstSafepointEvent().getTimestamp(),
@@ -803,9 +803,9 @@ class TestJvmRun {
         assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
                 JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " not identified.");
         assertEquals((long) 24656, jvmRun.getDurationTotal(), "GC pause total not correct.");
-        assertEquals((long) 53, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
-        assertEquals((long) 167, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
-        assertEquals(362, jvmRun.getLastGcEvent().getDurationMicros(), "GC last duration not correct.");
+        assertEquals((long) 53, jvmRun.getFirstBlockingEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 167, jvmRun.getLastBlockingEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(362, jvmRun.getLastBlockingEvent().getDurationMicros(), "GC last duration not correct.");
         assertEquals(12, jvmRun.getUnifiedSafepointEventCount(), "Safepoint event count not correct.");
         assertEquals(25565000, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint time total not correct.");
         assertEquals((long) 29, jvmRun.getFirstSafepointEvent().getTimestamp(),
@@ -855,9 +855,9 @@ class TestJvmRun {
         assertEquals(kilobytes(0), jvmRun.getMaxClassSpace(), "Max metaspace space not calculated correctly.");
         assertEquals(37, jvmRun.getDurationMax(), "Max pause not calculated correctly.");
         assertEquals(969, jvmRun.getDurationTotal(), "Total GC duration not calculated correctly.");
-        assertEquals((long) 125, jvmRun.getFirstGcEvent().getTimestamp(), "GC first timestamp not correct.");
-        assertEquals((long) 2625, jvmRun.getLastGcEvent().getTimestamp(), "GC last timestamp not correct.");
-        assertEquals(4, jvmRun.getLastGcEvent().getDurationMicros(), "GC last duration not correct.");
+        assertEquals((long) 125, jvmRun.getFirstBlockingEvent().getTimestamp(), "GC first timestamp not correct.");
+        assertEquals((long) 2625, jvmRun.getLastBlockingEvent().getTimestamp(), "GC last timestamp not correct.");
+        assertEquals(4, jvmRun.getLastBlockingEvent().getDurationMicros(), "GC last duration not correct.");
         assertEquals(154, jvmRun.getUnifiedSafepointEventCount(), "Safepoint event count not correct.");
         assertEquals(12839885, jvmRun.getUnifiedSafepointTimeTotal(), "Safepoint time total not correct.");
         assertEquals((long) 125, jvmRun.getFirstSafepointEvent().getTimestamp(),

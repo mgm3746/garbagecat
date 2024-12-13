@@ -130,7 +130,7 @@ public class JvmRun {
     /**
      * The first blocking event.
      */
-    private BlockingEvent firstGcEvent;
+    private BlockingEvent firstBlockingEvent;
 
     /**
      * The first log event.
@@ -175,7 +175,7 @@ public class JvmRun {
     /**
      * The last blocking event.
      */
-    private BlockingEvent lastGcEvent;
+    private BlockingEvent lastBlockingEvent;
 
     /**
      * Last log line unprocessed.
@@ -822,30 +822,34 @@ public class JvmRun {
         return extRootScanningTimeTotal;
     }
 
+    public BlockingEvent getFirstBlockingEvent() {
+        return firstBlockingEvent;
+    }
+
     /**
      * @return The first gc or safepoint event.
      */
     public LogEvent getFirstEvent() {
         LogEvent event = null;
 
-        long firstGcEventTimeStamp = 0;
-        if (firstGcEvent != null) {
-            firstGcEventTimeStamp = firstGcEvent.getTimestamp();
+        long firstBlockingEventTimeStamp = 0;
+        if (firstBlockingEvent != null) {
+            firstBlockingEventTimeStamp = firstBlockingEvent.getTimestamp();
         }
         long firstSafepointEventTimestamp = 0;
         if (firstSafepointEvent != null) {
             firstSafepointEventTimestamp = firstSafepointEvent.getTimestamp();
         }
 
-        if (Math.min(firstGcEventTimeStamp, firstSafepointEventTimestamp) == 0) {
-            if (firstGcEvent != null && firstGcEventTimeStamp >= firstSafepointEventTimestamp) {
-                event = firstGcEvent;
+        if (Math.min(firstBlockingEventTimeStamp, firstSafepointEventTimestamp) == 0) {
+            if (firstBlockingEvent != null && firstBlockingEventTimeStamp >= firstSafepointEventTimestamp) {
+                event = firstBlockingEvent;
             } else {
                 event = firstSafepointEvent;
             }
         } else {
-            if (firstGcEventTimeStamp <= firstSafepointEventTimestamp) {
-                event = firstGcEvent;
+            if (firstBlockingEventTimeStamp <= firstSafepointEventTimestamp) {
+                event = firstBlockingEvent;
             } else {
                 event = firstSafepointEvent;
             }
@@ -876,10 +880,6 @@ public class JvmRun {
             }
         }
         return datestamp;
-    }
-
-    public BlockingEvent getFirstGcEvent() {
-        return firstGcEvent;
     }
 
     public LogEvent getFirstLogEvent() {
@@ -968,11 +968,11 @@ public class JvmRun {
                         : getFirstEvent().getTimestamp();
 
         // Use either last gc or last timestamp and add duration of gc/stop
-        long lastGcEventTimeStamp = 0;
-        long lastGcEventDuration = 0;
-        if (lastGcEvent != null) {
-            lastGcEventTimeStamp = lastGcEvent.getTimestamp();
-            lastGcEventDuration = lastGcEvent.getDurationMicros();
+        long lastBlockingEventTimeStamp = 0;
+        long lastBlockingEventDuration = 0;
+        if (lastBlockingEvent != null) {
+            lastBlockingEventTimeStamp = lastBlockingEvent.getTimestamp();
+            lastBlockingEventDuration = lastBlockingEvent.getDurationMicros();
         }
         long lastStoppedEventTimestamp = 0;
         long lastStoppedEventDuration = 0;
@@ -981,19 +981,23 @@ public class JvmRun {
             lastStoppedEventDuration = lastSafepointEvent.getDurationMicros();
         }
 
-        long end = lastStoppedEventTimestamp > lastGcEventTimeStamp
+        long end = lastStoppedEventTimestamp > lastBlockingEventTimeStamp
                 ? lastStoppedEventTimestamp + JdkMath.convertMicrosToMillis(lastStoppedEventDuration).longValue()
-                : lastGcEventTimeStamp + JdkMath.convertMicrosToMillis(lastGcEventDuration).longValue();
+                : lastBlockingEventTimeStamp + JdkMath.convertMicrosToMillis(lastBlockingEventDuration).longValue();
         return end - start;
+    }
+
+    public BlockingEvent getLastBlockingEvent() {
+        return lastBlockingEvent;
     }
 
     /**
      * @return The last gc or stopped event.
      */
     public LogEvent getLastEvent() {
-        long lastGcEventTimeStamp = lastGcEvent == null ? 0 : lastGcEvent.getTimestamp();
+        long lastBlockingEventTimeStamp = lastBlockingEvent == null ? 0 : lastBlockingEvent.getTimestamp();
         long lastStoppedEventTimestamp = lastSafepointEvent == null ? 0 : lastSafepointEvent.getTimestamp();
-        return lastGcEvent != null && lastGcEventTimeStamp >= lastStoppedEventTimestamp ? lastGcEvent
+        return lastBlockingEvent != null && lastBlockingEventTimeStamp >= lastStoppedEventTimestamp ? lastBlockingEvent
                 : lastSafepointEvent;
     }
 
@@ -1019,10 +1023,6 @@ public class JvmRun {
             }
         }
         return datestamp;
-    }
-
-    public BlockingEvent getLastGcEvent() {
-        return lastGcEvent;
     }
 
     public String getLastLogLineUnprocessed() {
@@ -1363,8 +1363,8 @@ public class JvmRun {
         this.extRootScanningTimeTotal = extRootScanningTimeTotal;
     }
 
-    public void setFirstGcEvent(BlockingEvent firstGcEvent) {
-        this.firstGcEvent = firstGcEvent;
+    public void setFirstBlockingEvent(BlockingEvent firstBlockingEvent) {
+        this.firstBlockingEvent = firstBlockingEvent;
     }
 
     public void setFirstLogEvent(LogEvent firstLogEvent) {
@@ -1407,8 +1407,8 @@ public class JvmRun {
         this.jvmOptions = jvmOptions;
     }
 
-    public void setLastGcEvent(BlockingEvent lastGcEvent) {
-        this.lastGcEvent = lastGcEvent;
+    public void setLastBlockingEvent(BlockingEvent lastBlockingEvent) {
+        this.lastBlockingEvent = lastBlockingEvent;
     }
 
     public void setLastLogLineUnprocessed(String lastLogLineUnprocessed) {

@@ -196,7 +196,7 @@ class TestUnifiedYoungEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_UNKNOWN.getKey()),
                 Analysis.WARN_EXPLICIT_GC_UNKNOWN + " analysis not identified.");
-        UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastGcEvent();
+        UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastBlockingEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (7487 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -219,7 +219,7 @@ class TestUnifiedYoungEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_HEADER),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_HEADER.toString() + ".");
-        UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastGcEvent();
+        UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastBlockingEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (50 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -243,7 +243,7 @@ class TestUnifiedYoungEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING.getKey()),
                 Analysis.WARN_APPLICATION_STOPPED_TIME_MISSING + " analysis not identified.");
-        UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastGcEvent();
+        UnifiedYoungEvent event = (UnifiedYoungEvent) jvmRun.getLastBlockingEvent();
         assertTrue(event.isEndstamp(), "Event time not identified as endstamp.");
         assertEquals((long) (1507 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
     }

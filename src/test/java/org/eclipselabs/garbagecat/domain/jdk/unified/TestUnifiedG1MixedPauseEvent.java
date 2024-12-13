@@ -206,7 +206,7 @@ class TestUnifiedG1MixedPauseEvent {
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE),
                 "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
-        UnifiedG1MixedPauseEvent event = (UnifiedG1MixedPauseEvent) jvmRun.getFirstGcEvent();
+        UnifiedG1MixedPauseEvent event = (UnifiedG1MixedPauseEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (16629), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
