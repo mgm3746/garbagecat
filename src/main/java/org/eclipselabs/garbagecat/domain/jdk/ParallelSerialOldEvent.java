@@ -12,7 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.memory;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,11 +94,11 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
      * Regular expressions defining the logging.
      */
     private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC (\\(" + __TRIGGER
-            + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)[,]{0,1} \\[(PSPermGen|Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + "\\) )?\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\] \\[PSOldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)[,]{0,1} \\[(PSPermGen|Metaspace): "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]"
+            + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -213,22 +214,22 @@ public class ParallelSerialOldEvent extends ParallelCollector implements Blockin
                 }
             }
             if (matcher.group(15) != null) {
-                this.trigger = GcTrigger.getTrigger(matcher.group(15));
+                trigger = GcTrigger.getTrigger(matcher.group(15));
             }
-            this.youngOccupancyInit = kilobytes(matcher.group(17));
-            this.youngOccupancyEnd = kilobytes(matcher.group(18));
-            this.youngSpace = kilobytes(matcher.group(19));
-            this.oldOccupancyInit = kilobytes(matcher.group(20));
-            this.oldOccupancyEnd = kilobytes(matcher.group(21));
-            this.oldSpace = kilobytes(matcher.group(22));
-            this.classOccupancyInit = kilobytes(matcher.group(27));
-            this.classOccupancyEnd = kilobytes(matcher.group(28));
-            this.classSpace = kilobytes(matcher.group(29));
-            this.duration = JdkMath.convertSecsToMicros(matcher.group(30)).intValue();
-            if (matcher.group(33) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(35)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(36)).intValue();
+            youngOccupancyInit = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
+            youngOccupancyEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
+            youngSpace = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+            oldOccupancyInit = memory(matcher.group(26), matcher.group(28).charAt(0)).convertTo(KILOBYTES);
+            oldOccupancyEnd = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
+            oldSpace = memory(matcher.group(32), matcher.group(34).charAt(0)).convertTo(KILOBYTES);
+            classOccupancyInit = memory(matcher.group(45), matcher.group(47).charAt(0)).convertTo(KILOBYTES);
+            classOccupancyEnd = memory(matcher.group(48), matcher.group(50).charAt(0)).convertTo(KILOBYTES);
+            classSpace = memory(matcher.group(51), matcher.group(53).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertSecsToMicros(matcher.group(54)).intValue();
+            if (matcher.group(57) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(58)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(59)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(60)).intValue();
             }
         }
     }

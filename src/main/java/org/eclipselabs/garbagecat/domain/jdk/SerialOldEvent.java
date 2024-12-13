@@ -12,7 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.memory;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,8 +96,8 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
      * Regular expression for SERIAL_NEW block in some events.
      */
     public static final String __SERIAL_NEW_BLOCK = JdkRegEx.DECORATOR + " \\[DefNew( \\(("
-            + GcTrigger.PROMOTION_FAILED.getRegex() + ")\\) )?: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\]";
+            + GcTrigger.PROMOTION_FAILED.getRegex() + ")\\) )?: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]";
 
     /**
      * Trigger(s) regular expression.
@@ -109,10 +110,10 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
      * Regular expressions defining the logging.
      */
     private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[(Full )?GC( \\(" + __TRIGGER + "\\))?([ ]{0,1}"
-            + __SERIAL_NEW_BLOCK + ")?( )?" + JdkRegEx.DECORATOR + " \\[Tenured: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), \\[(Perm |Metaspace): " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
+            + __SERIAL_NEW_BLOCK + ")?( )?" + JdkRegEx.DECORATOR + " \\[Tenured: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), \\[(Perm |Metaspace): " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\], " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX
             + "?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
@@ -237,21 +238,24 @@ public class SerialOldEvent extends SerialCollector implements BlockingEvent, Yo
             } else {
                 trigger = GcTrigger.NONE;
             }
-            oldOccupancyInit = kilobytes(matcher.group(54));
-            oldOccupancyEnd = kilobytes(matcher.group(55));
-            oldSpace = kilobytes(matcher.group(56));
-            youngOccupancyInit = kilobytes(matcher.group(60)).minus(getOldOccupancyInit());
-            youngOccupancyEnd = kilobytes(matcher.group(61)).minus(getOldOccupancyEnd());
-            youngSpace = kilobytes(matcher.group(62)).minus(getOldSpace());
+            oldOccupancyInit = memory(matcher.group(60), matcher.group(62).charAt(0)).convertTo(KILOBYTES);
+            oldOccupancyEnd = memory(matcher.group(63), matcher.group(65).charAt(0)).convertTo(KILOBYTES);
+            oldSpace = memory(matcher.group(66), matcher.group(68).charAt(0)).convertTo(KILOBYTES);
+            youngOccupancyInit = memory(matcher.group(72), matcher.group(74).charAt(0)).convertTo(KILOBYTES)
+                    .minus(getOldOccupancyInit());
+            youngOccupancyEnd = memory(matcher.group(75), matcher.group(77).charAt(0)).convertTo(KILOBYTES)
+                    .minus(getOldOccupancyEnd());
+            youngSpace = memory(matcher.group(78), matcher.group(80).charAt(0)).convertTo(KILOBYTES)
+                    .minus(getOldSpace());
             // Do not need total begin/end/allocation, as these can be calculated.
-            classOccupancyInit = kilobytes(matcher.group(64));
-            classOccupancyEnd = kilobytes(matcher.group(65));
-            classSpace = kilobytes(matcher.group(66));
-            duration = JdkMath.convertSecsToMicros(matcher.group(67)).intValue();
-            if (matcher.group(70) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(71)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(72)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(73)).intValue();
+            classOccupancyInit = memory(matcher.group(82), matcher.group(84).charAt(0)).convertTo(KILOBYTES);
+            classOccupancyEnd = memory(matcher.group(85), matcher.group(87).charAt(0)).convertTo(KILOBYTES);
+            classSpace = memory(matcher.group(88), matcher.group(90).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertSecsToMicros(matcher.group(91)).intValue();
+            if (matcher.group(94) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(95)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(96)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(97)).intValue();
             }
         }
     }

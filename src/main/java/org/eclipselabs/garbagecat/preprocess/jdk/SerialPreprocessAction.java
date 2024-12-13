@@ -26,7 +26,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
-import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
@@ -83,9 +82,9 @@ public class SerialPreprocessAction implements PreprocessAction {
      * 
      * : 36825K->4352K(39424K), 0.0224830 secs] 44983K->14441K(126848K), 0.0225800 secs]
      */
-    private static final String REGEX_RETAIN_END = "^(: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION + "\\])$";
+    private static final String REGEX_RETAIN_END = "^(: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\])$";
 
     /**
      * Log entry in the entangle log list used to indicate the current high level preprocessor (e.g. CMS, G1). This
@@ -153,7 +152,7 @@ public class SerialPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            clearEntangledLines(entangledLogLines);
+            this.logEntry = PreprocessAction.clearEntangledLines(entangledLogLines, this.logEntry);
             context.remove(PreprocessAction.NEWLINE);
         } else {
             LogEvent event = JdkUtil.parseLogLine(logEntry, null, CollectorFamily.UNKNOWN);
@@ -176,26 +175,6 @@ public class SerialPreprocessAction implements PreprocessAction {
                     && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION)) {
                 preprocessEvents.add(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION);
             }
-        }
-    }
-
-    /**
-     * TODO: Move to superclass.
-     * 
-     * Convenience method to write out any saved log lines.
-     * 
-     * @param entangledLogLines
-     *            Log lines to be output out of order.
-     * @return
-     */
-    private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
-            // Output any entangled log lines
-            for (String logLine : entangledLogLines) {
-                this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
-            }
-            // Reset entangled log lines
-            entangledLogLines.clear();
         }
     }
 

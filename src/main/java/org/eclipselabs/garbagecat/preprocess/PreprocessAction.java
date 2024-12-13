@@ -12,6 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.preprocess;
 
+import java.util.List;
+
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 
 /**
@@ -42,6 +45,27 @@ public interface PreprocessAction {
      * <code>PreprocessActionType</code> context identifier.
      */
     public static final String PREPROCESS_ACTION_TYPE = "PREPROCESS_ACTION_TYPE";
+
+    /**
+     * @param entangledLogLines
+     *            Prior log lines that were output out of order.
+     * @param logEntry
+     *            The current preprocessed logging line.
+     * @return The logEntry with any entangledLogLines appended.
+     */
+    public static String clearEntangledLines(List<String> entangledLogLines, String logEntry) {
+        StringBuffer logEntries = new StringBuffer(logEntry);
+        if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
+            // Output any entangled log lines
+            for (String logLine : entangledLogLines) {
+                logEntries.append(Constants.LINE_SEPARATOR);
+                logEntries.append(logLine);
+            }
+            // Reset entangled log lines
+            entangledLogLines.clear();
+        }
+        return logEntries.toString();
+    }
 
     /**
      * @return The log entry for the action.

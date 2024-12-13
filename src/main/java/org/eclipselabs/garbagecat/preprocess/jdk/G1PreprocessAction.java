@@ -29,7 +29,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
-import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -1114,7 +1113,7 @@ public class G1PreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
             }
-            clearEntangledLines(entangledLogLines);
+            this.logEntry = PreprocessAction.clearEntangledLines(entangledLogLines, this.logEntry);
             context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
         } else if ((matcher = REGEX_RETAIN_END_CONCURRENT_YOUNG_PATTERN.matcher(logEntry)).matches()) {
@@ -1124,7 +1123,7 @@ public class G1PreprocessAction implements PreprocessAction {
                 entangledLogLines.add(matcher.group(1));
                 this.logEntry = matcher.group(18);
             }
-            clearEntangledLines(entangledLogLines);
+            this.logEntry = PreprocessAction.clearEntangledLines(entangledLogLines, this.logEntry);
             context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
         } else {
@@ -1148,24 +1147,6 @@ public class G1PreprocessAction implements PreprocessAction {
                     && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION)) {
                 preprocessEvents.add(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION);
             }
-        }
-    }
-
-    /**
-     * Convenience method to write out any saved log lines.
-     * 
-     * @param entangledLogLines
-     *            Log lines to be output out of order.
-     * @return
-     */
-    private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
-            // Output any entangled log lines
-            for (String logLine : entangledLogLines) {
-                this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
-            }
-            // Reset entangled log lines
-            entangledLogLines.clear();
         }
     }
 

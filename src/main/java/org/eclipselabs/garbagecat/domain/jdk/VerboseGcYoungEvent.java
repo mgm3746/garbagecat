@@ -12,7 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.memory;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -83,7 +84,7 @@ public class VerboseGcYoungEvent extends UnknownCollector
      * Regular expressions defining the logging.
      */
     private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(" + __TRIGGER + "\\) )?(--)? ("
-            + JdkRegEx.SIZE_K + "->)?" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
+            + JdkRegEx.SIZE + "->)?" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION
             + "\\]?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
@@ -153,15 +154,15 @@ public class VerboseGcYoungEvent extends UnknownCollector
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             trigger = GcTrigger.getTrigger(matcher.group(15));
+            combinedOccupancyEnd = memory(matcher.group(22), matcher.group(24).charAt(0)).convertTo(KILOBYTES);
             if (matcher.group(18) != null) {
-                combinedOccupancyInit = kilobytes(matcher.group(19));
+                combinedOccupancyInit = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
             } else {
                 // set it to the end
-                combinedOccupancyInit = kilobytes(matcher.group(20));
+                combinedOccupancyInit = combinedOccupancyEnd;
             }
-            combinedOccupancyEnd = kilobytes(matcher.group(20));
-            combinedSpace = kilobytes(matcher.group(21));
-            duration = JdkMath.convertSecsToMicros(matcher.group(22)).intValue();
+            combinedSpace = memory(matcher.group(25), matcher.group(27).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertSecsToMicros(matcher.group(28)).intValue();
         }
     }
 

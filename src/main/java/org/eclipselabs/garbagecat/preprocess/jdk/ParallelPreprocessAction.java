@@ -28,7 +28,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
 import org.eclipselabs.garbagecat.domain.jdk.HeapAtGcEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
-import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -46,7 +45,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
  * 
  * <h2>Example Logging</h2>
  * 
- * *
  * <p>
  * 1) {@link org.eclipselabs.garbagecat.domain.jdk.ParallelSerialOldEvent} with "GC time <em>would exceed</em>
  * GCTimeLimit":
@@ -101,10 +99,10 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * Regular expression GCTimeLimit exceeded logging.
      */
     private static final String REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED = "^(" + JdkRegEx.DECORATOR
-            + " \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\)\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\) \\[PSPermGen: "
-            + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + " \\[Full GC \\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\] \\[(PS|Par)OldGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) \\[PSPermGen: " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\)\\])(      |\t)(GC time (would exceed|is exceeding) GCTimeLimit of 98%)$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_GC_TIME_LIMIT_EXCEEDED_PATTERN = Pattern
@@ -161,11 +159,11 @@ public class ParallelPreprocessAction implements PreprocessAction {
      * [PSYoungGen: 115174K->0K(5651968K)] [ParOldGen: 5758620K->1232841K(5767168K)] 5873794K->1232841K(11419136K),
      * [Metaspace: 214025K->213385K(1257472K)], 3.8546414 secs] [Times: user=10.71 sys=0.72, real=3.86 secs]
      */
-    private static final String REGEX_RETAIN_END = "^(  | )?((\\[PSYoungGen: " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\]( \\[(ParOldGen|PSOldGen): " + JdkRegEx.SIZE_K + "->"
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\])? " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)[,]{0,1}( \\[(PSPermGen|Metaspace): " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K
-            + "\\(" + JdkRegEx.SIZE_K + "\\)\\])?)?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
+    private static final String REGEX_RETAIN_END = "^(  | )?((\\[PSYoungGen: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)\\]( \\[(ParOldGen|PSOldGen): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\])? " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)[,]{0,1}( \\[(PSPermGen|Metaspace): " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\)\\])?)?, " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?)[ ]*$";
 
     private static final Pattern REGEX_RETAIN_END_PATTERN = Pattern.compile(REGEX_RETAIN_END);
 
@@ -283,7 +281,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
             matcher.reset();
             if (matcher.matches()) {
                 this.logEntry = matcher.group(1);
-                entangledLogLines.add(matcher.group(29));
+                entangledLogLines.add(matcher.group(53));
             }
             context.add(PreprocessAction.NEWLINE);
             context.add(TOKEN);
@@ -322,7 +320,7 @@ public class ParallelPreprocessAction implements PreprocessAction {
                     this.logEntry = matcher.group(2);
                 }
             }
-            clearEntangledLines(entangledLogLines);
+            this.logEntry = PreprocessAction.clearEntangledLines(entangledLogLines, this.logEntry);
             context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN);
         } else {
@@ -346,26 +344,6 @@ public class ParallelPreprocessAction implements PreprocessAction {
                     && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION)) {
                 preprocessEvents.add(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION);
             }
-        }
-    }
-
-    /**
-     * TODO: Move to superclass.
-     * 
-     * Convenience method to write out any saved log lines.
-     * 
-     * @param entangledLogLines
-     *            Log lines to be output out of order.
-     * @return
-     */
-    private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
-            // Output any entangled log lines
-            for (String logLine : entangledLogLines) {
-                this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
-            }
-            // Reset entangled log lines
-            entangledLogLines.clear();
         }
     }
 

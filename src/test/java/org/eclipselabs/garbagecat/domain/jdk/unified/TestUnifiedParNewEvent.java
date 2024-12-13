@@ -83,6 +83,17 @@ class TestUnifiedParNewEvent {
     }
 
     @Test
+    void testParallelismUserZero() {
+        String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
+                + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "
+                + "User=0.00s Sys=0.00s Real=0.01s";
+        assertTrue(UnifiedParNewEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + ".");
+        UnifiedParNewEvent event = new UnifiedParNewEvent(logLine);
+        assertEquals(0, event.getParallelism(), "Parallelism not calculated correctly.");
+    }
+
+    @Test
     void testParseLogLine() {
         String logLine = "[0.049s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) ParNew: "
                 + "974K->128K(1152K) CMS: 0K->518K(960K) Metaspace: 250K->250K(1056768K) 0M->0M(2M) 3.544ms "

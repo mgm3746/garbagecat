@@ -47,7 +47,6 @@ class TestAnalysis {
         String jvmOptions = "-XX:InitialHeapSize=2147483648 -XX:MaxHeapSize=8589934592 -XX:-UseAdaptiveSizePolicy";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_HEAP_MIN_NOT_EQUAL_MAX.getKey()),
                 org.github.joa.util.Analysis.INFO_HEAP_MIN_NOT_EQUAL_MAX + " analysis not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_ADAPTIVE_SIZE_POLICY_DISABLED.getKey()),
@@ -115,7 +114,6 @@ class TestAnalysis {
         String jvmOptions = "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_CGROUP_MEMORY_LIMIT.getKey()),
                 org.github.joa.util.Analysis.WARN_CGROUP_MEMORY_LIMIT + " analysis not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_EXPERIMENTAL_VM_OPTIONS_ENABLED.getKey()),
@@ -302,7 +300,6 @@ class TestAnalysis {
         logLines = gcManager.preprocess(logLines, null);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
                 JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
@@ -387,7 +384,6 @@ class TestAnalysis {
                 + "-XX:G1SummarizeRSetStatsPeriod=0";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT.getKey()),
                 org.github.joa.util.Analysis.INFO_G1_SUMMARIZE_RSET_STATS_OUTPUT + " analysis incorrectly identified.");
     }
@@ -577,6 +573,20 @@ class TestAnalysis {
     }
 
     @Test
+    void testJvmOptionsOverride() throws IOException {
+        File testFile = TestUtil.getFile("dataset294.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        String jvmOptions = "-Xmx2g";
+        JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals("-Xmx2g", jvmRun.getJvmOptions().getMaxHeapSize(), "Max heap value not parsed correctly.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_JVM_OPTIONS_OVERRIDE.getKey()),
+                Analysis.WARN_JVM_OPTIONS_OVERRIDE + " analysis not identified.");
+    }
+
+    @Test
     void testMaxTenuringOverrideCms() {
         String jvmOptions = "-Xss128k -XX:MaxTenuringThreshold=14 -Xmx2048M";
         JvmContext jvmContext = new JvmContext(jvmOptions);
@@ -585,7 +595,6 @@ class TestAnalysis {
         jvmContext.setGarbageCollectors(collectors);
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE.getKey()),
                 org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
@@ -599,7 +608,6 @@ class TestAnalysis {
         jvmContext.setGarbageCollectors(collectors);
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE.getKey()),
                 org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
@@ -613,7 +621,6 @@ class TestAnalysis {
         jvmContext.setGarbageCollectors(collectors);
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE.getKey()),
                 org.github.joa.util.Analysis.INFO_MAX_TENURING_OVERRIDE + " analysis not identified.");
     }
@@ -804,7 +811,6 @@ class TestAnalysis {
         String jvmOptions = "-XX:-PrintCommandLineFlags";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS_DISABLED.getKey()),
                 Analysis.WARN_PRINT_COMMANDLINE_FLAGS_DISABLED + " not identified.");
     }
@@ -831,7 +837,6 @@ class TestAnalysis {
         String jvmOptions = "MGM";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertFalse(jvmRun.hasAnalysis(Analysis.WARN_PRINT_COMMANDLINE_FLAGS.getKey()),
                 Analysis.WARN_PRINT_COMMANDLINE_FLAGS + " analysis incorrectly identified.");
     }
@@ -959,7 +964,6 @@ class TestAnalysis {
         String jvmOptions = "-Xss1025k";
         GcManager gcManager = new GcManager();
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        jvmRun.doAnalysis();
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_LARGE.getKey()),
                 org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_LARGE + " analysis not identified.");
     }

@@ -1632,7 +1632,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                 this.logEntry = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1);
             }
             if (!context.contains(TOKEN_BEGINNING_OF_UNIFIED_SAFEPOINT)) {
-                clearEntangledLines(entangledLogLines);
+                this.logEntry = PreprocessAction.clearEntangledLines(entangledLogLines, this.logEntry);
             }
             context.remove(PreprocessAction.NEWLINE);
             context.remove(TOKEN_BEGINNING_OF_UNIFIED_G1_FULL_GC);
@@ -1686,29 +1686,6 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.Z_STATS)) {
                 preprocessEvents.add(PreprocessAction.PreprocessEvent.Z_STATS);
             }
-        }
-    }
-
-    /**
-     * Convenience method to write out any saved log lines.
-     * 
-     * @param entangledLogLines
-     *            Log lines to be output out of order.
-     * @return
-     */
-    private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
-            // Output any entangled log lines
-            for (String logLine : entangledLogLines) {
-                // Add to prior line if current line is not an ending pattern
-                if (this.logEntry.matches(TimesData.REGEX_JDK9) || !logLine.endsWith(Constants.LINE_SEPARATOR)) {
-                    this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
-                } else {
-                    this.logEntry = this.logEntry + logLine;
-                }
-            }
-            // Reset entangled log lines
-            entangledLogLines.clear();
         }
     }
 

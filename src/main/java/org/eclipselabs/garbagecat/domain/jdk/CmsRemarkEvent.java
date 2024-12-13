@@ -125,12 +125,12 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * Regular expression defining standard logging.
      */
     private static final String REGEX = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(("
-            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
-            + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
+            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
+            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\(parallel\\) , " + JdkRegEx.DURATION
             + "\\]" + JdkRegEx.DECORATOR + " \\[weak refs processing, " + JdkRegEx.DURATION + "\\]("
             + JdkRegEx.DECORATOR + " \\[scrub string table, " + JdkRegEx.DURATION + "\\])?[ ]{0,1}\\[1 CMS-remark: "
-            + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), "
+            + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     /**
      * Regular expression for class unloading enabled with <code>-XX:+CMSClassUnloadingEnabled</code> (default JDK8
@@ -145,12 +145,10 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * secs]2021-11-27T09:12:25.284-0500: 0.079: [scrub symbol table, 0.0004021 secs]2021-11-27T09:12:25.284-0500:
      * 0.079: [scrub string table, 0.0001095 secs][1 CMS-remark: 509K(768K)] 697K(1920K), 0.0010805 secs] [Times:
      * user=0.00 sys=0.00, real=0.01 secs]
-     * 
-     * TODO: Combine with REGEX.
      */
     private static final String REGEX_CLASS_UNLOADING = "^(" + JdkRegEx.DECORATOR + " \\[GC( \\(("
-            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
-            + JdkRegEx.SIZE_K + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\((non-)?parallel\\) ("
+            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
+            + JdkRegEx.SIZE + "\\)\\])?" + JdkRegEx.DECORATOR + " \\[Rescan \\((non-)?parallel\\) ("
             + JdkRegEx.DECORATOR + " \\[grey object rescan, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
             + " \\[root rescan, " + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR + " \\[visit unhandled CLDs, "
             + JdkRegEx.DURATION + "\\])?(" + JdkRegEx.DECORATOR + " \\[dirty klass scan, " + JdkRegEx.DURATION
@@ -158,9 +156,9 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
             + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR + " \\[class unloading, " + JdkRegEx.DURATION + "\\]"
             + JdkRegEx.DECORATOR + " ((\\[scrub symbol & string tables, " + JdkRegEx.DURATION
             + "\\])|(\\[scrub symbol table, " + JdkRegEx.DURATION + "\\]" + JdkRegEx.DECORATOR
-            + " \\[scrub string table, " + JdkRegEx.DURATION + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + " \\[scrub string table, " + JdkRegEx.DURATION + "\\]))( )?\\[1 CMS-remark: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern REGEX_CLASS_UNLOADING_PATTERN = Pattern.compile(REGEX_CLASS_UNLOADING);
 
@@ -170,8 +168,8 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
      * Regular expression defining truncated logging due to -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC:
      */
     private static final String REGEX_TRUNCATED = "^" + JdkRegEx.DECORATOR + " \\[GC( \\(("
-            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE_K + " \\("
-            + JdkRegEx.SIZE_K + "\\)\\]$";
+            + GcTrigger.CMS_FINAL_REMARK.getRegex() + ")\\)[ ]{0,1})?\\[YG occupancy: " + JdkRegEx.SIZE + " \\("
+            + JdkRegEx.SIZE + "\\)\\]$";
 
     private static final Pattern REGEX_TRUNCATED_PATTERN = Pattern.compile(REGEX_TRUNCATED);
 
@@ -254,21 +252,21 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                     trigger = GcTrigger.getTrigger(matcher.group(16));
                 } else {
                     // Initial GC[YG block missing
-                    if (matcher.group(31) != null && matcher.group(31).matches(JdkRegEx.TIMESTAMP)) {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(31)).longValue();
-                    } else if (matcher.group(19).matches(JdkRegEx.TIMESTAMP)) {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(19)).longValue();
+                    if (matcher.group(33) != null && matcher.group(33).matches(JdkRegEx.TIMESTAMP)) {
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(33)).longValue();
+                    } else if (matcher.group(21).matches(JdkRegEx.TIMESTAMP)) {
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(21)).longValue();
                     } else {
                         // Datestamp only.
-                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(19));
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(21));
                     }
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMicros(matcher.group(72)).intValue();
-                if (matcher.group(75) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(76)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(77)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(78)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(84)).intValue();
+                if (matcher.group(87) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(88)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(89)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(90)).intValue();
                 }
             }
             classUnloading = false;
@@ -289,21 +287,21 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
                     trigger = GcTrigger.getTrigger(matcher.group(16));
                 } else {
                     // Initial GC[YG block missing
-                    if (matcher.group(31) != null && matcher.group(31).matches(JdkRegEx.TIMESTAMP)) {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(31)).longValue();
-                    } else if (matcher.group(19).matches(JdkRegEx.TIMESTAMP)) {
-                        timestamp = JdkMath.convertSecsToMillis(matcher.group(19)).longValue();
+                    if (matcher.group(33) != null && matcher.group(33).matches(JdkRegEx.TIMESTAMP)) {
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(33)).longValue();
+                    } else if (matcher.group(23).matches(JdkRegEx.TIMESTAMP)) {
+                        timestamp = JdkMath.convertSecsToMillis(matcher.group(23)).longValue();
                     } else {
                         // Datestamp only.
-                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(19));
+                        timestamp = JdkUtil.convertDatestampToMillis(matcher.group(23));
                     }
                 }
                 // The last duration is the total duration for the phase.
-                duration = JdkMath.convertSecsToMicros(matcher.group(178)).intValue();
-                if (matcher.group(181) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(182)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(183)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(184)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(190)).intValue();
+                if (matcher.group(193) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(194)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(195)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(196)).intValue();
                 }
             }
             classUnloading = true;

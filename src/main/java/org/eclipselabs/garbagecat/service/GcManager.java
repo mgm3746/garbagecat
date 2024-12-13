@@ -245,20 +245,19 @@ public class GcManager {
      * Get JVM run data.
      * 
      * @param jvmOptions
-     *            The JVM options passed in on the command line. Is is assumed command line options are more definitive
-     *            than options found in <code>HeaderCommandLineFlagsEvent</code>, which is only summary of some options
-     *            (e.g. it does not include log file name, rotation details, etc.).
+     *            The JVM options passed in on the command line.
      * @param throughputThreshold
      *            The throughput threshold for bottleneck reporting.
      * @return The JVM run data.
      */
     public JvmRun getJvmRun(String jvmOptions, int throughputThreshold) {
         JvmRun jvmRun = new JvmRun(throughputThreshold, jvmStartDate);
-        // Use jvm options passed in on the command line if none found in the logging
-        // TODO: jvm options passed on the command line should override options found in
-        // the logging header because the
-        // logging header doesn't include every option (e.g. -Xloggc).
-        if (jvmOptions != null && jvmDao.getJvmContext().getOptions() == null) {
+        // Use jvm options passed in on the command line
+        if (jvmOptions != null) {
+            if (jvmDao.getJvmContext().getOptions() != null) {
+                // Warn users if the command line options are override ones found in logging
+                jvmDao.addAnalysis(Analysis.WARN_JVM_OPTIONS_OVERRIDE);
+            }
             jvmDao.getJvmContext().setOptions(jvmOptions);
         }
         jvmRun.setJvmOptions(new JvmOptions(jvmDao.getJvmContext()));

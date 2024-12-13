@@ -305,6 +305,13 @@ public enum Analysis {
     WARN_HEAP_INSPECTION_INITIATED_GC("warn.heap.inspection.initiated.gc"),
 
     /**
+     * Property key for JVM options being passed in the command line when they exist in the GC logging. It can make
+     * sense to do this in JDK8, where the <code>HeaderCommandLineFlagsEvent</code> is only a summary, not a
+     * comprehensive list.
+     */
+    WARN_JVM_OPTIONS_OVERRIDE("warn.jvm.options.override"),
+
+    /**
      * Property key for inverted parallelism.
      */
     WARN_PARALLELISM_INVERTED("warn.parallelism.inverted"),

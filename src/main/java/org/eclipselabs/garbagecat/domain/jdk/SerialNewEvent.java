@@ -12,7 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static org.eclipselabs.garbagecat.util.Memory.memory;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,8 +92,8 @@ public class SerialNewEvent extends SerialCollector
      * Regular expression defining the logging.
      */
     private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[(Full )?GC( \\(" + __TRIGGER + "\\))?( )?"
-            + JdkRegEx.DECORATOR + " \\[DefNew: " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
-            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE_K + "->" + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K
+            + JdkRegEx.DECORATOR + " \\[DefNew: " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\), " + JdkRegEx.DURATION + "\\] " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
             + "\\), " + JdkRegEx.DURATION + "\\]" + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
@@ -190,18 +191,20 @@ public class SerialNewEvent extends SerialCollector
                 // Datestamp only.
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
-            trigger = GcTrigger.getTrigger(matcher.group(18));
-            youngOccupancyInit = kilobytes(matcher.group(31));
-            youngOccupancyEnd = kilobytes(matcher.group(32));
-            youngSpace = kilobytes(matcher.group(33));
-            oldOccupancyInit = kilobytes(matcher.group(37)).minus(youngOccupancyInit);
-            oldOccupancyEnd = kilobytes(matcher.group(38)).minus(youngOccupancyEnd);
-            oldSpace = kilobytes(matcher.group(39)).minus(youngSpace);
-            duration = JdkMath.convertSecsToMicros(matcher.group(40)).intValue();
-            if (matcher.group(43) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(44)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(45)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(46)).intValue();
+            trigger = GcTrigger.getTrigger(matcher.group(16));
+            youngOccupancyInit = memory(matcher.group(31), matcher.group(33).charAt(0)).convertTo(KILOBYTES);
+            youngOccupancyEnd = memory(matcher.group(34), matcher.group(36).charAt(0)).convertTo(KILOBYTES);
+            youngSpace = memory(matcher.group(37), matcher.group(39).charAt(0)).convertTo(KILOBYTES);
+            oldOccupancyInit = memory(matcher.group(43), matcher.group(45).charAt(0)).convertTo(KILOBYTES)
+                    .minus(youngOccupancyInit);
+            oldOccupancyEnd = memory(matcher.group(46), matcher.group(48).charAt(0)).convertTo(KILOBYTES)
+                    .minus(youngOccupancyEnd);
+            oldSpace = memory(matcher.group(49), matcher.group(51).charAt(0)).convertTo(KILOBYTES).minus(youngSpace);
+            duration = JdkMath.convertSecsToMicros(matcher.group(52)).intValue();
+            if (matcher.group(55) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(56)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(57)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(58)).intValue();
             }
         }
     }

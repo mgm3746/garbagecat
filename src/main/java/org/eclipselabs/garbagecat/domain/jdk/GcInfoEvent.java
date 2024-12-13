@@ -23,8 +23,6 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 /**
  * <p>
  * GC_INFO
- * 
- * TODO: Move to UnifiedHeaderEvent?
  * </p>
  * 
  * <p>

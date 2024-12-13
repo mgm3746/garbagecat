@@ -62,9 +62,9 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
      * Regular expressions defining the logging JDK8 and prior.
      */
     private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[GC (\\(("
-            + GcTrigger.CMS_INITIAL_MARK.getRegex() + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE_K + "\\("
-            + JdkRegEx.SIZE_K + "\\)\\] " + JdkRegEx.SIZE_K + "\\(" + JdkRegEx.SIZE_K + "\\), " + JdkRegEx.DURATION
-            + "\\]" + TimesData.REGEX + "?[ ]*$";
+            + GcTrigger.CMS_INITIAL_MARK.getRegex() + ")\\) )?\\[1 CMS-initial-mark: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)\\] " + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]"
+            + TimesData.REGEX + "?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -134,11 +134,11 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
                     timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
                 }
                 trigger = GcTrigger.getTrigger(matcher.group(15));
-                duration = JdkMath.convertSecsToMicros(matcher.group(20)).intValue();
-                if (matcher.group(23) != null) {
-                    timeUser = JdkMath.convertSecsToCentis(matcher.group(24)).intValue();
-                    timeSys = JdkMath.convertSecsToCentis(matcher.group(25)).intValue();
-                    timeReal = JdkMath.convertSecsToCentis(matcher.group(26)).intValue();
+                duration = JdkMath.convertSecsToMicros(matcher.group(28)).intValue();
+                if (matcher.group(31) != null) {
+                    timeUser = JdkMath.convertSecsToCentis(matcher.group(32)).intValue();
+                    timeSys = JdkMath.convertSecsToCentis(matcher.group(33)).intValue();
+                    timeReal = JdkMath.convertSecsToCentis(matcher.group(34)).intValue();
                 }
             }
         }

@@ -27,46 +27,6 @@ import org.junit.jupiter.api.Test;
 class TestHeaderCommandLineFlagsEvent {
 
     @Test
-    void testJBossHeader() {
-        String logLine = "  JAVA_OPTS: -Dprogram.name=run.sh -d64 -server -Xms10000m -Xmx10000m -ss512k "
-                + "-XX:PermSize=512m -XX:MaxPermSize=512m -XX:NewSize=3000m -XX:MaxNewSize=3000m -XX:SurvivorRatio=6 "
-                + "-XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=5 -verbose:gc -XX:+PrintGC -XX:+PrintGCDetails "
-                + "-XX:+PrintGCDateStamps -XX:-TraceClassUnloading -XX:+UseConcMarkSweepGC -XX:+UseParNewGC "
-                + "-XX:+CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=70 "
-                + "-XX:+UseCMSInitiatingOccupancyOnly -XX:ParallelGCThreads=8 -XX:+CMSScavengeBeforeRemark "
-                + "-Dcom.sun.management.jmxremote.port=12345 -Dcom.sun.management.jmxremote.ssl=false "
-                + "-Djava.net.preferIPv4Stack=true -Djboss.platform.mbeanserver "
-                + "-Djavax.management.builder.initial=org.jboss.system.server.jmx.MBeanServerBuilderImpl "
-                + "-XX:ErrorFile=/opt/jboss/jboss-eap-4.3/jboss-as/server/edreams/log/crash/hs_err_pid%p.log "
-                + "-XX:+DisableExplicitGC "
-                + "-Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 "
-                + "-Dsun.lang.ClassLoader.allowArraySyntax=true -DrobotsEngine=register "
-                + "-DconfigurationEngine.configDir=/opt/odigeo/properties/ "
-                + "-Djavax.net.ssl.keyStore=/opt/edreams/keys/java/keyStore "
-                + "-Djavax.net.ssl.keyStorePassword=changeit";
-        assertTrue(HeaderCommandLineFlagsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
-        HeaderCommandLineFlagsEvent event = new HeaderCommandLineFlagsEvent(logLine);
-        String jvmOptions = "-Dprogram.name=run.sh -d64 -server -Xms10000m -Xmx10000m -ss512k "
-                + "-XX:PermSize=512m -XX:MaxPermSize=512m -XX:NewSize=3000m -XX:MaxNewSize=3000m -XX:SurvivorRatio=6 "
-                + "-XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=5 -verbose:gc -XX:+PrintGC -XX:+PrintGCDetails "
-                + "-XX:+PrintGCDateStamps -XX:-TraceClassUnloading -XX:+UseConcMarkSweepGC -XX:+UseParNewGC "
-                + "-XX:+CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=70 "
-                + "-XX:+UseCMSInitiatingOccupancyOnly -XX:ParallelGCThreads=8 -XX:+CMSScavengeBeforeRemark "
-                + "-Dcom.sun.management.jmxremote.port=12345 -Dcom.sun.management.jmxremote.ssl=false "
-                + "-Djava.net.preferIPv4Stack=true -Djboss.platform.mbeanserver "
-                + "-Djavax.management.builder.initial=org.jboss.system.server.jmx.MBeanServerBuilderImpl "
-                + "-XX:ErrorFile=/opt/jboss/jboss-eap-4.3/jboss-as/server/edreams/log/crash/hs_err_pid%p.log "
-                + "-XX:+DisableExplicitGC "
-                + "-Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 "
-                + "-Dsun.lang.ClassLoader.allowArraySyntax=true -DrobotsEngine=register "
-                + "-DconfigurationEngine.configDir=/opt/odigeo/properties/ "
-                + "-Djavax.net.ssl.keyStore=/opt/edreams/keys/java/keyStore "
-                + "-Djavax.net.ssl.keyStorePassword=changeit";
-        assertEquals(jvmOptions, event.getJvmOptions(), "Flags not parsed correctly.");
-    }
-
-    @Test
     void testLine() {
         String logLine = "CommandLine flags: -XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
                 + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "

@@ -235,22 +235,16 @@ public final class JdkRegEx {
      * Decimal examples: 0.0B, 8192.0K, 28.0M, 30.0G
      * 
      * With comma: 306,0M
+     * 
+     * Whole number with 'K': 27808K, 16172 K
      */
-    public static final String SIZE = "(\\d{1,10}([\\.,]\\d)?)([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES + "])";
+    public static final String SIZE = "(\\d{1,10}([\\.,]\\d)?)[ ]{0,1}([" + BYTES + KILOBYTES + MEGABYTES + GIGABYTES
+            + "])";
 
     /**
      * The size of memory in bytes. No units.
      */
     public static final String SIZE_BYTES = "(\\d{1,11})";
-
-    /**
-     * The size of memory in kilobytes. Sometimes there is a space between the number and the "K" units.
-     * 
-     * For example: 27808K, 16172 K
-     * 
-     * TODO: Combine with SIZE_K?
-     */
-    public static final String SIZE_K = "(\\d{1,9})[ ]?K";
 
     /**
      * Timestamp. Milliseconds since JVM started.

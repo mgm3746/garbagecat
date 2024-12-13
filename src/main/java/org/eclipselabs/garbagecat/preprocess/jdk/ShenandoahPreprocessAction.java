@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
-import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.jdk.ApplicationConcurrentTimeEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassHistogramEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ClassUnloadingEvent;
@@ -35,7 +34,6 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahInitUpdateEvent;
 import org.eclipselabs.garbagecat.domain.jdk.TenuringDistributionEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
-import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
@@ -421,7 +419,7 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
             }
             // Sometimes this is the end of a logging event
             if (entangledLogLines != null && !entangledLogLines.isEmpty() && newLoggingEvent(nextLogEntry)) {
-                clearEntangledLines(entangledLogLines);
+                this.logEntry = PreprocessAction.clearEntangledLines(entangledLogLines, this.logEntry);
                 context.remove(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT);
             }
             context.remove(PreprocessAction.NEWLINE);
@@ -465,31 +463,6 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                     && !preprocessEvents.contains(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION)) {
                 preprocessEvents.add(PreprocessAction.PreprocessEvent.TENURING_DISTRIBUTION);
             }
-        }
-    }
-
-    /**
-     * TODO: Move to superclass.
-     * 
-     * Convenience method to write out any saved log lines.
-     * 
-     * @param entangledLogLines
-     *            Log lines to be output out of order.
-     */
-    private final void clearEntangledLines(List<String> entangledLogLines) {
-        if (entangledLogLines != null && !entangledLogLines.isEmpty()) {
-            // Output any entangled log lines
-            for (String logLine : entangledLogLines) {
-                // Add to prior line if current line is not an ending pattern
-                if ((this.logEntry != null && this.logEntry.matches(TimesData.REGEX_JDK9))
-                        || (logLine != null && !logLine.endsWith(Constants.LINE_SEPARATOR))) {
-                    this.logEntry = this.logEntry + Constants.LINE_SEPARATOR + logLine;
-                } else {
-                    this.logEntry = this.logEntry + logLine;
-                }
-            }
-            // Reset entangled log lines
-            entangledLogLines.clear();
         }
     }
 

@@ -209,13 +209,13 @@ class TestJdkRegEx {
     @Test
     void testSizeUnitsCase() {
         String size = "1234k";
-        assertFalse(size.matches(JdkRegEx.SIZE_K), "Size must have capital K (kilobytes).");
+        assertFalse(size.matches(JdkRegEx.SIZE), "Size must have capital K (kilobytes).");
     }
 
     @Test
     void testSizeValid() {
         String size = "1234K";
-        assertTrue(size.matches(JdkRegEx.SIZE_K), "'1234K' is a valid size.");
+        assertTrue(size.matches(JdkRegEx.SIZE), "'1234K' is a valid size.");
     }
 
     @Test
@@ -245,25 +245,25 @@ class TestJdkRegEx {
     @Test
     void testSizeWithDecimal() {
         String size = "1.234K";
-        assertFalse(size.matches(JdkRegEx.SIZE_K), "Size is a whole number.");
+        assertFalse(size.matches(JdkRegEx.SIZE), "Size is a whole number.");
     }
 
     @Test
     void testSizeWithInvalidCharacter() {
         String size = "A234K";
-        assertFalse(size.matches(JdkRegEx.SIZE_K), "Size is a decimal number.");
+        assertFalse(size.matches(JdkRegEx.SIZE), "Size is a decimal number.");
     }
 
     @Test
     void testSizeWithNineTensPlaces() {
         String size = "129092672K";
-        assertTrue(size.matches(JdkRegEx.SIZE_K), "'129092672K' is a valid size.");
+        assertTrue(size.matches(JdkRegEx.SIZE), "'129092672K' is a valid size.");
     }
 
     @Test
     void testSizeWithoutUnits() {
         String size = "1234";
-        assertFalse(size.matches(JdkRegEx.SIZE_K), "Size must have capital K (kilobytes).");
+        assertFalse(size.matches(JdkRegEx.SIZE), "Size must have capital K (kilobytes).");
     }
 
     @Test
@@ -337,6 +337,6 @@ class TestJdkRegEx {
     @Test
     void testZeroSize() {
         String size = "0K";
-        assertTrue(size.matches(JdkRegEx.SIZE_K), "Zero sizes are valid.");
+        assertTrue(size.matches(JdkRegEx.SIZE), "Zero sizes are valid.");
     }
 }

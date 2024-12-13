@@ -16,6 +16,7 @@ import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
@@ -129,6 +130,7 @@ class TestSerialNewEvent {
                 "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_NEW.toString() + ".");
         SerialNewEvent event = new SerialNewEvent(logLine);
         assertEquals((long) 2218, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(GcTrigger.ALLOCATION_FAILURE, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(kilobytes(209792), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
         assertEquals(kilobytes(15933), event.getYoungOccupancyEnd(), "Young end occupancy not parsed correctly.");
         assertEquals(kilobytes(235968), event.getYoungSpace(), "Young space size not parsed correctly.");

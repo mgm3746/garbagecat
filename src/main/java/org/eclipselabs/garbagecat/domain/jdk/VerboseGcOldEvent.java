@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 
@@ -75,9 +74,8 @@ public class VerboseGcOldEvent extends UnknownCollector
     /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + __TRIGGER + "\\) )? ("
-            + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")->(" + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\(("
-            + JdkRegEx.SIZE_K + "|" + JdkRegEx.SIZE + ")\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
+    private static final String _REGEX = "^" + JdkRegEx.DECORATOR + " \\[Full GC( \\(" + __TRIGGER + "\\) )? "
+            + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION + "\\]?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -146,22 +144,10 @@ public class VerboseGcOldEvent extends UnknownCollector
                 timestamp = JdkUtil.convertDatestampToMillis(matcher.group(2));
             }
             trigger = GcTrigger.getTrigger(matcher.group(15));
-            if (matcher.group(17).matches(JdkRegEx.SIZE_K)) {
-                combinedOccupancyInit = kilobytes(matcher.group(18));
-            } else {
-                combinedOccupancyInit = memory(matcher.group(19), matcher.group(21).charAt(0)).convertTo(KILOBYTES);
-            }
-            if (matcher.group(22).matches(JdkRegEx.SIZE_K)) {
-                combinedOccupancyEnd = kilobytes(matcher.group(23));
-            } else {
-                combinedOccupancyEnd = memory(matcher.group(24), matcher.group(26).charAt(0)).convertTo(KILOBYTES);
-            }
-            if (matcher.group(27).matches(JdkRegEx.SIZE_K)) {
-                combinedSpace = kilobytes(matcher.group(28));
-            } else {
-                combinedSpace = memory(matcher.group(29), matcher.group(31).charAt(0)).convertTo(KILOBYTES);
-            }
-            duration = JdkMath.convertSecsToMicros(matcher.group(32)).intValue();
+            combinedOccupancyInit = memory(matcher.group(17), matcher.group(19).charAt(0)).convertTo(KILOBYTES);
+            combinedOccupancyEnd = memory(matcher.group(20), matcher.group(22).charAt(0)).convertTo(KILOBYTES);
+            combinedSpace = memory(matcher.group(23), matcher.group(25).charAt(0)).convertTo(KILOBYTES);
+            duration = JdkMath.convertSecsToMicros(matcher.group(26)).intValue();
         }
     }
 

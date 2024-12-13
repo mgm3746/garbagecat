@@ -273,9 +273,6 @@ class TestJdkUtil {
 
     }
 
-    /**
-     * 
-     */
     @Test
     void testBottleneckNewInterval() {
         String previousLogLine = "[2023-05-10T13:22:05.853-0500][890481.088s][gc,start] GC(7242) Pause Full "
@@ -372,6 +369,11 @@ class TestJdkUtil {
         String logLine = "85030.389: [Full GC 85030.390: [CMS2012-06-20T12:29:58.094+0200: 85030.443: "
                 + "[CMS-concurrent-preclean: 0.108/0.139 secs] [Times: user=0.14 sys=0.01, real=0.14 secs]";
         assertTrue(JdkUtil.isLogLineWithDateStamp(logLine), "Datestamp not found.");
+    }
+
+    @Test
+    void testDecoratorSize() {
+        assertEquals(13, JdkUtil.DECORATOR_SIZE, "DECORATOR_SIZE not correct");
     }
 
     @Test

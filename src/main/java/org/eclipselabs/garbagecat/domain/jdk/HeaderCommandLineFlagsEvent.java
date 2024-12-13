@@ -24,8 +24,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * </p>
  * 
  * <p>
- * Flags header that displays a combination and/or subset of the following: (1) Options passed to the JVM. (2)
- * Options/settings triggered by the options passed in. It is not just the options passed to the JVM.
+ * A flags header that displays a combination and/or subset of the following: (1) Options passed to the JVM. (2) Options
+ * set by ergonomics.
+ * 
+ * <p>
+ * It is not a definitive list but a summary of some options (e.g. it does not include log file name, rotation details,
+ * etc.).
  * </p>
  * 
  * <p>
@@ -46,16 +50,8 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  * 
  * <h2>Example Logging</h2>
  * 
- * 1) Standard JVM format:
- * 
  * <pre>
  * CommandLine flags: -XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 -XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:GCLogFileSize=8388608 -XX:InitialHeapSize=13958643712 -XX:MaxHeapSize=13958643712 -XX:MaxPermSize=402653184 -XX:MaxTenuringThreshold=6 -XX:NewRatio=2 -XX:NumberOfGCLogFiles=8 -XX:OldPLABSize=16 -XX:PermSize=402653184 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation -XX:+UseParNewGC
- * </pre>
- * 
- * 2) JBoss header in standard out:
- * 
- * <pre>
- *   JAVA_OPTS: -Dprogram.name=run.sh -d64 -server -Xms10000m -Xmx10000m -ss512k -XX:PermSize=512m -XX:MaxPermSize=512m -XX:NewSize=3000m -XX:MaxNewSize=3000m -XX:SurvivorRatio=6 -XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=5 -verbose:gc -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:-TraceClassUnloading -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=70 -XX:+UseCMSInitiatingOccupancyOnly -XX:ParallelGCThreads=8 -XX:+CMSScavengeBeforeRemark -Dcom.sun.management.jmxremote.port=12345 -Dcom.sun.management.jmxremote.ssl=false -Djava.net.preferIPv4Stack=true -Djboss.platform.mbeanserver -Djavax.management.builder.initial=org.jboss.system.server.jmx.MBeanServerBuilderImpl -XX:ErrorFile=/opt/jboss/jboss-eap-4.3/jboss-as/server/path/log/crash/hs_err_pid%p.log -XX:+DisableExplicitGC -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dsun.lang.ClassLoader.allowArraySyntax=true
  * </pre>
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
@@ -66,7 +62,7 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
     /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX = "^(CommandLine flags:|  JAVA_OPTS:)[ ]{1,2}(.+)$";
+    private static final String _REGEX = "^CommandLine flags: (.+)$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
@@ -109,7 +105,7 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
         String jvmOptions = null;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            jvmOptions = matcher.group(2);
+            jvmOptions = matcher.group(1);
         }
         return jvmOptions;
     }
