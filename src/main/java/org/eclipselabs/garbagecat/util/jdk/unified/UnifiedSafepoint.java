@@ -24,8 +24,6 @@ public class UnifiedSafepoint {
 
     /**
      * Defined triggers.
-     * 
-     * TODO: Split into GC vs. non-GC?
      */
     public enum Trigger {
         BULK_REVOKE_BIAS, CGC_OPERATION, CLASSLOADER_STATS_OPERATION, CLEAN_CLASSLOADER_DATA_METASPACES, CLEANUP,
@@ -72,14 +70,14 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * TODO:
+     * Classloader metrics event.
      * </p>
      */
     public static final String CLASSLOADER_STATS_OPERATION = "ClassLoaderStatsOperation";
 
     /**
      * <p>
-     * TODO:
+     * Work related to concurrent class unloading that has to be done in a safepoint.
      * </p>
      */
     public static final String CLEAN_CLASSLOADER_DATA_METASPACES = "CleanClassLoaderDataMetaspaces";
@@ -153,14 +151,14 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * TODO:
+     * Find deadlocks event.
      * </p>
      */
     public static final String FIND_DEADLOCKS = "FindDeadlocks";
 
     /**
      * <p>
-     * TODO:
+     * Force safepoint event.
      * </p>
      */
     public static final String FORCE_SAFEPOINT = "ForceSafepoint";
@@ -272,7 +270,8 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * TODO.
+     * The safepoint for executing an alternate code path when a handshake fails due to a platform not support
+     * handshakes.
      * </p>
      */
     public static final String HANDSHAKE_FALL_BACK = "HandshakeFallback";
@@ -293,14 +292,16 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * TODO:
+     * JFR event to write or clear the queue. Will be removed and split into JFRSafepointClear and JFRSafepointWrite in
+     * JDK24. Reference: <a href="https://bugs.openjdk.org/browse/JDK-8338314">JDK-8338314</a>.
      * </p>
      */
     public static final String JFR_CHECKPOINT = "JFRCheckpoint";
 
     /**
      * <p>
-     * TODO:
+     * JFR jdk.OldObjectSample event for additional tracking of heap objects (e.g. path to gc roots). Reference:
+     * <a href="https://github.com/oracle/graal/issues/5145">Add JFR jdk.OldObjectSample event</a>.
      * </p>
      */
     public static final String JFR_OLD_OBJECT = "JFROldObject";
@@ -338,7 +339,7 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * TODO:
+     * Print JNI information.
      * </p>
      */
     public static final String PRINT_JNI = "PrintJNI";
@@ -384,7 +385,7 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * TODO:
+     * Safepoint to support the JVM tool interface (JVMTI).
      * </p>
      */
     public static final String SET_NOTIFY_JVMTI_EVENTS_MODE = "SetNotifyJvmtiEventsMode";

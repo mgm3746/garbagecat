@@ -441,8 +441,6 @@ public class ShenandoahPreprocessAction implements PreprocessAction {
                         || context.contains(TOKEN_BEGINNING_SHENANDOAH))) {
                     this.logEntry = logEntry;
                     context.add(PreprocessAction.NEWLINE);
-                    // TODO: ?
-                    // context.add(TOKEN_BEGINNING_SHENANDOAH_CONCURRENT);
                 } else {
                     // output intermingled lines at end
                     entangledLogLines.add(logEntry);

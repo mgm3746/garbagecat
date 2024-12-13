@@ -21,12 +21,16 @@ package org.eclipselabs.garbagecat.util.jdk;
 public enum GcTrigger {
     //
     ALLOCATION_FAILURE("Allocation Failure"),
+
     // Ctrl-Break with -XX:+PrintClassHistogram trigger causes a full GC.
     CLASS_HISTOGRAM("Class Histogram"),
+
     //
     CMS_FINAL_REMARK("CMS Final Remark"),
+
     //
     CMS_INITIAL_MARK("CMS Initial Mark"),
+
     /**
      * <p>
      * CMS concurrent mode failure trigger.
@@ -70,6 +74,7 @@ public enum GcTrigger {
      * </ol>
      */
     CONCURRENT_MODE_FAILURE("concurrent mode failure"),
+
     /**
      * <p>
      * CMS concurrent mode interrupted trigger.
@@ -97,12 +102,14 @@ public enum GcTrigger {
      * </ol>
      */
     CONCURRENT_MODE_INTERRUPTED("concurrent mode interrupted"),
+
     /**
      * <p>
      * Explicit garbage collection trigger (e.g. Distributed Garbage Collection (DGC), jcmd &lt;pid&gt; GC.run).
      * </p>
      */
     DIAGNOSTIC_COMMAND("Diagnostic Command"),
+
     /**
      * <p>
      * Ergonomics trigger. GC happens for a heuristics reason. A heuristic is a rule of thumb or pattern the JVM uses to
@@ -121,16 +128,19 @@ public enum GcTrigger {
      * </ol>
      */
     ERGONOMICS("Ergonomics"),
+
     /**
      * G1 Compaction Pause trigger. A full gc due to too high heap occupancy in the old generation at the start of a
      * concurrent cycle during the concurrent start phase (when liveness information is determined).
      */
     G1_COMPACTION_PAUSE("G1 Compaction Pause"),
+
     /**
      * G1 Evacuation Pause trigger. Live objects are copied out of one region (evacuated) to another region to free
      * contiguous space. For both young and mixed collections.
      */
     G1_EVACUATION_PAUSE("G1 Evacuation Pause"),
+
     /**
      * Humongous object allocation trigger.
      * 
@@ -148,6 +158,7 @@ public enum GcTrigger {
      * disabled with <code>-XX:-G1UseAdaptiveIHOP</code>, IHOP is fixed at <code>InitiatingHeapOccupancyPercent</code>.
      */
     G1_HUMONGOUS_ALLOCATION("G1 Humongous Allocation"),
+
     //
     G1_PREVENTIVE_COLLECTION("G1 Preventive Collection"),
     /**
@@ -171,24 +182,31 @@ public enum GcTrigger {
      * "critical region").
      */
     GCLOCKER_INITIATED_GC("GCLocker Initiated GC"),
+
     //
     HEAP_DUMP_INITIATED_GC("Heap Dump Initiated GC"),
+
     //
     HEAP_INSPECTION_INITIATED_GC("Heap Inspection Initiated GC"),
+
     // JVM Tool Interface explicit GC trigger
     JVMTI_FORCED_GARBAGE_COLLECTION("JvmtiEnv ForceGarbageCollection"),
+
     /**
      * Run after METADATA_GC_THRESHOLD fails to resize the Metaspace. A full collection is run to clean up soft
      * references and free Metaspace. If this fails to free space, OutOfMemoryError is thrown.
      */
     LAST_DITCH_COLLECTION("Last ditch collection"),
+
     /**
      * Metadata GC Threshold trigger. When the Metaspace is resized. The JVM has failed to allocate memory for something
      * that should be stored in Metaspace and does a full collection before attempting to resize the Metaspace.
      */
     METADATA_GC_THRESHOLD("Metadata GC Threshold"),
+
     //
     METADATE_GC_CLEAR_SOFT_REFERENCES("Metadata GC Clear Soft References"),
+
     //
     NONE("NONE"),
     /**
@@ -218,35 +236,37 @@ public enum GcTrigger {
      * </p>
      */
     PROMOTION_FAILED("promotion failed"),
+
     /**
-     * TODO:
+     * Synchronization to support concurrent evacuation of live objects from one region to another.
      */
     SHENANDOAH_EVACUATION("Evacuation"),
+
     /**
-     * TODO:
-     */
-    SHENANDOAH_EVICTION("Eviction"),
-    /**
-     * TODO:
+     * Synchronization to support concurrent marking.
      */
     SHENANDOAH_MARK("Mark"),
+
     /**
-     * TODO:
+     * Synchronization to support outside of cycle <code>UnifiedShenandoahDegeneratedGcEvent</code>.
      */
     SHENANDOAH_OUTSIDE_OF_CYCLE("Outside of Cycle"),
+
     /**
-     * TODO:
+     * Synchronization to support processing weak references.
      */
     SHENANDOAH_PROCESS_WEAKREFS("process weakrefs"),
 
     /**
-     * TODO:
+     * Synchronization to support unloading classes.
      */
     SHENANDOAH_UNLOAD_CLASSES("unload classes"),
+
     /**
-     * TODO:
+     * Synchronization to support concurrent update references phase.
      */
     SHENANDOAH_UPDATE_REFS("[uU]pdate [rR]efs"),
+
     // Explicit garbage collection invoked.
     SYSTEM_GC("System(.gc\\(\\))?"),
     /**
@@ -270,6 +290,7 @@ public enum GcTrigger {
      * </ol>
      */
     TO_SPACE_EXHAUSTED("to-space exhausted"),
+
     /**
      * <p>
      * To Space Overflow trigger. A G1_YOUNG_PAUSE, G1_MIXED_PAUSE, or G1_YOUNG_INITIAL_MARK collection cannot happen
@@ -290,6 +311,7 @@ public enum GcTrigger {
      * </ol>
      */
     TO_SPACE_OVERFLOW("to-space overflow"),
+
     //
     UNKNOWN("UNKNOWN");
 
@@ -344,8 +366,6 @@ public enum GcTrigger {
                 return PROMOTION_FAILED;
             if (literal.matches(SHENANDOAH_EVACUATION.regex))
                 return SHENANDOAH_EVACUATION;
-            if (literal.matches(SHENANDOAH_EVICTION.regex))
-                return SHENANDOAH_EVICTION;
             if (literal.matches(SHENANDOAH_MARK.regex))
                 return SHENANDOAH_MARK;
             if (literal.matches(SHENANDOAH_OUTSIDE_OF_CYCLE.regex))

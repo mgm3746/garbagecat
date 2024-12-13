@@ -389,12 +389,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_SHENANDOAH = "^(" + UnifiedRegEx.DECORATOR
             + ")( Pause (Degenerated GC|Final (Evac|Mark|Roots|Update Refs)|Full|Init (Mark|Update Refs))( \\(("
-            + GcTrigger.SHENANDOAH_EVACUATION.getRegex() + "|" + GcTrigger.SHENANDOAH_EVICTION.getRegex() + "|"
-            + GcTrigger.SHENANDOAH_MARK.getRegex() + "|" + GcTrigger.SHENANDOAH_OUTSIDE_OF_CYCLE.getRegex() + "|"
-            + GcTrigger.SHENANDOAH_PROCESS_WEAKREFS.getRegex() + "|" + GcTrigger.SHENANDOAH_UNLOAD_CLASSES.getRegex()
-            + "|" + GcTrigger.SHENANDOAH_UPDATE_REFS.getRegex() + ")\\))?( \\(("
-            + GcTrigger.SHENANDOAH_PROCESS_WEAKREFS.getRegex() + "|" + GcTrigger.SHENANDOAH_UNLOAD_CLASSES.getRegex()
-            + ")\\))?)$";
+            + GcTrigger.SHENANDOAH_EVACUATION.getRegex() + "|" + GcTrigger.SHENANDOAH_MARK.getRegex() + "|"
+            + GcTrigger.SHENANDOAH_OUTSIDE_OF_CYCLE.getRegex() + "|" + GcTrigger.SHENANDOAH_PROCESS_WEAKREFS.getRegex()
+            + "|" + GcTrigger.SHENANDOAH_UNLOAD_CLASSES.getRegex() + "|" + GcTrigger.SHENANDOAH_UPDATE_REFS.getRegex()
+            + ")\\))?( \\((" + GcTrigger.SHENANDOAH_PROCESS_WEAKREFS.getRegex() + "|"
+            + GcTrigger.SHENANDOAH_UNLOAD_CLASSES.getRegex() + ")\\))?)$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_SHENANDOAH_PATTERN = Pattern
             .compile(REGEX_RETAIN_BEGINNING_SHENANDOAH);
@@ -654,13 +653,12 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_MIDDLE_SHENANDOAH_DATA = "^(" + UnifiedRegEx.DECORATOR
             + ")( Pause (Degenerated GC|Final (Evac|Mark|Roots|Update Refs)|Full|Init (Mark|Update Refs))( \\(("
-            + GcTrigger.SHENANDOAH_EVACUATION.getRegex() + "|" + GcTrigger.SHENANDOAH_EVICTION.getRegex() + "|"
-            + GcTrigger.SHENANDOAH_MARK.getRegex() + "|" + GcTrigger.SHENANDOAH_OUTSIDE_OF_CYCLE.getRegex() + "|"
-            + GcTrigger.SHENANDOAH_PROCESS_WEAKREFS.getRegex() + "|" + GcTrigger.SHENANDOAH_UNLOAD_CLASSES.getRegex()
-            + "|" + GcTrigger.SHENANDOAH_UPDATE_REFS.getRegex() + ")\\))?( \\(("
-            + GcTrigger.SHENANDOAH_PROCESS_WEAKREFS.getRegex() + "|" + GcTrigger.SHENANDOAH_UNLOAD_CLASSES.getRegex()
-            + ")\\))?)((( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)))? "
-            + JdkRegEx.DURATION_MS + ")$";
+            + GcTrigger.SHENANDOAH_EVACUATION.getRegex() + "|" + GcTrigger.SHENANDOAH_MARK.getRegex() + "|"
+            + GcTrigger.SHENANDOAH_OUTSIDE_OF_CYCLE.getRegex() + "|" + GcTrigger.SHENANDOAH_PROCESS_WEAKREFS.getRegex()
+            + "|" + GcTrigger.SHENANDOAH_UNLOAD_CLASSES.getRegex() + "|" + GcTrigger.SHENANDOAH_UPDATE_REFS.getRegex()
+            + ")\\))?( \\((" + GcTrigger.SHENANDOAH_PROCESS_WEAKREFS.getRegex() + "|"
+            + GcTrigger.SHENANDOAH_UNLOAD_CLASSES.getRegex() + ")\\))?)((( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
+            + "\\(" + JdkRegEx.SIZE + "\\)))? " + JdkRegEx.DURATION_MS + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_SHENANDOAH_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_SHENANDOAH_DATA);

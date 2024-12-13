@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * </p>
  * 
  * <p>
- * TODO
+ * Safepoint to support concurrent evacuation of live objects from one region to another.
  * </p>
  * 
  * <h2>Example Logging</h2>
