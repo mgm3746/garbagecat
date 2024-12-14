@@ -75,14 +75,11 @@ import org.github.joa.domain.GarbageCollector;
  * 2018-12-06T19:04:46.807-0500: 0.122: [Full GC (Ergonomics) [PSYoungGen: 508K-&gt;385K(1536K)] [PSOldGen: 408K-&gt;501K(2048K)] 916K-&gt;887K(3584K), [Metaspace: 3680K-&gt;3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]
  * </pre>
  * 
- * TODO: Expand or extend {@link org.eclipselabs.garbagecat.domain.jdk.SerialOldEvent}.
- * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * @author jborelo
  * 
  */
-public class ParallelSerialOldEvent extends ParallelCollector implements BlockingEvent, YoungCollection, OldCollection,
-        ClassSpaceCollection, YoungData, OldData, ClassData, TriggerData, SerialCollection, TimesData {
+public class ParallelSerialOldEvent extends SerialOldEvent {
 
     /**
      * Trigger(s) regular expression.

@@ -89,8 +89,8 @@ import org.github.joa.domain.GarbageCollector;
  * @author jborelo
  * 
  */
-public class SerialOldEvent extends SerialCollector implements BlockingEvent, YoungCollection, OldCollection,
-        ClassSpaceCollection, YoungData, OldData, ClassData, TriggerData, SerialCollection, TimesData {
+public class SerialOldEvent extends SerialCollector implements BlockingEvent, ClassData, ClassSpaceCollection,
+        OldCollection, OldData, SerialCollection, TimesData, TriggerData, YoungCollection, YoungData {
 
     /**
      * Regular expression for SERIAL_NEW block in some events.
