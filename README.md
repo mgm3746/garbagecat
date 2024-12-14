@@ -89,42 +89,9 @@ JDK9+:
 [2020-02-14T15:21:55.207-0500][052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-## Installation ##
+## Running ##
 
-Note: The Fedora and RHEL installs are release dependent. To ensure you have the latest code, [build garbagecat](https://github.com/mgm3746/garbagecat#building).
-
-### Fedora ###
-
-```
-# dnf copr enable bostrt/garbagecat
-# dnf install garbagecat
-```
-
-### RHEL Method #1 ###
-
-#### RHEL7 ####
-
-```
-# yum install yum-plugin-copr --enablerepo=rhel-7-server-optional-rpms
-# yum copr enable bostrt/garbagecat
-# yum install garbagecat
-```
-
-#### RHEL8 ####
-
-```
-# yum install dnf-plugins-core
-# yum copr enable bostrt/garbagecat
-# yum install garbagecat
-```
-
-### RHEL Method #2 ###
-
-Put the YUM repo file into your /etc/yum/repos.d/:
-* [RHEL 7 repo file](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-7/bostrt-garbagecat-epel-7.repo)
-* [RHEL 8 repo file](https://copr.fedorainfracloud.org/coprs/bostrt/garbagecat/repo/epel-8/bostrt-garbagecat-epel-78.repo)
-
-### Docker
+There is no need to download or build garbagecat to run the latest code. Simply run the container release as follows:
 
 ```bash
 $ docker run --pull=always -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --help
@@ -132,22 +99,13 @@ $ docker run --pull=always -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/ga
 ```
 
 NOTES:
+1. Supported architectures are x86_64 and arm64.
+1. Containers are automatically updated with each commit, so you are always running with the lastest updates.
 1. Local directory gets mounted on existing `/home/garbagecat/files` directory.
-1. You need to use the stdout with `--console`.
+1. The report is written to stdout with the `--console` option.
 1. The local directory must have world execute permission (Linux).
 
 ## Building ##
-
-Download the latest Maven: [http://maven.apache.org/download.html](http://maven.apache.org/download.html).
-
-Copy the download to where you want to install it and unzip it. For example:
-
-```
-$ cp ~/Downloads/apache-maven-3.6.3-bin.tar.gz ~/opt/
-$ cd ~/opt/
-$ tar -xvzf apache-maven-3.6.3-bin.tar.gz
-$ rm apache-maven-3.6.3-bin.tar.gz
-```
 
 Get source:
 
@@ -159,10 +117,10 @@ Build it:
 
 ```
 $ cd garbagecat
-$ /opt/apache-maven-3.6.3/bin/mvn clean (rebuilding)
-$ /opt/apache-maven-3.6.3/bin/mvn --settings settings.xml package
+$ /path/to/mvn clean (rebuilding)
+$ /path/to/mvn --settings settings.xml package
 $ export JAVA_HOME=/usr/lib/jvm/java/ (or wherever a JDK is installed)
-$ /opt/apache-maven-3.6.3/bin/mvn --settings settings.xml javadoc:javadoc
+$ /path/to/mvn --settings settings.xml javadoc:javadoc
 ```
 
 If you get the following error:
@@ -173,7 +131,7 @@ If you get the following error:
 Run the following command:
 
 ```
-$ /opt/apache-maven-3.6.3/bin/mvn -U -fn clean install
+$ /path/to/mvn -U -fn clean install
 ```
 
 ## Usage ##
@@ -188,7 +146,7 @@ usage: garbagecat [OPTION]... [FILE]
  -p,--preprocess            do preprocessing
  -r,--reorder               reorder logging by timestamp
  -s,--startdatetime <arg>   JVM start datetime (yyyy-MM-dd HH:mm:ss.SSS)
-                            to convert uptime to datestamp
+                            to convert uptime to datestamp in reporting
  -t,--threshold <arg>       threshold (0-100) for throughput bottleneck
                             reporting
  -v,--verbose               verbose output
@@ -196,7 +154,6 @@ usage: garbagecat [OPTION]... [FILE]
 ```
 
 Notes:
-  1. The Fedora/RHEL install allows garbagecat to be run as an executable file. For example: `garbagecat --help`.
   1. JVM options are can be passed in if they are not present in the gc logging header. Specifying the JVM options used during the JVM run allows for more detailed analysis.
   1. By default a report called report.txt is created in the directory where the **garbagecat** tool is run. Specifying a custom name for the output file is useful when analyzing multiple gc logs.
   1. Preprocessing is often required (e.g. when non-standard JVM options are used). It removes extraneous logging and makes any format adjustments needed for parsing (e.g. combining logging that the JVM sometimes splits across multiple lines).
@@ -216,7 +173,6 @@ $ java -jar garbagecat.jar /path/to/garbagecat/src/test/gc-example.log
 ### Report ###
 
 ```
-gc-example.log
 =======================================================================
 JVM:
 -----------------------------------------------------------------------
@@ -230,9 +186,9 @@ Datestamp First: 2016-10-10T18:43:49.025-0700
 Timestamp First: 1.362 secs
 Datestamp Last: 2016-10-11T12:34:47.720-0700
 Timestamp Last: 64260.057 secs
-# GC Events: 36586
+# GC Events: 36546
 Event Types: PAR_NEW, CMS_INITIAL_MARK, CMS_CONCURRENT, CMS_REMARK, CMS_SERIAL_OLD
-# Parallel Events: 36585
+# Parallel Events: 36545
 # Inverted Parallelism: 2
 Inverted Parallelism Max: 2016-10-11T08:06:39.037-0700: 48171.374: [GC (CMS Initial Mark) [1 CMS-initial-mark: 6578959K(8218240K)] 6599305K(8371584K), 0.0118105 secs] [Times: user=0.01 sys=0.00, real=0.02 secs] 
 # Serial Events: 1
@@ -245,7 +201,7 @@ Metaspace After GC Max: 167164K
 Metaspace Allocation Max: 1204224K
 GC Throughput: 96%
 GC Pause Max: 7.528 secs
-GC Pause Total: 2626.403 secs
+GC Pause Total: 2623.500 secs
 =======================================================================
 ANALYSIS:
 -----------------------------------------------------------------------
@@ -253,6 +209,7 @@ error
 -----------------------------------------------------------------------
 *The CMS_SERIAL_OLD collector is being invoked for one of the following reasons: (1) Fragmentation. The concurrent low pause collector does not compact. When fragmentation becomes an issue a serial collection compacts the heap. If the old generation has available space, the cause is likely fragmentation. Fragmentation can be avoided by increasing the heap size. (2) Metaspace class metadata or compressed class pointers allocation failure. The GC attempts to free/resize metaspace. (3) Resizing perm gen. If perm gen occupancy is near perm gen allocation, the cause is likely perm gen. Perm gen resizing can be avoided by setting the minimum perm gen size equal to the the maximum perm gen size. For example: -XX:PermSize=256M -XX:MaxPermSize=256M. (4) Undetermined reasons. Possibly the JVM requires a certain amount of heap or combination of resources that is not being met, and consequently the concurrent low pause collector is not used despite being specified with the -XX:+UseConcMarkSweepGC option. The CMS_SERIAL_OLD collector is a serial (single-threaded) collector, which means it can take a very long time to collect a large heap. For optimal performance, tune to avoid serial collections.
 *CMS promotion failed. A young generation collection is not able to complete because there is not enough space in the old generation for promotion. The old generation has available space, but it is not contiguous. When fragmentation is an issue, the concurrent low pause collector invokes a slow (single-threaded) serial collector to compact the heap. Tune to avoid fragmentation: (1) Increase the heap size. (2) Use -XX:CMSInitiatingOccupancyFraction=N (default 92) to run the CMS cycle more frequently to increase sweeping of dead objects in the old generation to free lists (e.g. -XX:CMSInitiatingOccupancyFraction=85 -XX:+UseCMSInitiatingOccupancyOnly). (3) Do heap dump analysis to determine if there is unintended object retention that can be addressed to decrease heap demands. Or move to a collector that handles fragmentation more efficiently: (1) G1 compacts the young and old generations during evacuation using a multi-threaded collector. (2) Shenandoah compacts concurrently. Temporarily add -XX:PrintFLSStatistics=1 and -XX:+PrintPromotionFailure to get additional insight into fragmentation.
+*Unidentified log line(s). Try running with the -p (preparsing) option.   
 -----------------------------------------------------------------------
 warn
 -----------------------------------------------------------------------
@@ -266,7 +223,7 @@ warn
 -----------------------------------------------------------------------
 info
 -----------------------------------------------------------------------
-*The JDK is very old (7.6 years).
+*The JDK is very old (8.5 years).
 *Metaspace(unlimited) = Class Metadata(unlimited) + Compressed Class Space(1024M).
 *-XX:+UseParNewGC is redundant (enabled by default) and can be removed. Deprecated in JDK8 and removed in JDK9.
 *The number of times an object is copied between survivor spaces is set with -XX:MaxTenuringThreshold=N (0-15). 0 = disabled. 15 (default) = promote when the survivor space fills. Unless testing has shown this improves performance, consider removing this option to allow the default value to be applied.
