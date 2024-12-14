@@ -7,7 +7,7 @@
 
 JAVA_HOME=/etc/alternatives/java_sdk_1.8.0_openjdk
 GARBAGECAT_HOME=../../../target
-GARBAGECAT_VERSION=-4.0.3-SNAPSHOT
+GARBAGECAT_VERSION=-5.0.1-SNAPSHOT
 
 ##### Create GC Logging #####
 

@@ -8,7 +8,7 @@
 #
 
 GARBAGECAT_HOME=~/workspace/garbagecat/target
-GARBAGECAT_VERSION=-4.0.3-SNAPSHOT
+GARBAGECAT_VERSION=-5.0.1-SNAPSHOT
 
 ##### JDK8 #####
 
