@@ -80,7 +80,6 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedFooterStatsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1InfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
@@ -168,7 +167,7 @@ public final class JdkUtil {
         //
         SHENANDOAH_TRIGGER, TENURING_DISTRIBUTION, THREAD_DUMP, UNIFIED_BLANK_LINE, UNIFIED_CMS_INITIAL_MARK,
         //
-        UNIFIED_CONCURRENT, UNIFIED_FOOTER_STATS, UNIFIED_G1_CLEANUP, UNIFIED_G1_FULL_GC_PARALLEL, UNIFIED_G1_INFO,
+        UNIFIED_CONCURRENT, UNIFIED_FOOTER_STATS, UNIFIED_G1_CLEANUP, UNIFIED_G1_FULL_GC_PARALLEL,
         //
         UNIFIED_G1_MIXED_PAUSE, UNIFIED_G1_YOUNG_INITIAL_MARK, UNIFIED_G1_YOUNG_PAUSE, UNIFIED_G1_YOUNG_PREPARE_MIXED,
         //
@@ -601,7 +600,6 @@ public final class JdkUtil {
         case TENURING_DISTRIBUTION:
         case UNIFIED_CONCURRENT:
         case UNIFIED_FOOTER_STATS:
-        case UNIFIED_G1_INFO:
         case UNIFIED_GC_LOCKER_RETRY:
         case UNIFIED_HEADER:
         case UNIFIED_SAFEPOINT:
@@ -731,7 +729,6 @@ public final class JdkUtil {
         case SHENANDOAH_TRIGGER:
         case UNIFIED_BLANK_LINE:
         case UNIFIED_FOOTER_STATS:
-        case UNIFIED_G1_INFO:
         case UNIFIED_HEADER:
         case UNIFIED_SAFEPOINT:
         case UNIFIED_SHENANDOAH_STATS:
@@ -773,8 +770,6 @@ public final class JdkUtil {
             return new UnifiedG1CleanupEvent(logLine);
         case UNIFIED_G1_FULL_GC_PARALLEL:
             return new UnifiedG1FullGcEvent(logLine);
-        case UNIFIED_G1_INFO:
-            return new UnifiedG1InfoEvent(logLine);
         case UNIFIED_G1_MIXED_PAUSE:
             return new UnifiedG1MixedPauseEvent(logLine);
         case UNIFIED_G1_YOUNG_INITIAL_MARK:

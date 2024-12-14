@@ -26,7 +26,6 @@ import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedFooterStatsEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent;
-import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1InfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1MixedPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungInitialMarkEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
@@ -140,8 +139,6 @@ public final class UnifiedUtil {
                 eventType = LogEventType.UNIFIED_G1_FULL_GC_PARALLEL;
             } else if (UnifiedG1CleanupEvent.match(logLine)) {
                 eventType = LogEventType.UNIFIED_G1_CLEANUP;
-            } else if (UnifiedG1InfoEvent.match(logLine)) {
-                eventType = LogEventType.UNIFIED_G1_INFO;
             } else if (UnifiedG1MixedPauseEvent.match(logLine)) {
                 eventType = LogEventType.UNIFIED_G1_MIXED_PAUSE;
             } else if (UnifiedG1YoungInitialMarkEvent.match(logLine)) {
@@ -198,8 +195,6 @@ public final class UnifiedUtil {
                 eventType = LogEventType.UNIFIED_CMS_INITIAL_MARK;
             } else if (UnifiedG1CleanupEvent.match(logLine)) {
                 eventType = LogEventType.UNIFIED_G1_CLEANUP;
-            } else if (UnifiedG1InfoEvent.match(logLine)) {
-                eventType = LogEventType.UNIFIED_G1_INFO;
             } else if (UnifiedG1MixedPauseEvent.match(logLine)) {
                 eventType = LogEventType.UNIFIED_G1_MIXED_PAUSE;
             } else if (UnifiedG1YoungInitialMarkEvent.match(logLine)) {
@@ -353,7 +348,6 @@ public final class UnifiedUtil {
             case UNIFIED_CONCURRENT:
             case UNIFIED_FOOTER_STATS:
             case UNIFIED_G1_CLEANUP:
-            case UNIFIED_G1_INFO:
             case UNIFIED_G1_MIXED_PAUSE:
             case UNIFIED_G1_YOUNG_INITIAL_MARK:
             case UNIFIED_G1_YOUNG_PAUSE:
