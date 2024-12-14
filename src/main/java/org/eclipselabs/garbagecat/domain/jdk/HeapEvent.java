@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -222,12 +223,12 @@ public class HeapEvent implements HeaderEvent, ThrowAwayEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.HEAP;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.HEAP.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

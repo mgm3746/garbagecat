@@ -22,7 +22,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ class TestUnifiedSerialNewEvent {
 
     @Test
     void testHydration() {
-        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_SERIAL_NEW;
+        EventType eventType = JdkUtil.EventType.UNIFIED_SERIAL_NEW;
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
@@ -42,7 +42,7 @@ class TestUnifiedSerialNewEvent {
         int duration = 0;
         assertTrue(
                 JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedSerialNewEvent,
-                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
     }
 
     @Test
@@ -50,9 +50,9 @@ class TestUnifiedSerialNewEvent {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW,
+        assertEquals(JdkUtil.EventType.UNIFIED_SERIAL_NEW,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW + "not identified.");
+                JdkUtil.EventType.UNIFIED_SERIAL_NEW + "not identified.");
     }
 
     @Test
@@ -61,7 +61,7 @@ class TestUnifiedSerialNewEvent {
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -70,9 +70,9 @@ class TestUnifiedSerialNewEvent {
                 + "1022K(1152K)->127K(1152K) Tenured: 0K(768K)->552K(768K) Metaspace: 155K(256K)->155K(256K) "
                 + "0M->0M(1M) 0.937ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedSerialNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + ".");
         UnifiedSerialNewEvent event = new UnifiedSerialNewEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_SERIAL_NEW, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 35, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
@@ -82,7 +82,7 @@ class TestUnifiedSerialNewEvent {
                 + "1016K->128K(1152K) Tenured: 929K->1044K(1552K) Metaspace: 1222K->1222K(1056768K) 1M->1M(2M) "
                 + "0.700ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedSerialNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + ".");
     }
 
     @Test
@@ -91,7 +91,7 @@ class TestUnifiedSerialNewEvent {
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s   ";
         assertTrue(UnifiedSerialNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + ".");
     }
 
     /**
@@ -103,9 +103,9 @@ class TestUnifiedSerialNewEvent {
                 + "Tenured: 929K->1044K(1552K) Metaspace: 1222K->1222K(1056768K) 1M->1M(2M) 0.700ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedSerialNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + ".");
         UnifiedSerialNewEvent event = new UnifiedSerialNewEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_SERIAL_NEW, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 3, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
@@ -115,7 +115,7 @@ class TestUnifiedSerialNewEvent {
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedSerialNewEvent,
-                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
     }
 
     @Test
@@ -124,9 +124,9 @@ class TestUnifiedSerialNewEvent {
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
                 + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedSerialNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + ".");
         UnifiedSerialNewEvent event = new UnifiedSerialNewEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_SERIAL_NEW, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 41, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(983), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -147,15 +147,15 @@ class TestUnifiedSerialNewEvent {
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SERIAL_NEW),
-                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SERIAL_NEW),
+                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_SERIAL_NEW);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_SERIAL_NEW);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as unified.");
     }
 }

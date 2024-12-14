@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -247,6 +248,10 @@ public class FlsStatisticsEvent extends CmsCollector implements ThrowAwayEvent {
         this.timestamp = 0L;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.FLS_STATISTICS;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.CMS;
@@ -254,10 +259,6 @@ public class FlsStatisticsEvent extends CmsCollector implements ThrowAwayEvent {
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.FLS_STATISTICS.toString();
     }
 
     public long getTimestamp() {

@@ -31,6 +31,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -400,16 +401,16 @@ public class G1YoungPauseEvent extends G1Collector implements BlockingEvent, You
         return eden;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.G1_YOUNG_PAUSE;
+    }
+
     public long getExtRootScanningTime() {
         return extRootScanningTime;
     }
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.G1_YOUNG_PAUSE.toString();
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -200,12 +201,12 @@ public class G1CleanupEvent extends G1Collector implements BlockingEvent, Parall
         return duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.G1_CLEANUP;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.G1_CLEANUP.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public int getParallelism() {

@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -150,12 +151,12 @@ public class G1RemarkEvent extends G1Collector implements BlockingEvent, Paralle
         return duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.G1_REMARK;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.G1_REMARK.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public int getParallelism() {

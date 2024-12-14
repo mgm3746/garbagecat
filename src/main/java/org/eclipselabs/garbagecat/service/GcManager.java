@@ -84,7 +84,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.github.joa.JvmOptions;
 import org.github.joa.domain.Bit;
@@ -147,7 +147,7 @@ public class GcManager {
      * Allocation rate in KB per second.
      */
     private BigDecimal getAllocationRate() {
-        List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents(LogEventType.G1_YOUNG_PAUSE);
+        List<BlockingEvent> blockingEvents = jvmDao.getBlockingEvents(EventType.G1_YOUNG_PAUSE);
 
         if (blockingEvents.isEmpty())
             return BigDecimal.ZERO;
@@ -805,8 +805,7 @@ public class GcManager {
                     if (trigger == null || !(trigger == GcTrigger.SYSTEM_GC || trigger == GcTrigger.CLASS_HISTOGRAM
                             || trigger == GcTrigger.HEAP_INSPECTION_INITIATED_GC
                             || trigger == GcTrigger.HEAP_DUMP_INITIATED_GC)) {
-                        JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
-                        switch (eventType) {
+                        switch (event.getEventType()) {
                         case G1_FULL_GC_SERIAL:
                             if (!jvmDao.getAnalysis().contains(Analysis.ERROR_SERIAL_GC_G1)) {
                                 jvmDao.addAnalysis(Analysis.ERROR_SERIAL_GC_G1);
@@ -1218,18 +1217,18 @@ public class GcManager {
                 }
             }
             // Populate events list.
-            JdkUtil.LogEventType eventType = JdkUtil.determineEventType(event.getName());
+            JdkUtil.EventType eventType = event.getEventType();
             // Use collectorFamily to identify generic UNIFIED_(OLD|YOUNG)
-            if (eventType == LogEventType.UNIFIED_YOUNG) {
+            if (event.getEventType() == EventType.UNIFIED_YOUNG) {
                 switch (collectorFamily) {
                 case G1:
-                    eventType = LogEventType.UNIFIED_G1_YOUNG_PAUSE;
+                    eventType = EventType.UNIFIED_G1_YOUNG_PAUSE;
                     break;
                 case PARALLEL:
-                    eventType = LogEventType.UNIFIED_PARALLEL_SCAVENGE;
+                    eventType = EventType.UNIFIED_PARALLEL_SCAVENGE;
                     break;
                 case SERIAL:
-                    eventType = LogEventType.UNIFIED_SERIAL_NEW;
+                    eventType = EventType.UNIFIED_SERIAL_NEW;
                     break;
                 case CMS:
                 case SHENANDOAH:
@@ -1239,16 +1238,16 @@ public class GcManager {
                     break;
                 }
             }
-            if (eventType == LogEventType.UNIFIED_OLD) {
+            if (eventType == EventType.UNIFIED_OLD) {
                 switch (collectorFamily) {
                 case G1:
-                    eventType = LogEventType.UNIFIED_G1_FULL_GC_PARALLEL;
+                    eventType = EventType.UNIFIED_G1_FULL_GC_PARALLEL;
                     break;
                 case PARALLEL:
-                    eventType = LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD;
+                    eventType = EventType.UNIFIED_PARALLEL_COMPACTING_OLD;
                     break;
                 case SERIAL:
-                    eventType = LogEventType.UNIFIED_SERIAL_OLD;
+                    eventType = EventType.UNIFIED_SERIAL_OLD;
                     break;
                 case CMS:
                 case SHENANDOAH:

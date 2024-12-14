@@ -18,21 +18,13 @@ import static org.eclipselabs.garbagecat.util.Memory.Unit.KILOBYTES;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipselabs.garbagecat.domain.BlockingEvent;
-import org.eclipselabs.garbagecat.domain.ClassData;
-import org.eclipselabs.garbagecat.domain.ClassSpaceCollection;
-import org.eclipselabs.garbagecat.domain.OldCollection;
-import org.eclipselabs.garbagecat.domain.OldData;
-import org.eclipselabs.garbagecat.domain.SerialCollection;
 import org.eclipselabs.garbagecat.domain.TimesData;
-import org.eclipselabs.garbagecat.domain.TriggerData;
-import org.eclipselabs.garbagecat.domain.YoungCollection;
-import org.eclipselabs.garbagecat.domain.YoungData;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -263,6 +255,10 @@ public class ParallelSerialOldEvent extends SerialOldEvent {
         return duration;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.PARALLEL_SERIAL_OLD;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.PARALLEL_SERIAL_OLD;
@@ -270,10 +266,6 @@ public class ParallelSerialOldEvent extends SerialOldEvent {
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString();
     }
 
     public Memory getOldOccupancyEnd() {

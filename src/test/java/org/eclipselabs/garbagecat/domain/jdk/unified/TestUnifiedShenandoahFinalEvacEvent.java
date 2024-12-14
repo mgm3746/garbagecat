@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,34 +34,34 @@ class TestUnifiedShenandoahFinalEvacEvent {
     void testBlocking() {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testHydration() {
-        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC;
+        EventType eventType = JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC;
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
         long timestamp = 1044 - 0;
         int duration = 0;
         assertTrue(
                 JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
                         duration) instanceof UnifiedShenandoahFinalEvacEvent,
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC,
+        assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC + "not identified.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC + "not identified.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
         assertTrue(UnifiedShenandoahFinalEvacEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + ".");
         UnifiedShenandoahFinalEvacEvent event = new UnifiedShenandoahFinalEvacEvent(logLine);
         assertEquals(10444 - 0, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -70,7 +70,7 @@ class TestUnifiedShenandoahFinalEvacEvent {
     void testLogLineWhitespaceAtEnd() {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms   ";
         assertTrue(UnifiedShenandoahFinalEvacEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + ".");
     }
 
     @Test
@@ -78,20 +78,20 @@ class TestUnifiedShenandoahFinalEvacEvent {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
         assertTrue(
                 JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFinalEvacEvent,
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_SHENANDOAH_FINAL_EVAC);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as unified.");
     }
 }

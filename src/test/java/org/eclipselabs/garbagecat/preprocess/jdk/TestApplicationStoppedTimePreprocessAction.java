@@ -30,7 +30,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -209,12 +209,12 @@ class TestApplicationStoppedTimePreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_CONCURRENT),
-                "Log line not recognized as " + LogEventType.G1_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
-                "Log line not recognized as " + LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_INITIAL_MARK),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_CONCURRENT),
+                "Log line not recognized as " + EventType.G1_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.APPLICATION_STOPPED_TIME),
+                "Log line not recognized as " + EventType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 
     @Test

@@ -34,7 +34,7 @@ import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,7 @@ class TestUnifiedG1FullGcEvent {
 
     @Test
     void testHydration() {
-        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL;
+        EventType eventType = JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL;
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms][gc,start] GC(8646) Pause Full "
                 + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) "
                 + "8186M->8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s";
@@ -54,7 +54,7 @@ class TestUnifiedG1FullGcEvent {
         int duration = 0;
         assertTrue(
                 JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedG1FullGcEvent,
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not parsed.");
     }
 
     @Test
@@ -62,9 +62,9 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms][gc,start] GC(8646) Pause Full "
                 + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) "
                 + "8186M->8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL,
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL + "not identified.");
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL + "not identified.");
     }
 
     @Test
@@ -73,15 +73,15 @@ class TestUnifiedG1FullGcEvent {
                 + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) "
                 + "8186M->8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testLogLine() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_G1_FULL_GC_PARALLEL);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not indentified as unified.");
     }
 
     @Test
@@ -90,10 +90,9 @@ class TestUnifiedG1FullGcEvent {
                 + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) "
                 + "8186M->8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 79853119, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(214096), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
@@ -114,10 +113,9 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[0.069s][info][gc     ] GC(1) Pause Full (G1 Compaction Pause) 1M->1M(5M) "
                 + "6.324ms User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
         assertEquals((long) (69 - 6), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(GcTrigger.G1_COMPACTION_PAUSE, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals(Memory.ZERO, event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
@@ -139,7 +137,7 @@ class TestUnifiedG1FullGcEvent {
                 + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) "
                 + "8186M->8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s   ";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
     }
 
     /**
@@ -151,10 +149,9 @@ class TestUnifiedG1FullGcEvent {
                 + "(G1 Evacuation Pause) Humongous regions: 1->1 Metaspace: 519911K(834476K)->519307K(834476K) "
                 + "1962M->1929M(1968M) 3371.651ms User=6.35s Sys=0.00s Real=3.38s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -163,7 +160,7 @@ class TestUnifiedG1FullGcEvent {
                 + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) "
                 + "8186M->8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedG1FullGcEvent,
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not parsed.");
     }
 
     @Test
@@ -172,10 +169,9 @@ class TestUnifiedG1FullGcEvent {
                 + "Humongous regions: 105->81 Metaspace: 71663K(72128K)->71663K(72128K) 2679M->2149M(3072M) 657.941ms "
                 + "User=2.04s Sys=0.06s Real=0.66s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -184,10 +180,9 @@ class TestUnifiedG1FullGcEvent {
                 + "(G1 Humongous Allocation) Humongous regions: 0->0 Metaspace: 69475K->69475K(153600K) "
                 + "16339M->14486M(16384M) 8842.979ms User=52.67s Sys=0.01s Real=8.84s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -196,10 +191,9 @@ class TestUnifiedG1FullGcEvent {
                 + "(GCLocker Initiated GC) Humongous regions: 0->0 Metaspace: 214103K->214103K(739328K) "
                 + "8184M->8180M(8192M) 2101.341ms User=16.34s Sys=0.05s Real=2.10s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -208,10 +202,9 @@ class TestUnifiedG1FullGcEvent {
                 + "(Metadata GC Clear Soft References) Humongous regions: 0->0 Metaspace: 2081045K(2097152K)->"
                 + "2080952K(2097152K) 777M->767M(3072M) 1291.658ms User=4.58s Sys=0.00s Real=1.29s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -220,10 +213,9 @@ class TestUnifiedG1FullGcEvent {
                 + "(Metadata GC Threshold) Humongous regions: 0->0 Metaspace: 2085985K(2097152K)->2080672K(2097152K) "
                 + "1223M->961M(3072M) 2558.763ms User=5.73s Sys=0.16s Real=2.56s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -232,10 +224,9 @@ class TestUnifiedG1FullGcEvent {
                 + "Humongous regions: 0->0 Metaspace: 590830K->590830K(1644544K) 2878M->2837M(3072M) 3952.620ms "
                 + "User=13.07s Sys=0.00s Real=3.95s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -247,11 +238,11 @@ class TestUnifiedG1FullGcEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (79853119), event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -266,11 +257,11 @@ class TestUnifiedG1FullGcEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (1217172136), event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -278,8 +269,8 @@ class TestUnifiedG1FullGcEvent {
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not indentified as reportable.");
     }
 
     @Test
@@ -287,7 +278,7 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[2023-08-25T02:15:57.862-0400][gc,start] GC(4) Pause Full (G1 Compaction Pause) 1M->1M(5M) "
                 + "6.324ms User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
         assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(GcTrigger.G1_COMPACTION_PAUSE, event.getTrigger(), "Trigger not parsed correctly.");
@@ -309,7 +300,7 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[2023-08-25T02:15:57.862-0400][3.161s][gc,start] GC(4) Pause Full (G1 Compaction Pause) "
                 + "1M->1M(5M) 6.324ms User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(GcTrigger.G1_COMPACTION_PAUSE, event.getTrigger(), "Trigger not parsed correctly.");
@@ -331,7 +322,7 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[2023-08-25T02:15:57.862-0400][3161ms][gc,start] GC(4) Pause Full (G1 Compaction Pause) "
                 + "1M->1M(5M) 6.324ms User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(GcTrigger.G1_COMPACTION_PAUSE, event.getTrigger(), "Trigger not parsed correctly.");
@@ -353,7 +344,7 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[3.161s][gc,start] GC(4) Pause Full (G1 Compaction Pause) 1M->1M(5M) 6.324ms "
                 + "User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(GcTrigger.G1_COMPACTION_PAUSE, event.getTrigger(), "Trigger not parsed correctly.");
@@ -375,7 +366,7 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[3161ms][gc,start] GC(4) Pause Full (G1 Compaction Pause) 1M->1M(5M) 6.324ms "
                 + "User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(GcTrigger.G1_COMPACTION_PAUSE, event.getTrigger(), "Trigger not parsed correctly.");
@@ -401,11 +392,11 @@ class TestUnifiedG1FullGcEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getLastBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (173690), event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -416,10 +407,9 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[89968.517s][info][gc] GC(1344) Pause Full (G1 Evacuation Pause) 16382M->13777M(16384M) "
                 + "6796.352ms";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         UnifiedG1FullGcEvent event = new UnifiedG1FullGcEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 89968517 - 6796, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(megabytes(16382), event.getCombinedOccupancyInit(),
@@ -434,6 +424,6 @@ class TestUnifiedG1FullGcEvent {
         String logLine = "[390191.660s][info][gc] GC(1407) Pause Full (G1 Humongous Allocation) "
                 + "16334M->15583M(16384M) 6561.965ms";
         assertTrue(UnifiedG1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
     }
 }

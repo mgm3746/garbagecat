@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -117,12 +118,12 @@ public class UnifiedHeapDumpBeforeFullGcEvent implements LogEvent, UnifiedLoggin
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

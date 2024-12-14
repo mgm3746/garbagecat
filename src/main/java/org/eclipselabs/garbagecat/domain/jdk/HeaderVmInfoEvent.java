@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.Arch;
 import org.github.joa.domain.BuiltBy;
 import org.github.joa.domain.Os;
@@ -171,6 +172,10 @@ public class HeaderVmInfoEvent implements LogEvent {
         return builtBy;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.HEADER_VM_INFO;
+    }
+
     /**
      * The Java release string. For example:
      * 
@@ -231,10 +236,6 @@ public class HeaderVmInfoEvent implements LogEvent {
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.HEADER_VM_INFO.toString();
     }
 
     /**

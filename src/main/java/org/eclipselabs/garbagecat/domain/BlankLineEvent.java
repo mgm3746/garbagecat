@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -62,12 +63,12 @@ public class BlankLineEvent implements ThrowAwayEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.BLANK_LINE;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.BLANK_LINE.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

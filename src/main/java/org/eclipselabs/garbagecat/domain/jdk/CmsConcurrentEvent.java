@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -115,6 +116,10 @@ public class CmsConcurrentEvent extends CmsCollector implements LogEvent, Parall
         this.logEntry = logEntry;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.CMS_CONCURRENT;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.CMS;
@@ -122,10 +127,6 @@ public class CmsConcurrentEvent extends CmsCollector implements LogEvent, Parall
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.CMS_CONCURRENT.toString();
     }
 
     public long getTimestamp() {

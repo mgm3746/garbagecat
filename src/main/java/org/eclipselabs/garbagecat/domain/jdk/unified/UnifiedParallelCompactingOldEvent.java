@@ -33,6 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.github.joa.domain.GarbageCollector;
@@ -262,6 +263,10 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector impleme
         return eventTime;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_PARALLEL_COMPACTING_OLD;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.PARALLEL_OLD;
@@ -269,10 +274,6 @@ public class UnifiedParallelCompactingOldEvent extends ParallelCollector impleme
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString();
     }
 
     public Memory getOldOccupancyEnd() {

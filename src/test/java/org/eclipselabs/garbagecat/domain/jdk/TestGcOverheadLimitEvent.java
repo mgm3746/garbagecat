@@ -29,27 +29,27 @@ class TestGcOverheadLimitEvent {
     void testLineIsExceeding() {
         String logLine = "GC time is exceeding GCTimeLimit of 98%";
         assertTrue(GcOverheadLimitEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.GC_OVERHEAD_LIMIT.toString() + ".");
     }
 
     @Test
     void testLineWouldExceed() {
         String logLine = "GC time would exceed GCTimeLimit of 98%";
         assertTrue(GcOverheadLimitEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.GC_OVERHEAD_LIMIT.toString() + ".");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "GC time would exceed GCTimeLimit of 98%";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
         String logLine = "GC time would exceed GCTimeLimit of 98%";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as reportable.");
+                JdkUtil.EventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as reportable.");
     }
 }

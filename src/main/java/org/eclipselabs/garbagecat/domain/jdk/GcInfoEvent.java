@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -129,12 +130,12 @@ public class GcInfoEvent implements ThrowAwayEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.GC_INFO;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.GC_INFO.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

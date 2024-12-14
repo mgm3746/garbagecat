@@ -32,6 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.github.joa.domain.GarbageCollector;
@@ -249,6 +250,10 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
         return eventTime;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_SERIAL_NEW;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.SERIAL_NEW;
@@ -256,10 +261,6 @@ public class UnifiedSerialNewEvent extends SerialCollector implements UnifiedLog
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString();
     }
 
     public Memory getOldOccupancyEnd() {

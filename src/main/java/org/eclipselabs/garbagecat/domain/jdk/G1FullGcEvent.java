@@ -32,6 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -302,12 +303,12 @@ public class G1FullGcEvent extends G1Collector implements BlockingEvent, YoungCo
         return duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.G1_FULL_GC_SERIAL;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public int getParallelism() {

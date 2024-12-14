@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 import org.junit.jupiter.api.Test;
 
@@ -137,11 +137,11 @@ class TestShenandoahPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -758,11 +758,11 @@ class TestShenandoahPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -774,15 +774,15 @@ class TestShenandoahPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
-                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.APPLICATION_STOPPED_TIME),
+                JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
     }
 
     @Test
@@ -794,11 +794,11 @@ class TestShenandoahPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -810,11 +810,11 @@ class TestShenandoahPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -826,21 +826,21 @@ class TestShenandoahPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_DEGENERATED_GC),
-                JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.APPLICATION_STOPPED_TIME),
-                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_INIT_UPDATE),
-                JdkUtil.LogEventType.SHENANDOAH_INIT_UPDATE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_DEGENERATED_GC),
+                JdkUtil.EventType.SHENANDOAH_DEGENERATED_GC.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.APPLICATION_STOPPED_TIME),
+                JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_INIT_MARK),
+                JdkUtil.EventType.SHENANDOAH_INIT_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_INIT_UPDATE),
+                JdkUtil.EventType.SHENANDOAH_INIT_UPDATE.toString() + " event not identified.");
     }
 
     @Test

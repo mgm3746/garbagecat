@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -298,16 +299,16 @@ public class G1YoungInitialMarkEvent extends G1Collector implements BlockingEven
         return eventTime + otherTime;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.G1_YOUNG_INITIAL_MARK;
+    }
+
     public long getExtRootScanningTime() {
         return extRootScanningTime;
     }
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString();
     }
 
     @Override

@@ -37,7 +37,7 @@ class TestHeaderVmInfoEvent {
         String logLine = "Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on "
                 + "Sep 29 2015 08:44:21 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
         assertTrue(HeaderVmInfoEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VM_INFO.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEADER_VM_INFO.toString() + ".");
     }
 
     /**
@@ -48,7 +48,7 @@ class TestHeaderVmInfoEvent {
         String logLine = "Java HotSpot(TM) 64-Bit Server VM (24.91-b03) for windows-amd64 JRE (1.7.0_91-b15), built on "
                 + "Oct  2 2015 03:26:24 by \"java_re\" with unknown MS VC++:1600";
         assertTrue(HeaderVmInfoEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VM_INFO.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEADER_VM_INFO.toString() + ".");
         HeaderVmInfoEvent event = new HeaderVmInfoEvent(logLine);
         assertEquals(Arch.X86_64, event.getArch(), "Arch not identified");
         assertEquals(BuiltBy.JAVA_RE, event.getBuiltBy(), "Builder not identified");
@@ -76,7 +76,7 @@ class TestHeaderVmInfoEvent {
         String logLine = "Java HotSpot(TM) 64-Bit Server VM (25.73-b02) for linux-amd64 JRE (1.8.0_73-b02), "
                 + "built on Jan 29 2016 17:39:45 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
         assertTrue(HeaderVmInfoEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VM_INFO.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEADER_VM_INFO.toString() + ".");
         HeaderVmInfoEvent event = new HeaderVmInfoEvent(logLine);
         assertEquals(Arch.X86_64, event.getArch(), "Arch not identified");
         assertEquals(BuiltBy.JAVA_RE, event.getBuiltBy(), "Builder not identified");
@@ -101,7 +101,7 @@ class TestHeaderVmInfoEvent {
         String logLine = "Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on "
                 + "Sep 29 2015 08:44:21 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.HEADER_VM_INFO.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.HEADER_VM_INFO.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
@@ -109,7 +109,7 @@ class TestHeaderVmInfoEvent {
         String logLine = "OpenJDK 64-Bit Server VM (24.95-b01) for linux-amd64 JRE (1.7.0_95-b00), built on "
                 + "Jan 18 2016 21:57:50 by \"mockbuild\" with gcc 4.8.5 20150623 (Red Hat 4.8.5-4)";
         assertTrue(HeaderVmInfoEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_VM_INFO.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEADER_VM_INFO.toString() + ".");
         HeaderVmInfoEvent event = new HeaderVmInfoEvent(logLine);
         assertEquals(Arch.X86_64, event.getArch(), "Arch not identified");
         assertEquals(BuiltBy.MOCKBUILD, event.getBuiltBy(), "Builder not identified");

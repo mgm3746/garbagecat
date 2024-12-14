@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -144,12 +145,12 @@ public class ShenandoahFinalMarkEvent extends ShenandoahCollector implements Blo
         return duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.SHENANDOAH_FINAL_MARK;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_FINAL_MARK.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

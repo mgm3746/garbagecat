@@ -61,7 +61,7 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
@@ -231,9 +231,9 @@ public class Main {
             printWriter.write("# GC Events: " + jvmRun.getBlockingEventCount() + LINE_SEPARATOR);
             if (jvmRun.getBlockingEventCount() > 0) {
                 printWriter.write("Event Types: ");
-                List<LogEventType> eventTypes = jvmRun.getEventTypes();
+                List<EventType> eventTypes = jvmRun.getEventTypes();
                 boolean firstEvent = true;
-                for (LogEventType eventType : eventTypes) {
+                for (EventType eventType : eventTypes) {
                     // Only report GC events
                     if (JdkUtil.isReportable(eventType)) {
                         if (!firstEvent) {
@@ -359,7 +359,7 @@ public class Main {
 
                 // As of now the allocation rate is only implemented for G1GC collector.
                 if (jvmRun.getJvmOptions().getUseG1Gc() != null
-                        || jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_PAUSE)) {
+                        || jvmRun.getEventTypes().contains(EventType.G1_YOUNG_PAUSE)) {
                     BigDecimal allocationRate = jvmRun.getAllocationRate();
                     if (allocationRate.longValue() > 0) {
                         Memory gbPerSec = Memory.memory(allocationRate.longValue(), KILOBYTES);

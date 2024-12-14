@@ -14,7 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
-import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType.SHENANDOAH_DEGENERATED_GC;
+import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType.SHENANDOAH_DEGENERATED_GC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -58,7 +58,7 @@ class TestShenandoahDegeneratedGcEvent {
 
     @Test
     void testHydration() {
-        LogEventType eventType = SHENANDOAH_DEGENERATED_GC;
+        EventType eventType = SHENANDOAH_DEGENERATED_GC;
         String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
         long timestamp = 854868165;
         int duration = 1285045;
@@ -153,7 +153,7 @@ class TestShenandoahDegeneratedGcEvent {
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(SHENANDOAH_DEGENERATED_GC);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
                 SHENANDOAH_DEGENERATED_GC + " incorrectly indentified as unified.");

@@ -29,6 +29,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
@@ -190,12 +191,12 @@ public class UnifiedYoungEvent extends UnknownCollector
         return eventTime;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_YOUNG;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_YOUNG.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

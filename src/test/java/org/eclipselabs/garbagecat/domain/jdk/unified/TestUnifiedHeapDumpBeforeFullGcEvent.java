@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,24 +34,24 @@ class TestUnifiedHeapDumpBeforeFullGcEvent {
     @Test
     void testBeforeGc() {
         String logLine = "[2024-12-06T10:15:56.126-0500] GC(0) Heap Dump (before full gc) 7.667ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC,
+        assertEquals(JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC + " not identified.");
+                JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC + " not identified.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[2024-12-06T10:15:56.126-0500] GC(0) Heap Dump (before full gc) 7.667ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC,
+        assertEquals(JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC + "not identified.");
+                JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC + "not identified.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "[2024-12-06T10:15:56.126-0500] GC(0) Heap Dump (before full gc) 7.667ms";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString()
+                JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString()
                         + " incorrectly indentified as blocking.");
     }
 
@@ -61,22 +61,21 @@ class TestUnifiedHeapDumpBeforeFullGcEvent {
         assertTrue(
                 JdkUtil.parseLogLine(logLine, null,
                         CollectorFamily.UNKNOWN) instanceof UnifiedHeapDumpBeforeFullGcEvent,
-                JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC),
-                JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString()
+        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC),
+                JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString()
                         + " incorrectly indentified as reportable.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<>();
-        eventTypes.add(LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC);
+        List<EventType> eventTypes = new ArrayList<>();
+        eventTypes.add(EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString()
-                        + " incorrectly indentified as unified.");
+                JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString() + " incorrectly indentified as unified.");
     }
 }

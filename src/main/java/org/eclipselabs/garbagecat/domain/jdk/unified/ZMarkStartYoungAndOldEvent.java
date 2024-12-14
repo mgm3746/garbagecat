@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.github.joa.domain.GarbageCollector;
@@ -116,6 +117,10 @@ public class ZMarkStartYoungAndOldEvent extends ZCollector implements UnifiedLog
         return eventTime;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.ZGC_GENERATIONAL;
@@ -123,10 +128,6 @@ public class ZMarkStartYoungAndOldEvent extends ZCollector implements UnifiedLog
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString();
     }
 
     @Override

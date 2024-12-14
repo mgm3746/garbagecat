@@ -36,34 +36,34 @@ class TestVmWarningEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
-        assertEquals(JdkUtil.LogEventType.VM_WARNING, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.VM_WARNING + "not identified.");
+        assertEquals(JdkUtil.EventType.VM_WARNING, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.VM_WARNING + "not identified.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
         assertTrue(VmWarningEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VM_WARNING.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VM_WARNING.toString() + ".");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.VM_WARNING.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.VM_WARNING.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof VmWarningEvent,
-                JdkUtil.LogEventType.VM_WARNING.toString() + " not parsed.");
+                JdkUtil.EventType.VM_WARNING.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.VM_WARNING),
-                JdkUtil.LogEventType.VM_WARNING.toString() + " indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.VM_WARNING),
+                JdkUtil.EventType.VM_WARNING.toString() + " indentified as reportable.");
     }
 }

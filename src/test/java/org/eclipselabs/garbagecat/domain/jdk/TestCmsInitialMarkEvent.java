@@ -31,7 +31,7 @@ class TestCmsInitialMarkEvent {
         String logLine = "8.722: [GC (CMS Initial Mark) [1 CMS-initial-mark: 0K(989632K)] 187663K(1986432K), "
                 + "0.0157899 secs] [Times: user=0.06 sys=0.00, real=0.02 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -39,7 +39,7 @@ class TestCmsInitialMarkEvent {
         String logLine = "251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] "
                 + "4150346K(8367360K), 0.0174433 secs]";
         assertTrue(CmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_INITIAL_MARK.toString() + ".");
         CmsInitialMarkEvent event = new CmsInitialMarkEvent(logLine);
         assertEquals((long) 251763, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(17443, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -87,7 +87,7 @@ class TestCmsInitialMarkEvent {
         String logLine = "251.763: [GC [1 CMS-initial-mark: 4133273K(8218240K)] "
                 + "4150346K(8367360K), 0.0174433 secs]         ";
         assertTrue(CmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_INITIAL_MARK.toString() + ".");
     }
 
     @Test

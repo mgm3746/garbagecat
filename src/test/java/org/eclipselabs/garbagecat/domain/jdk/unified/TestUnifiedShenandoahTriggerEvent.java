@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -36,22 +36,22 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[2019-02-05T15:10:00.671-0200][1349583ms] Trigger: Time since last GC (300004 ms) is larger "
                 + "than guaranteed interval (300000 ms)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER,
+        assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER + "not identified.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER + "not identified.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "[3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
@@ -59,13 +59,13 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)";
         assertTrue(
                 JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahTriggerEvent,
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
@@ -73,7 +73,7 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[2019-02-05T14:47:34.156-0200][3068ms] Trigger: Learning 1 of 5. Free (912M) is below "
                 + "initial threshold (912M)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -81,7 +81,7 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[41.917s][info][gc           ] Trigger: Average GC time (26.32 ms) is above the time for "
                 + "allocation rate (324.68 MB/s) to deplete free headroom (8M)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -89,7 +89,7 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[63.328s][info][gc           ] Trigger: Average GC time (77.12 ms) is above the time for "
                 + "allocation rate (101894 KB/s) to deplete free headroom (6846K)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -97,7 +97,7 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[1.757s][info][gc           ] Trigger: Average GC time (9.74 ms) is above the time for "
                 + "allocation rate (1244 MB/s) to deplete free headroom (11236K)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -105,7 +105,7 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[10.508s][info][gc          ] Trigger: Average GC time (16.09 ms) is above the time for "
                 + "average allocation rate (409 MB/s) to deplete free headroom (5742K) (margin of error = 1.80)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -113,7 +113,7 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[11.569s] Trigger: Average GC time (11.12 ms) is above the time for instantaneous allocation "
                 + "rate (651 MB/s) to deplete free headroom (6262K) (spike threshold = 1.80)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -121,14 +121,14 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[2019-02-05T14:48:05.666-0200][34578ms] Trigger: Average GC time (52.77 ms) is above the "
                 + "time for allocation rate (1313.84 MB/s) to deplete free headroom (67M)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testTriggerFree() {
         String logLine = "[24.356s][info][gc] Trigger: Free (6M) is below minimum threshold (6M)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -136,14 +136,14 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[0.410s][info][gc           ] Trigger: Learning 3 of 5. Free (45613K) is below initial "
                 + "threshold (45875K)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testTriggerFreeSpacesAfterGc() {
         String logLine = "[49.186s][info][gc           ] Trigger: Free (6M) is below minimum threshold (6M)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -151,35 +151,35 @@ class TestUnifiedShenandoahTriggerEvent {
         String logLine = "[2019-02-05T14:47:49.297-0200][18209ms] Trigger: Free (128M) is below minimum threshold "
                 + "(130M)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testTriggerHandleAllocationFailure() {
         String logLine = "[52.883s][info][gc           ] Trigger: Handle Allocation Failure";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testTriggerLearning() {
         String logLine = "[0.448s][info][gc] Trigger: Learning 1 of 5. Free (44M) is below initial threshold (44M)";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testTriggerMetadataGcThreshold() {
         String logLine = "[2023-02-22T12:31:34.603+0000][2243][gc           ] Trigger: Metadata GC Threshold";
         assertTrue(UnifiedShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_SHENANDOAH_TRIGGER);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_SHENANDOAH_TRIGGER);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " not indentified as unified.");
     }
 }

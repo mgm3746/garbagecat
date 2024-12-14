@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -33,26 +33,25 @@ class TestZMarkStartYoungAndOldEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
-        assertEquals(JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD,
+        assertEquals(JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD + "not identified.");
+                JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
         assertTrue(ZMarkStartYoungAndOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + ".");
         ZMarkStartYoungAndOldEvent event = new ZMarkStartYoungAndOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals((long) (410 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(8, event.getDurationMicros(), "Duration not parsed correctly.");
     }
@@ -61,13 +60,13 @@ class TestZMarkStartYoungAndOldEvent {
     void testParseLogLine() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZMarkStartYoungAndOldEvent,
-                JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not parsed.");
+                JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD),
-                JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD),
+                JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not indentified as reportable.");
     }
 
     /**
@@ -78,24 +77,23 @@ class TestZMarkStartYoungAndOldEvent {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start "
                 + "(Major) 0.008ms";
         assertTrue(ZMarkStartYoungAndOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + ".");
         ZMarkStartYoungAndOldEvent event = new ZMarkStartYoungAndOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.Z_MARK_START_YOUNG_AND_OLD);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.Z_MARK_START_YOUNG_AND_OLD);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not indentified as unified.");
+                JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not indentified as unified.");
     }
 
     @Test
     void testWhitespaceAtEnd() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms   ";
         assertTrue(ZMarkStartYoungAndOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + ".");
     }
 }

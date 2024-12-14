@@ -33,7 +33,7 @@ class TestSerialOldEvent {
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
                 + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 187159, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(GcTrigger.NONE, event.getTrigger(), "Trigger not parsed correctly.");
@@ -56,7 +56,7 @@ class TestSerialOldEvent {
                 + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
                 + "0.1148688 secs] [Times: user=0.11 sys=0.02, real=0.13 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals(543824178668L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -68,7 +68,7 @@ class TestSerialOldEvent {
                 + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
                 + "0.1148688 secs] [Times: user=0.11 sys=0.02, real=0.13 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 24296, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(15728 - 11239), event.getYoungOccupancyInit(),
@@ -95,7 +95,7 @@ class TestSerialOldEvent {
                 + "318331K->255907K(1290816K), [Metaspace: 489383K->489383K(1503232K)], 0.8736644 secs] "
                 + "[Times: user=0.84 sys=0.00, real=0.87 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 22634812, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
@@ -119,7 +119,7 @@ class TestSerialOldEvent {
                 + "0.1248607 secs] 62508K->12062K(760256K), [Metaspace: 20526K->20526K(1069056K)], 0.1249442 secs] "
                 + "[Times: user=0.18 sys=0.08, real=0.13 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 2447, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
@@ -144,7 +144,7 @@ class TestSerialOldEvent {
                 + "689404K->79151K(760256K), [Metaspace: 68373K->68373K(1114112K)], 0.2881307 secs] "
                 + "[Times: user=0.30 sys=0.00, real=0.29 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 38922, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
@@ -169,7 +169,7 @@ class TestSerialOldEvent {
                 + "0.3905008 secs] 674654K->144069K(760256K), [Metaspace: 65384K->65384K(1114112K)], 0.6804246 secs] "
                 + "[Times: user=0.67 sys=0.01, real=0.69 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 116957, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
@@ -193,7 +193,7 @@ class TestSerialOldEvent {
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
                 + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.SERIAL_OLD.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.SERIAL_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -202,7 +202,7 @@ class TestSerialOldEvent {
                 + "[Tenured: 1092K->2866K(116544K), 0.0489980 secs] 11012K->2866K(129664K), "
                 + "[Perm : 8602K->8604K(131072K)], 0.0490880 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 2457, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
@@ -224,7 +224,7 @@ class TestSerialOldEvent {
                 + "11239K->9441K(11328K), 0.1110369 secs] 15728K->9441K(16256K), [Perm : 15599K->15599K(65536K)], "
                 + "0.1148688 secs] [Times: user=0.11 sys=0.02, real=0.13 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 24296, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -235,7 +235,7 @@ class TestSerialOldEvent {
                 + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
                 + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]       ";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
     }
 
     @Test
@@ -244,7 +244,7 @@ class TestSerialOldEvent {
                 + "3727.365: [Tenured: 837793K->597490K(889536K), 44.7498530 secs] 1238107K->597490K(1289920K), "
                 + "[Perm : 54745K->54745K(54784K)], 44.7501880 secs]";
         assertTrue(SerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SERIAL_OLD.toString() + ".");
         SerialOldEvent event = new SerialOldEvent(logLine);
         assertEquals((long) 3727365, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1238107 - 837793), event.getYoungOccupancyInit(),

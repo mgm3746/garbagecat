@@ -33,7 +33,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +45,7 @@ class TestUnifiedG1MixedPauseEvent {
 
     @Test
     void testHydration() {
-        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE;
+        EventType eventType = JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE;
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
@@ -54,7 +54,7 @@ class TestUnifiedG1MixedPauseEvent {
         assertTrue(
                 JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
                         duration) instanceof UnifiedG1MixedPauseEvent,
-                JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.");
     }
 
     @Test
@@ -62,9 +62,9 @@ class TestUnifiedG1MixedPauseEvent {
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE,
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE + "not identified.");
+                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE + "not identified.");
     }
 
     @Test
@@ -73,7 +73,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -82,9 +82,9 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 16629, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(3801), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
@@ -108,9 +108,9 @@ class TestUnifiedG1MixedPauseEvent {
                 + " 28.1 Other: 1.1ms Humongous regions: 16->16 Metaspace: 424441K(898652K)->424441K(898652K) "
                 + "4711M->2664M(24576M) 117.183ms User=2.56s Sys=0.00s Real=0.11s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 1234, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(424441), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
@@ -135,7 +135,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Metaspace: 147162K(149824K)->147162K(149824K) 8331M->4808M(32768M) 25,917ms User=0,17s "
                 + "Sys=0,00s Real=0,03s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
 
     @Test
@@ -144,7 +144,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Humongous regions: 0->0 Metaspace: 1240K(1344K)->1240K(1344K) 11M->10M(50M) 1.753ms "
                 + "User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
 
     @Test
@@ -153,7 +153,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "(G1 Humongous Allocation) Other: 0.1ms Humongous regions: 13->13 "
                 + "Metaspace: 443023K->443023K(1468416K) 8176M->717M(8192M) 9.643ms User=0.03s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
 
     @Test
@@ -162,7 +162,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Other: 0.1ms Humongous regions: 0->0 Metaspace: 43948K(44672K)->43948K(44672K) 38M->30M(72M) "
                 + "3.310ms User=0.04s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
 
     @Test
@@ -171,7 +171,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Initiated GC) Other: 0.1ms Humongous regions: 13->13 Metaspace: 365476K->365476K(1384448K) "
                 + "3827M->3109M(12288M) 23.481ms User=0.20s Sys=0.02s Real=0.02s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
 
     @Test
@@ -180,7 +180,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s     ";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
 
     @Test
@@ -189,7 +189,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedG1MixedPauseEvent,
-                JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.");
     }
 
     @Test
@@ -202,10 +202,10 @@ class TestUnifiedG1MixedPauseEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = (UnifiedG1MixedPauseEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (16629), event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -213,8 +213,8 @@ class TestUnifiedG1MixedPauseEvent {
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as reportable.");
     }
 
     @Test
@@ -223,7 +223,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
         assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -234,7 +234,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
                 + "15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -245,7 +245,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
                 + "15M->12M(31M) 1.202ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -256,7 +256,7 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -267,17 +267,17 @@ class TestUnifiedG1MixedPauseEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_G1_MIXED_PAUSE);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_G1_MIXED_PAUSE);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as unified.");
     }
 
     @Test
@@ -285,9 +285,9 @@ class TestUnifiedG1MixedPauseEvent {
         String logLine = "[89961.720s][info][gc] GC(1343) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "16218M->16382M(16384M) 408.985ms";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
         UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 89961720 - 408, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(megabytes(16218), event.getCombinedOccupancyInit(),
@@ -303,6 +303,6 @@ class TestUnifiedG1MixedPauseEvent {
         String logLine = "[217230.988s][info][gc] GC(141) Pause Young (Mixed) (GCLocker Initiated GC) "
                 + "4137M->2444M(16384M) 103.899ms";
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
 }

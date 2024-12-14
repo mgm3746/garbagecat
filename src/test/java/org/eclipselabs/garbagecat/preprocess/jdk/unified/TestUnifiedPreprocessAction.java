@@ -40,7 +40,7 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.PreprocessActionType;
 import org.junit.jupiter.api.Test;
 
@@ -333,13 +333,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -606,13 +606,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -936,19 +936,19 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_HEADER),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
-                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CLEANUP),
-                JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_HEADER),
+                JdkUtil.EventType.UNIFIED_HEADER.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_REMARK),
+                JdkUtil.EventType.UNIFIED_REMARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_CLEANUP),
+                JdkUtil.EventType.UNIFIED_G1_CLEANUP.toString() + " event not identified.");
     }
 
     @Test
@@ -960,13 +960,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_HEADER),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_HEADER),
+                JdkUtil.EventType.UNIFIED_HEADER.toString() + " event not identified.");
     }
 
     @Test
@@ -1120,11 +1120,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
     }
 
     @Test
@@ -1383,15 +1383,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
-                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_REMARK),
+                JdkUtil.EventType.UNIFIED_REMARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -1509,15 +1509,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -1607,11 +1607,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
     }
 
     @Test
@@ -1623,11 +1623,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_COMPACTING_OLD),
+                JdkUtil.EventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " event not identified.");
     }
 
     @Test
@@ -1990,19 +1990,19 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CLEANUP),
-                JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
-                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_CLEANUP),
+                JdkUtil.EventType.UNIFIED_G1_CLEANUP.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_REMARK),
+                JdkUtil.EventType.UNIFIED_REMARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -2014,17 +2014,17 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -2222,12 +2222,12 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
@@ -2424,15 +2424,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
     }
 
     @Test
@@ -2680,15 +2680,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -2881,11 +2881,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
     }
 
     @Test
@@ -2897,11 +2897,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
     }
 
     @Test
@@ -2940,15 +2940,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_OLD),
-                JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SERIAL_OLD),
+                JdkUtil.EventType.UNIFIED_SERIAL_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -3454,17 +3454,17 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CMS_INITIAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
-                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PAR_NEW),
-                JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CMS_INITIAL_MARK),
+                JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_REMARK),
+                JdkUtil.EventType.UNIFIED_REMARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PAR_NEW),
+                JdkUtil.EventType.UNIFIED_PAR_NEW.toString() + " event not identified.");
     }
 
     @Test
@@ -3476,11 +3476,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_CLEANUP),
-                JdkUtil.LogEventType.UNIFIED_G1_CLEANUP.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_CLEANUP),
+                JdkUtil.EventType.UNIFIED_G1_CLEANUP.toString() + " event not identified.");
     }
 
     @Test
@@ -3492,13 +3492,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -3510,11 +3510,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
-                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_REMARK),
+                JdkUtil.EventType.UNIFIED_REMARK.toString() + " event not identified.");
     }
 
     /**
@@ -3530,11 +3530,11 @@ class TestUnifiedPreprocessAction {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
     }
 
     @Test
@@ -3546,11 +3546,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
     }
 
     @Test
@@ -3562,11 +3562,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
     }
 
     @Test
@@ -3578,10 +3578,10 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_COMPACTING_OLD),
+                JdkUtil.EventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " event not identified.");
     }
 
     @Test
@@ -3593,11 +3593,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
     }
 
     @Test
@@ -3609,11 +3609,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
     }
 
     @Test
@@ -3625,11 +3625,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PAR_NEW),
-                JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PAR_NEW),
+                JdkUtil.EventType.UNIFIED_PAR_NEW.toString() + " event not identified.");
     }
 
     @Test
@@ -3641,12 +3641,12 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_NEW),
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SERIAL_NEW),
 
-                JdkUtil.LogEventType.UNIFIED_SERIAL_NEW.toString() + " event not identified.");
+                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " event not identified.");
     }
 
     @Test
@@ -3658,11 +3658,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_OLD),
-                JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SERIAL_OLD),
+                JdkUtil.EventType.UNIFIED_SERIAL_OLD.toString() + " event not identified.");
         UnifiedSerialOldEvent event = (UnifiedSerialOldEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (73), event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -3677,11 +3677,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SERIAL_OLD),
-                JdkUtil.LogEventType.UNIFIED_SERIAL_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SERIAL_OLD),
+                JdkUtil.EventType.UNIFIED_SERIAL_OLD.toString() + " event not identified.");
     }
 
     @Test
@@ -4083,11 +4083,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -4141,13 +4141,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -4159,15 +4159,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -4179,11 +4179,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -4245,15 +4245,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_COMPACTING_OLD),
+                JdkUtil.EventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -4569,23 +4569,23 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(7, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_HEADER),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_HEADER),
+                JdkUtil.EventType.UNIFIED_HEADER.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
         assertEquals(kilobytes(3795), jvmRun.getMaxClassSpaceOccupancyNonBlocking(),
                 "Metaspace max occupancy not parsed correctly.");
         assertEquals(kilobytes(3968), jvmRun.getMaxClassSpaceNonBlocking(),
@@ -4604,23 +4604,23 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(8, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_HEADER),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_HEADER),
+                JdkUtil.EventType.UNIFIED_HEADER.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
         assertEquals(kilobytes(4135), jvmRun.getMaxClassSpaceOccupancyNonBlocking(),
                 "Metaspace max occupancy not parsed correctly.");
         assertEquals(kilobytes(4288), jvmRun.getMaxClassSpaceNonBlocking(),
@@ -4652,13 +4652,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_DEGENERATED_GC),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_DEGENERATED_GC.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_DEGENERATED_GC),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_DEGENERATED_GC.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
         UnifiedShenandoahDegeneratedGcEvent event = (UnifiedShenandoahDegeneratedGcEvent) jvmRun
                 .getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
@@ -4884,13 +4884,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -4940,13 +4940,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -5084,13 +5084,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -5189,13 +5189,13 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -5245,21 +5245,21 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " even not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " even not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
     }
 
     @Test
@@ -5271,25 +5271,25 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(7, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_HEADER),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " even not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " even not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.LogEventType.SHENANDOAH_CONCURRENT.toString() + " event incorrectly identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_HEADER),
+                JdkUtil.EventType.UNIFIED_HEADER.toString() + " even not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " even not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_CONCURRENT),
+                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " event incorrectly identified.");
     }
 
     @Test
@@ -5313,19 +5313,19 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(5, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
         assertEquals(kilobytes(20 * 1024), jvmRun.getMaxHeapOccupancyNonBlocking(),
                 "Max heap occupancy for a non blocking event not parsed correctly.");
         assertEquals(kilobytes(20 * 1024), jvmRun.getMaxHeapAfterGcNonBlocking(),
@@ -5635,15 +5635,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -5667,11 +5667,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_EVAC),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " event not identified.");
     }
 
     @Test
@@ -5683,11 +5683,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " event not identified.");
     }
 
     @Test
@@ -5699,11 +5699,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " event not identified.");
     }
 
     @Test
@@ -5715,11 +5715,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_MARK),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_MARK),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_MARK.toString() + " event not identified.");
     }
 
     @Test
@@ -5731,11 +5731,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " event not identified.");
     }
 
     @Test
@@ -6182,10 +6182,10 @@ class TestUnifiedPreprocessAction {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                "Log line not recognized as " + LogEventType.UNIFIED_CONCURRENT.toString() + ".");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                LogEventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                "Log line not recognized as " + EventType.UNIFIED_CONCURRENT.toString() + ".");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                EventType.UNKNOWN.toString() + " event identified.");
     }
 
     @Test
@@ -6384,11 +6384,11 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
     }
 
     @Test
@@ -6400,15 +6400,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_MIXED_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_MIXED_PAUSE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_MIXED_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
+                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
     }
 
     @Test
@@ -6420,15 +6420,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_REMARK),
-                JdkUtil.LogEventType.UNIFIED_REMARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_REMARK),
+                JdkUtil.EventType.UNIFIED_REMARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
     }
 
     @Test
@@ -6467,15 +6467,15 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_HEADER),
-                JdkUtil.LogEventType.UNIFIED_HEADER.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_HEADER),
+                JdkUtil.EventType.UNIFIED_HEADER.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_PARALLEL_COMPACTING_OLD),
+                JdkUtil.EventType.UNIFIED_PARALLEL_COMPACTING_OLD.toString() + " event not identified.");
     }
 
     @Test
@@ -7415,21 +7415,21 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_CONCURRENT),
-                JdkUtil.LogEventType.Z_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_START),
-                JdkUtil.LogEventType.Z_MARK_START.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_END),
-                JdkUtil.LogEventType.Z_MARK_END.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_RELOCATE_START),
-                JdkUtil.LogEventType.Z_RELOCATE_START.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_CONCURRENT),
+                JdkUtil.EventType.Z_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_MARK_START),
+                JdkUtil.EventType.Z_MARK_START.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_MARK_END),
+                JdkUtil.EventType.Z_MARK_END.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_RELOCATE_START),
+                JdkUtil.EventType.Z_RELOCATE_START.toString() + " event not identified.");
     }
 
     @Test
@@ -7441,25 +7441,25 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(8, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_CONCURRENT),
-                JdkUtil.LogEventType.Z_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_START_YOUNG_AND_OLD),
-                JdkUtil.LogEventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_END_YOUNG),
-                JdkUtil.LogEventType.Z_MARK_END_YOUNG.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_END_OLD),
-                JdkUtil.LogEventType.Z_MARK_END_OLD.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_RELOCATE_START_YOUNG),
-                JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_RELOCATE_START_OLD),
-                JdkUtil.LogEventType.Z_RELOCATE_START_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_CONCURRENT),
+                JdkUtil.EventType.Z_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_MARK_START_YOUNG_AND_OLD),
+                JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_MARK_END_YOUNG),
+                JdkUtil.EventType.Z_MARK_END_YOUNG.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_MARK_END_OLD),
+                JdkUtil.EventType.Z_MARK_END_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_RELOCATE_START_YOUNG),
+                JdkUtil.EventType.Z_RELOCATE_START_YOUNG.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_RELOCATE_START_OLD),
+                JdkUtil.EventType.Z_RELOCATE_START_OLD.toString() + " event not identified.");
         assertEquals(kilobytes(2 * 1024), jvmRun.getMaxClassSpaceOccupancyNonBlocking(),
                 "Max metaspace occupancy for a non blocking event not parsed correctly.");
         assertEquals(kilobytes(2 * 1024), jvmRun.getMaxClassSpaceAfterGcNonBlocking(),
@@ -7483,21 +7483,21 @@ class TestUnifiedPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(6, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_CONCURRENT),
-                JdkUtil.LogEventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.UNIFIED_SAFEPOINT),
-                JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_CONCURRENT),
-                JdkUtil.LogEventType.Z_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_START_YOUNG),
-                JdkUtil.LogEventType.Z_MARK_START_YOUNG.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_MARK_END_YOUNG),
-                JdkUtil.LogEventType.Z_MARK_END_YOUNG.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.Z_RELOCATE_START_YOUNG),
-                JdkUtil.LogEventType.Z_RELOCATE_START_YOUNG.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_CONCURRENT),
+                JdkUtil.EventType.Z_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_MARK_START_YOUNG),
+                JdkUtil.EventType.Z_MARK_START_YOUNG.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_MARK_END_YOUNG),
+                JdkUtil.EventType.Z_MARK_END_YOUNG.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_RELOCATE_START_YOUNG),
+                JdkUtil.EventType.Z_RELOCATE_START_YOUNG.toString() + " event not identified.");
     }
 
     @Test

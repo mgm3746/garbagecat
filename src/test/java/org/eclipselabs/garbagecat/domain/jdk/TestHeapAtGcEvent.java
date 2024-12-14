@@ -29,64 +29,64 @@ class TestHeapAtGcEvent {
     void testBraceLine() {
         String logLine = "}";
         assertTrue(HeapAtGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEAP_AT_GC.toString() + ".");
     }
 
     @Test
     void testHeapAfterGcInvocations() {
         String logLine = "Heap after GC invocations=15661 (full 26):";
         assertTrue(HeapAtGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEAP_AT_GC.toString() + ".");
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof HeapAtGcEvent,
-                "JdkUtil.parseLogLine() does not return " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + " event.");
+                "JdkUtil.parseLogLine() does not return " + JdkUtil.EventType.HEAP_AT_GC.toString() + " event.");
     }
 
     @Test
     void testHeapAfterLowerCaseGcLine() {
         String logLine = "Heap after gc invocations=362:";
         assertTrue(HeapAtGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEAP_AT_GC.toString() + ".");
     }
 
     @Test
     void testHeapAfterPrintGCDateStampsLine() {
         String logLine = "Heap after GC invocations=1 (full 0):";
         assertTrue(HeapAtGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEAP_AT_GC.toString() + ".");
     }
 
     @Test
     void testHeapBeforeLowerCaseGcLine() {
         String logLine = "{Heap before gc invocations=1:";
         assertTrue(HeapAtGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEAP_AT_GC.toString() + ".");
     }
 
     @Test
     void testHeapBeforePrintGCDateStampsLine() {
         String logLine = "{Heap before GC invocations=0 (full 0):";
         assertTrue(HeapAtGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEAP_AT_GC.toString() + ".");
     }
 
     @Test
     void testHeapBeforeUpperCaseGcFullLine() {
         String logLine = "{Heap before GC invocations=261 (full 10):";
         assertTrue(HeapAtGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEAP_AT_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEAP_AT_GC.toString() + ".");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "{Heap before gc invocations=1:";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.HEAP_AT_GC.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testNotReportable() {
         String logLine = "{Heap before gc invocations=1:";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.HEAP_AT_GC.toString() + " incorrectly indentified as reportable.");
+                JdkUtil.EventType.HEAP_AT_GC.toString() + " incorrectly indentified as reportable.");
     }
 }

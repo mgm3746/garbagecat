@@ -30,7 +30,7 @@ class TestHeaderMemoryEvent {
     void testLine() {
         String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
         assertTrue(HeaderMemoryEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_MEMORY.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEADER_MEMORY.toString() + ".");
         HeaderMemoryEvent event = new HeaderMemoryEvent(logLine);
         assertEquals((long) 0, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(65806300, event.getPhysicalMemory(), "Physical memory not parsed correctly.");
@@ -44,7 +44,7 @@ class TestHeaderMemoryEvent {
     void testLineMemoryPage8kNoSwapData() {
         String logLine = "Memory: 8k page, physical 535035904k(398522432k free)";
         assertTrue(HeaderMemoryEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_MEMORY.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEADER_MEMORY.toString() + ".");
         HeaderMemoryEvent event = new HeaderMemoryEvent(logLine);
         assertEquals((long) 0, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(535035904, event.getPhysicalMemory(), "Physical memory not parsed correctly.");
@@ -57,7 +57,7 @@ class TestHeaderMemoryEvent {
     void testNotBlocking() {
         String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.HEADER_MEMORY.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.HEADER_MEMORY.toString() + " incorrectly indentified as blocking.");
     }
 
 }

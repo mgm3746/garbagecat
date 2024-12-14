@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -87,12 +88,12 @@ public class VmWarningEvent implements UnifiedLogging {
         return errNo;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.VM_WARNING;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.VM_WARNING.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

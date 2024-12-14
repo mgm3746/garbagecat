@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -141,12 +142,12 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements HeaderE
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.SHENANDOAH_STATS;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_STATS.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

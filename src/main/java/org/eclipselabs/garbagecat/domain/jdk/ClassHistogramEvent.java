@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -152,12 +153,12 @@ public class ClassHistogramEvent implements ThrowAwayEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.CLASS_HISTOGRAM;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.CLASS_HISTOGRAM.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

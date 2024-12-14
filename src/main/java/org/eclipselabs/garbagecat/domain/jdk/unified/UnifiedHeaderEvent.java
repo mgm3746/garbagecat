@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -289,6 +290,10 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
         return collectorFamily;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_HEADER;
+    }
+
     /**
      * The Java release string. For example:
      * 
@@ -367,10 +372,6 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_HEADER.toString();
     }
 
     @Override

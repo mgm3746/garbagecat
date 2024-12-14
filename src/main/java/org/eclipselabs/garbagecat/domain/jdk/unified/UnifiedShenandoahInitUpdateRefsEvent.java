@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
@@ -122,12 +123,12 @@ public class UnifiedShenandoahInitUpdateRefsEvent extends ShenandoahCollector
         return eventTime;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.jdk.G1Collector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
@@ -138,12 +139,12 @@ public class UnifiedGcLockerRetryEvent extends G1Collector implements LogEvent, 
         }
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

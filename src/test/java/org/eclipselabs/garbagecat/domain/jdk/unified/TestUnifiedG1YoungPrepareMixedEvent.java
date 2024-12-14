@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +44,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
 
     @Test
     void testHydration() {
-        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
+        EventType eventType = JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED;
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
@@ -53,7 +53,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         assertTrue(
                 JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
                         duration) instanceof UnifiedG1YoungPrepareMixedEvent,
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
     }
 
     @Test
@@ -61,9 +61,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         String logLine = "[16.627s][info][gc,start      ] GC(1354) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED,
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED + "not identified.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED + "not identified.");
     }
 
     @Test
@@ -72,7 +72,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -82,7 +82,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(
                 JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedG1YoungPrepareMixedEvent,
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not parsed.");
     }
 
     @Test
@@ -91,10 +91,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
         assertEquals((long) (16627 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(3801), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
@@ -119,10 +118,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "Metaspace: 424009K(898652K)->424009K(898652K) 18221M->3823M(24576M) 153.101ms "
                 + "User=3.35s Sys=0.01s Real=0.15s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
         assertEquals((long) (1234 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(424009), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
@@ -148,10 +146,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "Metaspace: 147162K(149824K)->147162K(149824K) 24336M->9999M(32768M) 26,821ms "
                 + "User=0,18s Sys=0,00s Real=0,03s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -159,10 +156,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         String logLine = "[0.113s][info][gc       ] GC(6) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "4M->5M(30M) 1.419ms User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
         assertEquals((long) (113 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(0), event.getClassOccupancyInit(), "Class initial occupancy not parsed correctly.");
@@ -186,10 +182,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "Humongous regions: 0->0 Metaspace: 654K(832K)->654K(832K) 10M->10M(50M) 1.550ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -198,10 +193,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "(G1 Humongous Allocation) Other: 0.1ms Humongous regions: 13->13 "
                 + "Metaspace: 66401K->66401K(151552K) 15678M->1575M(16384M) 24.193ms User=0.12s Sys=0.00s Real=0.03s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -210,10 +204,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "To-space exhausted Other: 1.3ms Humongous regions: 312->70 Metaspace: 401628K->401628K(1421312K) "
                 + "11481M->8717M(12000M) 1125.930ms User=6.31s Sys=0.13s Real=1.13s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -222,10 +215,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "(G1 Preventive Collection) Other: 0.1ms Humongous regions: 13->13 "
                 + "Metaspace: 52236K(52736K)->52236K(52736K) 269M->81M(300M) 14.821ms User=0.02s Sys=0.00s Real=0.01s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -235,10 +227,9 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "Metaspace: 360792K->360792K(1380352K) 10311M->3024M(12288M) 33.928ms User=0.25s "
                 + "Sys=0.04s Real=0.03s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
@@ -251,10 +242,10 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = (UnifiedG1YoungPrepareMixedEvent) jvmRun.getFirstBlockingEvent();
         assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
         assertEquals((long) (16627), event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -262,8 +253,8 @@ class TestUnifiedG1YoungPrepareMixedEvent {
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as reportable.");
     }
 
     @Test
@@ -272,7 +263,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
                 + "24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
         assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -283,7 +274,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
                 + "24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -294,7 +285,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
                 + "24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -305,7 +296,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
                 + "24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -316,17 +307,17 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "
                 + "24M->13M(31M) 0.361ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
         UnifiedG1YoungPrepareMixedEvent event = new UnifiedG1YoungPrepareMixedEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as unified.");
     }
 
     @Test
@@ -334,7 +325,7 @@ class TestUnifiedG1YoungPrepareMixedEvent {
         String logLine = "[217224.994s][info][gc] GC(137) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
                 + "13840M->7940M(16384M) 44.565ms";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
 
     @Test
@@ -343,6 +334,6 @@ class TestUnifiedG1YoungPrepareMixedEvent {
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 24M->13M(31M) 0.361ms "
                 + "User=0.00s Sys=0.00s Real=0.00s    ";
         assertTrue(UnifiedG1YoungPrepareMixedEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + ".");
     }
 }

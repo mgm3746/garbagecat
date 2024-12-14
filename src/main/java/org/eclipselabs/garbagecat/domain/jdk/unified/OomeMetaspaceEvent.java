@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -94,12 +95,12 @@ public class OomeMetaspaceEvent implements UnifiedLogging, HeaderEvent, ThrowAwa
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.OOME_METASPACE;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.OOME_METASPACE.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

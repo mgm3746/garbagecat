@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -84,12 +85,12 @@ public class UnifiedShenandoahCancellingGcEvent extends ShenandoahCollector impl
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

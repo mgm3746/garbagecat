@@ -23,6 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -164,6 +165,10 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
         return duration;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.CMS_INITIAL_MARK;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.CMS;
@@ -171,10 +176,6 @@ public class CmsInitialMarkEvent extends CmsCollector implements BlockingEvent, 
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.CMS_INITIAL_MARK.toString();
     }
 
     public int getParallelism() {

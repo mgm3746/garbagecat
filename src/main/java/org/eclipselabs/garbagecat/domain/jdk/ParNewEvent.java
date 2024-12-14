@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -291,6 +292,10 @@ public class ParNewEvent extends CmsIncrementalModeCollector
         return duration;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.PAR_NEW;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.PAR_NEW;
@@ -298,10 +303,6 @@ public class ParNewEvent extends CmsIncrementalModeCollector
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.PAR_NEW.toString();
     }
 
     public Memory getOldOccupancyEnd() {

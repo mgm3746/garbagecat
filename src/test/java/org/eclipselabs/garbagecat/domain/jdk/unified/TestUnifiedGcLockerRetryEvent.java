@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +35,9 @@ class TestUnifiedGcLockerRetryEvent {
     void testIdentityEventType() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY,
+        assertEquals(JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY + "not identified.");
+                JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY + "not identified.");
     }
 
     @Test
@@ -45,7 +45,7 @@ class TestUnifiedGcLockerRetryEvent {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words  ";
         assertTrue(UnifiedGcLockerRetryEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + ".");
     }
 
     @Test
@@ -53,7 +53,7 @@ class TestUnifiedGcLockerRetryEvent {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
@@ -61,13 +61,13 @@ class TestUnifiedGcLockerRetryEvent {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedGcLockerRetryEvent,
-                JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY),
-                JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY),
+                JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + " not indentified as reportable.");
     }
 
     @Test
@@ -75,7 +75,7 @@ class TestUnifiedGcLockerRetryEvent {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
         assertTrue(UnifiedGcLockerRetryEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + ".");
         UnifiedGcLockerRetryEvent event = new UnifiedGcLockerRetryEvent(logLine);
         assertEquals(729476174167L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -85,7 +85,7 @@ class TestUnifiedGcLockerRetryEvent {
         String logLine = "[2023-02-12T07:16:14.167+0200][0.005s][warning][gc,alloc       ] ForkJoinPool-123-worker: "
                 + "Retried waiting for GCLocker too often allocating 1235 words";
         assertTrue(UnifiedGcLockerRetryEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + ".");
         UnifiedGcLockerRetryEvent event = new UnifiedGcLockerRetryEvent(logLine);
         assertEquals((long) 5, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -95,16 +95,16 @@ class TestUnifiedGcLockerRetryEvent {
         String logLine = "[0.005s][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";
         assertTrue(UnifiedGcLockerRetryEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + ".");
         UnifiedGcLockerRetryEvent event = new UnifiedGcLockerRetryEvent(logLine);
         assertEquals((long) 5, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_GC_LOCKER_RETRY);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_GC_LOCKER_RETRY);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_GC_LOCKER_RETRY.toString() + " incorrectly indentified as unified.");
+                JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + " incorrectly indentified as unified.");
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,29 +34,29 @@ class TestShenandoahTriggerEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "Trigger: Learning 1 of 5. Free (45118K) is below initial threshold (45875K)";
-        assertEquals(JdkUtil.LogEventType.SHENANDOAH_TRIGGER,
+        assertEquals(JdkUtil.EventType.SHENANDOAH_TRIGGER,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.SHENANDOAH_TRIGGER + "not identified.");
+                JdkUtil.EventType.SHENANDOAH_TRIGGER + "not identified.");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "Trigger: Learning 1 of 5. Free (45118K) is below initial threshold (45875K)";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testParseLogLine() {
         String logLine = "Trigger: Learning 1 of 5. Free (45118K) is below initial threshold (45875K)";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahTriggerEvent,
-                JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + " not parsed.");
+                JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.SHENANDOAH_TRIGGER),
-                JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as reportable.");
+        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.SHENANDOAH_TRIGGER),
+                JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test
@@ -64,7 +64,7 @@ class TestShenandoahTriggerEvent {
         String logLine = "Trigger: Average GC time (12.56 ms) is above the time for allocation rate (899 MB/s) to "
                 + "deplete free headroom (11466K)";
         assertTrue(ShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
@@ -72,28 +72,28 @@ class TestShenandoahTriggerEvent {
         String logLine = "Trigger: Average GC time (6458.98 ms) is above the time for allocation rate (89583 BB/s) "
                 + "to deplete free headroom (0B)";
         assertTrue(ShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testTriggerFreeNoDecorator() {
         String logLine = "Trigger: Free (168M) is below minimum threshold (168M)";
         assertTrue(ShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testTriggerLearning() {
         String logLine = "Trigger: Learning 1 of 5. Free (45118K) is below initial threshold (45875K)";
         assertTrue(ShenandoahTriggerEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + ".");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.SHENANDOAH_TRIGGER);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.SHENANDOAH_TRIGGER);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as unified.");
+                JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as unified.");
     }
 }

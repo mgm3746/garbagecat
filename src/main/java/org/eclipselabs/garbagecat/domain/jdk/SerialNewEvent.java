@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -229,6 +230,10 @@ public class SerialNewEvent extends SerialCollector
         return duration;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.SERIAL_NEW;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.SERIAL_NEW;
@@ -236,10 +241,6 @@ public class SerialNewEvent extends SerialCollector
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.SERIAL_NEW.toString();
     }
 
     public Memory getOldOccupancyEnd() {

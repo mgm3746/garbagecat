@@ -35,6 +35,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
@@ -293,16 +294,16 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
         return eventTime + otherTime;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE;
+    }
+
     public long getExtRootScanningTime() {
         return extRootScanningTime;
     }
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_G1_YOUNG_PAUSE.toString();
     }
 
     @Override

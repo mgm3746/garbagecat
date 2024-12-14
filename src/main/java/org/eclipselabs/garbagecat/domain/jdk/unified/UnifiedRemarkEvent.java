@@ -22,6 +22,7 @@ import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -202,12 +203,12 @@ public class UnifiedRemarkEvent extends UnknownCollector
         return duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_REMARK;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_REMARK.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public int getParallelism() {

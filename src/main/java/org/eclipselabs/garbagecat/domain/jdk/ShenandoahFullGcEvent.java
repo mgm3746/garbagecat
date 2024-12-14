@@ -26,6 +26,7 @@ import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -197,12 +198,12 @@ public class ShenandoahFullGcEvent extends ShenandoahCollector
         return duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.SHENANDOAH_FULL_GC;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_FULL_GC.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

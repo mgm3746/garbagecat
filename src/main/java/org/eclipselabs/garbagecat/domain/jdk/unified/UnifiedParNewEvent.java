@@ -32,6 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.github.joa.domain.GarbageCollector;
 
@@ -252,6 +253,10 @@ public class UnifiedParNewEvent extends CmsCollector implements UnifiedLogging, 
         return duration;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_PAR_NEW;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.CMS;
@@ -259,10 +264,6 @@ public class UnifiedParNewEvent extends CmsCollector implements UnifiedLogging, 
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_PAR_NEW.toString();
     }
 
     public Memory getOldOccupancyEnd() {

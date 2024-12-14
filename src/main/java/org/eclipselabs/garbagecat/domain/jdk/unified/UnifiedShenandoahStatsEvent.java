@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -195,12 +196,12 @@ public class UnifiedShenandoahStatsEvent extends ShenandoahCollector
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_SHENANDOAH_STATS.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

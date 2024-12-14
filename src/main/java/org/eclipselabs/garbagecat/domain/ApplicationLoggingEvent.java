@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -152,12 +153,12 @@ public class ApplicationLoggingEvent implements ThrowAwayEvent {
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.APPLICATION_LOGGING;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.APPLICATION_LOGGING.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

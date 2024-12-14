@@ -148,7 +148,7 @@ public final class JdkUtil {
     /**
      * Defined logging events.
      */
-    public enum LogEventType {
+    public enum EventType {
         APPLICATION_CONCURRENT_TIME, APPLICATION_LOGGING, APPLICATION_STOPPED_TIME, BLANK_LINE, CLASS_HISTOGRAM,
         //
         CLASS_UNLOADING, CMS_CONCURRENT, CMS_INITIAL_MARK, CMS_REMARK, CMS_SERIAL_OLD, FLS_STATISTICS, FOOTER_STATS,
@@ -244,9 +244,9 @@ public final class JdkUtil {
         return sb.toString();
     }
 
-    public static final LogEventType determineEventType(String eventTypeString) {
-        LogEventType[] logEventTypes = LogEventType.values();
-        for (LogEventType logEventType : logEventTypes) {
+    public static final EventType determineEventType(String eventTypeString) {
+        EventType[] logEventTypes = EventType.values();
+        for (EventType logEventType : logEventTypes) {
             if (logEventType.toString().equals(eventTypeString)) {
                 return logEventType;
             }
@@ -285,7 +285,7 @@ public final class JdkUtil {
      *            The duration of the log event in microseconds (rounded)
      * @return The <code>BlockingEvent</code> for the given event values.
      */
-    public static final BlockingEvent hydrateBlockingEvent(LogEventType eventType, String logEntry, long timestamp,
+    public static final BlockingEvent hydrateBlockingEvent(EventType eventType, String logEntry, long timestamp,
             int duration) {
         switch (eventType) {
 
@@ -407,9 +407,9 @@ public final class JdkUtil {
      *            The <code>CollectorFamily</code>.
      * @return The <code>LogEventType</code> of the log entry.
      */
-    public static final LogEventType identifyEventType(String logLine, LogEvent priorLogEvent,
+    public static final EventType identifyEventType(String logLine, LogEvent priorLogEvent,
             CollectorFamily collectorFamily) {
-        LogEventType logEventType = LogEventType.UNKNOWN;
+        EventType logEventType = EventType.UNKNOWN;
         if (priorLogEvent instanceof UnifiedLogging) {
             // Unified
             logEventType = UnifiedUtil.identifyEventType(logLine, priorLogEvent, collectorFamily);
@@ -417,7 +417,7 @@ public final class JdkUtil {
                 || priorLogEvent instanceof UnknownEvent) {
             // Unknown
             logEventType = UnifiedUtil.identifyEventType(logLine, priorLogEvent, collectorFamily);
-            if (logEventType == LogEventType.UNKNOWN) {
+            if (logEventType == EventType.UNKNOWN) {
                 logEventType = identifyLegacyEventType(logLine, priorLogEvent);
             }
         } else {
@@ -436,131 +436,131 @@ public final class JdkUtil {
      *            The prior log line <code>LogEvent</code>.
      * @return The <code>LogEventType</code> of the log entry.
      */
-    public static final LogEventType identifyLegacyEventType(String logLine, LogEvent priorLogEvent) {
+    public static final EventType identifyLegacyEventType(String logLine, LogEvent priorLogEvent) {
 
         // In order of most common events to limit checking
 
         // Unknown collector (has to go 1st)
         if (VerboseGcYoungEvent.match(logLine))
-            return LogEventType.VERBOSE_GC_YOUNG;
+            return EventType.VERBOSE_GC_YOUNG;
         if (VerboseGcOldEvent.match(logLine))
-            return LogEventType.VERBOSE_GC_OLD;
+            return EventType.VERBOSE_GC_OLD;
 
         // G1
         if (G1YoungPauseEvent.match(logLine))
-            return LogEventType.G1_YOUNG_PAUSE;
+            return EventType.G1_YOUNG_PAUSE;
         if (G1MixedPauseEvent.match(logLine))
-            return LogEventType.G1_MIXED_PAUSE;
+            return EventType.G1_MIXED_PAUSE;
         if (G1ConcurrentEvent.match(logLine))
-            return LogEventType.G1_CONCURRENT;
+            return EventType.G1_CONCURRENT;
         if (G1YoungInitialMarkEvent.match(logLine))
-            return LogEventType.G1_YOUNG_INITIAL_MARK;
+            return EventType.G1_YOUNG_INITIAL_MARK;
         if (G1RemarkEvent.match(logLine))
-            return LogEventType.G1_REMARK;
+            return EventType.G1_REMARK;
         if (G1FullGcEvent.match(logLine))
-            return LogEventType.G1_FULL_GC_SERIAL;
+            return EventType.G1_FULL_GC_SERIAL;
         if (G1CleanupEvent.match(logLine))
-            return LogEventType.G1_CLEANUP;
+            return EventType.G1_CLEANUP;
 
         // CMS
         if (ParNewEvent.match(logLine))
-            return LogEventType.PAR_NEW;
+            return EventType.PAR_NEW;
         if (CmsSerialOldEvent.match(logLine))
-            return LogEventType.CMS_SERIAL_OLD;
+            return EventType.CMS_SERIAL_OLD;
         if (CmsInitialMarkEvent.match(logLine))
-            return LogEventType.CMS_INITIAL_MARK;
+            return EventType.CMS_INITIAL_MARK;
         if (CmsRemarkEvent.match(logLine))
-            return LogEventType.CMS_REMARK;
+            return EventType.CMS_REMARK;
         if (CmsConcurrentEvent.match(logLine))
-            return LogEventType.CMS_CONCURRENT;
+            return EventType.CMS_CONCURRENT;
 
         // Parallel
         if (ParallelScavengeEvent.match(logLine))
-            return LogEventType.PARALLEL_SCAVENGE;
+            return EventType.PARALLEL_SCAVENGE;
         if (ParallelSerialOldEvent.match(logLine))
-            return LogEventType.PARALLEL_SERIAL_OLD;
+            return EventType.PARALLEL_SERIAL_OLD;
         if (ParallelCompactingOldEvent.match(logLine))
-            return LogEventType.PARALLEL_COMPACTING_OLD;
+            return EventType.PARALLEL_COMPACTING_OLD;
 
         // Serial
         if (SerialOldEvent.match(logLine))
-            return LogEventType.SERIAL_OLD;
+            return EventType.SERIAL_OLD;
         if (SerialNewEvent.match(logLine))
-            return LogEventType.SERIAL_NEW;
+            return EventType.SERIAL_NEW;
 
         // Shenandoah
         if (UnifiedShenandoahCancellingGcEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC;
+            return EventType.UNIFIED_SHENANDOAH_CANCELLING_GC;
         if (ShenandoahConcurrentEvent.match(logLine))
-            return LogEventType.SHENANDOAH_CONCURRENT;
+            return EventType.SHENANDOAH_CONCURRENT;
         if (ShenandoahDegeneratedGcEvent.match(logLine))
-            return LogEventType.SHENANDOAH_DEGENERATED_GC;
+            return EventType.SHENANDOAH_DEGENERATED_GC;
         if (ShenandoahFinalEvacEvent.match(logLine))
-            return LogEventType.SHENANDOAH_FINAL_EVAC;
+            return EventType.SHENANDOAH_FINAL_EVAC;
         if (ShenandoahFinalMarkEvent.match(logLine))
-            return LogEventType.SHENANDOAH_FINAL_MARK;
+            return EventType.SHENANDOAH_FINAL_MARK;
         if (UnifiedShenandoahFinalRootsEvent.match(logLine))
-            return LogEventType.UNIFIED_SHENANDOAH_FINAL_ROOTS;
+            return EventType.UNIFIED_SHENANDOAH_FINAL_ROOTS;
         if (ShenandoahFinalUpdateEvent.match(logLine))
-            return LogEventType.SHENANDOAH_FINAL_UPDATE;
+            return EventType.SHENANDOAH_FINAL_UPDATE;
         if (ShenandoahFullGcEvent.match(logLine))
-            return LogEventType.SHENANDOAH_FULL_GC;
+            return EventType.SHENANDOAH_FULL_GC;
         if (ShenandoahInitMarkEvent.match(logLine))
-            return LogEventType.SHENANDOAH_INIT_MARK;
+            return EventType.SHENANDOAH_INIT_MARK;
         if (ShenandoahInitUpdateEvent.match(logLine))
-            return LogEventType.SHENANDOAH_INIT_UPDATE;
+            return EventType.SHENANDOAH_INIT_UPDATE;
         if (logLine.matches(ShenandoahStatsEvent._REGEX_HEADER)
                 || (ShenandoahStatsEvent.match(logLine) && priorLogEvent instanceof ShenandoahStatsEvent))
-            return LogEventType.SHENANDOAH_STATS;
+            return EventType.SHENANDOAH_STATS;
         if (ShenandoahTriggerEvent.match(logLine))
-            return LogEventType.SHENANDOAH_TRIGGER;
+            return EventType.SHENANDOAH_TRIGGER;
 
         // Other
         if (ApplicationConcurrentTimeEvent.match(logLine))
-            return LogEventType.APPLICATION_CONCURRENT_TIME;
+            return EventType.APPLICATION_CONCURRENT_TIME;
         if (ApplicationStoppedTimeEvent.match(logLine))
-            return LogEventType.APPLICATION_STOPPED_TIME;
+            return EventType.APPLICATION_STOPPED_TIME;
         if (ClassUnloadingEvent.match(logLine))
-            return LogEventType.CLASS_UNLOADING;
+            return EventType.CLASS_UNLOADING;
         if (logLine.matches(FooterStatsEvent._REGEX_HEADER)
                 || (FooterStatsEvent.match(logLine) && priorLogEvent instanceof FooterStatsEvent))
-            return LogEventType.FOOTER_STATS;
+            return EventType.FOOTER_STATS;
         if (GcInfoEvent.match(logLine) && !(priorLogEvent instanceof UnifiedHeaderEvent))
-            return LogEventType.GC_INFO;
+            return EventType.GC_INFO;
         if (logLine.matches(HeapEvent._REGEX_HEADER)
                 || (HeapEvent.match(logLine) && priorLogEvent instanceof HeapEvent))
-            return LogEventType.HEAP;
+            return EventType.HEAP;
         if (HeapAtGcEvent.match(logLine))
-            return LogEventType.HEAP_AT_GC;
+            return EventType.HEAP_AT_GC;
         if (TenuringDistributionEvent.match(logLine))
-            return LogEventType.TENURING_DISTRIBUTION;
+            return EventType.TENURING_DISTRIBUTION;
         if (ClassHistogramEvent.match(logLine))
-            return LogEventType.CLASS_HISTOGRAM;
+            return EventType.CLASS_HISTOGRAM;
         if (ApplicationLoggingEvent.match(logLine))
-            return LogEventType.APPLICATION_LOGGING;
+            return EventType.APPLICATION_LOGGING;
         if (ThreadDumpEvent.match(logLine))
-            return LogEventType.THREAD_DUMP;
+            return EventType.THREAD_DUMP;
         if (LogFileEvent.match(logLine))
-            return LogEventType.LOG_FILE;
+            return EventType.LOG_FILE;
         if (GcOverheadLimitEvent.match(logLine))
-            return LogEventType.GC_OVERHEAD_LIMIT;
+            return EventType.GC_OVERHEAD_LIMIT;
         if (FlsStatisticsEvent.match(logLine))
-            return LogEventType.FLS_STATISTICS;
+            return EventType.FLS_STATISTICS;
         if (GcLockerScavengeFailedEvent.match(logLine))
-            return LogEventType.GC_LOCKER_SCAVENGE_FAILED;
+            return EventType.GC_LOCKER_SCAVENGE_FAILED;
         if (HeaderCommandLineFlagsEvent.match(logLine))
-            return LogEventType.HEADER_COMMAND_LINE_FLAGS;
+            return EventType.HEADER_COMMAND_LINE_FLAGS;
         if (HeaderMemoryEvent.match(logLine))
-            return LogEventType.HEADER_MEMORY;
+            return EventType.HEADER_MEMORY;
         if (HeaderVmInfoEvent.match(logLine))
-            return LogEventType.HEADER_VM_INFO;
+            return EventType.HEADER_VM_INFO;
         if (VmWarningEvent.match(logLine))
-            return LogEventType.VM_WARNING;
+            return EventType.VM_WARNING;
         if (BlankLineEvent.match(logLine))
-            return LogEventType.BLANK_LINE;
+            return EventType.BLANK_LINE;
 
         // no idea what event is
-        return LogEventType.UNKNOWN;
+        return EventType.UNKNOWN;
     }
 
     /**
@@ -568,7 +568,7 @@ public final class JdkUtil {
      *            The event type to test.
      * @return true if the log event is blocking, false if it is concurrent or informational.
      */
-    public static final boolean isBlocking(LogEventType eventType) {
+    public static final boolean isBlocking(EventType eventType) {
         switch (eventType) {
         case APPLICATION_CONCURRENT_TIME:
         case APPLICATION_STOPPED_TIME:
@@ -699,7 +699,7 @@ public final class JdkUtil {
      *            The event type to test.
      * @return true if the log event is should be included in the report event list, false otherwise.
      */
-    public static final boolean isReportable(LogEventType eventType) {
+    public static final boolean isReportable(EventType eventType) {
         switch (eventType) {
         case APPLICATION_CONCURRENT_TIME:
         case APPLICATION_LOGGING:
@@ -753,7 +753,7 @@ public final class JdkUtil {
      * @return The <code>LogEvent</code> for the log line.
      */
     public static final LogEvent parseLogLine(String logLine, LogEvent priorLogEvent, CollectorFamily collectorFamily) {
-        LogEventType eventType = identifyEventType(logLine, priorLogEvent, collectorFamily);
+        EventType eventType = identifyEventType(logLine, priorLogEvent, collectorFamily);
         switch (eventType) {
         // Unified (order of appearance)
         case UNIFIED_SAFEPOINT:

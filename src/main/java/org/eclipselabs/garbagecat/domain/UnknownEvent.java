@@ -13,6 +13,7 @@
 package org.eclipselabs.garbagecat.domain;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * Logging event that could not be identified.
@@ -37,12 +38,12 @@ public class UnknownEvent implements LogEvent {
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNKNOWN;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNKNOWN.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -65,12 +66,12 @@ public class UnifiedBlankLineEvent implements UnifiedLogging, ThrowAwayEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_BLANK_LINE;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_BLANK_LINE.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

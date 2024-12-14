@@ -21,7 +21,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -35,22 +35,22 @@ class TestUnifiedCmsInitialMarkEvent {
     void testBlocking() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK,
+        assertEquals(JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK + "not identified.");
+                JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK + "not identified.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         assertEquals((long) (178 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(157, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -63,20 +63,20 @@ class TestUnifiedCmsInitialMarkEvent {
     void testParseLogLine() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedCmsInitialMarkEvent,
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK),
+                JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testTimestampUptime() {
         String logLine = "[3.161s] GC(4) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(157, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -89,7 +89,7 @@ class TestUnifiedCmsInitialMarkEvent {
     void testTimestampUptimeMillis() {
         String logLine = "[3161ms] GC(4) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(157, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -100,17 +100,17 @@ class TestUnifiedCmsInitialMarkEvent {
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_CMS_INITIAL_MARK);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_CMS_INITIAL_MARK);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as unified.");
     }
 
     @Test
     void testUnifiedTime() {
         String logLine = "[2023-08-25T02:15:57.862-0400] GC(4) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         assertEquals(746241357862L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(157, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -123,7 +123,7 @@ class TestUnifiedCmsInitialMarkEvent {
     void testUnifiedTimeUptime() {
         String logLine = "[2023-08-25T02:15:57.862-0400][3.161s] GC(4) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(157, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -136,7 +136,7 @@ class TestUnifiedCmsInitialMarkEvent {
     void testUnifiedTimeUptimeMillis() {
         String logLine = "[2023-08-25T02:15:57.862-0400][3161ms] GC(4) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         assertEquals(3161, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(157, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -149,7 +149,7 @@ class TestUnifiedCmsInitialMarkEvent {
     void testWhitespaceAtEnd() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms     ";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
     }
 
     @Test
@@ -157,7 +157,7 @@ class TestUnifiedCmsInitialMarkEvent {
         String logLine = "[0.053s][info][gc           ] GC(1) Pause Initial Mark 0M->0M(2M) 0.278ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + ".");
         UnifiedCmsInitialMarkEvent event = new UnifiedCmsInitialMarkEvent(logLine);
         assertEquals((long) (53 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(278, event.getDurationMicros(), "Duration not parsed correctly.");

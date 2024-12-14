@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
+
 /**
  * Base logging event.
  * 
@@ -21,16 +23,14 @@ package org.eclipselabs.garbagecat.domain;
 public interface LogEvent {
 
     /**
+     * @return The event type identifier.
+     */
+    EventType getEventType();
+
+    /**
      * @return The log entry for the event.
      */
     String getLogEntry();
-
-    /**
-     * TODO: Change to LogEventType.
-     * 
-     * @return The event identifier.
-     */
-    String getName();
 
     /**
      * @return The time when the event begins, in milliseconds after JVM startup or from the arbitrary point in time

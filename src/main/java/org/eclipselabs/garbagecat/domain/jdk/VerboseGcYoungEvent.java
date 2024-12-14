@@ -27,6 +27,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -198,12 +199,12 @@ public class VerboseGcYoungEvent extends UnknownCollector
         return duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.VERBOSE_GC_YOUNG;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.VERBOSE_GC_YOUNG.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

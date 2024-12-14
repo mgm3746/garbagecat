@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,30 +34,30 @@ class TestUnifiedShenandoahCancellingGcEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC,
+        assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC + "not identified.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC + "not identified.");
     }
 
     @Test
     void testLineJdk8() {
         String logLine = "Cancelling GC: Stopping VM";
         assertTrue(UnifiedShenandoahCancellingGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
     }
 
     @Test
     void testLineUnified() {
         String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
         assertTrue(UnifiedShenandoahCancellingGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString()
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString()
                         + " incorrectly indentified as blocking.");
     }
 
@@ -67,36 +67,35 @@ class TestUnifiedShenandoahCancellingGcEvent {
         assertTrue(
                 JdkUtil.parseLogLine(logLine, null,
                         CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahCancellingGcEvent,
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString()
+        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString()
                         + " incorrectly indentified as reportable.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_SHENANDOAH_CANCELLING_GC);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString()
-                        + " incorrectly indentified as unified.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + " incorrectly indentified as unified.");
     }
 
     @Test
     void testUnifiedDetailed() {
         String logLine = "[69.941s][info][gc           ] Cancelling GC: Stopping VM";
         assertTrue(UnifiedShenandoahCancellingGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
     }
 
     @Test
     void testUnifiedUptimeMillis() {
         String logLine = "[2019-02-05T15:10:08.997-0200][1357909ms] Cancelling GC: Stopping VM";
         assertTrue(UnifiedShenandoahCancellingGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
     }
 }

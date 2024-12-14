@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -249,12 +250,12 @@ public class ZStatsEvent extends UnknownCollector implements UnifiedLogging, Hea
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.Z_STATS;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.Z_STATS.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

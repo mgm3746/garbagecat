@@ -33,7 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -46,7 +46,7 @@ class TestG1MixedPauseEvent {
     void test() {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 72598, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(),
@@ -62,7 +62,7 @@ class TestG1MixedPauseEvent {
         String logLine = "2018-03-02T07:08:35.683+0000: [GC pause (G1 Evacuation Pause) (mixed) "
                 + "1239M->949M(4096M), 0.0245500 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals(573271715683L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -72,7 +72,7 @@ class TestG1MixedPauseEvent {
         String logLine = "2018-03-02T07:08:35.683+0000: 47788.145: [GC pause (G1 Evacuation Pause) (mixed) "
                 + "1239M->949M(4096M), 0.0245500 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 47788145, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1239 * 1024), event.getCombinedOccupancyInit(),
@@ -93,7 +93,7 @@ class TestG1MixedPauseEvent {
                 + "[Ext Root Scanning (ms): 1.8][Other: 23.0 ms][Eden: 22.9G(24.3G)->0.0B(24.3G) Survivors: "
                 + "112.0M->0.0B Heap: 27.7G(28.0G)->23.5G(28.0G)] [Times: user=34.39 sys=13.70, real=8.64 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
         assertEquals((long) 506146808, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -116,7 +116,7 @@ class TestG1MixedPauseEvent {
     void testIsBlocking() {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.G1_MIXED_PAUSE.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -125,7 +125,7 @@ class TestG1MixedPauseEvent {
                 + "1.8][Other: 23.0 ms][Eden: 3416.0M(3416.0M)->0.0B(3464.0M) Survivors: 264.0M->216.0M Heap: "
                 + "17.7G(18.0G)->17.8G(18.0G)] [Times: user=11.35 sys=0.00, real=1.50 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
         assertEquals((long) 615375044, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -150,7 +150,7 @@ class TestG1MixedPauseEvent {
                 + "[Other: 23.0 ms][Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: "
                 + "11.8G(26.0G)->9058.4M(26.0G)] [Times: user=0.30 sys=0.00, real=0.08 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals(508375624149L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -161,7 +161,7 @@ class TestG1MixedPauseEvent {
                 + "[Ext Root Scanning (ms): 1.8][Other: 23.0 ms][Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: "
                 + "40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)] [Times: user=0.30 sys=0.00, real=0.08 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 3082652, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(12373197), event.getCombinedOccupancyInit(),
@@ -185,7 +185,7 @@ class TestG1MixedPauseEvent {
                 + "[Eden: 1288.0M(1288.0M)->0.0B(1288.0M) Survivors: 40.0M->40.0M Heap: 11.8G(26.0G)->9058.4M(26.0G)]"
                 + " [Times: user=0.30 sys=0.00, real=0.08 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 3082652, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(12373197), event.getCombinedOccupancyInit(),
@@ -209,7 +209,7 @@ class TestG1MixedPauseEvent {
                 + "[Eden: 2044M(2044M)->0B(1792M) Survivors: 4096K->256M Heap: 2653M(12288M)->435M(12288M)] "
                 + "[Times: user=0.43 sys=0.00, real=0.06 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 449412888, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(2653 * 1024), event.getCombinedOccupancyInit(),
@@ -233,7 +233,7 @@ class TestG1MixedPauseEvent {
                 + "1.8][Other: 23.0 ms][Eden: 112.0M(112.0M)->0.0B(112.0M) Survivors: 16.0M->16.0M Heap: "
                 + "12.9G(30.0G)->11.3G(30.0G)] [Times: user=0.19 sys=0.00, real=0.05 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
         assertEquals((long) 2973338, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -268,10 +268,10 @@ class TestG1MixedPauseEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE),
-                JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_MIXED_PAUSE),
+                JdkUtil.EventType.G1_MIXED_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
     }
@@ -292,10 +292,10 @@ class TestG1MixedPauseEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE),
-                JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_MIXED_PAUSE),
+                JdkUtil.EventType.G1_MIXED_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
     }
@@ -309,11 +309,11 @@ class TestG1MixedPauseEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE),
-                JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_MIXED_PAUSE),
+                JdkUtil.EventType.G1_MIXED_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_REFERENCE_GC_ENABLED.getKey()),
                 "-XX:+PrintReferenceGC not identified.");
     }
@@ -334,10 +334,10 @@ class TestG1MixedPauseEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_MIXED_PAUSE),
-                JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_MIXED_PAUSE),
+                JdkUtil.EventType.G1_MIXED_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
     }
@@ -347,7 +347,7 @@ class TestG1MixedPauseEvent {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs] "
                 + "[Times: user=0.22 sys=0.00, real=0.22 secs]   ";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 72598, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(),
@@ -363,7 +363,7 @@ class TestG1MixedPauseEvent {
     void testTriggerG1EvacuationPause() {
         String logLine = "81.757: [GC pause (G1 Evacuation Pause) (mixed) 1584M->1390M(8192M), 0.1472883 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 81757, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
@@ -383,7 +383,7 @@ class TestG1MixedPauseEvent {
     void testTriggerG1EvacuationPauseDashDash() {
         String logLine = "424692.063: [GC pause (G1 Evacuation Pause) (mixed)-- 8129M->7812M(8192M), 0.0890849 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 424692063, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
@@ -405,7 +405,7 @@ class TestG1MixedPauseEvent {
                 + "1.8][Other: 23.0 ms][Eden: 44.0M(44.0M)->0.0B(248.0M) Survivors: 31.0M->10.0M Heap: "
                 + "1141.0M(1500.0M)->1064.5M(1500.0M)] [Times: user=0.07 sys=0.00, real=0.02 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals((long) 55647, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -428,7 +428,7 @@ class TestG1MixedPauseEvent {
         String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs] "
                 + "[Times: user=0.22 sys=0.00, real=0.22 secs]";
         assertTrue(G1MixedPauseEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_MIXED_PAUSE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
         G1MixedPauseEvent event = new G1MixedPauseEvent(logLine);
         assertEquals((long) 72598, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(658432), event.getCombinedOccupancyInit(),

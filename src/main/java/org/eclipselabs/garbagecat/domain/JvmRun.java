@@ -70,7 +70,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
@@ -115,7 +115,7 @@ public class JvmRun {
     /**
      * Event types.
      */
-    private List<LogEventType> eventTypes;
+    private List<EventType> eventTypes;
 
     /**
      * Maximum external root scanning time (microseconds).
@@ -432,7 +432,7 @@ public class JvmRun {
                     analysis.add(0, ERROR_OOME_EXIT);
                     getUnidentifiedLogLines().remove(getUnidentifiedLogLines().size() - 1);
                     if (getUnidentifiedLogLines().isEmpty()) {
-                        getEventTypes().remove(JdkUtil.LogEventType.UNKNOWN);
+                        getEventTypes().remove(JdkUtil.EventType.UNKNOWN);
                     }
                 }
             }
@@ -448,12 +448,12 @@ public class JvmRun {
             }
         }
         // Try to infer event types when gc details are missing
-        if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)) {
+        if (getEventTypes().contains(EventType.VERBOSE_GC_OLD)) {
             if (jvmOptions.getJvmContext().getGarbageCollectors().contains(GarbageCollector.G1)) {
                 if (jvmOptions.getJvmContext().getVersionMajor() == 8) {
-                    if (!getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL)) {
-                        getEventTypes().add(LogEventType.G1_FULL_GC_SERIAL);
-                        getEventTypes().remove(LogEventType.VERBOSE_GC_OLD);
+                    if (!getEventTypes().contains(EventType.G1_FULL_GC_SERIAL)) {
+                        getEventTypes().add(EventType.G1_FULL_GC_SERIAL);
+                        getEventTypes().remove(EventType.VERBOSE_GC_OLD);
                     }
                     if (!hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey())) {
                         analysis.add(Analysis.ERROR_SERIAL_GC_G1);
@@ -491,12 +491,12 @@ public class JvmRun {
             }
         }
         // Check to see if application stopped time enabled
-        if (getBlockingEventCount() > 0 && !(eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
-                || eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT))) {
+        if (getBlockingEventCount() > 0 && !(eventTypes.contains(EventType.APPLICATION_STOPPED_TIME)
+                || eventTypes.contains(EventType.UNIFIED_SAFEPOINT))) {
             analysis.add(WARN_APPLICATION_STOPPED_TIME_MISSING);
         }
         // Check for significant stopped time unrelated to GC
-        if (eventTypes.contains(LogEventType.APPLICATION_STOPPED_TIME)
+        if (eventTypes.contains(EventType.APPLICATION_STOPPED_TIME)
                 && getGcStoppedRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD
                 && getStoppedTimeThroughput() != getGcThroughput()) {
             if (jvmOptions.getJvmContext().getVersionMajor() >= 17) {
@@ -506,7 +506,7 @@ public class JvmRun {
             }
         }
         // Check for significant safepoint time unrelated to GC
-        if (eventTypes.contains(LogEventType.UNIFIED_SAFEPOINT)
+        if (eventTypes.contains(EventType.UNIFIED_SAFEPOINT)
                 && getGcUnifiedSafepointRatio() < Constants.GC_SAFEPOINT_RATIO_THRESHOLD && getJvmRunDuration() > 0
                 && getUnifiedSafepointThroughput() != getGcThroughput()) {
             if (jvmOptions.getJvmContext().getVersionMajor() >= 17) {
@@ -518,8 +518,8 @@ public class JvmRun {
         // Check if logging indicates gc details missing
         if (!hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING.getKey())
                 && !hasAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_DISABLED.getKey())) {
-            if (getEventTypes().contains(LogEventType.VERBOSE_GC_OLD)
-                    || getEventTypes().contains(LogEventType.VERBOSE_GC_YOUNG)) {
+            if (getEventTypes().contains(EventType.VERBOSE_GC_OLD)
+                    || getEventTypes().contains(EventType.VERBOSE_GC_YOUNG)) {
                 jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_JDK8_PRINT_GC_DETAILS_MISSING);
             }
         }
@@ -601,7 +601,7 @@ public class JvmRun {
         if (org.github.joa.util.JdkUtil.isOptionDisabled(jvmOptions.getPrintCommandLineFlags())) {
             analysis.add(WARN_PRINT_COMMANDLINE_FLAGS_DISABLED);
         } else if (jvmOptions.getPrintCommandLineFlags() == null && !UnifiedUtil.isUnifiedLogging(getEventTypes())
-                && !getEventTypes().isEmpty() && !getEventTypes().contains(LogEventType.HEADER_COMMAND_LINE_FLAGS)) {
+                && !getEventTypes().isEmpty() && !getEventTypes().contains(EventType.HEADER_COMMAND_LINE_FLAGS)) {
             analysis.add(WARN_PRINT_COMMANDLINE_FLAGS);
         }
         // Determine why PrintGCCause is missing
@@ -617,19 +617,19 @@ public class JvmRun {
         }
         // Check events for outputting application concurrent time
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME)
-                && (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)
+                && (getEventTypes().contains(EventType.APPLICATION_CONCURRENT_TIME)
                         || getPreprocessEvents().contains(PreprocessEvent.APPLICATION_CONCURRENT_TIME))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_PRINT_GC_APPLICATION_CONCURRENT_TIME);
         }
         // Check events for trace class unloading enabled
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING)
-                && (getEventTypes().contains(LogEventType.CLASS_UNLOADING)
+                && (getEventTypes().contains(EventType.CLASS_UNLOADING)
                         || getPreprocessEvents().contains(PreprocessEvent.CLASS_UNLOADING))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING);
         }
         // Detect PrintFLSStatistics if no JVM options
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_FLS_STATISTICS)
-                && (getEventTypes().contains(LogEventType.FLS_STATISTICS)
+                && (getEventTypes().contains(EventType.FLS_STATISTICS)
                         || getPreprocessEvents().contains(PreprocessEvent.FLS_STATISTICS))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_FLS_STATISTICS);
         }
@@ -640,7 +640,7 @@ public class JvmRun {
         }
         // Detect -XX:+PrintTenuringDistribution if no JVM options
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_TENURING_DISTRIBUTION)
-                && (getEventTypes().contains(LogEventType.TENURING_DISTRIBUTION)
+                && (getEventTypes().contains(EventType.TENURING_DISTRIBUTION)
                         || getPreprocessEvents().contains(PreprocessEvent.TENURING_DISTRIBUTION))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_TENURING_DISTRIBUTION);
         }
@@ -649,38 +649,38 @@ public class JvmRun {
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.WARN_PRINT_CLASS_HISTOGRAM)
                 && !jvmOptions.hasAnalysis(org.github.joa.util.Analysis.WARN_PRINT_CLASS_HISTOGRAM_BEFORE_FULL_GC)
                 && !jvmOptions.hasAnalysis(org.github.joa.util.Analysis.WARN_PRINT_CLASS_HISTOGRAM_AFTER_FULL_GC)
-                && (getEventTypes().contains(LogEventType.CLASS_HISTOGRAM)
+                && (getEventTypes().contains(EventType.CLASS_HISTOGRAM)
                         || getPreprocessEvents().contains(PreprocessEvent.CLASS_HISTOGRAM))) {
             analysis.add(Analysis.WARN_CLASS_HISTOGRAM);
         }
         // Detect -XX:+PrintHeapAtGC if no JVM options
         if (!jvmOptions.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC)
-                && (getEventTypes().contains(LogEventType.HEAP_AT_GC)
+                && (getEventTypes().contains(EventType.HEAP_AT_GC)
                         || getPreprocessEvents().contains(PreprocessEvent.HEAP_AT_GC))) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC);
         }
         // Application logging
-        if (getEventTypes().contains(LogEventType.APPLICATION_CONCURRENT_TIME)
+        if (getEventTypes().contains(EventType.APPLICATION_CONCURRENT_TIME)
                 || getPreprocessEvents().contains(PreprocessEvent.APPLICATION_LOGGING)) {
             analysis.add(Analysis.WARN_APPLICATION_LOGGING);
         }
         // OOME Metaspace
-        if (getEventTypes().contains(LogEventType.OOME_METASPACE)
+        if (getEventTypes().contains(EventType.OOME_METASPACE)
                 || getPreprocessEvents().contains(PreprocessEvent.OOME_METASPACE)) {
             analysis.add(Analysis.ERROR_OOME_METASPACE);
         }
         // Thread dump
-        if (getEventTypes().contains(LogEventType.THREAD_DUMP)) {
+        if (getEventTypes().contains(EventType.THREAD_DUMP)) {
             analysis.add(Analysis.INFO_THREAD_DUMP);
         }
         // GCLocker retry failed
-        if (getEventTypes().contains(LogEventType.UNIFIED_GC_LOCKER_RETRY)) {
+        if (getEventTypes().contains(EventType.UNIFIED_GC_LOCKER_RETRY)) {
             analysis.add(Analysis.ERROR_GC_LOCKER_RETRY);
         } else if (!getGcTriggers().isEmpty() && getGcTriggers().contains(GcTrigger.GCLOCKER_INITIATED_GC)) {
             analysis.add(Analysis.WARN_GC_LOCKER);
         }
         // Check for PAR_NEW disabled.
-        if (getEventTypes().contains(LogEventType.SERIAL_NEW)
+        if (getEventTypes().contains(EventType.SERIAL_NEW)
                 && jvmOptions.getJvmContext().getGarbageCollectors().contains(GarbageCollector.CMS)) {
             // Replace general gc.serial analysis
             if (analysis.contains(WARN_SERIAL_GC)) {
@@ -705,16 +705,16 @@ public class JvmRun {
             analysis.add(Analysis.WARN_SAFEPOINT_STATS);
         }
         // Check for heap dump before/after full gc
-        if (getEventTypes().contains(LogEventType.UNIFIED_HEAP_DUMP_AFTER_FULL_GC)
+        if (getEventTypes().contains(EventType.UNIFIED_HEAP_DUMP_AFTER_FULL_GC)
                 && !hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_AFTER_FULL_GC.getKey())) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_AFTER_FULL_GC);
         }
-        if (getEventTypes().contains(LogEventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC)
+        if (getEventTypes().contains(EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC)
                 && !hasAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_BEFORE_FULL_GC.getKey())) {
             jvmOptions.addAnalysis(org.github.joa.util.Analysis.WARN_HEAP_DUMP_BEFORE_FULL_GC);
         }
         // Detect diagnostic ZGC statistics being output every ZStatisticsInterval interval
-        if (getEventTypes().contains(LogEventType.Z_STATS) || getPreprocessEvents().contains(PreprocessEvent.Z_STATS)) {
+        if (getEventTypes().contains(EventType.Z_STATS) || getPreprocessEvents().contains(PreprocessEvent.Z_STATS)) {
             analysis.add(Analysis.INFO_Z_STATISTICS_INTERVAL);
         }
     }
@@ -810,7 +810,7 @@ public class JvmRun {
         return durationTotal;
     }
 
-    public List<LogEventType> getEventTypes() {
+    public List<EventType> getEventTypes() {
         return eventTypes;
     }
 
@@ -1328,7 +1328,7 @@ public class JvmRun {
      * @return true if there is data, false otherwise (e.g. no logging lines recognized).
      */
     public boolean haveData() {
-        return getEventTypes().size() >= 2 || !getEventTypes().contains(LogEventType.UNKNOWN);
+        return getEventTypes().size() >= 2 || !getEventTypes().contains(EventType.UNKNOWN);
     }
 
     public boolean isLogEndingUnidentified() {
@@ -1351,7 +1351,7 @@ public class JvmRun {
         this.blockingEventCount = blockingEventCount;
     }
 
-    public void setEventTypes(List<LogEventType> eventTypes) {
+    public void setEventTypes(List<EventType> eventTypes) {
         this.eventTypes = eventTypes;
     }
 

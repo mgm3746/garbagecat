@@ -13,6 +13,7 @@
 package org.eclipselabs.garbagecat.domain;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * Logging event that does not yet exist. Used to determine the beginning of parsing (the prior log event for the first
@@ -23,12 +24,12 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
  */
 public class NullEvent implements LogEvent {
 
-    public String getLogEntry() {
-        return null;
+    public EventType getEventType() {
+        return JdkUtil.EventType.NULL;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.NULL.toString();
+    public String getLogEntry() {
+        return null;
     }
 
     public long getTimestamp() {

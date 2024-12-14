@@ -36,7 +36,7 @@ class TestHeaderCommandLineFlagsEvent {
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
         assertTrue(HeaderCommandLineFlagsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.HEADER_COMMAND_LINE_FLAGS.toString() + ".");
         HeaderCommandLineFlagsEvent event = new HeaderCommandLineFlagsEvent(logLine);
         String jvmOptions = "-XX:+CMSClassUnloadingEnabled -XX:CMSInitiatingOccupancyFraction=75 "
                 + "-XX:+CMSScavengeBeforeRemark -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
@@ -58,6 +58,6 @@ class TestHeaderCommandLineFlagsEvent {
                 + "-XX:+PrintGCTimeStamps -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseGCLogFileRotation "
                 + "-XX:+UseParNewGC";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.HEADER_COMMAND_LINE_FLAGS.toString() + " incorrectly indentified as blocking.");
     }
 }

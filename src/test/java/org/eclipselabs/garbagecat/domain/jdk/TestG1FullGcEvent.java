@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -51,10 +51,10 @@ class TestG1FullGcEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL),
-                JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_FULL_GC_SERIAL),
+                JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + " event not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }
@@ -63,7 +63,7 @@ class TestG1FullGcEvent {
     void testIsBlocking() {
         String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -72,7 +72,7 @@ class TestG1FullGcEvent {
                 + " 11G->2270M(12G), 19.8185620 secs][Eden: 0.0B(612.0M)->0.0B(7372.0M) Survivors: 0.0B->0.0B "
                 + "Heap: 11.1G(12.0G)->2270.1M(12.0G)], [Perm: 730823K->730823K(2097152K)]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(GcTrigger.CLASS_HISTOGRAM, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 49689217, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -95,7 +95,7 @@ class TestG1FullGcEvent {
                 + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
                 + "[Times: user=56.34 sys=1.78, real=40.67 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(541450532523L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -107,7 +107,7 @@ class TestG1FullGcEvent {
                 + "Heap: 999.5M(3072.0M)->691.1M(3072.0M)], [Perm: 175031K->175031K(175104K)]"
                 + " [Times: user=4.43 sys=0.05, real=3.44 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.NONE, "Trigger not parsed correctly.");
         assertEquals((long) 178892, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -133,7 +133,7 @@ class TestG1FullGcEvent {
                 + "Heap: 22.0G(22.0G)->20.6G(22.0G)], [Perm: 1252884K->1252884K(2097152K)] "
                 + "[Times: user=56.34 sys=1.78, real=40.67 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 35911404, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -156,7 +156,7 @@ class TestG1FullGcEvent {
                 + "[Eden: 0.0B(45.7G)->0.0B(34.4G) Survivors: 0.0B->0.0B Heap: 28.0G(28.0G)->387.6M(28.0G)], "
                 + "[Metaspace: 65867K->65277K(1112064K)] [Times: user=1.43 sys=0.00, real=1.18 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(GcTrigger.ALLOCATION_FAILURE, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 56965451, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -179,7 +179,7 @@ class TestG1FullGcEvent {
                 + "Heap: 1124.8M(5120.0M)->1118.9M(5120.0M)], [Metaspace: 323874K->323874K(1511424K)]"
                 + " [Times: user=5.87 sys=0.01, real=3.89 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(GcTrigger.JVMTI_FORCED_GARBAGE_COLLECTION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 102621, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -201,7 +201,7 @@ class TestG1FullGcEvent {
                 + "Heap: 1196.3M(5120.0M)->1118.8M(5120.0M)], [Metaspace: 324984K->323866K(1511424K)] "
                 + "[Times: user=6.37 sys=0.00, real=4.46 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(GcTrigger.LAST_DITCH_COLLECTION, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 98150, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -223,7 +223,7 @@ class TestG1FullGcEvent {
                 + "Heap: 1831.0M(5120.0M)->1213.5M(5120.0M)], [Metaspace: 396834K->324903K(1511424K)]"
                 + " [Times: user=7.15 sys=0.04, real=5.14 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(GcTrigger.METADATA_GC_THRESHOLD, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 188123, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -244,7 +244,7 @@ class TestG1FullGcEvent {
                 + "[Eden: 80.0M(112.0M)->0.0B(128.0M) Survivors: 16.0M->0.0B Heap: 5820.3M(30.0G)->1381.9M(30.0G)]"
                 + " [Times: user=5.76 sys=1.00, real=5.53 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals((long) 105151, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -265,7 +265,7 @@ class TestG1FullGcEvent {
         String logLine = "2017-05-25T13:00:52.772+0000: 2412.888: [Full GC 1630M->1281M(3072M), 4.1555250 secs] "
                 + "[Times: user=7.02 sys=0.01, real=4.16 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.NONE, "Trigger not parsed correctly.");
         assertEquals((long) 2412888, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -281,7 +281,7 @@ class TestG1FullGcEvent {
     void testLogLinePreprocessedNoDetailsTriggerMetadataGcThreshold() {
         String logLine = "19544.442: [Full GC (Metadata GC Threshold) 2167M->1007M(6144M), 3.5952929 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
     }
 
     @Test
@@ -291,7 +291,7 @@ class TestG1FullGcEvent {
                 + "Heap: 277.7M(1024.0M)->16.7M(1024.0M)], [Metaspace: 41053K->41053K(1085440K)] "
                 + "[Times: user=0.14 sys=0.00, real=0.12 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(GcTrigger.HEAP_DUMP_INITIATED_GC, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 5590760, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -311,7 +311,7 @@ class TestG1FullGcEvent {
                 + "2021-10-07T10:05:58.708+0100: 69326.814: [Class Histogram (after full gc):, 4.5682980 secs] "
                 + "[Times: user=33.60 sys=0.00, real=29.14 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(GcTrigger.HEAP_DUMP_INITIATED_GC, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 69302241, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -331,7 +331,7 @@ class TestG1FullGcEvent {
                 + "Heap: 3198.1M(4096.0M)->827.6M(4096.0M)], [Metaspace: 319076K->318118K(1343488K)] "
                 + "[Times: user=5.01 sys=0.00, real=4.14 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertEquals(GcTrigger.HEAP_INSPECTION_INITIATED_GC, event.getTrigger(), "Trigger not parsed correctly.");
         assertEquals((long) 21424319, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -347,7 +347,7 @@ class TestG1FullGcEvent {
     void testLogLineTriggerSystemGC() {
         String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals((long) 1302524, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -366,14 +366,14 @@ class TestG1FullGcEvent {
     void testNotVerboseGcOld() {
         String logLine = "424753.957: [Full GC (Allocation Failure)  8184M->6998M(8192M), 24.1990452 secs]";
         assertFalse(G1YoungPauseEvent.match(logLine),
-                "Log line recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
     }
 
     @Test
     void testTriggerAllocationFailure() {
         String logLine = "424753.957: [Full GC (Allocation Failure)  8184M->6998M(8192M), 24.1990452 secs]";
         assertTrue(G1FullGcEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
         G1FullGcEvent event = new G1FullGcEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 424753957, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -398,10 +398,10 @@ class TestG1FullGcEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_FULL_GC_SERIAL),
-                JdkUtil.LogEventType.G1_FULL_GC_SERIAL.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_FULL_GC_SERIAL),
+                JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + " event not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }

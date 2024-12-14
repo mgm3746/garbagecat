@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -83,12 +84,12 @@ public class GcLockerScavengeFailedEvent implements LogEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.GC_LOCKER_SCAVENGE_FAILED;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.GC_LOCKER_SCAVENGE_FAILED.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

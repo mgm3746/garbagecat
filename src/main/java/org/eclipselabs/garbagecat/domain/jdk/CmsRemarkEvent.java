@@ -23,6 +23,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -343,12 +344,12 @@ public class CmsRemarkEvent extends CmsIncrementalModeCollector
         return duration;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.CMS_REMARK;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.CMS_REMARK.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public int getParallelism() {

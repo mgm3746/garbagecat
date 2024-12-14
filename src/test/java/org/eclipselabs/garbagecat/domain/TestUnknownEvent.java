@@ -28,6 +28,6 @@ class TestUnknownEvent {
     void testLogLine() {
         String logLine = "Mike was here!!!";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnknownEvent,
-                "Log line not recognized as " + JdkUtil.LogEventType.UNKNOWN.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNKNOWN.toString() + ".");
     }
 }

@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.jdk.UnknownCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
@@ -100,12 +101,12 @@ public class ZRelocationStallEvent extends UnknownCollector implements UnifiedLo
         return eventTime;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.Z_RELOCATION_STALL;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.Z_RELOCATION_STALL.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

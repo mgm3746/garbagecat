@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.preprocess.jdk.unified.UnifiedPreprocessAction;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
@@ -279,12 +280,12 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
         return durationNanos;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_SAFEPOINT;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_SAFEPOINT.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

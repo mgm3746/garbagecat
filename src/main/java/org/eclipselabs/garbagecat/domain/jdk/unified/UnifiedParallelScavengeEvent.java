@@ -32,6 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.github.joa.domain.GarbageCollector;
 
@@ -270,6 +271,10 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
         return duration;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.PARALLEL_SCAVENGE;
@@ -277,10 +282,6 @@ public class UnifiedParallelScavengeEvent extends ParallelCollector implements U
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString();
     }
 
     public Memory getOldOccupancyEnd() {

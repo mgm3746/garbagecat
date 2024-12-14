@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -306,12 +307,12 @@ public class HeapAtGcEvent implements ThrowAwayEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.HEAP_AT_GC;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.HEAP_AT_GC.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

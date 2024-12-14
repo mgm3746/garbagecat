@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,25 +34,25 @@ class TestZAllocationStallEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[123456.789s][info][gc          ] Allocation Stall (default task-1234) 1.234ms";
-        assertEquals(JdkUtil.LogEventType.Z_ALLOCATION_STALL,
+        assertEquals(JdkUtil.EventType.Z_ALLOCATION_STALL,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.Z_ALLOCATION_STALL + "not identified.");
+                JdkUtil.EventType.Z_ALLOCATION_STALL + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[123456.789s][info][gc          ] Allocation Stall (default task-1234) 1.234ms";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "[123456.789s][info][gc          ] Allocation Stall (default task-1234) 1.234ms";
         assertTrue(ZAllocationStallEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + ".");
         ZAllocationStallEvent event = new ZAllocationStallEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.Z_ALLOCATION_STALL, event.getEventType(), "Event type incorrect.");
         assertEquals((long) (123456789L - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(1234, event.getDurationMicros(), "Duration not parsed correctly.");
     }
@@ -61,13 +61,13 @@ class TestZAllocationStallEvent {
     void testParseLogLine() {
         String logLine = "[123456.789s][info][gc          ] Allocation Stall (default task-1234) 1.234ms";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZAllocationStallEvent,
-                JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString() + " not parsed.");
+                JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.Z_ALLOCATION_STALL),
-                JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_ALLOCATION_STALL),
+                JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + " not indentified as reportable.");
     }
 
     /**
@@ -78,23 +78,23 @@ class TestZAllocationStallEvent {
         String logLine = "[2021-03-09T14:45:02.441-0300][123456.789s][info][gc          ] Allocation Stall "
                 + "(default task-1234) 1.234ms";
         assertTrue(ZAllocationStallEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + ".");
         ZAllocationStallEvent event = new ZAllocationStallEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.Z_ALLOCATION_STALL, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.Z_ALLOCATION_STALL);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.Z_ALLOCATION_STALL);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString() + " not indentified as unified.");
+                JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + " not indentified as unified.");
     }
 
     @Test
     void testWhitespaceAtEnd() {
         String logLine = "[123456.789s][info][gc          ] Allocation Stall (default task-1234) 1.234ms   ";
         assertTrue(ZAllocationStallEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_ALLOCATION_STALL.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + ".");
     }
 }

@@ -33,6 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 
@@ -271,12 +272,12 @@ public class UnifiedG1FullGcEvent extends G1Collector implements UnifiedLogging,
         return eventTime;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_G1_FULL_GC_PARALLEL.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public int getParallelism() {

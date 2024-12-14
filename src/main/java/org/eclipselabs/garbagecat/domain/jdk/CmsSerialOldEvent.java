@@ -33,6 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -462,6 +463,10 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
         return duration;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.CMS_SERIAL_OLD;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.SERIAL_OLD;
@@ -469,10 +474,6 @@ public class CmsSerialOldEvent extends CmsIncrementalModeCollector implements Bl
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.CMS_SERIAL_OLD.toString();
     }
 
     public Memory getOldOccupancyEnd() {

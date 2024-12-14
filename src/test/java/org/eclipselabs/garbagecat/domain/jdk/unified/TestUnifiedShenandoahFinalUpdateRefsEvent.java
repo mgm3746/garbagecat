@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,34 +34,34 @@ class TestUnifiedShenandoahFinalUpdateRefsEvent {
     void testBlocking() {
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testHydration() {
-        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS;
+        EventType eventType = JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS;
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
         long timestamp = 478 - 0;
         int duration = 232;
         assertTrue(
                 JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
                         duration) instanceof UnifiedShenandoahFinalUpdateRefsEvent,
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not parsed.");
     }
 
     @Test
     void testIdentityEventType() {
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS,
+        assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS + "not identified.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS + "not identified.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
         assertTrue(UnifiedShenandoahFinalUpdateRefsEvent.match(logLine), "Log line not recognized as "
-                + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + ".");
+                + JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + ".");
         UnifiedShenandoahFinalUpdateRefsEvent event = new UnifiedShenandoahFinalUpdateRefsEvent(logLine);
         assertEquals(478 - 0, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(232, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -73,37 +73,36 @@ class TestUnifiedShenandoahFinalUpdateRefsEvent {
         assertTrue(
                 JdkUtil.parseLogLine(logLine, null,
                         CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahFinalUpdateRefsEvent,
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString()
-                        + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testTimestamp() {
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
         assertTrue(UnifiedShenandoahFinalUpdateRefsEvent.match(logLine), "Log line not recognized as "
-                + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + ".");
+                + JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + ".");
         UnifiedShenandoahFinalUpdateRefsEvent event = new UnifiedShenandoahFinalUpdateRefsEvent(logLine);
         assertEquals(478 - 0, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not indentified as unified.");
     }
 
     @Test
     void testWhitespaceAtEnd() {
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms  ";
         assertTrue(UnifiedShenandoahFinalUpdateRefsEvent.match(logLine), "Log line not recognized as "
-                + JdkUtil.LogEventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + ".");
+                + JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + ".");
     }
 }

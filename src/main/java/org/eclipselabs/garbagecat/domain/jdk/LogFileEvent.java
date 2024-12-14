@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -83,12 +84,12 @@ public class LogFileEvent implements LogEvent {
         timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.LOG_FILE;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.LOG_FILE.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

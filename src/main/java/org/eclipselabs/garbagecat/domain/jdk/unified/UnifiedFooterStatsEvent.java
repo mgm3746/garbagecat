@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
@@ -342,12 +343,12 @@ public class UnifiedFooterStatsEvent implements UnifiedLogging, HeaderEvent, Thr
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.UNIFIED_FOOTER_STATS;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.UNIFIED_FOOTER_STATS.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     @Override

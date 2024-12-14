@@ -33,7 +33,7 @@ class TestParallelSerialOldEvent {
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
         assertTrue(ParallelSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         assertEquals((long) 3600, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(5424), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -54,7 +54,7 @@ class TestParallelSerialOldEvent {
                 + "[PSOldGen: 408K->501K(2048K)] 916K->887K(3584K), "
                 + "[Metaspace: 3680K->3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]";
         assertTrue(ParallelSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         assertEquals(597438286807L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -65,7 +65,7 @@ class TestParallelSerialOldEvent {
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -74,7 +74,7 @@ class TestParallelSerialOldEvent {
                 + "[PSOldGen: 1081K->2855K(116544K)] 2865K->2855K(129280K) "
                 + "[PSPermGen: 8600K->8600K(131072K)], 0.0427680 secs]";
         assertTrue(ParallelSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         assertEquals((long) 4165, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC,
@@ -97,7 +97,7 @@ class TestParallelSerialOldEvent {
                 + "[PSOldGen: 408K->501K(2048K)] 916K->887K(3584K), "
                 + "[Metaspace: 3680K->3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]";
         assertTrue(ParallelSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         assertEquals((long) 122, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -108,7 +108,7 @@ class TestParallelSerialOldEvent {
                 + "[PSOldGen: 408K->501K(2048K)] 916K->887K(3584K), "
                 + "[Metaspace: 3680K->3680K(1056768K)], 0.0030057 secs] [Times: user=0.01 sys=0.00, real=0.00 secs]";
         assertTrue(ParallelSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         assertEquals((long) 122, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ERGONOMICS,
@@ -135,6 +135,6 @@ class TestParallelSerialOldEvent {
                 + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
                 + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]  ";
         assertTrue(ParallelSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + ".");
     }
 }

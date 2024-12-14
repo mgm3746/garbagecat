@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -161,12 +162,12 @@ public class G1ConcurrentEvent extends G1Collector implements LogEvent, Parallel
         }
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.G1_CONCURRENT;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.G1_CONCURRENT.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

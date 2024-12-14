@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -74,12 +75,12 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.SHENANDOAH_TRIGGER;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.SHENANDOAH_TRIGGER.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

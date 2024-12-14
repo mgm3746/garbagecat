@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.GarbageCollector;
 
 /**
@@ -236,6 +237,10 @@ public class ParallelScavengeEvent extends ParallelCollector
         return duration;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.PARALLEL_SCAVENGE;
+    }
+
     @Override
     public GarbageCollector getGarbageCollector() {
         return GarbageCollector.PARALLEL_SCAVENGE;
@@ -243,10 +248,6 @@ public class ParallelScavengeEvent extends ParallelCollector
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.PARALLEL_SCAVENGE.toString();
     }
 
     public Memory getOldOccupancyEnd() {

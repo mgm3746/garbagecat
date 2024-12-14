@@ -33,7 +33,7 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -51,11 +51,11 @@ class TestG1YoungInitialMarkEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_YOUNG_INITIAL_MARK),
+                "Log line not recognized as " + EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1.getKey()),
                 Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis incorrectly identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_G1_YOUNG_INITIAL_MARK.getKey()),
@@ -68,7 +68,7 @@ class TestG1YoungInitialMarkEvent {
         String logLine = "2021-10-26T09:58:12.086-0400: [GC pause (G1 Evacuation Pause) (young) (initial-mark) "
                 + "3879K->2859K(6144K), 0.0019560 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals(688553892086L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -78,7 +78,7 @@ class TestG1YoungInitialMarkEvent {
         String logLine = "2021-10-26T09:58:12.086-0400: 123.456: [GC pause (G1 Evacuation Pause) (young) "
                 + "(initial-mark) 3879K->2859K(6144K), 0.0019560 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 123456, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(GcTrigger.G1_EVACUATION_PAUSE, event.getTrigger(), "Trigger not parsed correctly.");
@@ -94,7 +94,7 @@ class TestG1YoungInitialMarkEvent {
         String logLine = "2.443: [GC pause (GCLocker Initiated GC) (young) (initial-mark) 1061M->52M(110G), "
                 + "0.0280096 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 2443, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
@@ -112,7 +112,7 @@ class TestG1YoungInitialMarkEvent {
         String logLine = "1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs] "
                 + "[Times: user=0.18 sys=0.02, real=0.06 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 1244357, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(867328), event.getCombinedOccupancyInit(),
@@ -131,7 +131,7 @@ class TestG1YoungInitialMarkEvent {
     void testIsBlocking() {
         String logLine = "1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -139,7 +139,7 @@ class TestG1YoungInitialMarkEvent {
         String logLine = "1.471: [GC pause (Metadata GC Threshold) (young) (initial-mark) 992M->22M(110G), "
                 + "0.0210012 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 1471, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
@@ -158,7 +158,7 @@ class TestG1YoungInitialMarkEvent {
                 + "[Eden: 11.3G(11.3G)->0.0B(11.3G) Survivors: 192.0M->176.0M Heap: 23.0G(26.0G)->11.7G(26.0G)]"
                 + " [Times: user=1.09 sys=0.00, real=0.27 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 44620073, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.NONE, "Trigger not parsed correctly.");
@@ -181,7 +181,7 @@ class TestG1YoungInitialMarkEvent {
     void testNotYoungPause() {
         String logLine = "1113.145: [GC pause (young) 849M->583M(968M), 0.0392710 secs]";
         assertFalse(G1YoungInitialMarkEvent.match(logLine),
-                "Log line recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
     }
 
     @Test
@@ -190,7 +190,7 @@ class TestG1YoungInitialMarkEvent {
                 + "Scanning (ms): 1.8][Other: 7.5 ms][Eden: 5376.0M(7680.0M)->0.0B(6944.0M) Survivors: 536.0M->568.0M "
                 + "Heap: 13.8G(26.0G)->8821.4M(26.0G)] [Times: user=1.66 sys=0.02, real=0.43 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals(508313565414L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -201,7 +201,7 @@ class TestG1YoungInitialMarkEvent {
                 + "[Ext Root Scanning (ms): 4.4][Other: 7.5 ms][Eden: 5376.0M(7680.0M)->0.0B(6944.0M) Survivors: "
                 + "536.0M->568.0M Heap: 13.8G(26.0G)->8821.4M(26.0G)] [Times: user=1.66 sys=0.02, real=0.43 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 27474176, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(14470349), event.getCombinedOccupancyInit(),
@@ -224,7 +224,7 @@ class TestG1YoungInitialMarkEvent {
                 + "[Ext Root Scanning (ms): 1.8][Other: 7.5 ms][Eden: 304.0M(1552.0M)->0.0B(1520.0M) Survivors: "
                 + "0.0B->32.0M Heap: 296.0M(30.5G)->23.2M(30.5G)] [Times: user=0.12 sys=0.01, real=0.03 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 9915, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(296 * 1024), event.getCombinedOccupancyInit(),
@@ -241,7 +241,7 @@ class TestG1YoungInitialMarkEvent {
                 + "[Other: 7.5 ms][Eden: 5376.0M(7680.0M)->0.0B(6944.0M) Survivors: 536.0M->568.0M "
                 + "Heap: 13.8G(26.0G)->8821.4M(26.0G)] [Times: user=1.66 sys=0.02, real=0.43 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 27474176, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.NONE, "Trigger not parsed correctly.");
@@ -266,7 +266,7 @@ class TestG1YoungInitialMarkEvent {
                 + "[Other: 7.5 ms][Eden: 1792M(1792M)->0B(2044M) Survivors: 256M->4096K Heap: "
                 + "7582M(12288M)->5537M(12288M)] [Times: user=0.13 sys=0.00, real=0.02 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 449391255, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(7582 * 1024), event.getCombinedOccupancyInit(),
@@ -290,7 +290,7 @@ class TestG1YoungInitialMarkEvent {
                 + "Root Scanning (ms): 4.4][Other: 7.5 ms][Eden: 424.0M(1352.0M)->0.0B(1360.0M) Survivors: "
                 + "80.0M->72.0M Heap: 500.9M(28.0G)->72.0M(28.0G)] [Times: user=0.14 sys=0.01, real=0.02 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 182037, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_HUMONGOUS_ALLOCATION, "Trigger not parsed correctly.");
@@ -314,7 +314,7 @@ class TestG1YoungInitialMarkEvent {
         String logLine = "2017-02-20T20:17:04.874-0500: 40442.077: [GC pause (G1 Humongous Allocation) (young) "
                 + "(initial-mark), 0.0142482 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 40442077, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(0), event.getCombinedOccupancyInit(),
@@ -330,7 +330,7 @@ class TestG1YoungInitialMarkEvent {
                 + "Scanning (ms): 4.4][Other: 7.5 ms][Eden: 16.0M(3072.0M)->0.0B(3070.0M) Survivors: 0.0B->2048.0K "
                 + "Heap: 828.8M(5120.0M)->814.8M(5120.0M)] [Times: user=0.09 sys=0.00, real=0.05 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 6896482, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
@@ -354,7 +354,7 @@ class TestG1YoungInitialMarkEvent {
                 + "Scanning (ms): 4.4][Other: 7.5 ms][Eden: 716.0M(1850.0M)->0.0B(1522.0M) Survivors: 96.0M->244.0M "
                 + "Heap: 2260.0M(5120.0M)->1831.0M(5120.0M)] [Times: user=0.56 sys=0.04, real=0.29 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 87830, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
@@ -378,7 +378,7 @@ class TestG1YoungInitialMarkEvent {
                 + "Survivors: 28.0M->34.0M Heap: 924.5M(2362.0M)->713.5M(2362.0M)] [Times: user=0.19 sys=0.00, "
                 + "real=0.10 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 130241, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
@@ -401,7 +401,7 @@ class TestG1YoungInitialMarkEvent {
                 + "Scanning (ms): 4.4][Other: 7.5 ms][Eden: 14.2G(14.5G)->0.0B(1224.0M) Survivors: 40.0M->104.0M "
                 + "Heap: 22.9G(26.0G)->19.2G(26.0G)] [Times: user=3.03 sys=0.02, real=1.02 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 60346050, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.TO_SPACE_EXHAUSTED, "Trigger not parsed correctly.");
@@ -425,7 +425,7 @@ class TestG1YoungInitialMarkEvent {
         String logLine = "7.190: [GC pause (G1 Evacuation Pause) (young) (initial-mark) 407M->100M(8192M), "
                 + "0.0720459 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 7190, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");
@@ -446,7 +446,7 @@ class TestG1YoungInitialMarkEvent {
         String logLine = "424753.803: [GC pause (G1 Evacuation Pause) (young) (initial-mark)-- 8184M->8184M(8192M), "
                 + "0.1294400 secs]";
         assertTrue(G1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
         G1YoungInitialMarkEvent event = new G1YoungInitialMarkEvent(logLine);
         assertEquals((long) 424753803, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_EVACUATION_PAUSE, "Trigger not parsed correctly.");

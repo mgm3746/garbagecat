@@ -34,7 +34,7 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -68,7 +68,7 @@ class TestParNewEvent {
         String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.PAR_NEW.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.PAR_NEW.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -76,7 +76,7 @@ class TestParNewEvent {
         String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
                 + "89399K->11655K(907328K), 0.0387074 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 20189, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(86199), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -103,7 +103,7 @@ class TestParNewEvent {
                 + "1388745K->458752K(4128768K), 0.5246295 secs] 2977822K->2161212K(13172736K), 0.5248785 secs] "
                 + "[Times: user=0.92 sys=0.03, real=0.51 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 7236341, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1388745), event.getYoungOccupancyInit(),
@@ -129,7 +129,7 @@ class TestParNewEvent {
                 + "[ParNew: 273152K->858K(341376K), 0.0030008 secs] 273152K->858K(980352K), 0.0031183 secs] "
                 + "[Times: user=0.00 sys=0.00, real=0.00 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 84335, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(273152), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -153,7 +153,7 @@ class TestParNewEvent {
                 + "0.0395910 secs] 1228800K->30695K(8235008K), 0.0397980 secs] "
                 + "[Times: user=0.23 sys=0.01, real=0.04 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 2480, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.GCLOCKER_INITIATED_GC, "Trigger not parsed correctly.");
@@ -186,7 +186,7 @@ class TestParNewEvent {
         String logLine = "1.948: [GC (Allocation Failure)1.948: [ParNew: 136576K->17023K(153600K), 0.0303800 secs] "
                 + "136576K->19515K(494976K), 0.0305360 secs] [Times: user=0.10 sys=0.01, real=0.03 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 1948, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
@@ -210,7 +210,7 @@ class TestParNewEvent {
         String logLine = "6.703: [GC (Allocation Failure) 6.703: [ParNew: 886080K->11485K(996800K), 0.0193349 secs] "
                 + "886080K->11485K(1986432K), 0.0198375 secs] [Times: user=0.09 sys=0.01, real=0.02 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 6703, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
@@ -236,7 +236,7 @@ class TestParNewEvent {
                 + "6555444K->5043068K(22020096K) icms_dc=100 , 0.3406250 secs] "
                 + "[Times: user=2.12 sys=0.01, real=0.34 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 78251, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
@@ -263,7 +263,7 @@ class TestParNewEvent {
                 + "0.5193071 secs] 7385012K->7555732K(13172736K), 0.5196411 secs] "
                 + "[Times: user=0.92 sys=0.00, real=0.55 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 393747603, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(476295), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -287,7 +287,7 @@ class TestParNewEvent {
         String logLine = "27880.710: [GC (System.gc()) 27880.710: [ParNew: 925502K->58125K(996800K), 0.0133005 secs] "
                 + "5606646K->4742781K(8277888K), 0.0138294 secs] [Times: user=0.14 sys=0.00, real=0.02 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 27880710, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
@@ -313,7 +313,7 @@ class TestParNewEvent {
                 + "4.506: [GC (CMS Final Remark) 4.506: [ParNew: 100369K->10116K(153344K), 0.0724021 secs] "
                 + "100369K->16685K(4177280K), 0.0724907 secs] [Times: user=0.13 sys=0.01, real=0.07 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 4506, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
@@ -340,7 +340,7 @@ class TestParNewEvent {
                 + "6417140K->3472610K(22020096K) icms_dc=35 , 0.6542370 secs] "
                 + "[Times: user=1.89 sys=0.01, real=0.66 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 66504, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
@@ -368,7 +368,7 @@ class TestParNewEvent {
                 + "5117539K->5001473K(8388608K), 27.6557600 secs] 17958061K->18622281K(22020096K) icms_dc=57 , "
                 + "27.6560550 secs] [Times: user=49.10 sys=6.01, real=27.65 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 58427547, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
@@ -395,7 +395,7 @@ class TestParNewEvent {
                 + "30.385: [GC (CMS Final Remark)  890910K->620060K(7992832K), 0.1223879 secs] 620060K(7992832K), "
                 + "0.2328529 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 30385, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.CMS_FINAL_REMARK, "Trigger not parsed correctly.");
@@ -416,7 +416,7 @@ class TestParNewEvent {
                 + "0.0458577 secs] 4057776K->3931241K(8367360K), 0.0461448 secs] "
                 + "[Times: user=0.34 sys=0.01, real=0.05 secs]    ";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
     }
 
     @Test
@@ -425,7 +425,7 @@ class TestParNewEvent {
                 + "417639K->364081K(1828480K) icms_dc=0 , 0.0225090 secs] "
                 + "[Times: user=0.05 sys=0.00, real=0.02 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 42514965, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(54564), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -449,7 +449,7 @@ class TestParNewEvent {
                 + "0.0458577 secs] 4057776K->3931241K(8367360K), 0.0461448 secs] "
                 + "[Times: user=0.34 sys=0.01, real=0.05 secs]";
         assertTrue(ParNewEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         ParNewEvent event = new ParNewEvent(logLine);
         assertEquals((long) 68331885, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(149120), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -482,8 +482,8 @@ class TestParNewEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.PAR_NEW),
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
                 Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis not identified.");
     }
@@ -527,12 +527,12 @@ class TestParNewEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.PAR_NEW),
-                "Log line not recognized as " + JdkUtil.LogEventType.PAR_NEW.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.PAR_NEW),
+                "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_CONCURRENT.toString() + ".");
     }
 }

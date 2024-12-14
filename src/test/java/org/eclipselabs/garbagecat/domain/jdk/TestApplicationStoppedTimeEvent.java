@@ -30,7 +30,7 @@ class TestApplicationStoppedTimeEvent {
     void testLogLine() {
         String logLine = "Total time for which application threads were stopped: 0.0968457 seconds";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 0, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(96845, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -41,7 +41,7 @@ class TestApplicationStoppedTimeEvent {
         String logLine = "2015-05-04T18:08:00.244+0000: Total time for which application threads were stopped: "
                 + "0.0001390 seconds";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals(484060080244L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -51,7 +51,7 @@ class TestApplicationStoppedTimeEvent {
         String logLine = "2015-05-04T18:08:00.244+0000: 0.964: Total time for which application threads were stopped: "
                 + "0.0001390 seconds";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 964, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(139, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -61,7 +61,7 @@ class TestApplicationStoppedTimeEvent {
     void testLogLineJdk8() {
         String logLine = "1.977: Total time for which application threads were stopped: 0.0002054 seconds";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 1977, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(205, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -72,7 +72,7 @@ class TestApplicationStoppedTimeEvent {
         String logLine = "4.483: Total time for which application threads were stopped: 0.0018237 seconds, Stopping "
                 + "threads took: 0.0017499 seconds";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 4482, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(1823, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -82,7 +82,7 @@ class TestApplicationStoppedTimeEvent {
     void testLogLineTimestamp() {
         String logLine = "0.964: Total time for which application threads were stopped: 0.0001390 seconds";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 964, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
@@ -91,7 +91,7 @@ class TestApplicationStoppedTimeEvent {
     void testLogLineWithCommas() {
         String logLine = "1,065: Total time for which application threads were stopped: 0,0001610 seconds";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 1065, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(161, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -102,7 +102,7 @@ class TestApplicationStoppedTimeEvent {
         String logLine = "51185.692: Total time for which application threads were stopped: -0.0005950 seconds, "
                 + "Stopping threads took: 0.0003310 seconds";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
         ApplicationStoppedTimeEvent event = new ApplicationStoppedTimeEvent(logLine);
         assertEquals((long) 51185692, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(-595, event.getDurationMicros(), "Duration not parsed correctly.");
@@ -112,13 +112,13 @@ class TestApplicationStoppedTimeEvent {
     void testLogLineWithSpacesAtEnd() {
         String logLine = "Total time for which application threads were stopped: 0.0968457 seconds  ";
         assertTrue(ApplicationStoppedTimeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = "1,065: Total time for which application threads were stopped: 0,0001610 seconds";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.APPLICATION_STOPPED_TIME.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + " incorrectly indentified as blocking.");
     }
 }

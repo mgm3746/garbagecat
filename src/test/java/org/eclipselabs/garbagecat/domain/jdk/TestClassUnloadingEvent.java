@@ -29,7 +29,7 @@ import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -42,35 +42,35 @@ class TestClassUnloadingEvent {
     void testLine() {
         String logLine = "[Unloading class $Proxy61]";
         assertTrue(ClassUnloadingEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CLASS_UNLOADING.toString() + ".");
     }
 
     @Test
     void testLineWithUnderline() {
         String logLine = "[Unloading class MyClass_1234153487841_717989]";
         assertTrue(ClassUnloadingEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CLASS_UNLOADING.toString() + ".");
     }
 
     @Test
     void testLogLineWithBeginningSpace() {
         String logLine = " [Unloading class $Proxy225]";
         assertTrue(ClassUnloadingEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CLASS_UNLOADING.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CLASS_UNLOADING.toString() + ".");
     }
 
     @Test
     void testNotBlocking() {
         String logLine = " [Unloading class $Proxy225]";
         assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.");
+                JdkUtil.EventType.CLASS_UNLOADING.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test
     void testReportable() {
         String logLine = " [Unloading class $Proxy225]";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
+                JdkUtil.EventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
     }
 
     /**
@@ -88,11 +88,11 @@ class TestClassUnloadingEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.PARALLEL_SERIAL_OLD),
-                JdkUtil.LogEventType.PARALLEL_SERIAL_OLD.toString() + " not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.PARALLEL_SERIAL_OLD),
+                JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + " not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING.getKey()),
                 org.github.joa.util.Analysis.INFO_TRACE_CLASS_UNLOADING + " analysis not identified.");
     }

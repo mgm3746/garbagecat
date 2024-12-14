@@ -32,7 +32,7 @@ import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -49,7 +49,7 @@ class TestCmsSerialOldEvent {
                 + "11.9525850 secs] 13363199K->9728622K(13363200K), [CMS Perm : 376898K->376894K(524288K)], "
                 + "88.2785270 secs] [Times: user=86.32 sys=0.39, real=88.27 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertEquals(547134692659L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(8632, event.getTimeUser(), "User time not parsed correctly.");
@@ -62,7 +62,7 @@ class TestCmsSerialOldEvent {
     void testFirstLineOfMultiLineParallelScavengeEvent() {
         String logLine = "10.392: [GC";
         assertFalse(CmsSerialOldEvent.match(logLine),
-                "Log line incorrectly recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line incorrectly recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
     }
 
     @Test
@@ -71,7 +71,7 @@ class TestCmsSerialOldEvent {
                 + "failure): 6014591K->6014592K(6014592K), 79.9352305 secs] 6256895K->6147510K(6256896K), [CMS Perm "
                 + ": 206989K->206977K(262144K)], 79.9356622 secs] [Times: user=101.02 sys=3.09, real=79.94 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 4300825, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -97,7 +97,7 @@ class TestCmsSerialOldEvent {
                 + "failure): 1794415K->909664K(1835008K), 124.5953890 secs] 2056175K->909664K(2096960K) "
                 + "icms_dc=100 , 124.5963320 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1901217, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -126,10 +126,10 @@ class TestCmsSerialOldEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
-                JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_SERIAL_OLD),
+                JdkUtil.EventType.CMS_SERIAL_OLD.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_HEAP_INSPECTION_INITIATED_GC.getKey()),
                 Analysis.WARN_HEAP_INSPECTION_INITIATED_GC + " analysis not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
@@ -143,7 +143,7 @@ class TestCmsSerialOldEvent {
                 + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
                 + "[Times: user=0.26 sys=0.00, real=0.27 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.CMS_SERIAL_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -154,7 +154,7 @@ class TestCmsSerialOldEvent {
                 + "471478.440: [Class Histogram, 15.6352805 secs] 6449325K->1290167K(7848704K), [CMS Perm : "
                 + "473438K->450663K(771512K)], 102.3357902 secs] [Times: user=106.25 sys=0.21, real=102.34 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 471391741, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -182,7 +182,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS: 5589K->5796K(122880K), 0.0889610 secs] 11695K->5796K(131072K), "
                 + "[CMS Perm : 13140K->13124K(131072K)], 0.0891270 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertEquals((long) 5980, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(6106), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -204,7 +204,7 @@ class TestCmsSerialOldEvent {
                 + "1301420K->840574K(1855852K), [CMS Perm : 226817K->226813K(376168K)], "
                 + "3.7574584 secs] [Times: user=3.74 sys=0.00, real=3.76 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertEquals(1504625L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertFalse(event.isIncrementalMode(), "Incremental Mode not parsed correctly.");
@@ -215,7 +215,7 @@ class TestCmsSerialOldEvent {
         String logLine = "165.805: [Full GC 165.805: [CMS: 101481K->97352K(1572864K), 1.1183800 secs] "
                 + "287075K->97352K(2080768K), [CMS Perm : 68021K->67965K(262144K)] icms_dc=10 , 1.1186020 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertEquals((long) 165805, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes((287075 - 101481)), event.getYoungOccupancyInit(),
@@ -241,7 +241,7 @@ class TestCmsSerialOldEvent {
                 + "[Times: user=14.05 sys=0.02, real=11.68 secs]";
 
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 706707, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -266,7 +266,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS: 1231K->2846K(114688K), 0.0827010 secs] 8793K->2846K(129472K), "
                 + "[CMS Perm : 8602K->8593K(131072K)], 0.0828090 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals((long) 2425, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -288,7 +288,7 @@ class TestCmsSerialOldEvent {
         String logLine = "144501.626: [GC 144501.627: [ParNew (promotion failed): 680066K->680066K(707840K), "
                 + "3.7067346 secs] 1971073K->1981370K(2018560K), 3.7084059 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 144501626, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -312,7 +312,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS: 887439K->893801K(907264K), 9.6413020 secs] 1419919K->893801K(1506304K), 9.6419180 secs] "
                 + "[Times: user=9.54 sys=0.10, real=9.65 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 3546690, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -335,7 +335,7 @@ class TestCmsSerialOldEvent {
                 + "0.1347360 secs]289985.252: [Tenured: 1281600K->978341K(1281600K), 3.6577930 secs] "
                 + "1409528K->978341K(1425792K), 3.7930200 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 289985117, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -356,7 +356,7 @@ class TestCmsSerialOldEvent {
                 + "0.1316193 secs]1182.075: [CMS: 6656483K->548489K(8218240K), 9.1244297 secs] "
                 + "6797120K->548489K(8367360K), 9.2564476 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 1181943, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -382,7 +382,7 @@ class TestCmsSerialOldEvent {
                 + "[Times: user=94.88 sys=0.24, real=94.91 secs]";
 
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CLASS_HISTOGRAM, "Trigger not parsed correctly.");
         assertEquals((long) 11662232, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -409,7 +409,7 @@ class TestCmsSerialOldEvent {
                 + "[Times: user=94.88 sys=0.24, real=94.91 secs]";
 
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CLASS_HISTOGRAM, "Trigger not parsed correctly.");
         assertEquals((long) 11662232, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -438,7 +438,7 @@ class TestCmsSerialOldEvent {
                 + "[Times: user=0.55 sys=0.01, real=0.52 secs]";
 
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 85217903, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -463,7 +463,7 @@ class TestCmsSerialOldEvent {
                 + "1.3656970 secs] 1229657K->413373K(1581168K), [CMS Perm : 83805K->80520K(83968K)], 1.3659420 secs] "
                 + "[Times: user=1.33 sys=0.01, real=1.37 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 44684, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -489,7 +489,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS Perm : 252246K->252202K(262144K)], 42.9070278 secs] "
                 + "[Times: user=43.11 sys=0.18, real=42.91 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_INTERRUPTED, "Trigger not parsed correctly.");
         assertEquals((long) 85030389, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -521,10 +521,10 @@ class TestCmsSerialOldEvent {
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
-                JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_SERIAL_OLD),
+                JdkUtil.EventType.CMS_SERIAL_OLD.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_HEAP_DUMP_INITIATED_GC.getKey()),
                 Analysis.WARN_HEAP_DUMP_INITIATED_GC + " analysis not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
@@ -538,7 +538,7 @@ class TestCmsSerialOldEvent {
                 + "[Metaspace: 73362K->73362K(1118208K)], 0.8553350 secs] "
                 + "[Times: user=0.83 sys=0.03, real=0.86 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.HEAP_INSPECTION_INITIATED_GC, "Trigger not parsed correctly.");
         assertEquals((long) 2854464, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -564,7 +564,7 @@ class TestCmsSerialOldEvent {
                 + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
                 + "[Times: user=0.26 sys=0.00, real=0.27 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_INTERRUPTED, "Trigger not parsed correctly.");
         assertEquals((long) 262372344, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -589,7 +589,7 @@ class TestCmsSerialOldEvent {
                 + "0.2102326 secs] 49512K->49392K(2063104K), [Metaspace: 256586K->256586K(1230848K)], 0.2108635 secs] "
                 + "[Times: user=0.20 sys=0.00, real=0.21 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
         assertEquals((long) 262372130, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -614,7 +614,7 @@ class TestCmsSerialOldEvent {
                 + "0.2337314 secs] 176820K->49512K(2063104K), [Metaspace: 256586K->256586K(1230848K)], "
                 + "0.2343092 secs] [Times: user=0.23 sys=0.00, real=0.23 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
         assertEquals((long) 262371895, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -639,7 +639,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS: 5589K->5796K(122880K), 0.0889610 secs] 11695K->5796K(131072K), "
                 + "[CMS Perm : 13140K->13124K(131072K)], 0.0891270 secs] ";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
     }
 
     @Test
@@ -648,7 +648,7 @@ class TestCmsSerialOldEvent {
                 + "42782.371: [Tenured: 1082057K->934941K(1082084K), 6.2719770 secs] "
                 + "1310721K->934941K(1336548K), 6.5587770 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 42782086, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -669,7 +669,7 @@ class TestCmsSerialOldEvent {
                 + "4040686K->2873414K(4040704K), [Metaspace: 72200K->72200K(1118208K)], 8.7986750 secs] "
                 + "[Times: user=8.79 sys=0.01, real=8.80 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1817644, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -694,7 +694,7 @@ class TestCmsSerialOldEvent {
                 + "[Tenured: 44849K->25946K(44864K), 0.2586250 secs] 60100K->25946K(64512K), "
                 + "[Perm : 43759K->43759K(262144K)], 0.2773070 secs] [Times: user=0.16 sys=0.01, real=0.28 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 6102, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -718,7 +718,7 @@ class TestCmsSerialOldEvent {
                 + "0.0000130 secs]26683.210: [CMS (concurrent mode failure): 1141548K->1078465K(1179648K), "
                 + "7.3835370 secs] 1403308K->1078465K(1441600K), 7.3838390 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 26683209, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -743,15 +743,15 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
-                LogEventType.CMS_SERIAL_OLD.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
-                LogEventType.CMS_CONCURRENT.toString() + " event not identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_SERIAL_OLD),
+                EventType.CMS_SERIAL_OLD.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_CONCURRENT),
+                EventType.CMS_CONCURRENT.toString() + " event not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_CMS_INCREMENTAL_MODE.getKey()),
@@ -765,7 +765,7 @@ class TestCmsSerialOldEvent {
                 + "6217865K->6028029K(6256896K), [CMS Perm : 206688K->206662K(262144K)], 79.0509595 secs] "
                 + "[Times: user=104.69 sys=3.63, real=79.05 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 3070289, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -791,7 +791,7 @@ class TestCmsSerialOldEvent {
                 + "3925228K->2702358K(4040704K), [Metaspace: 72175K->72175K(1118208K)] icms_dc=100 , 12.3480570 secs] "
                 + "[Times: user=15.38 sys=0.02, real=12.35 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 719519, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -817,7 +817,7 @@ class TestCmsSerialOldEvent {
                 + "9.3575580 secs] 4011734K->2725109K(4040704K), [Metaspace: 72111K->72111K(1118208K)], "
                 + "9.3610080 secs] [Times: user=9.35 sys=0.01, real=9.36 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 1202526, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -845,7 +845,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS Perm : 500357K->443269K(1048576K)], 97.2188825 secs] "
                 + "[Times: user=100.78 sys=0.18, real=97.22 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 572264304, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -872,7 +872,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS Perm : 498279K->443366K(1048576K)], 83.6775207 secs] "
                 + "[Times: user=87.62 sys=0.20, real=83.68 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 576460444, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -897,7 +897,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS: 664527K->317110K(1507328K), 2.9523520 secs] 697709K->317110K(1566336K), "
                 + "[CMS Perm : 83780K->83711K(131072K)], 3.0039040 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 395950370, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -922,7 +922,7 @@ class TestCmsSerialOldEvent {
                 + "2022731K->684015K(6191104K), [CMS Perm : 201541K->201494K(524288K)] icms_dc=21 , "
                 + "5.0421688 secs] [Times: user=5.54 sys=0.01, real=5.04 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 4595651, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -949,7 +949,7 @@ class TestCmsSerialOldEvent {
                 + " 3863904K->756393K(7848704K), [CMS Perm : 682507K->442221K(1048576K)], 107.6553710 secs]"
                 + " [Times: user=112.83 sys=0.28, real=107.66 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 182314858, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -980,13 +980,13 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
-                "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
-                "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_SERIAL_OLD),
+                "Log line not recognized as " + EventType.CMS_SERIAL_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_CONCURRENT),
+                "Log line not recognized as " + EventType.CMS_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
@@ -997,7 +997,7 @@ class TestCmsSerialOldEvent {
                 + "0.1785000 secs]25281.193: [CMS (concurrent mode failure): 1048384K->1015603K(1179648K), "
                 + "7.6767910 secs] 1292923K->1015603K(1441600K), 7.8557660 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 25281015, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -1021,7 +1021,7 @@ class TestCmsSerialOldEvent {
                 + "13363199K->9728622K(13363200K), [CMS Perm : 376898K->376894K(524288K)], 88.2785270 secs] "
                 + "[Times: user=86.32 sys=0.39, real=88.27 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 2057323, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -1046,7 +1046,7 @@ class TestCmsSerialOldEvent {
                 + "4.3393411 secs] 5167424K->5187429K(12394496K) icms_dc=7 , 4.3398519 secs] "
                 + "[Times: user=4.96 sys=1.91, real=4.34 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 159275552, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -1061,7 +1061,7 @@ class TestCmsSerialOldEvent {
                 + "14542753K->4554003K(18482496K), [CMS Perm : 227503K->226115K(378908K)], 15.1927120 secs] "
                 + "[Times: user=16.31 sys=0.21, real=15.19 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 108537519, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -1088,7 +1088,7 @@ class TestCmsSerialOldEvent {
                 + "3.8341757 secs] 5094036K->2769354K(7424000K), [Metaspace: 18583K->18583K(1067008K)], "
                 + "4.2847962 secs] [Times: user=9.11 sys=0.00, real=4.29 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 36843783, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -1109,7 +1109,7 @@ class TestCmsSerialOldEvent {
         String logLine = "5881.424: [GC 5881.424: [ParNew (promotion failed): 153272K->152257K(153344K), "
                 + "0.2143850 secs]5881.639: [CMS";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.PROMOTION_FAILED, "Trigger not parsed correctly.");
         assertEquals((long) 5881424, event.getTimestamp(), "Time stamp not parsed correctly.");
@@ -1130,15 +1130,15 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_SERIAL_OLD),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_CMS_INCREMENTAL_MODE.getKey()),
                 org.github.joa.util.Analysis.INFO_CMS_INCREMENTAL_MODE + " analysis not identified.");
     }
@@ -1152,15 +1152,15 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_SERIAL_OLD),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
@@ -1174,13 +1174,13 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_SERIAL_OLD),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
@@ -1194,15 +1194,15 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_INITIAL_MARK.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_SERIAL_OLD),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_INITIAL_MARK),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_INITIAL_MARK.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED.getKey()),
                 Analysis.INFO_FIRST_TIMESTAMP_THRESHOLD_EXCEEDED + " analysis not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
@@ -1218,15 +1218,15 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                JdkUtil.LogEventType.UNKNOWN.toString() + " event identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_SERIAL_OLD),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.LogEventType.CMS_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_CONCURRENT.toString() + ".");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_SERIAL_OLD),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.CMS_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis not identified.");
     }
@@ -1245,13 +1245,13 @@ class TestCmsSerialOldEvent {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
-                LogEventType.UNKNOWN.toString() + " event identified.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                EventType.UNKNOWN.toString() + " event identified.");
         assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_CONCURRENT),
-                "Log line not recognized as " + LogEventType.CMS_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(LogEventType.CMS_SERIAL_OLD),
-                "Log line not recognized as " + LogEventType.CMS_SERIAL_OLD.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_CONCURRENT),
+                "Log line not recognized as " + EventType.CMS_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_SERIAL_OLD),
+                "Log line not recognized as " + EventType.CMS_SERIAL_OLD.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC.getKey()),
                 org.github.joa.util.Analysis.INFO_JDK8_PRINT_HEAP_AT_GC + " analysis not identified.");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
@@ -1265,7 +1265,7 @@ class TestCmsSerialOldEvent {
                 + "[CMS Perm : 1257346K->1257346K(2097152K)] icms_dc=100 , 23.1838500 secs] "
                 + "[Times: user=22.77 sys=0.39, real=23.18 secs]";
         assertTrue(CmsSerialOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.CMS_SERIAL_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.CMS_SERIAL_OLD.toString() + ".");
         CmsSerialOldEvent event = new CmsSerialOldEvent(logLine);
         assertTrue(event.getTrigger() == GcTrigger.CONCURRENT_MODE_FAILURE, "Trigger not parsed correctly.");
         assertEquals((long) 58626878, event.getTimestamp(), "Time stamp not parsed correctly.");

@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -286,16 +287,16 @@ public class G1MixedPauseEvent extends G1Collector implements BlockingEvent, Par
         return eventTime + otherTime;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.G1_MIXED_PAUSE;
+    }
+
     public long getExtRootScanningTime() {
         return extRootScanningTime;
     }
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.G1_MIXED_PAUSE.toString();
     }
 
     @Override

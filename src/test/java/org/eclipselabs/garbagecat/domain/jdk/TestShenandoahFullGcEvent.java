@@ -14,7 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
-import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType.SHENANDOAH_FULL_GC;
+import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType.SHENANDOAH_FULL_GC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +44,7 @@ class TestShenandoahFullGcEvent {
 
     @Test
     void testHydration() {
-        LogEventType eventType = SHENANDOAH_FULL_GC;
+        EventType eventType = SHENANDOAH_FULL_GC;
         String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";
         long timestamp = 120839710;
@@ -119,7 +119,7 @@ class TestShenandoahFullGcEvent {
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
+        List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(SHENANDOAH_FULL_GC);
         assertFalse(UnifiedUtil.isUnifiedLogging(eventTypes),
                 SHENANDOAH_FULL_GC + " incorrectly indentified as unified.");

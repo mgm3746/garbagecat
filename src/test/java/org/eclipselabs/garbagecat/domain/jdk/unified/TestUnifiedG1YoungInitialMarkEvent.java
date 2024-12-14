@@ -22,7 +22,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -36,9 +36,9 @@ class TestUnifiedG1YoungInitialMarkEvent {
     void testIdentityEventType() {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK,
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK + "not identified.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK + "not identified.");
     }
 
     @Test
@@ -46,7 +46,7 @@ class TestUnifiedG1YoungInitialMarkEvent {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -54,10 +54,9 @@ class TestUnifiedG1YoungInitialMarkEvent {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
         UnifiedG1YoungInitialMarkEvent event = new UnifiedG1YoungInitialMarkEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK, event.getEventType(), "Event type incorrect.");
         assertEquals((long) (2752 - 1), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.G1_HUMONGOUS_ALLOCATION, "Trigger not parsed correctly.");
         assertEquals(kilobytes(562 * 1024), event.getCombinedOccupancyInit(),
@@ -73,7 +72,7 @@ class TestUnifiedG1YoungInitialMarkEvent {
         String logLine = "[2.727s][info][gc           ] GC(51) Pause Initial Mark (G1 Humongous Allocation) "
                 + "1162M->5M(1250M) 1.336ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
     }
 
     @Test
@@ -81,7 +80,7 @@ class TestUnifiedG1YoungInitialMarkEvent {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
     }
 
     @Test
@@ -90,13 +89,13 @@ class TestUnifiedG1YoungInitialMarkEvent {
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(
                 JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedG1YoungInitialMarkEvent,
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as reportable.");
     }
 
     /**
@@ -107,17 +106,16 @@ class TestUnifiedG1YoungInitialMarkEvent {
         String logLine = "[2021-03-09T14:45:02.441-0300][12.082s] GC(6) Pause Initial Mark (G1 Humongous Allocation) "
                 + "1162M->5M(1250M) 1.336ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedG1YoungInitialMarkEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + ".");
         UnifiedG1YoungInitialMarkEvent event = new UnifiedG1YoungInitialMarkEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_G1_YOUNG_INITIAL_MARK);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as unified.");
     }
 }

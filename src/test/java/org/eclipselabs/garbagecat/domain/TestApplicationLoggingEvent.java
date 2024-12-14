@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType.APPLICATION_LOGGING;
+import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType.APPLICATION_LOGGING;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

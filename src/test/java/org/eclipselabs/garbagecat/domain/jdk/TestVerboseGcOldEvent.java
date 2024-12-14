@@ -31,16 +31,16 @@ class TestVerboseGcOldEvent {
     void testIsBlocking() {
         String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.VERBOSE_GC_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals(2143132151L, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(kilobytes(1606823), event.getCombinedOccupancyInit(),
                 "Combined initial occupancy not parsed correctly.");
@@ -55,9 +55,9 @@ class TestVerboseGcOldEvent {
         String logLine = "2016-06-22T14:04:51.080+0100: [Full GC (Last ditch collection)  500269K->500224K(3128704K), "
                 + "4.2311820 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals(519897891080L, event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
@@ -66,9 +66,9 @@ class TestVerboseGcOldEvent {
         String logLine = "2016-06-22T14:04:51.080+0100: 22561.627: [Full GC (Last ditch collection)  "
                 + "500269K->500224K(3128704K), 4.2311820 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 22561627, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
         assertEquals(kilobytes(500269), event.getCombinedOccupancyInit(),
@@ -83,9 +83,9 @@ class TestVerboseGcOldEvent {
     void testLogLineG1Sizes() {
         String logLine = "2017-03-20T04:30:01.936+0800: 2950.666: [Full GC 8134M->2349M(8192M), 10.3726320 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 2950666, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.NONE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(8329216), event.getCombinedOccupancyInit(),
@@ -101,9 +101,9 @@ class TestVerboseGcOldEvent {
         String logLine = "2017-04-06T15:22:40.708-0500: 303068.960: [Full GC (Allocation Failure)  "
                 + "7455264K->4498878K(7992832K), 13.2445067 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 303068960, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(7455264), event.getCombinedOccupancyInit(),
@@ -118,9 +118,9 @@ class TestVerboseGcOldEvent {
     void testLogLineTriggerErgonomics() {
         String logLine = "2412.683: [Full GC (Ergonomics)  728595K->382365K(932352K), 1.2268902 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 2412683, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ERGONOMICS, "Trigger not parsed correctly.");
         assertEquals(kilobytes(728595), event.getCombinedOccupancyInit(),
@@ -135,9 +135,9 @@ class TestVerboseGcOldEvent {
     void testLogLineTriggerExplicitGc() {
         String logLine = "8453.778: [Full GC (System.gc())  457601K->176797K(939520K), 1.5623937 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 8453778, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.SYSTEM_GC, "Trigger not parsed correctly.");
         assertEquals(kilobytes(457601), event.getCombinedOccupancyInit(),
@@ -152,9 +152,9 @@ class TestVerboseGcOldEvent {
     void testLogLineTriggerLastDitchCollection() {
         String logLine = "18134.427: [Full GC (Last ditch collection)  457103K->449140K(3128704K), 5.6081071 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 18134427, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.LAST_DITCH_COLLECTION, "Trigger not parsed correctly.");
         assertEquals(kilobytes(457103), event.getCombinedOccupancyInit(),
@@ -169,9 +169,9 @@ class TestVerboseGcOldEvent {
     void testLogLineTriggerMetadataGcThreshold() {
         String logLine = "18129.496: [Full GC (Metadata GC Threshold)  629455K->457103K(3128704K), 4.4946967 secs]";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
         VerboseGcOldEvent event = new VerboseGcOldEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.VERBOSE_GC_OLD.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.VERBOSE_GC_OLD, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 18129496, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.METADATA_GC_THRESHOLD, "Trigger not parsed correctly.");
         assertEquals(kilobytes(629455), event.getCombinedOccupancyInit(),
@@ -186,6 +186,6 @@ class TestVerboseGcOldEvent {
     void testLogLineWhitespaceAtEnd() {
         String logLine = "2143132.151: [Full GC 1606823K->1409859K(2976064K), 12.0855599 secs]    ";
         assertTrue(VerboseGcOldEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.VERBOSE_GC_OLD.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.VERBOSE_GC_OLD.toString() + ".");
     }
 }

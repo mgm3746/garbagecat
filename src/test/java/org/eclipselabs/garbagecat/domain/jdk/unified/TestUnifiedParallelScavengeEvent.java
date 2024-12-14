@@ -22,7 +22,7 @@ import java.util.List;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ class TestUnifiedParallelScavengeEvent {
 
     @Test
     void testHydration() {
-        LogEventType eventType = JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE;
+        EventType eventType = JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE;
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
@@ -43,7 +43,7 @@ class TestUnifiedParallelScavengeEvent {
         assertTrue(
                 JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
                         duration) instanceof UnifiedParallelScavengeEvent,
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not parsed.");
     }
 
     @Test
@@ -51,9 +51,9 @@ class TestUnifiedParallelScavengeEvent {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE,
+        assertEquals(JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE + "not identified.");
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE + "not identified.");
     }
 
     @Test
@@ -62,7 +62,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as blocking.");
     }
 
     @Test
@@ -71,7 +71,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "512K(1024K)->448K(1024K) ParOldGen: 0K(512K)->8K(512K) Metaspace: 88K(192K)->88K(192K) 0M->0M(1M) "
                 + "0.656ms User=0.01s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
@@ -80,7 +80,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "20544K->64K(20992K) PSOldGen: 15496K->15504K(17920K) Metaspace: 3779K->3779K(1056768K) "
                 + "35M->15M(38M) 0.402ms User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
@@ -89,7 +89,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s    ";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
@@ -98,7 +98,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedParallelScavengeEvent,
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not parsed.");
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not parsed.");
     }
 
     @Test
@@ -107,10 +107,9 @@ class TestUnifiedParallelScavengeEvent {
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
                 + "User=0.01s Sys=0.01s Real=0.00s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
         UnifiedParallelScavengeEvent event = new UnifiedParallelScavengeEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 31, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(512), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -134,10 +133,9 @@ class TestUnifiedParallelScavengeEvent {
                 + "512K->432K(1024K) ParOldGen: 0K->8K(512K) Metaspace: 121K->121K(1056768K) 0M->0M(1M) 0.762ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
         UnifiedParallelScavengeEvent event = new UnifiedParallelScavengeEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString(), event.getName(),
-                "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE, event.getEventType(), "Event type incorrect.");
         assertEquals((long) 29, event.getTimestamp(), "Time stamp not parsed correctly.");
         assertTrue(event.getTrigger() == GcTrigger.ALLOCATION_FAILURE, "Trigger not parsed correctly.");
         assertEquals(kilobytes(512), event.getYoungOccupancyInit(), "Young initial occupancy not parsed correctly.");
@@ -161,7 +159,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "Promotion failed PSYoungGen: 1246735K->1246735K(1264128K) ParOldGen: 2927696K->3125241K(3125248K) "
                 + "Metaspace: 589156K->589156K(1687552K) 4076M->4269M(4286M) 692.086ms User=1.83s Sys=0.21s Real=0.69s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
@@ -170,7 +168,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "Initiated GC) PSYoungGen: 2097664K->213686K(2446848K) ParOldGen: 31515K->31523K(5592576K) "
                 + "Metaspace: 70500K->70500K(1116160K) 2079M->239M(7851M) 119.933ms User=0.61s Sys=0.21s Real=0.12s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
@@ -179,7 +177,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "PSYoungGen: 542130K->17888K(1538048K) ParOldGen: 152353K->152353K(180224K) "
                 + "Metaspace: 217673K->217673K(1275904K) 678M->166M(1678M) 9.184ms User=0.04s Sys=0.00s Real=0.01s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
@@ -188,7 +186,7 @@ class TestUnifiedParallelScavengeEvent {
                 + "References) PSYoungGen: 0K->0K(731136K) ParOldGen: 145284K->145284K(1467904K) Metaspace: "
                 + "243927K->243927K(481280K) 141M->141M(2147M) 4.151ms User=0.00s Sys=0.00s Real=0.01s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
@@ -197,20 +195,20 @@ class TestUnifiedParallelScavengeEvent {
                 + "PSYoungGen: 30682K->2160K(66560K) ParOldGen: 46817K->57994K(175104K) "
                 + "Metaspace: 88760K->88760K(337920K) 75M->58M(236M) 44.313ms User=0.07s Sys=0.02s Real=0.04s";
         assertTrue(UnifiedParallelScavengeEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + ".");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE),
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as reportable.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.UNIFIED_PARALLEL_SCAVENGE);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.UNIFIED_PARALLEL_SCAVENGE);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as unified.");
+                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as unified.");
     }
 }

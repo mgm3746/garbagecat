@@ -45,7 +45,7 @@ import org.eclipselabs.garbagecat.preprocess.PreprocessAction.PreprocessEvent;
 import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 import org.github.joa.domain.JvmContext;
 
@@ -114,7 +114,7 @@ public class JvmDao {
     /**
      * List of all event types associate with the JVM run.
      */
-    List<LogEventType> eventTypes = new ArrayList<>();
+    List<EventType> eventTypes = new ArrayList<>();
 
     /**
      * Maximum external root scanning time (microseconds).
@@ -330,8 +330,8 @@ public class JvmDao {
      *            The event type to retrieve.
      * @return <code>List</code> of events.
      */
-    public synchronized List<BlockingEvent> getBlockingEvents(LogEventType eventType) {
-        return this.blockingEvents.stream().filter(e -> e.getName().equals(eventType.toString()))
+    public synchronized List<BlockingEvent> getBlockingEvents(EventType eventType) {
+        return this.blockingEvents.stream().filter(e -> e.getEventType().equals(eventType.toString()))
                 .map(JvmDao::toBlockingEvent).collect(toList());
     }
 
@@ -363,7 +363,7 @@ public class JvmDao {
         return longs(this.blockingEvents, BlockingEvent::getDurationMicros).collect(summingLong(Long::valueOf));
     }
 
-    public List<LogEventType> getEventTypes() {
+    public List<EventType> getEventTypes() {
         return eventTypes;
     }
 

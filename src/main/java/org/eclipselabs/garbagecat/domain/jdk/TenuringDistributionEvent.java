@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk;
 
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -179,12 +180,12 @@ public class TenuringDistributionEvent implements ThrowAwayEvent {
         this.timestamp = 0L;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.TENURING_DISTRIBUTION;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.TENURING_DISTRIBUTION.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.LogEventType;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
 
@@ -33,25 +33,25 @@ class TestZRelocateStartEvent {
     @Test
     void testIdentityEventType() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
-        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START,
+        assertEquals(JdkUtil.EventType.Z_RELOCATE_START,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
-                JdkUtil.LogEventType.Z_RELOCATE_START + "not identified.");
+                JdkUtil.EventType.Z_RELOCATE_START + "not identified.");
     }
 
     @Test
     void testIsBlocking() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
         assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.LogEventType.Z_RELOCATE_START.toString() + " not indentified as blocking.");
+                JdkUtil.EventType.Z_RELOCATE_START.toString() + " not indentified as blocking.");
     }
 
     @Test
     void testLogLine() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
         assertTrue(ZRelocateStartEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_RELOCATE_START.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_RELOCATE_START.toString() + ".");
         ZRelocateStartEvent event = new ZRelocateStartEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.Z_RELOCATE_START, event.getEventType(), "Event type incorrect.");
         assertEquals((long) (132 - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
         assertEquals(4, event.getDurationMicros(), "Duration not parsed correctly.");
     }
@@ -60,13 +60,13 @@ class TestZRelocateStartEvent {
     void testParseLogLine() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ZRelocateStartEvent,
-                JdkUtil.LogEventType.Z_RELOCATE_START.toString() + " not parsed.");
+                JdkUtil.EventType.Z_RELOCATE_START.toString() + " not parsed.");
     }
 
     @Test
     void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.LogEventType.Z_RELOCATE_START),
-                JdkUtil.LogEventType.Z_RELOCATE_START.toString() + " not indentified as reportable.");
+        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_RELOCATE_START),
+                JdkUtil.EventType.Z_RELOCATE_START.toString() + " not indentified as reportable.");
     }
 
     /**
@@ -76,24 +76,24 @@ class TestZRelocateStartEvent {
     void testTimestampTimeUptime() {
         String logLine = "[2021-03-09T14:45:02.441-0300][0.132s] GC(0) Pause Relocate Start 0.004ms";
         assertTrue(ZRelocateStartEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_RELOCATE_START.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_RELOCATE_START.toString() + ".");
         ZRelocateStartEvent event = new ZRelocateStartEvent(logLine);
-        assertEquals(JdkUtil.LogEventType.Z_RELOCATE_START.toString(), event.getName(), "Event name incorrect.");
+        assertEquals(JdkUtil.EventType.Z_RELOCATE_START, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
     void testUnified() {
-        List<LogEventType> eventTypes = new ArrayList<LogEventType>();
-        eventTypes.add(LogEventType.Z_RELOCATE_START);
+        List<EventType> eventTypes = new ArrayList<EventType>();
+        eventTypes.add(EventType.Z_RELOCATE_START);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
-                JdkUtil.LogEventType.Z_RELOCATE_START.toString() + " not indentified as unified.");
+                JdkUtil.EventType.Z_RELOCATE_START.toString() + " not indentified as unified.");
     }
 
     @Test
     void testWhitespaceAtEnd() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms    ";
         assertTrue(ZRelocateStartEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.LogEventType.Z_RELOCATE_START.toString() + ".");
+                "Log line not recognized as " + JdkUtil.EventType.Z_RELOCATE_START.toString() + ".");
     }
 
 }

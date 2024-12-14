@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -98,6 +99,10 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
         this.timestamp = 0L;
     }
 
+    public EventType getEventType() {
+        return JdkUtil.EventType.HEADER_COMMAND_LINE_FLAGS;
+    }
+
     /**
      * @return JVM options.
      */
@@ -112,10 +117,6 @@ public class HeaderCommandLineFlagsEvent implements LogEvent {
 
     public String getLogEntry() {
         return logEntry;
-    }
-
-    public String getName() {
-        return JdkUtil.LogEventType.HEADER_COMMAND_LINE_FLAGS.toString();
     }
 
     public long getTimestamp() {

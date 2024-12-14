@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -80,12 +81,12 @@ public class ApplicationConcurrentTimeEvent implements ThrowAwayEvent {
         this.logEntry = logEntry;
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.APPLICATION_CONCURRENT_TIME;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.APPLICATION_CONCURRENT_TIME.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public long getTimestamp() {

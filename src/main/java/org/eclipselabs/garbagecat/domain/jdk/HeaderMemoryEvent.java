@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
+import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 
 /**
  * <p>
@@ -125,12 +126,12 @@ public class HeaderMemoryEvent implements LogEvent {
         }
     }
 
-    public String getLogEntry() {
-        return logEntry;
+    public EventType getEventType() {
+        return JdkUtil.EventType.HEADER_MEMORY;
     }
 
-    public String getName() {
-        return JdkUtil.LogEventType.HEADER_MEMORY.toString();
+    public String getLogEntry() {
+        return logEntry;
     }
 
     public int getPhysicalMemory() {
