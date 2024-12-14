@@ -85,7 +85,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_APPLICATION_LOGGING.getKey()),
@@ -282,7 +282,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_OOME_EXIT.getKey()),
@@ -297,7 +297,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
@@ -366,7 +366,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -458,7 +458,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -649,7 +649,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -1023,7 +1023,7 @@ class TestAnalysis {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.hasAnalysis(Analysis.INFO_Z_STATISTICS_INTERVAL.getKey()),

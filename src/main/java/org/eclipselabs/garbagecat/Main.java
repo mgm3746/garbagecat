@@ -104,10 +104,13 @@ public class Main {
             throw new IllegalArgumentException("Log file and report are the same file.");
         }
 
-        // Determine JVM environment information.
+        // Requiring the JVM start date/time for preprocessing was originally a hack to handle datestamps introduced
+        // with <code>-XX:+PrintGCDateStamps</code> was introduced in JDK 1.6 update 4. It is now to
+        // convert uptime to a datestamp in reporting (e.g. bottlenecks).
         Date jvmStartDate = cmd.hasOption(OPTION_STARTDATETIME_LONG)
                 ? parseStartDateTime(cmd.getOptionValue(OPTION_STARTDATETIME_SHORT))
                 : null;
+
         String jvmOptions = cmd.hasOption(OPTION_JVMOPTIONS_LONG) ? cmd.getOptionValue(OPTION_JVMOPTIONS_SHORT) : null;
 
         URI logFileUri = logFile.toURI();
@@ -122,19 +125,10 @@ public class Main {
 
         // Do preprocessing
         if (cmd.hasOption(OPTION_PREPROCESS_LONG) || cmd.hasOption(OPTION_STARTDATETIME_LONG)) {
-            /*
-             * Requiring the JVM start date/time for preprocessing is a hack to handle datestamps. When garbagecat was
-             * started there was no <code>-XX:+PrintGCDateStamps</code> option. When it was introduced in JDK 1.6 update
-             * 4, the easiest thing to do to handle datestamps was to preprocess the datestamps and convert them to
-             * timestamps.
-             *
-             * TODO: Handle datetimes separately from preprocessing so preprocessing doesn't require passing in the JVM
-             * start date/time.
-             */
             if (verbose) {
                 System.out.println("preprocessing...");
             }
-            logLines = gcManager.preprocess(logLines, jvmStartDate);
+            logLines = gcManager.preprocess(logLines);
         }
 
         // Allow logging to be reordered?

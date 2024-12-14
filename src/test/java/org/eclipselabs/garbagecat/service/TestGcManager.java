@@ -89,6 +89,6 @@ class TestGcManager {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
     }
 }

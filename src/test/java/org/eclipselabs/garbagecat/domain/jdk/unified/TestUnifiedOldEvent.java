@@ -95,7 +95,7 @@ class TestUnifiedOldEvent {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),
@@ -142,7 +142,7 @@ class TestUnifiedOldEvent {
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines, null);
+        logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(LogEventType.UNKNOWN),

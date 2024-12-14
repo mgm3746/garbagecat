@@ -546,11 +546,9 @@ public class GcManager {
      * 
      * @param logLines
      *            Raw garbage collection logging.
-     * @param jvmStartDate
-     *            The date and time the JVM was started.
      * @return Preprocessed garbage collection logging.
      */
-    public List<String> preprocess(List<String> logLines, Date jvmStartDate) {
+    public List<String> preprocess(List<String> logLines) {
         if (logLines == null)
             throw new IllegalArgumentException("logLines == null!!");
 
