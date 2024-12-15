@@ -24,7 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 
 /**
  * <p>
- * FOOTER_STATS
+ * UNIFIED_FOOTER_STATS
  * </p>
  * 
  * <p>
