@@ -14,7 +14,7 @@ OpenJDK derivatives:
 
 ### Recommended GC Logging Options ###
 
-JDK9+ (`time`]:
+JDK9+ (time):
 
 
 ```
@@ -23,7 +23,7 @@ JDK9+ (`time`]:
 [2020-02-14T15:21:55.207-0500] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
 ```
 
-JDK8 (`datestamp`):
+JDK8 (datestamp):
 
 
 ```
