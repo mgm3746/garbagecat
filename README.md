@@ -91,19 +91,18 @@ JDK9+:
 
 ## Running ##
 
-There is no need to download or build garbagecat to run the latest code. Simply run the container release as follows:
+There is no need to download or build garbagecat to run the latest code. Simply run the container release, which is updated with each commit. For example, run as follows in the directory where the gc logging exists:
 
 ```bash
-$ docker run --pull=always -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --help
-$ docker run --pull=always -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --console /home/garbagecat/files/src/test/gc-example.log > report.txt
+$ docker run --pull=always -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --console /home/garbagecat/files/gc-example.log > report.txt
 ```
 
 NOTES:
-1. Supported architectures are x86_64 and arm64.
-1. Containers are automatically updated with each commit, so you are always running with the lastest updates.
-1. Local directory gets mounted on existing `/home/garbagecat/files` directory.
-1. The report is written to stdout with the `--console` option.
+1. Local directory gets mounted to the `/home/garbagecat/files/` container directory.
 1. The local directory must have world execute permission (Linux).
+1. The report is written to stdout with the `--console` option.
+1. Containers are automatically updated with each commit, so you are always running with the lastest updates.
+1. Supported architectures are x86_64 and arm64.
 
 ## Building ##
 
