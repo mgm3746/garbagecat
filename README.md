@@ -14,13 +14,17 @@ OpenJDK derivatives:
 
 ### Recommended GC Logging Options ###
 
-JDK5 - JDK8:
+JDK9+ (`time`]:
 
->-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime
 
-JDK8:
+```
+-Xlog:gc*,safepoint=info:file=gc_%p_%t.log:time:filecount=4,filesize=50M
 
-1) datestamp:
+[2020-02-14T15:21:55.207-0500] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
+```
+
+JDK8 (`datestamp`):
+
 
 ```
 -XX:+PrintGC -XX:+PrintGCDetails -XX:-PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:gc_%p_%t.log -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
@@ -29,72 +33,19 @@ JDK8:
 2021-10-08T20:22:22.788-0600: [GC (Allocation Failure) [PSYoungGen: 328070K->55019K(503808K)] 649122K->396284K(1078272K), 0.3093583 secs] [Times: user=0.43 sys=0.12, real=0.31 secs]
 ```
 
-2) timestamp:
+JDK5 - JDK8:
 
-```
--XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:gc_%p_%t.log -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
+>-XX:+PrintGC -Xloggc:gc.log -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCApplicationStoppedTime
 
-
-668.806: [GC (Allocation Failure) [PSYoungGen: 328070K->55019K(503808K)] 649122K->396284K(1078272K), 0.3093583 secs] [Times: user=0.43 sys=0.12, real=0.31 secs]
-```
-
-3) datestamp: timestamp:
-
-```
--XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:gc_%p_%t.log -XX:+UseGCLogFileRotation -XX:GCLogFileSize=50M -XX:NumberOfGCLogFiles=4
-
-
-2021-10-08T20:22:22.788-0600: 668.806: [GC (Allocation Failure) [PSYoungGen: 328070K->55019K(503808K)] 649122K->396284K(1078272K), 0.3093583 secs] [Times: user=0.43 sys=0.12, real=0.31 secs]
-```
-
-JDK9+:
-
-1) \[time\]
-
-```
--Xlog:gc*,safepoint=info:file=gc_%p_%t.log:time:filecount=4,filesize=50M
-
-[2020-02-14T15:21:55.207-0500] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
-```
-
-2) \[uptime\]
-
-```
--Xlog:gc*,safepoint=info:file=gc_%p_%t.log:uptime:filecount=4,filesize=50M
-
-[0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
-```
-
-3) \[uptimemillis\]
-
-```
--Xlog:gc*,safepoint=info:file=gc_%p_%t.log:uptimemillis:filecount=4,filesize=50M
-
-[052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
-```
-
-4) \[time\]\[uptime\]
-
-```
--Xlog:gc*,safepoint=info:file=gc_%p_%t.log:time,uptime:filecount=4,filesize=50M
-
-[2020-02-14T15:21:55.207-0500][0.052s] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
-```
-
-5) \[time\]\[uptimemillis\]
-
-```
--Xlog:gc*,safepoint=info:file=gc_%p_%t.log:time,uptimemillis:filecount=4,filesize=50M
-
-[2020-02-14T15:21:55.207-0500][052ms] GC(0) Pause Young (Normal) (G1 Evacuation Pause)
-```
 
 ## Running ##
 
-There is no need to download or build garbagecat to run the latest code. Simply run the container release, which is updated with each commit. For example, run as follows in the directory where the gc logging exists:
+There is no need to download or build garbagecat to run the latest code. Simply run the container release, which is updated with each commit. 
+
+For example, run the following in the directory where [gc-example](https://github.com/mgm3746/garbagecat/tree/master/src/test/gc-example.log) exists (GARBAGECAT_HOME/src/test/):
 
 ```bash
-$ docker run --pull=always -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:main --console /home/garbagecat/files/gc-example.log > report.txt
+docker run --pull=always -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:latest --console -p -t 20 /home/garbagecat/files/gc-example.log > report.txt
 ```
 
 NOTES:
@@ -136,7 +87,7 @@ $ /path/to/mvn -U -fn clean install
 ## Usage ##
 
 ```
-$ java -jar garbagecat.jar --help
+$ docker run --pull=always -v "$PWD":/home/garbagecat/files:z ghcr.io/mgm3746/garbagecat:latest --help
 usage: garbagecat [OPTION]... [FILE] 
  -c,--console               print report to stdout instead of file
  -h,--help                  help
