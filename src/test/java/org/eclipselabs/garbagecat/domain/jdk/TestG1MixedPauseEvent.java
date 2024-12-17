@@ -32,7 +32,6 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
@@ -110,13 +109,6 @@ class TestG1MixedPauseEvent {
         assertEquals(1370, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(864, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(557, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "72.598: [GC pause (mixed) 643M->513M(724M), 0.1686650 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.G1_MIXED_PAUSE.toString() + " not indentified as blocking.");
     }
 
     @Test

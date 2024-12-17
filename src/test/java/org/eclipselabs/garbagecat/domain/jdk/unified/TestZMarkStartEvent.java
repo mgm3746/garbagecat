@@ -38,13 +38,6 @@ class TestZMarkStartEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.124s][info][gc,phases   ] GC(0) Pause Mark Start 0.004ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.Z_MARK_START.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         String logLine = "[0.124s][info][gc,phases   ] GC(0) Pause Mark Start 0.004ms";
         assertTrue(ZMarkStartEvent.match(logLine),

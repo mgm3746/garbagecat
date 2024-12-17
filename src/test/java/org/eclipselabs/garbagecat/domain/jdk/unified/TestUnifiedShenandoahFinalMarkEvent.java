@@ -31,13 +31,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedShenandoahFinalMarkEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.531s][info][gc] GC(1) Pause Final Mark 1.004ms";
         assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK,

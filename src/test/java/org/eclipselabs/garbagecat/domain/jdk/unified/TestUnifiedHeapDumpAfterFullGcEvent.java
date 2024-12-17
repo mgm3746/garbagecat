@@ -48,13 +48,6 @@ class TestUnifiedHeapDumpAfterFullGcEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[2024-12-06T05:57:30.303-0500] GC(0) Heap Dump (after full gc) 5.254ms";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_HEAP_DUMP_AFTER_FULL_GC.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "[2024-12-06T05:57:30.303-0500] GC(0) Heap Dump (after full gc) 5.254ms";
         assertTrue(

@@ -60,13 +60,6 @@ class TestGcInfoEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Humongous object threshold: 512K";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.GC_INFO.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testNotUnifiedFrag100() {
         String logLine = "Free: 88400K, Max: 256K regular, 768K humongous, Frag: 100% external, 5% internal; "
                 + "Reserve: 6624K, Max: 256K";

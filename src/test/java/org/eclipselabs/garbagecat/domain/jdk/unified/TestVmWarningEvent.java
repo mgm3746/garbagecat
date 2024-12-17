@@ -48,13 +48,6 @@ class TestVmWarningEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.VM_WARNING.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof VmWarningEvent,

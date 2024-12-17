@@ -34,13 +34,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedShenandoahDegeneratedGcEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                UNIFIED_SHENANDOAH_DEGENERATED_GC + " not indentified as blocking.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
         assertEquals(UNIFIED_SHENANDOAH_DEGENERATED_GC,

@@ -13,14 +13,12 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.github.joa.domain.Arch;
 import org.github.joa.domain.BuiltBy;
 import org.github.joa.domain.Os;
@@ -94,14 +92,6 @@ class TestHeaderVmInfoEvent {
         assertEquals(17, calendar.get(Calendar.HOUR_OF_DAY), "Start hour not parsed correctly.");
         assertEquals(39, calendar.get(Calendar.MINUTE), "Start minute not parsed correctly.");
         assertEquals(45, calendar.get(Calendar.SECOND), "Start second not parsed correctly.");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "Java HotSpot(TM) 64-Bit Server VM (24.85-b08) for linux-amd64 JRE (1.7.0_85-b34), built on "
-                + "Sep 29 2015 08:44:21 by \"java_re\" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.HEADER_VM_INFO.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test

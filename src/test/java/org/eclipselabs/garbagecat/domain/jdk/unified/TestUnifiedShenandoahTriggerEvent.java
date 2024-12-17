@@ -48,13 +48,6 @@ class TestUnifiedShenandoahTriggerEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "[3068ms] Trigger: Learning 1 of 5. Free (912M) is below initial threshold (912M)";
         assertTrue(

@@ -77,13 +77,6 @@ class TestHeapAtGcEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "{Heap before gc invocations=1:";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.HEAP_AT_GC.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testNotReportable() {
         String logLine = "{Heap before gc invocations=1:";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),

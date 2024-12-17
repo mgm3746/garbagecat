@@ -256,13 +256,6 @@ class TestUnifiedHeapEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_HEAP.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testObjectSpace() {
         String logLine = "[37.098s][info][gc,heap,exit   ]   object space 32768K, 83% used [0x00000000fc000000,"
                 + "0x00000000fda99f58,0x00000000fe000000)";

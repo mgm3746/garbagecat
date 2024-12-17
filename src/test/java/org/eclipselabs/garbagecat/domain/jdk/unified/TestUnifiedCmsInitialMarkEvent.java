@@ -32,13 +32,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedCmsInitialMarkEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.178s][info][gc] GC(5) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertEquals(JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK,

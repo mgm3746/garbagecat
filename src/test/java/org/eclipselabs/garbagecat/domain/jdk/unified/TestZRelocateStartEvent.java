@@ -39,13 +39,6 @@ class TestZRelocateStartEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.Z_RELOCATE_START.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         String logLine = "[0.132s] GC(0) Pause Relocate Start 0.004ms";
         assertTrue(ZRelocateStartEvent.match(logLine),

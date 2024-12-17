@@ -13,11 +13,9 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -115,10 +113,4 @@ class TestApplicationStoppedTimeEvent {
                 "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 
-    @Test
-    void testNotBlocking() {
-        String logLine = "1,065: Total time for which application threads were stopped: 0,0001610 seconds";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + " incorrectly indentified as blocking.");
-    }
 }

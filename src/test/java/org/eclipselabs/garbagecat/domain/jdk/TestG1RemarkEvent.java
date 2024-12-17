@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,13 +34,6 @@ class TestG1RemarkEvent {
         String logLine = "2971.469: [GC remark, 0.2274544 secs] [Times: user=0.22 sys=0.00, real=0.22 secs]     ";
         assertTrue(G1RemarkEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.G1_REMARK.toString() + ".");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "106.129: [GC remark, 0.0450170 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.G1_REMARK.toString() + " not indentified as blocking.");
     }
 
     @Test

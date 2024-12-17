@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -54,13 +53,6 @@ class TestTenuringDistributionEvent {
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)
                         .equals(EventType.TENURING_DISTRIBUTION),
                 JdkUtil.EventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test

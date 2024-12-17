@@ -31,13 +31,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedShenandoahFinalEvacEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[10.444s][info][gc] GC(278) Pause Final Evac 0.003ms";
         assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC,

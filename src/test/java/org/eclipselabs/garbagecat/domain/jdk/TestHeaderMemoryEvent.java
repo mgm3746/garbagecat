@@ -13,11 +13,9 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -51,13 +49,6 @@ class TestHeaderMemoryEvent {
         assertEquals(398522432, event.getPhysicalMemoryFree(), "Physical memory free not parsed correctly.");
         assertEquals(0, event.getSwap(), "Swap not parsed correctly.");
         assertEquals(0, event.getSwapFree(), "Swap free not parsed correctly.");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "Memory: 4k page, physical 65806300k(58281908k free), swap 16777212k(16777212k free)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.HEADER_MEMORY.toString() + " incorrectly indentified as blocking.");
     }
 
 }

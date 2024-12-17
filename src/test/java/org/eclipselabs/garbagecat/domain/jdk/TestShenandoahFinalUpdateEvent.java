@@ -32,13 +32,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahFinalUpdateEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "18.504: [Pause Final Update Refs, 0.206 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SHENANDOAH_FINAL_UPDATE.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testDatestamp() {
         String logLine = "2020-03-10T08:03:47.442-0400: [Pause Final Update Refs, 0.206 ms]";
         assertTrue(ShenandoahFinalUpdateEvent.match(logLine),

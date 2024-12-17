@@ -241,13 +241,6 @@ class TestFlsStaticsEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "Max   Chunk Size: 536870912";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.FLS_STATISTICS.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testNotReportable() {
         String logLine = "Max   Chunk Size: 536870912";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),

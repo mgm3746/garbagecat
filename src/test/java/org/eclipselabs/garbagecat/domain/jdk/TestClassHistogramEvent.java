@@ -120,14 +120,6 @@ class TestClassHistogramEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
-                + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testPreprocessedAfterFullGcDatestamp() {
         String logLine = "2021-10-07T10:05:58.708+0100: [Class Histogram (after full gc):, 4.5682980 secs]";
         assertTrue(ClassHistogramEvent.match(logLine),

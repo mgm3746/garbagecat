@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,13 +25,6 @@ import org.junit.jupiter.api.Test;
  * 
  */
 class TestVerboseGcYoungEvent {
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "2205570.508: [GC 1726387K->773247K(3097984K), 0.2318035 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.VERBOSE_GC_YOUNG.toString() + " not indentified as blocking.");
-    }
 
     @Test
     void testLogLine() {

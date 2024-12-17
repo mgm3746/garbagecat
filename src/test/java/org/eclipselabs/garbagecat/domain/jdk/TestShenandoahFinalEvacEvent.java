@@ -32,13 +32,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahFinalEvacEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "2020-03-10T08:03:46.251-0400: 17.313: [Pause Final Evac, 0.009 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SHENANDOAH_FINAL_EVAC.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testDatestamp() {
         String logLine = "2020-03-10T08:03:46.251-0400: [Pause Final Evac, 0.009 ms]";
         assertTrue(ShenandoahFinalEvacEvent.match(logLine),

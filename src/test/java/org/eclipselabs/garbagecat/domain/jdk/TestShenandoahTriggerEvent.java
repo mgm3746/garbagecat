@@ -40,13 +40,6 @@ class TestShenandoahTriggerEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "Trigger: Learning 1 of 5. Free (45118K) is below initial threshold (45875K)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "Trigger: Learning 1 of 5. Free (45118K) is below initial threshold (45875K)";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahTriggerEvent,

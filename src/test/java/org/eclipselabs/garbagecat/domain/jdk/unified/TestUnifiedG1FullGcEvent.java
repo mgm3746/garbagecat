@@ -55,15 +55,6 @@ class TestUnifiedG1FullGcEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[2021-03-13T03:37:40.051+0530][79853119ms][gc,start] GC(8646) Pause Full "
-                + "(G1 Evacuation Pause) Humongous regions: 0->0 Metaspace: 214096K->214096K(739328K) "
-                + "8186M->8178M(8192M) 2127.343ms User=16.40s Sys=0.09s Real=2.13s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.UNIFIED_G1_FULL_GC_PARALLEL);

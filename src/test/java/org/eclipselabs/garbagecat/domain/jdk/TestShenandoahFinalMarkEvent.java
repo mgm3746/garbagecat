@@ -32,13 +32,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahFinalMarkEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "2020-03-10T08:03:29.427-0400: 0.489: [Pause Final Mark, 0.313 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SHENANDOAH_FINAL_MARK.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testDatestamp() {
         String logLine = "2020-03-10T08:03:29.427-0400: [Pause Final Mark, 0.313 ms]";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine),

@@ -31,13 +31,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedShenandoahInitUpdateRefsEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "[5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms";
         assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS,

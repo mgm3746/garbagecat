@@ -339,13 +339,6 @@ class TestShenandoahStatsEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "All times are wall-clock times, except per-root-class counters, that are sum over";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SHENANDOAH_STATS.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "All times are wall-clock times, except per-root-class counters, that are sum over";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahStatsEvent,

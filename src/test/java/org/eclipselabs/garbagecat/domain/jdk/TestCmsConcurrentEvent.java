@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -137,14 +136,6 @@ class TestCmsConcurrentEvent {
                 + "[Times: user=6.00 sys=0.28, real=10.26 secs]x";
         assertFalse(CmsConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.CMS_CONCURRENT.toString() + ".");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "572289.495: [CMS572304.683: [CMS-concurrent-sweep: 17.692/44.143 secs] "
-                + "[Times: user=97.86 sys=1.85, real=44.14 secs]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.CMS_CONCURRENT.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test

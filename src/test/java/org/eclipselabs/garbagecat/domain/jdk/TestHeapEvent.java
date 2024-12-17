@@ -167,17 +167,9 @@ class TestHeapEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "Heap";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.HEAP.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testObjectSpace() {
         String logLine = "  object space 341504K, 27% used [0x00000005cd600000,0x00000005d322aa70,0x00000005e2380000)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.HEAP.toString() + " incorrectly indentified as blocking.");
+        assertTrue(HeapEvent.match(logLine), "Log line not recognized as " + JdkUtil.EventType.HEAP.toString() + ".");
     }
 
     @Test
@@ -191,8 +183,7 @@ class TestHeapEvent {
     void testParOldGen() {
         String logLine = " ParOldGen       total 341504K, used 94378K [0x00000005cd600000, 0x00000005e2380000, "
                 + "0x0000000719d00000)";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.HEAP.toString() + " incorrectly indentified as blocking.");
+        assertTrue(HeapEvent.match(logLine), "Log line not recognized as " + JdkUtil.EventType.HEAP.toString() + ".");
     }
 
     @Test

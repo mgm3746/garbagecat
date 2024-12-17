@@ -195,13 +195,6 @@ class TestUnifiedFooterStatsEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms] GC STATISTICS:";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testObservedPacing() {
         String logLine = "[103.684s][info][gc,stats     ] observed pacing delays may be higher than the threshold "
                 + "when paced thread spent more";

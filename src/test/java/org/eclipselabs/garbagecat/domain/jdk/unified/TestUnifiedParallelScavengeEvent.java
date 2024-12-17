@@ -43,15 +43,6 @@ class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
-                + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
-                + "User=0.01s Sys=0.01s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testJdk17() {
         String logLine = "[0.026s][info][gc,start    ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K(1024K)->448K(1024K) ParOldGen: 0K(512K)->8K(512K) Metaspace: 88K(192K)->88K(192K) 0M->0M(1M) "

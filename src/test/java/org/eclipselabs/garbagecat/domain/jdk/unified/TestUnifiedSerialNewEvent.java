@@ -43,15 +43,6 @@ class TestUnifiedSerialNewEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
-                + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
-                + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testJdk17() {
         String logLine = "[0.035s][info][gc,start    ] GC(0) Pause Young (Allocation Failure) DefNew: "
                 + "1022K(1152K)->127K(1152K) Tenured: 0K(768K)->552K(768K) Metaspace: 155K(256K)->155K(256K) "

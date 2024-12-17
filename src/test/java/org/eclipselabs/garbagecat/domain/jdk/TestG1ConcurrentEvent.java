@@ -13,11 +13,9 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -142,13 +140,6 @@ class TestG1ConcurrentEvent {
                 "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
         G1ConcurrentEvent event = new G1ConcurrentEvent(logLine);
         assertEquals((long) 50136, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "50.101: [GC concurrent-root-region-scan-start]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.G1_CONCURRENT.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test

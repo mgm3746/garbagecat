@@ -31,7 +31,6 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
@@ -134,16 +133,6 @@ class TestCmsSerialOldEvent {
                 Analysis.WARN_HEAP_INSPECTION_INITIATED_GC + " analysis not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_CMS.getKey()),
                 Analysis.ERROR_SERIAL_GC_CMS + " analysis incorrectly identified.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "262372.344: [Full GC (JvmtiEnv ForceGarbageCollection) 262372.344: [CMS "
-                + "(concurrent mode interrupted): 49392K->48780K(1756416K), 0.2620228 secs] "
-                + "49392K->48780K(2063104K), [Metaspace: 256552K->256552K(1230848K)], 0.2624794 secs] "
-                + "[Times: user=0.26 sys=0.00, real=0.27 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.CMS_SERIAL_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test

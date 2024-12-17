@@ -130,13 +130,6 @@ class TestShenandoahConcurrentEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "0.426: [Concurrent reset 16434K->16466K(21248K), 0.091 ms]";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "0.426: [Concurrent reset 16434K->16466K(21248K), 0.091 ms]";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof ShenandoahConcurrentEvent,

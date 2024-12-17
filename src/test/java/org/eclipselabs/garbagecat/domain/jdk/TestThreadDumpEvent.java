@@ -82,13 +82,6 @@ class TestThreadDumpEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "Full thread dump Java HotSpot(TM) Server VM (11.0-b16 mixed mode):";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.THREAD_DUMP.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testReportable() {
         String logLine = "Full thread dump Java HotSpot(TM) Server VM (11.0-b16 mixed mode):";
         assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),

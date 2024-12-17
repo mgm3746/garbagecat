@@ -35,13 +35,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahDegeneratedGcEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                SHENANDOAH_DEGENERATED_GC + " not indentified as blocking.");
-    }
-
-    @Test
     void testDatestamp() {
         String logLine = "2020-08-18T14:05:42.515+0000: [Pause Degenerated GC (Mark) "
                 + "93058M->29873M(98304M), 1285.045 ms]";

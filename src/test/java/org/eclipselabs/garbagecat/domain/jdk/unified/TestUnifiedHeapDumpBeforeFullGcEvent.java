@@ -48,14 +48,6 @@ class TestUnifiedHeapDumpBeforeFullGcEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[2024-12-06T10:15:56.126-0500] GC(0) Heap Dump (before full gc) 7.667ms";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_HEAP_DUMP_BEFORE_FULL_GC.toString()
-                        + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "[2024-12-06T10:15:56.126-0500] GC(0) Heap Dump (before full gc) 7.667ms";
         assertTrue(

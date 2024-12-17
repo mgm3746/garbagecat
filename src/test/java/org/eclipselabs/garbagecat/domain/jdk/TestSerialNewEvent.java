@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -72,14 +71,6 @@ class TestSerialNewEvent {
         assertEquals(kilobytes(4425 - 4425), event.getOldOccupancyEnd(), "Old end occupancy not parsed correctly.");
         assertEquals(kilobytes(3137216 - 76672), event.getOldSpace(), "Old space size not parsed correctly.");
         assertEquals(36058, event.getDurationMicros(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "7.798: [GC 7.798: [DefNew: 37172K->3631K(39296K), 0.0209300 secs] "
-                + "41677K->10314K(126720K), 0.0210210 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SERIAL_NEW.toString() + " not indentified as blocking.");
     }
 
     @Test

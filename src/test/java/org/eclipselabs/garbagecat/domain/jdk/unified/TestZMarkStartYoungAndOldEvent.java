@@ -39,13 +39,6 @@ class TestZMarkStartYoungAndOldEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.Z_MARK_START_YOUNG_AND_OLD.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         String logLine = "[0.410s][info][gc,phases   ] GC(19) Y: Pause Mark Start (Major) 0.008ms";
         assertTrue(ZMarkStartYoungAndOldEvent.match(logLine),

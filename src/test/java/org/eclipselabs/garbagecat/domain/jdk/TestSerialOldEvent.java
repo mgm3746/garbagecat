@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -185,15 +184,6 @@ class TestSerialOldEvent {
         assertEquals(kilobytes(65384), event.getClassOccupancyEnd(), "Class end occupancy not parsed correctly.");
         assertEquals(kilobytes(1114112), event.getClassSpace(), "Class space size not parsed correctly.");
         assertEquals(680424, event.getDurationMicros(), "Duration not parsed correctly.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "187.159: [Full GC 187.160: "
-                + "[Tenured: 97171K->102832K(815616K), 0.6977443 secs] 152213K->102832K(907328K), "
-                + "[Perm : 49152K->49154K(49158K)], 0.6929258 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SERIAL_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test

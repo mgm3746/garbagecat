@@ -35,14 +35,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahFullGcEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
-                + "[Metaspace: 282195K->281648K(1314816K)]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                SHENANDOAH_FULL_GC + " not indentified as blocking.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";

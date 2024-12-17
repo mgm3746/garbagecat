@@ -51,13 +51,6 @@ class TestUnifiedYoungEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[9.602s][info][gc] GC(569) Pause Young (Allocation Failure) 32M->12M(38M) 1.812ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_YOUNG.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testJdk17() {
         String logLine = "[0.070s][info][gc,start    ] GC(2) Pause Young (Allocation Failure) 1M->1M(2M) 0.663ms "
                 + "User=0.00s Sys=0.00s Real=0.00s";

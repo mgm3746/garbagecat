@@ -33,7 +33,6 @@ import org.eclipselabs.garbagecat.util.GcUtil;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
@@ -61,14 +60,6 @@ class TestParNewEvent {
                 org.github.joa.util.Analysis.INFO_CMS_INCREMENTAL_MODE + " analysis not identified.");
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT.getKey()),
                 org.github.joa.util.Analysis.WARN_CMS_INC_MODE_WITH_INIT_OCCUP_FRACT + " analysis not identified.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "20.189: [GC 20.190: [ParNew: 86199K->8454K(91712K), 0.0375060 secs] "
-                + "89399K->11655K(907328K), 0.0387074 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.PAR_NEW.toString() + " not indentified as blocking.");
     }
 
     @Test

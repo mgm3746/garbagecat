@@ -31,7 +31,6 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
@@ -57,13 +56,6 @@ class TestG1FullGcEvent {
                 JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + " event not identified.");
         assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "1302.524: [Full GC (System.gc()) 653M->586M(979M), 1.6364900 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + " not indentified as blocking.");
     }
 
     @Test

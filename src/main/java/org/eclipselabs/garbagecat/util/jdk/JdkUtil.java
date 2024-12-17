@@ -439,60 +439,6 @@ public final class JdkUtil {
     }
 
     /**
-     * @param eventType
-     *            The event type to test.
-     * @return true if the log event is blocking, false if it is concurrent or informational.
-     */
-    public static final boolean isBlocking(EventType eventType) {
-        switch (eventType) {
-        case APPLICATION_CONCURRENT_TIME:
-        case APPLICATION_STOPPED_TIME:
-        case CLASS_HISTOGRAM:
-        case CLASS_UNLOADING:
-        case CMS_CONCURRENT:
-        case FLS_STATISTICS:
-        case UNIFIED_HEAP:
-        case UNIFIED_HEAP_DUMP_AFTER_FULL_GC:
-        case UNIFIED_HEAP_DUMP_BEFORE_FULL_GC:
-        case FOOTER_STATS:
-        case G1_CONCURRENT:
-        case GC_INFO:
-        case GC_LOCKER_SCAVENGE_FAILED:
-        case GC_OVERHEAD_LIMIT:
-        case HEADER_COMMAND_LINE_FLAGS:
-        case HEADER_MEMORY:
-        case HEADER_VM_INFO:
-        case HEAP:
-        case HEAP_ADDRESS:
-        case HEAP_AT_GC:
-        case HEAP_REGION_SIZE:
-        case LOG_FILE:
-        case UNIFIED_SHENANDOAH_CANCELLING_GC:
-        case SHENANDOAH_CONCURRENT:
-        case SHENANDOAH_STATS:
-        case SHENANDOAH_TRIGGER:
-        case THREAD_DUMP:
-        case TENURING_DISTRIBUTION:
-        case UNIFIED_CONCURRENT:
-        case UNIFIED_FOOTER_STATS:
-        case UNIFIED_GC_LOCKER_RETRY:
-        case UNIFIED_HEADER:
-        case UNIFIED_SAFEPOINT:
-        case UNIFIED_SHENANDOAH_STATS:
-        case UNIFIED_SHENANDOAH_TRIGGER:
-        case UNKNOWN:
-        case VM_WARNING:
-        case Z_ALLOCATION_STALL:
-        case Z_RELOCATION_STALL:
-        case Z_STATS:
-            return false;
-        default:
-            return true;
-        }
-
-    }
-
-    /**
      * Determine if the <code>SafepointEvent</code> should be classified as a bottleneck.
      * 
      * @param event

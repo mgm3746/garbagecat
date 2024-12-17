@@ -31,13 +31,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedShenandoahFinalRootsEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "[2023-08-25T02:15:57.862-0400][233.267s] GC(4) Pause Final Roots 0.019ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_ROOTS.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[2023-08-25T02:15:57.862-0400][233.267s] GC(4) Pause Final Roots 0.019ms";
         assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_ROOTS,

@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -121,15 +120,6 @@ class TestParallelCompactingOldEvent {
         assertEquals(3, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(243, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(288, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "2182.541: [Full GC [PSYoungGen: 1940K->0K(98560K)] "
-                + "[ParOldGen: 813929K->422305K(815616K)] 815869K->422305K(914176K) "
-                + "[PSPermGen: 81960K->81783K(164352K)], 2.4749181 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.PARALLEL_COMPACTING_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test

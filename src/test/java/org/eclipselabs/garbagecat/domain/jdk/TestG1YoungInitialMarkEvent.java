@@ -32,7 +32,6 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
@@ -125,13 +124,6 @@ class TestG1YoungInitialMarkEvent {
         assertEquals(2, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(6, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(334, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "1244.357: [GC pause (young) (initial-mark) 847M->599M(970M), 0.0566840 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + " not indentified as blocking.");
     }
 
     @Test

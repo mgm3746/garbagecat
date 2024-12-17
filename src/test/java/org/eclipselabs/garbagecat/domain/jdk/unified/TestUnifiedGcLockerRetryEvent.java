@@ -49,14 +49,6 @@ class TestUnifiedGcLockerRetryEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
-                + "waiting for GCLocker too often allocating 1235 words";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";

@@ -31,13 +31,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedShenandoahFinalUpdateRefsEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
         assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS,

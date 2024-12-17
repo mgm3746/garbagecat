@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -57,15 +56,6 @@ class TestParallelSerialOldEvent {
                 "Log line not recognized as " + JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + ".");
         ParallelSerialOldEvent event = new ParallelSerialOldEvent(logLine);
         assertEquals(597438286807L, event.getTimestamp(), "Time stamp not parsed correctly.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "3.600: [Full GC [PSYoungGen: 5424K->0K(38208K)] "
-                + "[PSOldGen: 488K->5786K(87424K)] 5912K->5786K(125632K) "
-                + "[PSPermGen: 13092K->13094K(131072K)], 0.0699360 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.PARALLEL_SERIAL_OLD.toString() + " not indentified as blocking.");
     }
 
     @Test

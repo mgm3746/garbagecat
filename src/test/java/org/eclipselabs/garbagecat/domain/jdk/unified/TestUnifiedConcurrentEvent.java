@@ -15,7 +15,6 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.eclipselabs.garbagecat.util.Memory.megabytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -379,13 +378,6 @@ class TestUnifiedConcurrentEvent {
         String logLine = "[16.601s][info][gc,marking   ] GC(1033) Concurrent Mark (16.601s)";
         assertTrue(UnifiedConcurrentEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + ".");
-    }
-
-    @Test
-    void testNotBlocking() {
-        String logLine = "[0.082s][info][gc] GC(1) Concurrent Mark";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test

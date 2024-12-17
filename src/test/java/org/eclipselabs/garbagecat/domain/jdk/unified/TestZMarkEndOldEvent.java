@@ -39,13 +39,6 @@ class TestZMarkEndOldEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.213s][info][gc,phases   ] GC(2) O: Pause Mark End 0.005ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.Z_MARK_END_OLD.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         String logLine = "[0.213s][info][gc,phases   ] GC(2) O: Pause Mark End 0.005ms";
         assertTrue(ZMarkEndOldEvent.match(logLine),

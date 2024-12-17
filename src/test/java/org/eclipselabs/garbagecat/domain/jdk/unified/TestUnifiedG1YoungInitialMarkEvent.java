@@ -42,14 +42,6 @@ class TestUnifiedG1YoungInitialMarkEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
-                + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         String logLine = "[2.752s][info][gc            ] GC(53) Pause Initial Mark (G1 Humongous Allocation) "
                 + "562M->5M(1250M) 1.212ms User=0.00s Sys=0.00s Real=0.00s";

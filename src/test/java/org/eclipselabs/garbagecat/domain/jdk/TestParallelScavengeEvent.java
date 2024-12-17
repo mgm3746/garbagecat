@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.GcTrigger;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -112,14 +111,6 @@ class TestParallelScavengeEvent {
         assertEquals(0, event.getTimeSys(), "Sys time not parsed correctly.");
         assertEquals(27, event.getTimeReal(), "Real time not parsed correctly.");
         assertEquals(319, event.getParallelism(), "Parallelism not calculated correctly.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "19810.091: [GC [PSYoungGen: 27808K->632K(28032K)] "
-                + "160183K->133159K(585088K), 0.0225213 secs]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.PARALLEL_SCAVENGE.toString() + " not indentified as blocking.");
     }
 
     @Test

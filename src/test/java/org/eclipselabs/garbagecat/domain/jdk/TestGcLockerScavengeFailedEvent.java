@@ -46,13 +46,6 @@ class TestGcLockerScavengeFailedEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "GC locker: Trying a full collection because scavenge failed";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.GC_LOCKER_SCAVENGE_FAILED.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "GC locker: Trying a full collection because scavenge failed";
         LogEvent event = JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN);

@@ -68,13 +68,6 @@ class TestApplicationConcurrentTimeEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "Application time: 130.5284640 seconds   ";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.APPLICATION_CONCURRENT_TIME.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testReportable() {
         String logLine = "Application time: 130.5284640 seconds   ";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),

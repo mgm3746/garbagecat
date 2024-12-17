@@ -858,17 +858,6 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
-        String logLine = "[0.013s][info][gc,init] NUMA Support: Disabled";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_HEADER.toString() + " incorrectly indentified as blocking.");
-        assertNotEquals(JdkUtil.EventType.GC_INFO,
-                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
-                JdkUtil.EventType.GC_INFO + " not identified.");
-    }
-
-    @Test
     void testNumaNodes() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[2023-12-12T08:47:56.693+0200][info][gc,init] NUMA Nodes: 4";

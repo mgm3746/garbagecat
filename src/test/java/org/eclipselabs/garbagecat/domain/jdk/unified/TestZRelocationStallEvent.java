@@ -13,7 +13,6 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -37,13 +36,6 @@ class TestZRelocationStallEvent {
         assertEquals(JdkUtil.EventType.Z_RELOCATION_STALL,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.EventType.Z_RELOCATION_STALL + "not identified.");
-    }
-
-    @Test
-    void testIsBlocking() {
-        String logLine = "[123456.789s][info][gc          ] Relocation Stall (default task-1234) 1.234ms";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.Z_RELOCATION_STALL.toString() + " incorrectly indentified as blocking.");
     }
 
     @Test

@@ -141,13 +141,6 @@ class TestFooterStatsEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "GC STATISTICS:";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.FOOTER_STATS.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testObservedPacing() {
         String logLine = "observed pacing delays may be higher than the threshold " + "when paced thread spent more";
         assertTrue(FooterStatsEvent.match(logLine),

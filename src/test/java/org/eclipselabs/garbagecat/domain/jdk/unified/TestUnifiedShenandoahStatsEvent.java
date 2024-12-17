@@ -197,14 +197,6 @@ class TestUnifiedShenandoahStatsEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[2024-04-09T08:26:09.935-0400] All times are wall-clock times, except per-root-class "
-                + "counters, that are sum over";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "[2024-04-09T08:26:09.935-0400] All times are wall-clock times, except per-root-class "
                 + "counters, that are sum over";

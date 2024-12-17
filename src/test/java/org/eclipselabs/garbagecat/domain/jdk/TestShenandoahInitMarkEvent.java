@@ -32,13 +32,6 @@ import org.junit.jupiter.api.Test;
 class TestShenandoahInitMarkEvent {
 
     @Test
-    void testBlocking() {
-        String logLine = "0.427: [Pause Init Mark, 0.419 ms]";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.SHENANDOAH_INIT_MARK.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testDatestamp() {
         String logLine = "2020-03-10T08:03:29.365-0400: [Pause Init Mark, 0.419 ms]";
         assertTrue(ShenandoahInitMarkEvent.match(logLine),

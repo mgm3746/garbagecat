@@ -82,15 +82,6 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
-                + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "
-                + "24M->13M(31M) 0.401ms User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testJdk17() {
         String logLine = "[0.037s][info][gc,start    ] GC(0) Pause Young (Normal) (G1 Preventive Collection) Ext Root "
                 + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 331K(512K)->331K(512K) "

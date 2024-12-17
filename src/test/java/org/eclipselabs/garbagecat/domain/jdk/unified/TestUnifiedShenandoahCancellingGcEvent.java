@@ -54,14 +54,6 @@ class TestUnifiedShenandoahCancellingGcEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString()
-                        + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "[72.659s][info][gc] Cancelling GC: Stopping VM";
         assertTrue(

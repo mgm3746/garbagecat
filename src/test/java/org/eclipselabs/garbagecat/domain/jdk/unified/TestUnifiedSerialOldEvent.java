@@ -52,15 +52,6 @@ class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
-                + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_SERIAL_OLD.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testJdk17() {
         String logLine = "[0.071s][info][gc,start    ] GC(3) Pause Full (Allocation Failure) DefNew: "
                 + "1125K(1152K)->0K(1152K) Tenured: 754K(768K)->1500K(2504K) Metaspace: 1003K(1088K)->1003K(1088K) "

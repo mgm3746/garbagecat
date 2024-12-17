@@ -78,14 +78,6 @@ class TestZStatsEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "[10.485s] === Garbage Collection Statistics ================================================"
-                + "=======================================================================";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.Z_STATS.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testParseLogLine() {
         String logLine = "[10.485s] === Garbage Collection Statistics ================================================"
                 + "=======================================================================";

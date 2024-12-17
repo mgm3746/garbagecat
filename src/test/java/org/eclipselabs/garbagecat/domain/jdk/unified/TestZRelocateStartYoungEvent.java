@@ -49,13 +49,6 @@ class TestZRelocateStartYoungEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.103s][info][gc,phases   ] GC(0) Y: Pause Relocate Start 0.006ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.Z_RELOCATE_START_YOUNG.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         String logLine = "[0.103s][info][gc,phases   ] GC(0) Y: Pause Relocate Start 0.006ms";
         assertTrue(ZRelocateStartYoungEvent.match(logLine),

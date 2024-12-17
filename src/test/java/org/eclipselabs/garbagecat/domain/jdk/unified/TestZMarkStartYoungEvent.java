@@ -39,13 +39,6 @@ class TestZMarkStartYoungEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[0.296s][info][gc,phases   ] GC(3) y: Pause Mark Start 0.010ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.Z_MARK_START_YOUNG.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         String logLine = "[0.296s][info][gc,phases   ] GC(3) y: Pause Mark Start 0.010ms";
         assertTrue(ZMarkStartYoungEvent.match(logLine),

@@ -40,13 +40,6 @@ class TestUnifiedG1CleanupEvent {
     }
 
     @Test
-    void testIsBlocking() {
-        String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
-        assertTrue(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_G1_CLEANUP.toString() + " not indentified as blocking.");
-    }
-
-    @Test
     void testLogLine() {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
         assertTrue(UnifiedG1CleanupEvent.match(logLine),

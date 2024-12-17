@@ -40,13 +40,6 @@ class TestGcOverheadLimitEvent {
     }
 
     @Test
-    void testNotBlocking() {
-        String logLine = "GC time would exceed GCTimeLimit of 98%";
-        assertFalse(JdkUtil.isBlocking(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as blocking.");
-    }
-
-    @Test
     void testReportable() {
         String logLine = "GC time would exceed GCTimeLimit of 98%";
         assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
