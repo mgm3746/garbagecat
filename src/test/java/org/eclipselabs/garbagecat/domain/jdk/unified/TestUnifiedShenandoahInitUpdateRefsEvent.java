@@ -38,18 +38,6 @@ class TestUnifiedShenandoahInitUpdateRefsEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS;
-        String logLine = "[5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms";
-        long timestamp = 5312 - 0;
-        int duration = 5;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof UnifiedShenandoahInitUpdateRefsEvent,
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[5.312s][info][gc] GC(110) Pause Init Update Refs 0.005ms";
         assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS,

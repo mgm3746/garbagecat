@@ -57,16 +57,6 @@ class TestShenandoahDegeneratedGcEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = SHENANDOAH_DEGENERATED_GC;
-        String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
-        long timestamp = 854868165;
-        int duration = 1285045;
-        assertTrue(JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                duration) instanceof ShenandoahDegeneratedGcEvent, SHENANDOAH_DEGENERATED_GC + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
         assertEquals(SHENANDOAH_DEGENERATED_GC, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),

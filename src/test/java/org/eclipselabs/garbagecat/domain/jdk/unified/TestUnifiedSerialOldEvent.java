@@ -42,19 +42,6 @@ class TestUnifiedSerialOldEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.UNIFIED_SERIAL_OLD;
-        String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
-                + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
-        long timestamp = 27091;
-        int duration = 0;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedSerialOldEvent,
-                JdkUtil.EventType.UNIFIED_SERIAL_OLD.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.075s][info][gc,start     ] GC(2) Pause Full (Allocation Failure) DefNew: "
                 + "1152K->0K(1152K) Tenured: 458K->929K(960K) Metaspace: 697K->697K(1056768K) 1M->0M(2M) 3.061ms "

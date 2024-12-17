@@ -43,18 +43,6 @@ class TestShenandoahFullGcEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = SHENANDOAH_FULL_GC;
-        String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
-                + "[Metaspace: 282195K->281648K(1314816K)]";
-        long timestamp = 120839710;
-        int duration = 4077;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof ShenandoahFullGcEvent,
-                SHENANDOAH_FULL_GC + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "2021-03-23T20:57:46.427+0000: 120839.710: [Pause Full 1589M->1002M(1690M), 4077.274 ms], "
                 + "[Metaspace: 282195K->281648K(1314816K)]";

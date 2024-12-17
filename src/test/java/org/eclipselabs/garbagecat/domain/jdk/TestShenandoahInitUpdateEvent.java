@@ -39,18 +39,6 @@ class TestShenandoahInitUpdateEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.SHENANDOAH_INIT_UPDATE;
-        String logLine = "17.346: [Pause Init Update Refs, 0.017 ms]";
-        long timestamp = 17346;
-        int duration = 17;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof ShenandoahInitUpdateEvent,
-                JdkUtil.EventType.SHENANDOAH_INIT_UPDATE.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "17.346: [Pause Init Update Refs, 0.017 ms]";
         assertEquals(JdkUtil.EventType.SHENANDOAH_INIT_UPDATE,

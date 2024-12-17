@@ -33,20 +33,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedParallelScavengeEvent {
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE;
-        String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
-                + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "
-                + "User=0.01s Sys=0.01s Real=0.00s";
-        long timestamp = 27091;
-        int duration = 0;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof UnifiedParallelScavengeEvent,
-                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.031s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) PSYoungGen: "
                 + "512K->464K(1024K) PSOldGen: 0K->8K(512K) Metaspace: 120K->120K(1056768K) 0M->0M(1M) 1.195ms "

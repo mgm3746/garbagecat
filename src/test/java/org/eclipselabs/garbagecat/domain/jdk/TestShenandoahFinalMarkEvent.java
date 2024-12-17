@@ -48,18 +48,6 @@ class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.SHENANDOAH_FINAL_MARK;
-        String logLine = "2020-03-10T08:03:29.427-0400: 0.489: [Pause Final Mark, 0.313 ms]";
-        long timestamp = 489;
-        int duration = 313;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof ShenandoahFinalMarkEvent,
-                JdkUtil.EventType.SHENANDOAH_FINAL_MARK.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "2020-03-10T08:03:29.427-0400: 0.489: [Pause Final Mark, 0.313 ms]";
         assertEquals(JdkUtil.EventType.SHENANDOAH_FINAL_MARK,

@@ -33,19 +33,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedSerialNewEvent {
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.UNIFIED_SERIAL_NEW;
-        String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
-                + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "
-                + "1.393ms User=0.00s Sys=0.00s Real=0.00s";
-        long timestamp = 27091;
-        int duration = 0;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp, duration) instanceof UnifiedSerialNewEvent,
-                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.041s][info][gc,start     ] GC(0) Pause Young (Allocation Failure) "
                 + "DefNew: 983K->128K(1152K) Tenured: 0K->458K(768K) Metaspace: 246K->246K(1056768K) 0M->0M(1M) "

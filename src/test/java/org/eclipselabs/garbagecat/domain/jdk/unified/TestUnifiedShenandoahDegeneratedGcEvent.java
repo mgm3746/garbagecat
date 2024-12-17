@@ -41,18 +41,6 @@ class TestUnifiedShenandoahDegeneratedGcEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = UNIFIED_SHENANDOAH_DEGENERATED_GC;
-        String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
-        long timestamp = 52937 - 53;
-        int duration = 53;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof UnifiedShenandoahDegeneratedGcEvent,
-                UNIFIED_SHENANDOAH_DEGENERATED_GC + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[52.937s][info][gc           ] GC(1632) Pause Degenerated GC (Mark) 60M->30M(64M) 53.697ms";
         assertEquals(UNIFIED_SHENANDOAH_DEGENERATED_GC,

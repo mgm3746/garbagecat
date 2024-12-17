@@ -44,20 +44,6 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedG1MixedPauseEvent {
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE;
-        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
-                + "Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
-        long timestamp = 15108;
-        int duration = 0;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof UnifiedG1MixedPauseEvent,
-                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "

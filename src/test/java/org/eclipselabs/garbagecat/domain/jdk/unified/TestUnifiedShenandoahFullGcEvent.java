@@ -41,16 +41,6 @@ class TestUnifiedShenandoahFullGcEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = UNIFIED_SHENANDOAH_FULL_GC;
-        String logLine = "[10.478s][info][gc] GC(0) Pause Full 1589M->1002M(1690M), 4077.274 ms";
-        long timestamp = 478;
-        int duration = 4077;
-        assertTrue(JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                duration) instanceof UnifiedShenandoahFullGcEvent, UNIFIED_SHENANDOAH_FULL_GC + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[10.478s][info][gc] GC(0) Pause Full 1589M->1002M(1690M), 4077.274 ms";
         assertEquals(UNIFIED_SHENANDOAH_FULL_GC, JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),

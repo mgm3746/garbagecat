@@ -59,18 +59,6 @@ class TestShenandoahFinalEvacEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.SHENANDOAH_FINAL_EVAC;
-        String logLine = "2020-03-10T08:03:46.251-0400: 17.313: [Pause Final Evac, 0.009 ms]";
-        long timestamp = 17313;
-        int duration = 9;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof ShenandoahFinalEvacEvent,
-                JdkUtil.EventType.SHENANDOAH_FINAL_EVAC.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "2020-03-10T08:03:46.251-0400: 17.313: [Pause Final Evac, 0.009 ms]";
         assertEquals(JdkUtil.EventType.SHENANDOAH_FINAL_EVAC,

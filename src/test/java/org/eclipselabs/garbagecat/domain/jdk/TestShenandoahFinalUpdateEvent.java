@@ -49,18 +49,6 @@ class TestShenandoahFinalUpdateEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.SHENANDOAH_FINAL_UPDATE;
-        String logLine = "18.504: [Pause Final Update Refs, 0.206 ms]";
-        long timestamp = 18504;
-        int duration = 20;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof ShenandoahFinalUpdateEvent,
-                JdkUtil.EventType.SHENANDOAH_FINAL_UPDATE.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "18.504: [Pause Final Update Refs, 0.206 ms]";
         assertEquals(JdkUtil.EventType.SHENANDOAH_FINAL_UPDATE,

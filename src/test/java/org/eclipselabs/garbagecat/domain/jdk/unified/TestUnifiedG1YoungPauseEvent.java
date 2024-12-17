@@ -72,20 +72,6 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE;
-        String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) "
-                + "Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) 24M->13M(31M) 0.401ms "
-                + "User=0.00s Sys=0.00s Real=0.00s";
-        long timestamp = 27091;
-        int duration = 0;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof UnifiedG1YoungPauseEvent,
-                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
                 + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "

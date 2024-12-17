@@ -49,18 +49,6 @@ class TestShenandoahInitMarkEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.SHENANDOAH_INIT_MARK;
-        String logLine = "0.427: [Pause Init Mark, 0.419 ms]";
-        long timestamp = 427;
-        int duration = 419;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof ShenandoahInitMarkEvent,
-                JdkUtil.EventType.SHENANDOAH_INIT_MARK.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "0.427: [Pause Init Mark, 0.419 ms]";
         assertEquals(JdkUtil.EventType.SHENANDOAH_INIT_MARK,

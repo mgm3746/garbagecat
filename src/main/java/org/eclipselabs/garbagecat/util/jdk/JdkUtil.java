@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.ApplicationLoggingEvent;
 import org.eclipselabs.garbagecat.domain.BlankLineEvent;
-import org.eclipselabs.garbagecat.domain.BlockingEvent;
 import org.eclipselabs.garbagecat.domain.LogEvent;
 import org.eclipselabs.garbagecat.domain.NullEvent;
 import org.eclipselabs.garbagecat.domain.SafepointEvent;
@@ -270,130 +269,6 @@ public final class JdkUtil {
             decorator = matcher.find() ? matcher.group(1) : null;
         }
         return decorator;
-    }
-
-    /**
-     * Create <code>BlockingEvent</code> from values.
-     * 
-     * @param eventType
-     *            Log entry <code>LogEventType</code>.
-     * @param logEntry
-     *            Log entry.
-     * @param timestamp
-     *            Log entry timestamp (milliseconds after JVM startup).
-     * @param duration
-     *            The duration of the log event in microseconds (rounded)
-     * @return The <code>BlockingEvent</code> for the given event values.
-     */
-    public static final BlockingEvent hydrateBlockingEvent(EventType eventType, String logEntry, long timestamp,
-            int duration) {
-        switch (eventType) {
-
-        // Unified (alphabetical)
-        case UNIFIED_CMS_INITIAL_MARK:
-            return new UnifiedCmsInitialMarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_CLEANUP:
-            return new UnifiedG1CleanupEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_FULL_GC_PARALLEL:
-            return new UnifiedG1FullGcEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_YOUNG_INITIAL_MARK:
-            return new UnifiedG1YoungInitialMarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_MIXED_PAUSE:
-            return new UnifiedG1MixedPauseEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_YOUNG_PAUSE:
-            return new UnifiedG1YoungPauseEvent(logEntry, timestamp, duration);
-        case UNIFIED_G1_YOUNG_PREPARE_MIXED:
-            return new UnifiedG1YoungPrepareMixedEvent(logEntry, timestamp, duration);
-        case UNIFIED_OLD:
-            return new UnifiedOldEvent(logEntry, timestamp, duration);
-        case UNIFIED_PARALLEL_COMPACTING_OLD:
-            return new UnifiedParallelCompactingOldEvent(logEntry, timestamp, duration);
-        case UNIFIED_PARALLEL_SCAVENGE:
-            return new UnifiedParallelScavengeEvent(logEntry, timestamp, duration);
-        case UNIFIED_PAR_NEW:
-            return new UnifiedParNewEvent(logEntry, timestamp, duration);
-        case UNIFIED_REMARK:
-            return new UnifiedRemarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_SERIAL_NEW:
-            return new UnifiedSerialNewEvent(logEntry, timestamp, duration);
-        case UNIFIED_SERIAL_OLD:
-            return new UnifiedSerialOldEvent(logEntry, timestamp, duration);
-        case UNIFIED_SHENANDOAH_DEGENERATED_GC:
-            return new UnifiedShenandoahDegeneratedGcEvent(logEntry, timestamp, duration);
-        case UNIFIED_SHENANDOAH_FINAL_EVAC:
-            return new UnifiedShenandoahFinalEvacEvent(logEntry, timestamp, duration);
-        case UNIFIED_SHENANDOAH_FINAL_MARK:
-            return new UnifiedShenandoahFinalMarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS:
-            return new UnifiedShenandoahFinalUpdateRefsEvent(logEntry, timestamp, duration);
-        case UNIFIED_SHENANDOAH_FULL_GC:
-            return new UnifiedShenandoahFullGcEvent(logEntry, timestamp, duration);
-        case UNIFIED_SHENANDOAH_INIT_MARK:
-            return new UnifiedShenandoahInitMarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_SHENANDOAH_INIT_UPDATE_REFS:
-            return new UnifiedShenandoahInitUpdateRefsEvent(logEntry, timestamp, duration);
-        case UNIFIED_YOUNG:
-            return new UnifiedYoungEvent(logEntry, timestamp, duration);
-
-        // G1
-        case G1_YOUNG_PAUSE:
-            return new G1YoungPauseEvent(logEntry, timestamp, duration);
-        case G1_MIXED_PAUSE:
-            return new G1MixedPauseEvent(logEntry, timestamp, duration);
-        case G1_YOUNG_INITIAL_MARK:
-            return new G1YoungInitialMarkEvent(logEntry, timestamp, duration);
-        case G1_REMARK:
-            return new G1RemarkEvent(logEntry, timestamp, duration);
-        case G1_CLEANUP:
-            return new G1CleanupEvent(logEntry, timestamp, duration);
-        case G1_FULL_GC_SERIAL:
-            return new G1FullGcEvent(logEntry, timestamp, duration);
-        // Shenandoah
-        case SHENANDOAH_DEGENERATED_GC:
-            return new ShenandoahDegeneratedGcEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_FINAL_EVAC:
-            return new ShenandoahFinalEvacEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_FINAL_MARK:
-            return new ShenandoahFinalMarkEvent(logEntry, timestamp, duration);
-        case UNIFIED_SHENANDOAH_FINAL_ROOTS:
-            return new UnifiedShenandoahFinalRootsEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_FINAL_UPDATE:
-            return new ShenandoahFinalUpdateEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_FULL_GC:
-            return new ShenandoahFullGcEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_INIT_MARK:
-            return new ShenandoahInitMarkEvent(logEntry, timestamp, duration);
-        case SHENANDOAH_INIT_UPDATE:
-            return new ShenandoahInitUpdateEvent(logEntry, timestamp, duration);
-        // CMS
-        case PAR_NEW:
-            return new ParNewEvent(logEntry, timestamp, duration);
-        case CMS_SERIAL_OLD:
-            return new CmsSerialOldEvent(logEntry, timestamp, duration);
-        case CMS_INITIAL_MARK:
-            return new CmsInitialMarkEvent(logEntry, timestamp, duration);
-        case CMS_REMARK:
-            return new CmsRemarkEvent(logEntry, timestamp, duration);
-        // Parallel
-        case PARALLEL_SCAVENGE:
-            return new ParallelScavengeEvent(logEntry, timestamp, duration);
-        case PARALLEL_SERIAL_OLD:
-            return new ParallelSerialOldEvent(logEntry, timestamp, duration);
-        case PARALLEL_COMPACTING_OLD:
-            return new ParallelCompactingOldEvent(logEntry, timestamp, duration);
-        // Serial
-        case SERIAL_OLD:
-            return new SerialOldEvent(logEntry, timestamp, duration);
-        case SERIAL_NEW:
-            return new SerialNewEvent(logEntry, timestamp, duration);
-        // Other
-        case VERBOSE_GC_YOUNG:
-            return new VerboseGcYoungEvent(logEntry, timestamp, duration);
-        case VERBOSE_GC_OLD:
-            return new VerboseGcOldEvent(logEntry, timestamp, duration);
-        default:
-            throw new AssertionError("Unexpected event type value: " + eventType + ": " + logEntry);
-        }
     }
 
     /**

@@ -38,18 +38,6 @@ class TestUnifiedShenandoahFinalUpdateRefsEvent {
     }
 
     @Test
-    void testHydration() {
-        EventType eventType = JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS;
-        String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
-        long timestamp = 478 - 0;
-        int duration = 232;
-        assertTrue(
-                JdkUtil.hydrateBlockingEvent(eventType, logLine, timestamp,
-                        duration) instanceof UnifiedShenandoahFinalUpdateRefsEvent,
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not parsed.");
-    }
-
-    @Test
     void testIdentityEventType() {
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
         assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS,
