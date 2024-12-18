@@ -108,12 +108,6 @@ class TestZRelocateStartYoungEvent {
         assertEquals((long) (755666465303L - 0), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_RELOCATE_START_YOUNG),
-                JdkUtil.EventType.Z_RELOCATE_START_YOUNG.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test with time, uptime decorator.
      */

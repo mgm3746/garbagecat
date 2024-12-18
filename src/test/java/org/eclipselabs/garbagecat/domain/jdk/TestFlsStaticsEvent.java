@@ -240,10 +240,4 @@ class TestFlsStaticsEvent {
                 "Log line not recognized as " + JdkUtil.EventType.FLS_STATISTICS.toString() + ".");
     }
 
-    @Test
-    void testNotReportable() {
-        String logLine = "Max   Chunk Size: 536870912";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.FLS_STATISTICS.toString() + " incorrectly indentified as reportable.");
-    }
 }

@@ -109,12 +109,6 @@ class TestUnifiedParNewEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_PAR_NEW),
-                JdkUtil.EventType.UNIFIED_PAR_NEW.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTriggerGCLocaterInitiateGC() {
         String logLine = "[2022-10-23T10:40:35.421+0200] GC(2) Pause Young (GCLocker Initiated GC) ParNew: "
                 + "596352K->18048K(596352K) CMS: 69520K->113365K(1482752K) Metaspace: 94138K->94138K(604160K) "

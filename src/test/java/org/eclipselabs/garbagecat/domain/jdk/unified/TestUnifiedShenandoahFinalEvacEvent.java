@@ -63,12 +63,6 @@ class TestUnifiedShenandoahFinalEvacEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.UNIFIED_SHENANDOAH_FINAL_EVAC);

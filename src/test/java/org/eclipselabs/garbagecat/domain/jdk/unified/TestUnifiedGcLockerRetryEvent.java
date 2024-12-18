@@ -57,12 +57,6 @@ class TestUnifiedGcLockerRetryEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY),
-                JdkUtil.EventType.UNIFIED_GC_LOCKER_RETRY.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestampTime() {
         String logLine = "[2023-02-12T07:16:14.167+0200][warning][gc,alloc       ] ForkJoinPool-123-worker: Retried "
                 + "waiting for GCLocker too often allocating 1235 words";

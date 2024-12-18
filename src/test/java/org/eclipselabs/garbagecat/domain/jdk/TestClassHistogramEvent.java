@@ -12,11 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -146,14 +144,6 @@ class TestClassHistogramEvent {
                 + "secs]";
         assertTrue(ClassHistogramEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.CLASS_HISTOGRAM.toString() + ".");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "49709.036: [Class Histogram (after full gc):, 2.4232900 secs] "
-                + "[Times: user=29.91 sys=0.08, real=22.24 secs]";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.CLASS_HISTOGRAM.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test

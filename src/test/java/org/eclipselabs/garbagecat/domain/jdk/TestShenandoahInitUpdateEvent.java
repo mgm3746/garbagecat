@@ -83,12 +83,6 @@ class TestShenandoahInitUpdateEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.SHENANDOAH_INIT_UPDATE),
-                JdkUtil.EventType.SHENANDOAH_INIT_UPDATE.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.SHENANDOAH_INIT_UPDATE);

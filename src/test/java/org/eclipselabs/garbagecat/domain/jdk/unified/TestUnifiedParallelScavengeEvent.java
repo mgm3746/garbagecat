@@ -176,12 +176,6 @@ class TestUnifiedParallelScavengeEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE),
-                JdkUtil.EventType.UNIFIED_PARALLEL_SCAVENGE.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.UNIFIED_PARALLEL_SCAVENGE);

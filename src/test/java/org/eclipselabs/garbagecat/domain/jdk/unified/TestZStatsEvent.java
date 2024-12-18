@@ -95,12 +95,6 @@ class TestZStatsEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.Z_STATS),
-                JdkUtil.EventType.Z_STATS.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testSubphaseConcurrentMarkTryFlush() {
         LogEvent priorLogEvent = new ZStatsEvent(null);
         String logLine = "[10.029s][info][gc,stats    ]    Subphase: Concurrent Mark Try Flush                     "
@@ -154,13 +148,7 @@ class TestZStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_STATS),
-                JdkUtil.EventType.Z_STATS.toString() + " event not identified.");
-        assertFalse(jvmRun.getEventTypes().contains(EventType.FOOTER_STATS),
-                JdkUtil.EventType.FOOTER_STATS.toString() + " event incorrectly identified.");
-        assertFalse(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_STATS),
-                JdkUtil.EventType.SHENANDOAH_STATS.toString() + " event incorrectly identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -173,12 +161,6 @@ class TestZStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.Z_STATS),
-                JdkUtil.EventType.Z_STATS.toString() + " event not identified.");
-        assertFalse(jvmRun.getEventTypes().contains(EventType.FOOTER_STATS),
-                JdkUtil.EventType.FOOTER_STATS.toString() + " event incorrectly identified.");
-        assertFalse(jvmRun.getEventTypes().contains(EventType.SHENANDOAH_STATS),
-                JdkUtil.EventType.SHENANDOAH_STATS.toString() + " event incorrectly identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 }

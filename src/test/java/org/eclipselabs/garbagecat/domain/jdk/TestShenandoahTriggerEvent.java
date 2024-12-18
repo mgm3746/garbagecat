@@ -47,12 +47,6 @@ class TestShenandoahTriggerEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.SHENANDOAH_TRIGGER),
-                JdkUtil.EventType.SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testTriggerAverageGc() {
         String logLine = "Trigger: Average GC time (12.56 ms) is above the time for allocation rate (899 MB/s) to "
                 + "deplete free headroom (11466K)";

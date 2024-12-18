@@ -67,12 +67,6 @@ class TestUnifiedShenandoahFinalMarkEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.UNIFIED_SHENANDOAH_FINAL_MARK);

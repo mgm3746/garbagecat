@@ -67,12 +67,6 @@ class TestShenandoahFinalUpdateEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.SHENANDOAH_FINAL_UPDATE),
-                JdkUtil.EventType.SHENANDOAH_FINAL_UPDATE.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestamp() {
         String logLine = "18.504: [Pause Final Update Refs, 0.206 ms]";
         assertTrue(ShenandoahFinalUpdateEvent.match(logLine),

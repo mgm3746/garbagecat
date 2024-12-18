@@ -56,12 +56,6 @@ class TestZMarkEndOldEvent {
                 JdkUtil.EventType.Z_MARK_END_OLD.toString() + " not parsed.");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_MARK_END_OLD),
-                JdkUtil.EventType.Z_MARK_END_OLD.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test with time, uptime decorator.
      */

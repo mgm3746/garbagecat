@@ -189,12 +189,6 @@ class TestUnifiedG1MixedPauseEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE),
-                JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestampTime() {
         String logLine = "[2023-08-25T02:15:57.862-0400][gc,start] GC(4) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "

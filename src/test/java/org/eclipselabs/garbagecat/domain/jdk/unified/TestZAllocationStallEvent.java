@@ -56,12 +56,6 @@ class TestZAllocationStallEvent {
                 JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + " not parsed.");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_ALLOCATION_STALL),
-                JdkUtil.EventType.Z_ALLOCATION_STALL.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test with time, uptime decorator.
      */

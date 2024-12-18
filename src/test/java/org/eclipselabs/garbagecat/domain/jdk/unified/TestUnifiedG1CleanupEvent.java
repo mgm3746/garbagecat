@@ -110,12 +110,6 @@ class TestUnifiedG1CleanupEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_CLEANUP),
-                JdkUtil.EventType.UNIFIED_G1_CLEANUP.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestampUptime() {
         String logLine = "[3.161s] GC(4) Pause Cleanup 30M->30M(44M) 0.058ms";
         assertTrue(UnifiedG1CleanupEvent.match(logLine),

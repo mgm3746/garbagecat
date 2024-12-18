@@ -12,11 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -37,12 +35,5 @@ class TestGcOverheadLimitEvent {
         String logLine = "GC time would exceed GCTimeLimit of 98%";
         assertTrue(GcOverheadLimitEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.GC_OVERHEAD_LIMIT.toString() + ".");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "GC time would exceed GCTimeLimit of 98%";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.GC_OVERHEAD_LIMIT.toString() + " incorrectly indentified as reportable.");
     }
 }

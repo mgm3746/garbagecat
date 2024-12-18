@@ -348,12 +348,6 @@ class TestUnifiedG1YoungPauseEvent {
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE),
-                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test single line with time, uptime decorator.
      * 

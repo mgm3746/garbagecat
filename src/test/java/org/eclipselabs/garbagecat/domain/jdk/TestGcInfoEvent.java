@@ -90,12 +90,6 @@ class TestGcInfoEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.GC_INFO),
-                JdkUtil.EventType.GC_INFO.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testShenandoahGcMode() {
         String logLine = "Shenandoah GC mode: Snapshot-At-The-Beginning (SATB)";
         assertTrue(GcInfoEvent.match(logLine),

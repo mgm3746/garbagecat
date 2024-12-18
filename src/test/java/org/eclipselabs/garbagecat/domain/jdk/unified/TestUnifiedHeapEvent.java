@@ -334,12 +334,6 @@ class TestUnifiedHeapEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_HEAP),
-                JdkUtil.EventType.UNIFIED_HEAP.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testReservedRegion() {
         String logLine = "[69.946s][info][gc,heap,exit ] Reserved region:";
         assertTrue(UnifiedHeapEvent.match(logLine),

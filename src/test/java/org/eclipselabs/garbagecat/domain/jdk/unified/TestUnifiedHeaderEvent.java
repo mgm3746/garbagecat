@@ -998,12 +998,6 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_HEADER),
-                JdkUtil.EventType.UNIFIED_HEADER.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testRuntimeWorkers() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[0.018s][info][gc,init] Runtime Workers: 1";

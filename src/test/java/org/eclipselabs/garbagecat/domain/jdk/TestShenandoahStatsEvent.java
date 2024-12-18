@@ -388,12 +388,6 @@ class TestShenandoahStatsEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.SHENANDOAH_STATS),
-                JdkUtil.EventType.SHENANDOAH_STATS.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testSFlat() {
         String logLine = "    S: Flat Profiler Roots          129 us, workers (us): ---, ---, 129, ---, ---, ---, ---, "
                 + "---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---, ---,";

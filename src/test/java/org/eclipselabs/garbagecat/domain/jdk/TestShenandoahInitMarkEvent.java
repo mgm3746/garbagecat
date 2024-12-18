@@ -85,12 +85,6 @@ class TestShenandoahInitMarkEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.SHENANDOAH_INIT_MARK),
-                JdkUtil.EventType.SHENANDOAH_INIT_MARK.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestamp() {
         String logLine = "0.427: [Pause Init Mark, 0.419 ms]";
         assertTrue(ShenandoahInitMarkEvent.match(logLine),

@@ -55,12 +55,6 @@ class TestZMarkStartEvent {
                 JdkUtil.EventType.Z_MARK_START.toString() + " not parsed.");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_MARK_START),
-                JdkUtil.EventType.Z_MARK_START.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test with time, uptime decorator.
      */

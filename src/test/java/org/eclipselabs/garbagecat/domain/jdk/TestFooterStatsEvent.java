@@ -133,11 +133,7 @@ class TestFooterStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.FOOTER_STATS),
-                JdkUtil.EventType.FOOTER_STATS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.BLANK_LINE),
-                JdkUtil.EventType.BLANK_LINE.toString() + " event not identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -190,12 +186,6 @@ class TestFooterStatsEvent {
                 + "(n =   652) (lvls, us =        1,        2,        3,        4,       20)";
         assertTrue(FooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.FOOTER_STATS.toString() + ".");
-    }
-
-    @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.FOOTER_STATS),
-                JdkUtil.EventType.FOOTER_STATS.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test

@@ -120,12 +120,6 @@ class TestShenandoahDegeneratedGcEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(SHENANDOAH_DEGENERATED_GC),
-                SHENANDOAH_DEGENERATED_GC + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestamp() {
         String logLine = "854868.165: [Pause Degenerated GC (Mark) 93058M->29873M(98304M), 1285.045 ms]";
         assertTrue(ShenandoahDegeneratedGcEvent.match(logLine),

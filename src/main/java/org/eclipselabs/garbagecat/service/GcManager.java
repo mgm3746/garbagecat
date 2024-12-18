@@ -37,6 +37,7 @@ import org.eclipselabs.garbagecat.domain.OtherTime;
 import org.eclipselabs.garbagecat.domain.ParallelEvent;
 import org.eclipselabs.garbagecat.domain.SafepointEvent;
 import org.eclipselabs.garbagecat.domain.SerialCollection;
+import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.domain.TimeWarpException;
 import org.eclipselabs.garbagecat.domain.TimesData;
 import org.eclipselabs.garbagecat.domain.TriggerData;
@@ -60,13 +61,17 @@ import org.eclipselabs.garbagecat.domain.jdk.HeaderVmInfoEvent;
 import org.eclipselabs.garbagecat.domain.jdk.LogFileEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.ShenandoahFullGcEvent;
+import org.eclipselabs.garbagecat.domain.jdk.ThreadDumpEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedConcurrentEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPrepareMixedEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedHeaderEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSafepointEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedYoungEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.VmWarningEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.ZConcurrentEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.ZStatsEvent;
 import org.eclipselabs.garbagecat.preprocess.PreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.ApplicationStoppedTimePreprocessAction;
 import org.eclipselabs.garbagecat.preprocess.jdk.CmsPreprocessAction;
@@ -1217,48 +1222,55 @@ public class GcManager {
                 }
             }
             // Populate events list.
-            JdkUtil.EventType eventType = event.getEventType();
-            // Use collectorFamily to identify generic UNIFIED_(OLD|YOUNG)
-            if (event.getEventType() == EventType.UNIFIED_YOUNG) {
-                switch (collectorFamily) {
-                case G1:
-                    eventType = EventType.UNIFIED_G1_YOUNG_PAUSE;
-                    break;
-                case PARALLEL:
-                    eventType = EventType.UNIFIED_PARALLEL_SCAVENGE;
-                    break;
-                case SERIAL:
-                    eventType = EventType.UNIFIED_SERIAL_NEW;
-                    break;
-                case CMS:
-                case SHENANDOAH:
-                case UNKNOWN:
-                case Z:
-                default:
-                    break;
+            if (!(event instanceof ThrowAwayEvent)) {
+                JdkUtil.EventType eventType = event.getEventType();
+                // Use collectorFamily to identify generic UNIFIED_(OLD|YOUNG)
+                if (event instanceof UnifiedYoungEvent) {
+                    switch (collectorFamily) {
+                    case G1:
+                        eventType = EventType.UNIFIED_G1_YOUNG_PAUSE;
+                        break;
+                    case PARALLEL:
+                        eventType = EventType.UNIFIED_PARALLEL_SCAVENGE;
+                        break;
+                    case SERIAL:
+                        eventType = EventType.UNIFIED_SERIAL_NEW;
+                        break;
+                    case CMS:
+                    case SHENANDOAH:
+                    case UNKNOWN:
+                    case Z:
+                    default:
+                        break;
+                    }
+                } else if (event instanceof UnifiedOldEvent) {
+                    switch (collectorFamily) {
+                    case G1:
+                        eventType = EventType.UNIFIED_G1_FULL_GC_PARALLEL;
+                        break;
+                    case PARALLEL:
+                        eventType = EventType.UNIFIED_PARALLEL_COMPACTING_OLD;
+                        break;
+                    case SERIAL:
+                        eventType = EventType.UNIFIED_SERIAL_OLD;
+                        break;
+                    case CMS:
+                    case SHENANDOAH:
+                    case UNKNOWN:
+                    case Z:
+                    default:
+                        break;
+                    }
                 }
-            }
-            if (eventType == EventType.UNIFIED_OLD) {
-                switch (collectorFamily) {
-                case G1:
-                    eventType = EventType.UNIFIED_G1_FULL_GC_PARALLEL;
-                    break;
-                case PARALLEL:
-                    eventType = EventType.UNIFIED_PARALLEL_COMPACTING_OLD;
-                    break;
-                case SERIAL:
-                    eventType = EventType.UNIFIED_SERIAL_OLD;
-                    break;
-                case CMS:
-                case SHENANDOAH:
-                case UNKNOWN:
-                case Z:
-                default:
-                    break;
+                if (!jvmDao.getEventTypes().contains(eventType)) {
+                    jvmDao.getEventTypes().add(eventType);
                 }
-            }
-            if (!jvmDao.getEventTypes().contains(eventType)) {
-                jvmDao.getEventTypes().add(eventType);
+            } else {
+                if (event instanceof ThreadDumpEvent) {
+                    jvmDao.addAnalysis(Analysis.INFO_THREAD_DUMP);
+                } else if (event instanceof ZStatsEvent) {
+                    jvmDao.addAnalysis(Analysis.INFO_Z_STATISTICS_INTERVAL);
+                }
             }
             // Populate triggers list.
             if (event instanceof TriggerData) {

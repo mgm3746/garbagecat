@@ -152,12 +152,6 @@ class TestUnifiedOldEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_OLD),
-                JdkUtil.EventType.UNIFIED_OLD.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.UNIFIED_OLD);

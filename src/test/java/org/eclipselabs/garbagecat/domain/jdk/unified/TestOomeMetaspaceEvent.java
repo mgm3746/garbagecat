@@ -76,9 +76,7 @@ class TestOomeMetaspaceEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.OOME_METASPACE),
-                JdkUtil.EventType.OOME_METASPACE.toString() + " event not identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -105,9 +103,7 @@ class TestOomeMetaspaceEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.OOME_METASPACE),
-                JdkUtil.EventType.OOME_METASPACE.toString() + " event not identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -124,13 +120,6 @@ class TestOomeMetaspaceEvent {
         String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof OomeMetaspaceEvent,
                 JdkUtil.EventType.OOME_METASPACE.toString() + " not parsed.");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "[2022-02-08T07:33:14.540+0000][7732788ms] Metaspace (data) allocation failed for size 11";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.OOME_METASPACE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test

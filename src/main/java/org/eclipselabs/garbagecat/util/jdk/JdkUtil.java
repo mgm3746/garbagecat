@@ -516,55 +516,6 @@ public final class JdkUtil {
     }
 
     /**
-     * @param eventType
-     *            The event type to test.
-     * @return true if the log event is should be included in the report event list, false otherwise.
-     */
-    public static final boolean isReportable(EventType eventType) {
-        switch (eventType) {
-        case APPLICATION_CONCURRENT_TIME:
-        case APPLICATION_LOGGING:
-        case APPLICATION_STOPPED_TIME:
-        case BLANK_LINE:
-        case CLASS_HISTOGRAM:
-        case CLASS_UNLOADING:
-        case FLS_STATISTICS:
-        case UNIFIED_HEAP:
-        case UNIFIED_HEAP_DUMP_AFTER_FULL_GC:
-        case UNIFIED_HEAP_DUMP_BEFORE_FULL_GC:
-        case FOOTER_STATS:
-        case GC_INFO:
-        case GC_LOCKER_SCAVENGE_FAILED:
-        case GC_OVERHEAD_LIMIT:
-        case HEADER_COMMAND_LINE_FLAGS:
-        case HEADER_MEMORY:
-        case HEADER_VM_INFO:
-        case HEAP:
-        case HEAP_ADDRESS:
-        case HEAP_AT_GC:
-        case HEAP_REGION_SIZE:
-        case LOG_FILE:
-        case OOME_METASPACE:
-        case UNIFIED_SHENANDOAH_CANCELLING_GC:
-        case SHENANDOAH_STATS:
-        case SHENANDOAH_TRIGGER:
-        case UNIFIED_BLANK_LINE:
-        case UNIFIED_FOOTER_STATS:
-        case UNIFIED_HEADER:
-        case UNIFIED_SAFEPOINT:
-        case UNIFIED_SHENANDOAH_STATS:
-        case UNIFIED_SHENANDOAH_TRIGGER:
-        case UNKNOWN:
-        case VM_WARNING:
-        case Z_STATS:
-            return false;
-        default:
-            return true;
-        }
-
-    }
-
-    /**
      * @param logLine
      *            The log line.
      * @param priorLogEvent

@@ -87,12 +87,6 @@ class TestUnifiedShenandoahFullGcEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(UNIFIED_SHENANDOAH_FULL_GC),
-                UNIFIED_SHENANDOAH_FULL_GC + " not indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(UNIFIED_SHENANDOAH_FULL_GC);

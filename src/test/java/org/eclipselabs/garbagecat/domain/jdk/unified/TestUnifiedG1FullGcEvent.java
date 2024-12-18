@@ -246,12 +246,6 @@ class TestUnifiedG1FullGcEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL),
-                JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestampTime() {
         String logLine = "[2023-08-25T02:15:57.862-0400][gc,start] GC(4) Pause Full (G1 Compaction Pause) 1M->1M(5M) "
                 + "6.324ms User=0.01s Sys=0.00s Real=0.00s";

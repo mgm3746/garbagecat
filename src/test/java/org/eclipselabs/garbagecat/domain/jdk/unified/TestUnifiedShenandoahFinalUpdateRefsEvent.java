@@ -58,12 +58,6 @@ class TestUnifiedShenandoahFinalUpdateRefsEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestamp() {
         String logLine = "[0.478s][info][gc] GC(0) Pause Final Update Refs 0.232ms";
         assertTrue(UnifiedShenandoahFinalUpdateRefsEvent.match(logLine), "Log line not recognized as "

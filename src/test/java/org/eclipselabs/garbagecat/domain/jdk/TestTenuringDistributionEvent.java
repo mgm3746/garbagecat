@@ -62,11 +62,4 @@ class TestTenuringDistributionEvent {
                 JdkUtil.EventType.TENURING_DISTRIBUTION.toString() + " not indentified.");
     }
 
-    @Test
-    void testReportable() {
-        String logLine = "Desired survivor size 2228224 bytes, new threshold 1 (max 15)";
-        assertTrue(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.TENURING_DISTRIBUTION.toString() + " incorrectly indentified as not reportable.");
-    }
-
 }

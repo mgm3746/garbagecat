@@ -76,12 +76,6 @@ class TestShenandoahFinalMarkEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.SHENANDOAH_FINAL_MARK),
-                JdkUtil.EventType.SHENANDOAH_FINAL_MARK.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestamp() {
         String logLine = "0.489: [Pause Final Mark, 0.313 ms]";
         assertTrue(ShenandoahFinalMarkEvent.match(logLine),

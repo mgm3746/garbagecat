@@ -56,13 +56,6 @@ class TestUnifiedHeapDumpAfterFullGcEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_HEAP_DUMP_AFTER_FULL_GC),
-                JdkUtil.EventType.UNIFIED_HEAP_DUMP_AFTER_FULL_GC.toString()
-                        + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<>();
         eventTypes.add(EventType.UNIFIED_HEAP_DUMP_AFTER_FULL_GC);

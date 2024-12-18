@@ -78,15 +78,13 @@ class TestCmsPreprocessAction {
         logLines = gcManager.preprocess(logLines);
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 EventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(EventType.CMS_CONCURRENT),
                 "Log line not recognized as " + EventType.CMS_CONCURRENT.toString() + ".");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.APPLICATION_STOPPED_TIME),
                 "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.APPLICATION_CONCURRENT_TIME),
-                "Log line not recognized as " + JdkUtil.EventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
     }
 
     @Test

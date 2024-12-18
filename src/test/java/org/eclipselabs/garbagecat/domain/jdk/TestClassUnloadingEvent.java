@@ -28,7 +28,6 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.junit.jupiter.api.Test;
 
@@ -57,13 +56,6 @@ class TestClassUnloadingEvent {
         String logLine = " [Unloading class $Proxy225]";
         assertTrue(ClassUnloadingEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.CLASS_UNLOADING.toString() + ".");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = " [Unloading class $Proxy225]";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.CLASS_UNLOADING.toString() + " incorrectly indentified as reportable.");
     }
 
     /**

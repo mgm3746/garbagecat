@@ -229,12 +229,6 @@ class TestUnifiedG1YoungPrepareMixedEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED),
-                JdkUtil.EventType.UNIFIED_G1_YOUNG_PREPARE_MIXED.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestampTime() {
         String logLine = "[2023-08-25T02:15:57.862-0400][gc,start] GC(4) Pause Young (Prepare Mixed) "
                 + "(G1 Evacuation Pause) Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) "

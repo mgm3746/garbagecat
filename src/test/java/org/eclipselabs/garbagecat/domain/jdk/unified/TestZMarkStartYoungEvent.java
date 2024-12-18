@@ -56,12 +56,6 @@ class TestZMarkStartYoungEvent {
                 JdkUtil.EventType.Z_MARK_START_YOUNG.toString() + " not parsed.");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_MARK_START_YOUNG),
-                JdkUtil.EventType.Z_MARK_START_YOUNG.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test with time, uptime decorator.
      */

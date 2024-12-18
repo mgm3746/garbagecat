@@ -124,12 +124,6 @@ class TestUnifiedSerialNewEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SERIAL_NEW),
-                JdkUtil.EventType.UNIFIED_SERIAL_NEW.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.UNIFIED_SERIAL_NEW);

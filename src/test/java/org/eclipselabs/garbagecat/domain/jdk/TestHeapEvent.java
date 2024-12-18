@@ -234,12 +234,6 @@ class TestHeapEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.HEAP),
-                JdkUtil.EventType.HEAP.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testReservedRegion() {
         String logLine = "Reserved region:";
         assertTrue(HeapEvent.match(logLine), "Log line not recognized as " + JdkUtil.EventType.HEAP.toString() + ".");

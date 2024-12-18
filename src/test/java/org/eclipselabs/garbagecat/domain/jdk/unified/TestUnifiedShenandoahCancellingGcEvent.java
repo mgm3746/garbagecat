@@ -63,13 +63,6 @@ class TestUnifiedShenandoahCancellingGcEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString()
-                        + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.UNIFIED_SHENANDOAH_CANCELLING_GC);

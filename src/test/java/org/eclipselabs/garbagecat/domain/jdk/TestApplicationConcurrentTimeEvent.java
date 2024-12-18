@@ -12,11 +12,9 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -65,12 +63,5 @@ class TestApplicationConcurrentTimeEvent {
         String logLine = "0.193: Application time: 0.0430320 seconds";
         assertTrue(ApplicationConcurrentTimeEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.APPLICATION_CONCURRENT_TIME.toString() + ".");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "Application time: 130.5284640 seconds   ";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.APPLICATION_CONCURRENT_TIME.toString() + " incorrectly indentified as reportable.");
     }
 }

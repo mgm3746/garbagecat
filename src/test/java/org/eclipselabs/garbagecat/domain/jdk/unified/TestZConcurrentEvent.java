@@ -191,11 +191,4 @@ class TestZConcurrentEvent {
         assertEquals(megabytes(11576), event.getCombinedOccupancyEnd(), "Combined end occupancy not parsed correctly.");
         assertEquals(megabytes(23624), event.getCombinedSpace(), "Combined space size not parsed correctly.");
     }
-
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_CONCURRENT),
-                JdkUtil.EventType.Z_CONCURRENT.toString() + " not indentified as reportable.");
-    }
-
 }

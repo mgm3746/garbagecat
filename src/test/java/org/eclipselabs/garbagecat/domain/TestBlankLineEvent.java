@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -37,13 +36,6 @@ class TestBlankLineEvent {
         String logLine = "";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof BlankLineEvent,
                 JdkUtil.EventType.BLANK_LINE.toString() + " not parsed.");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.BLANK_LINE.toString() + " incorrectly indentified as reportable.");
     }
 
 }

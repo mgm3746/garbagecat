@@ -13,7 +13,6 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -72,13 +71,6 @@ class TestUnifiedBlankLineEvent {
         String logLine = "[2019-02-05T15:10:08.998-0200][1357910ms]   ";
         assertTrue(UnifiedBlankLineEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_BLANK_LINE.toString() + ".");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "[69.946s][info][gc,stats     ]";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.UNIFIED_BLANK_LINE.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test

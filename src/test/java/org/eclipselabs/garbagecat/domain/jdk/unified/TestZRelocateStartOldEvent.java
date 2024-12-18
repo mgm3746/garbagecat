@@ -56,12 +56,6 @@ class TestZRelocateStartOldEvent {
                 JdkUtil.EventType.Z_RELOCATE_START_OLD.toString() + " not parsed.");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_RELOCATE_START_OLD),
-                JdkUtil.EventType.Z_RELOCATE_START_OLD.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test with time, uptime decorator.
      */

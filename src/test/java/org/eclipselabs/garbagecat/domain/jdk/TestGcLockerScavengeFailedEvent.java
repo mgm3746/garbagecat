@@ -13,7 +13,6 @@
 package org.eclipselabs.garbagecat.domain.jdk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
@@ -51,12 +50,5 @@ class TestGcLockerScavengeFailedEvent {
         LogEvent event = JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN);
         assertTrue(event instanceof GcLockerScavengeFailedEvent,
                 JdkUtil.EventType.GC_LOCKER_SCAVENGE_FAILED.toString() + " event not identified.");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "GC locker: Trying a full collection because scavenge failed";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.GC_LOCKER_SCAVENGE_FAILED.toString() + " incorrectly indentified as reportable.");
     }
 }

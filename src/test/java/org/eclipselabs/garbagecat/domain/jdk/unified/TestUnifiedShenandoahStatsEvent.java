@@ -182,11 +182,7 @@ class TestUnifiedShenandoahStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SHENANDOAH_STATS),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_BLANK_LINE),
-                JdkUtil.EventType.UNIFIED_BLANK_LINE.toString() + " event not identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -237,12 +233,6 @@ class TestUnifiedShenandoahStatsEvent {
         String logLine = "[2024-04-11T20:17:37.413-0400]     Process                         157 us";
         assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test

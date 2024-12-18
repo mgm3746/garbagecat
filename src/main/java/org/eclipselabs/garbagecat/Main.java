@@ -234,14 +234,11 @@ public class Main {
                 List<EventType> eventTypes = jvmRun.getEventTypes();
                 boolean firstEvent = true;
                 for (EventType eventType : eventTypes) {
-                    // Only report GC events
-                    if (JdkUtil.isReportable(eventType)) {
-                        if (!firstEvent) {
-                            printWriter.write(", ");
-                        }
-                        printWriter.write(eventType.toString());
-                        firstEvent = false;
+                    if (!firstEvent) {
+                        printWriter.write(", ");
                     }
+                    printWriter.write(eventType.toString());
+                    firstEvent = false;
                 }
                 printWriter.write(LINE_SEPARATOR);
                 // Inverted parallelism

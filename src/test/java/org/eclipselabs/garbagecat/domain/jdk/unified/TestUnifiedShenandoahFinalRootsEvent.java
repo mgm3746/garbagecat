@@ -48,12 +48,6 @@ class TestUnifiedShenandoahFinalRootsEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_ROOTS),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_ROOTS.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestampUptime() {
         String logLine = "[3.161s] GC(4) Pause Final Roots 0.019ms";
         assertTrue(UnifiedShenandoahFinalRootsEvent.match(logLine),

@@ -65,12 +65,6 @@ class TestUnifiedShenandoahInitUpdateRefsEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testUnified() {
         List<EventType> eventTypes = new ArrayList<EventType>();
         eventTypes.add(EventType.UNIFIED_SHENANDOAH_INIT_UPDATE_REFS);

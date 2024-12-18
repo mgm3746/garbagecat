@@ -13,7 +13,6 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -53,12 +52,6 @@ class TestUnifiedShenandoahTriggerEvent {
         assertTrue(
                 JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedShenandoahTriggerEvent,
                 JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " not parsed.");
-    }
-
-    @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER),
-                JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test

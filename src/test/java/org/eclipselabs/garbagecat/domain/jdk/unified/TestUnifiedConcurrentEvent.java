@@ -409,12 +409,6 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_CONCURRENT),
-                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testResetRelocationSetWithDuration() {
         String logLine = "[10.029s][info][gc,phases   ] GC(162) Concurrent Reset Relocation Set 0.003ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),

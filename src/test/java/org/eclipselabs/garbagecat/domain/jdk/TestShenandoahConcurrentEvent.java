@@ -163,12 +163,6 @@ class TestShenandoahConcurrentEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.SHENANDOAH_CONCURRENT),
-                JdkUtil.EventType.SHENANDOAH_CONCURRENT.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestamp() {
         String logLine = "0.426: [Concurrent reset 16434K->16466K(21248K), 0.091 ms]";
         assertTrue(ShenandoahConcurrentEvent.match(logLine),

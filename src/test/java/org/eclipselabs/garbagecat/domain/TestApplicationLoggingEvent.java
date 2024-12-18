@@ -13,11 +13,8 @@
 package org.eclipselabs.garbagecat.domain;
 
 import static org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType.APPLICATION_LOGGING;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
-import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -105,13 +102,6 @@ class TestApplicationLoggingEvent {
     void testOracleException() {
         String logLine = "ORA-12514, TNS:listener does not currently know of service requested in connect descriptor";
         assertTrue(ApplicationLoggingEvent.match(logLine), "Log line not recognized as " + APPLICATION_LOGGING + ".");
-    }
-
-    @Test
-    void testReportable() {
-        String logLine = "00:02:05,067 INFO  [STDOUT] log4j: setFile ended";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                APPLICATION_LOGGING + " incorrectly indentified as reportable.");
     }
 
     @Test

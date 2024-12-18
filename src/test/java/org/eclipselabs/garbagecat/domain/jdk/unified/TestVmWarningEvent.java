@@ -13,7 +13,6 @@
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -52,11 +51,5 @@ class TestVmWarningEvent {
         String logLine = "OpenJDK 64-Bit Server VM warning: Failed to reserve shared memory. (error = 12)";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof VmWarningEvent,
                 JdkUtil.EventType.VM_WARNING.toString() + " not parsed.");
-    }
-
-    @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.VM_WARNING),
-                JdkUtil.EventType.VM_WARNING.toString() + " indentified as reportable.");
     }
 }

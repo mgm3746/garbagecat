@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
@@ -76,10 +75,4 @@ class TestHeapAtGcEvent {
                 "Log line not recognized as " + JdkUtil.EventType.HEAP_AT_GC.toString() + ".");
     }
 
-    @Test
-    void testNotReportable() {
-        String logLine = "{Heap before gc invocations=1:";
-        assertFalse(JdkUtil.isReportable(JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN)),
-                JdkUtil.EventType.HEAP_AT_GC.toString() + " incorrectly indentified as reportable.");
-    }
 }

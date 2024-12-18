@@ -60,12 +60,6 @@ class TestUnifiedCmsInitialMarkEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK),
-                JdkUtil.EventType.UNIFIED_CMS_INITIAL_MARK.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTimestampUptime() {
         String logLine = "[3.161s] GC(4) Pause Initial Mark 1M->1M(2M) 0.157ms";
         assertTrue(UnifiedCmsInitialMarkEvent.match(logLine),

@@ -96,7 +96,7 @@ class TestJvmRun {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.CMS_CONCURRENT),
                 "Log line not recognized as " + JdkUtil.EventType.CMS_CONCURRENT.toString() + ".");
     }
@@ -388,7 +388,7 @@ class TestJvmRun {
         assertEquals((long) 1, jvmRun.getNewRatio(), "NewRatio not calculated correctly.");
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event count not correct.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event count not correct.");
         assertEquals(0, jvmRun.getUnidentifiedLogLines().size(), "Should not be any unidentified log lines.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.PAR_NEW),
                 "Log line not recognized as " + JdkUtil.EventType.PAR_NEW.toString() + ".");

@@ -296,12 +296,6 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_SAFEPOINT),
-                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " incorrectly indentified as reportable.");
-    }
-
-    @Test
     void testSetNotifyJvmtiEventsMode() {
         String logLine = "[0.433s][info][safepoint   ] Safepoint \"SetNotifyJvmtiEventsMode\", Time since last: "
                 + "95823672 ns, Reaching safepoint: 82429 ns, Cleanup: 112026 ns, At safepoint: 10659 ns, "

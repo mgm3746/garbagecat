@@ -170,11 +170,7 @@ class TestUnifiedFooterStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_FOOTER_STATS),
-                JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_BLANK_LINE),
-                JdkUtil.EventType.UNIFIED_BLANK_LINE.toString() + " event not identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -187,11 +183,7 @@ class TestUnifiedFooterStatsEvent {
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_FOOTER_STATS),
-                JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_BLANK_LINE),
-                JdkUtil.EventType.UNIFIED_BLANK_LINE.toString() + " event not identified.");
+        assertEquals(0, jvmRun.getEventTypes().size(), "Event type count not correct.");
     }
 
     @Test
@@ -278,12 +270,6 @@ class TestUnifiedFooterStatsEvent {
         String logLine = "[66.558s][info][gc,stats      ]   Raise max pacing delay with care.";
         assertTrue(UnifiedFooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
-    }
-
-    @Test
-    void testReportable() {
-        assertFalse(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_FOOTER_STATS),
-                JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + " incorrectly indentified as reportable.");
     }
 
     @Test

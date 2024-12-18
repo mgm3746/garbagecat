@@ -125,12 +125,6 @@ class TestUnifiedYoungEvent {
     }
 
     @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_YOUNG),
-                JdkUtil.EventType.UNIFIED_YOUNG.toString() + " not indentified as reportable.");
-    }
-
-    @Test
     void testTriggerExplicitGc() {
         String logLine = "[7.487s][info][gc] GC(497) Pause Young (System.gc()) 16M->10M(36M) 0.940ms";
         assertTrue(UnifiedYoungEvent.match(logLine),

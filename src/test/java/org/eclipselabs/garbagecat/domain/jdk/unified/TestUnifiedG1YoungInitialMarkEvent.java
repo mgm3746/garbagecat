@@ -84,12 +84,6 @@ class TestUnifiedG1YoungInitialMarkEvent {
                 JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not parsed.");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK),
-                JdkUtil.EventType.UNIFIED_G1_YOUNG_INITIAL_MARK.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test with time, uptime decorator.
      */

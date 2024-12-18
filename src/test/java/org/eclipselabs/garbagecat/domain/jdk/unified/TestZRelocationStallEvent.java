@@ -56,12 +56,6 @@ class TestZRelocationStallEvent {
                 JdkUtil.EventType.Z_RELOCATION_STALL.toString() + " not parsed.");
     }
 
-    @Test
-    void testReportable() {
-        assertTrue(JdkUtil.isReportable(JdkUtil.EventType.Z_RELOCATION_STALL),
-                JdkUtil.EventType.Z_RELOCATION_STALL.toString() + " not indentified as reportable.");
-    }
-
     /**
      * Test with time, uptime decorator.
      */
