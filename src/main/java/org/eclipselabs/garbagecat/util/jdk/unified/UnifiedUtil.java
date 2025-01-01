@@ -331,6 +331,8 @@ public final class UnifiedUtil {
     }
 
     /**
+     * TODO: Remove this and use UnifiedLogging interface.
+     * 
      * @param eventTypes
      *            The JVM event types.
      * @return <code>true</code> if the JVM events indicate unified logging (JDK9+), false otherwise.
