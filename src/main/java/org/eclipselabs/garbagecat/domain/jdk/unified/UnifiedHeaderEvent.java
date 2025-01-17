@@ -12,11 +12,15 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.Memory.memory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkMath;
+import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
@@ -183,6 +187,11 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
     private static final String __REGEX_VERSION = "Version: " + UnifiedRegEx.RELEASE_STRING + " \\(release\\)";
 
     /**
+     * Regular expression for memory information.
+     */
+    private static final String __REGEX_MEMORY = "Memory: (" + JdkRegEx.SIZE + ")";
+
+    /**
      * Regular expression for jvm_args information.
      */
     private static final String __REGEX_JVM_ARGS = "jvm_args:[ ]{0,1}(.*)";
@@ -191,7 +200,7 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
      * Regular expressions defining the logging.
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " (" + __REGEX_GARBAGE_COLLECTOR + "|"
-            + __REGEX_VERSION + "|" + __REGEX_JVM_ARGS
+            + __REGEX_VERSION + "|" + __REGEX_JVM_ARGS + "|" + __REGEX_MEMORY
             + "| - (commit_granule_bytes|commit_granule_words|enlarge_chunks_in_place|use_allocation_guard|"
             + "virtual_space_node_default_size)|Activate regions|Address Space (Size|Type)|Alignments|"
             + "Available space on backing filesystem|(Initial|Max|Min) Capacity|CardTable entry size|"
@@ -202,7 +211,7 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "Heuristics ergonomically sets |Humongous [oO]bject [tT]hreshold|Initialize mark stack|"
             + "Initial Refinement Zones|Initialize Shenandoah heap|Initializing The Z Garbage Collector|"
             + "java_class_path \\(initial\\)|java_command|Large Page Support|Launcher Type|"
-            + "Mark (closed|open) archive regions in map|Max TLAB size|Medium Page Size|Memory|Mode|"
+            + "Mark (closed|open) archive regions in map|Max TLAB size|Medium Page Size|Mode|"
             + "Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|Narrow klass base|NUMA Nodes|"
             + "NUMA Support|Pacer for Idle|ParallelGCThreads|Parallel Workers|Periodic GC|Pre-touch|"
             + "Reference processing|Regions|Runtime Workers|Safepointing mechanism|Shenandoah GC mode|"
@@ -374,6 +383,41 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
         return logEntry;
     }
 
+    /**
+     * @return The memory for the given memory string.
+     */
+    public Memory getMemory() {
+        Memory memory = null;
+        if (isMemory()) {
+            Matcher matcher = PATTERN.matcher(logEntry);
+            if (matcher.find()) {
+                memory = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12).charAt(0));
+            }
+        }
+        return memory;
+    }
+
+    /**
+     * The memory string. For example:
+     * 
+     * <pre>
+     * Memory: 31888M
+     * </pre>
+     * 
+     * @return The memory string.
+     */
+    public String getMemoryString() {
+        String memory = null;
+        if (isMemory()) {
+            Matcher matcher = PATTERN.matcher(logEntry);
+            if (matcher.find()) {
+                memory = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9);
+            }
+        }
+        return memory;
+    }
+
     @Override
     public Tag getTag() {
         return Tag.UNKNOWN;
@@ -414,6 +458,20 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             }
         }
         return isJvmArgs;
+    }
+
+    /**
+     * @return true if the header contains memory information, false otherwise.
+     */
+    public boolean isMemory() {
+        boolean isMemory = false;
+        Matcher matcher = PATTERN.matcher(logEntry);
+        if (matcher.matches()) {
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1) != null) {
+                isMemory = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1).matches(__REGEX_MEMORY);
+            }
+        }
+        return isMemory;
     }
 
     /**

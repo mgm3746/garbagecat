@@ -1136,6 +1136,11 @@ public class GcManager {
                     collectorFamily = ((UnifiedHeaderEvent) event).getCollectorFamily();
                 } else if (((UnifiedHeaderEvent) event).isJvmArgs()) {
                     jvmDao.getJvmContext().setOptions((((UnifiedHeaderEvent) event).getJvmArgs()));
+                } else if (((UnifiedHeaderEvent) event).isMemory()) {
+                    jvmDao.setMemory(((UnifiedHeaderEvent) event).getMemoryString());
+                    jvmDao.setPhysicalMemory(((UnifiedHeaderEvent) event).getMemory().getValue(BYTES));
+                    jvmDao.getJvmContext().setMemory(org.github.joa.util.JdkUtil.convertSize(jvmDao.getPhysicalMemory(),
+                            'B', org.github.joa.util.Constants.UNITS));
                 }
                 if (event.getLogEntry().matches(
                         "^" + UnifiedRegEx.DECORATOR + " Min heap equals to max heap, disabling ShenandoahUncommit$")) {

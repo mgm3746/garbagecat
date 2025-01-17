@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk.unified;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.MEGABYTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -30,6 +31,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.NullEvent;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.Analysis;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
@@ -725,6 +727,10 @@ class TestUnifiedHeaderEvent {
         assertNotEquals(JdkUtil.EventType.GC_INFO,
                 JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
                 JdkUtil.EventType.GC_INFO + " not identified.");
+        UnifiedHeaderEvent event = new UnifiedHeaderEvent(logLine);
+        assertTrue(event.isMemory(), "memory information not identified.");
+        assertEquals("31907M", event.getMemoryString(), "memory string not correct.");
+        assertEquals(new Memory(31907, MEGABYTES), event.getMemory(), "memory not correct");
     }
 
     @Test

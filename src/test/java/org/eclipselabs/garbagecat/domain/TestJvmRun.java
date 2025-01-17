@@ -192,7 +192,7 @@ class TestJvmRun {
     }
 
     @Test
-    void testgetCompressedClassSpaceSizeBytes() {
+    void testCompressedClassSpaceSizeBytes() {
         JvmRun jvmRun = new JvmRun(0, null);
         String opts = "-XX:CompressedClassSpaceSize=768m";
         JvmContext jvmContext = new JvmContext(opts);

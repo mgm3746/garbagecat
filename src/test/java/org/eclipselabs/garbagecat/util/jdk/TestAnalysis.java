@@ -13,6 +13,7 @@
 package org.eclipselabs.garbagecat.util.jdk;
 
 import static org.eclipselabs.garbagecat.util.Memory.bytes;
+import static org.eclipselabs.garbagecat.util.Memory.Unit.MEGABYTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,6 +31,7 @@ import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
+import org.eclipselabs.garbagecat.util.Memory;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.github.joa.domain.Bit;
 import org.github.joa.domain.GarbageCollector;
@@ -966,6 +968,19 @@ class TestAnalysis {
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
         assertTrue(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_LARGE.getKey()),
                 org.github.joa.util.Analysis.WARN_THREAD_STACK_SIZE_LARGE + " analysis not identified.");
+    }
+
+    @Test
+    void testUnifiedMemory() throws IOException {
+        File testFile = TestUtil.getFile("dataset293.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals("31900M", jvmRun.getMemory(), "memory string not correct.");
+        assertEquals(new Memory(31900, MEGABYTES), jvmRun.getPhysicalMemory(), "physical memory not correct.");
     }
 
     /**
