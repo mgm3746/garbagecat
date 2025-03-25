@@ -200,7 +200,8 @@ public class Main {
             printWriter.write(LINEBREAK_SINGLE);
 
             // First/last timestamps
-            if (jvmRun.getBlockingEventCount() > 0 || jvmRun.getStoppedTimeEventCount() > 0) {
+            if (jvmRun.getBlockingEventCount() > 0 || jvmRun.getStoppedTimeEventCount() > 0
+                    || jvmRun.getUnifiedSafepointEventCount() > 0) {
                 // First event
                 if (jvmRun.getFirstEventDatestamp() != null) {
                     printWriter.write("Datestamp First: ");

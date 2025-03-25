@@ -125,6 +125,17 @@ class TestJvmRun {
                 "Log line not recognized as " + JdkUtil.EventType.APPLICATION_STOPPED_TIME.toString() + ".");
     }
 
+    @Test
+    void testCompressedClassSpaceSizeBytes() {
+        JvmRun jvmRun = new JvmRun(0, null);
+        String opts = "-XX:CompressedClassSpaceSize=768m";
+        JvmContext jvmContext = new JvmContext(opts);
+        JvmOptions jvmOptions = new JvmOptions(jvmContext);
+        jvmRun.setJvmOptions(jvmOptions);
+        assertEquals(bytes(805306368), jvmRun.getCompressedClassSpaceSizeBytes(),
+                "Compressed class space size bytes incorrect.");
+    }
+
     /**
      * Test <code>DateStampPreprocessAction</code>.
      * 
@@ -191,15 +202,28 @@ class TestJvmRun {
                 Analysis.WARN_DATESTAMP_APPROXIMATE + " analysis not identified.");
     }
 
+    /**
+     * @throws IOException
+     * @throws ParseException
+     */
     @Test
-    void testCompressedClassSpaceSizeBytes() {
-        JvmRun jvmRun = new JvmRun(0, null);
-        String opts = "-XX:CompressedClassSpaceSize=768m";
-        JvmContext jvmContext = new JvmContext(opts);
-        JvmOptions jvmOptions = new JvmOptions(jvmContext);
-        jvmRun.setJvmOptions(jvmOptions);
-        assertEquals(bytes(805306368), jvmRun.getCompressedClassSpaceSizeBytes(),
-                "Compressed class space size bytes incorrect.");
+    void testFirstAndLastEventDatestampNoGcSafepointOnly() throws IOException, ParseException {
+        File testFile = TestUtil.getFile("dataset295.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertTrue(jvmRun.hasDatestamps(), "Datestamp not identified.");
+        assertEquals("2025-03-20T23:34:05.200-0400", jvmRun.getFirstEventDatestamp(),
+                "First event datestamp not correct.");
+        assertEquals("2025-03-21T00:19:17.310-0400", jvmRun.getLastEventDatestamp(),
+                "Last event datestamp not correct.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.WARN_DATESTAMP_APPROXIMATE.getKey()),
+                Analysis.WARN_DATESTAMP_APPROXIMATE + " analysis incorrectly identified.");
+        assertEquals(0, jvmRun.getBlockingEventCount(), "GC blocking event count not correct.");
+        assertEquals(0, jvmRun.getStoppedTimeEventCount(), "Stopped Time event count not correct.");
+        assertEquals(2, jvmRun.getUnifiedSafepointEventCount(), "Safepoint event count not correct.");
     }
 
     /**
