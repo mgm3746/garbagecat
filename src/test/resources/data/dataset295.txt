@@ -1,0 +1,2 @@
+[2025-03-20T23:34:05.200-0400][633546.240s] Safepoint "GetAllStackTraces", Time since last: 1566743493 ns, Reaching safepoint: 8455 ns, Cleanup: 6062 ns, At safepoint: 183943 ns, Total: 198460 ns
+[2025-03-21T00:19:17.310-0400][636258.350s] Safepoint "GetAllStackTraces", Time since last: 1264874528 ns, Reaching safepoint: 8491 ns, Cleanup: 28021 ns, At safepoint: 177134 ns, Total: 213646 ns
