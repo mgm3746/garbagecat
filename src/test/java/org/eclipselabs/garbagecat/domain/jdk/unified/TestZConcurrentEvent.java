@@ -66,6 +66,20 @@ class TestZConcurrentEvent {
     }
 
     @Test
+    void testMajorCollectionTriggerMetadataGcThresholdZeroPercent() {
+        String logLine = "[22.006s] GC(0) Major Collection (Metadata GC Threshold) 138M(0%)->62M(0%) 0.085s";
+        assertTrue(ZConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.Z_CONCURRENT.toString() + ".");
+        ZConcurrentEvent event = new ZConcurrentEvent(logLine);
+        assertEquals(JdkUtil.EventType.Z_CONCURRENT, event.getEventType(), "Event type incorrect.");
+        assertEquals((long) (22006 - 85), event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(megabytes(138), event.getCombinedOccupancyInit(),
+                "Combined initial occupancy not parsed correctly.");
+        assertEquals(megabytes(62), event.getCombinedOccupancyEnd(), "Combined end occupancy not parsed correctly.");
+        assertEquals(megabytes(12400), event.getCombinedSpace(), "Combined space size not parsed correctly.");
+    }
+
+    @Test
     void testMajorCollectionTriggerProactive() {
         String logLine = "[2024-11-19T04:02:29.854+0800][1508.445s][info ][gc                      ] GC(131) Major "
                 + "Collection (Proactive) 15120M(64%)->12048M(51%) 17.390s";

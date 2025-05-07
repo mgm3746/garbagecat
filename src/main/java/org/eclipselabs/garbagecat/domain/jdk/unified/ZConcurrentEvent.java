@@ -174,8 +174,14 @@ public class ZConcurrentEvent extends UnknownCollector implements UnifiedLogging
                 BigDecimal end = new BigDecimal(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 17));
                 combinedOccupancyEnd = memory(Integer.toString(end.intValue()),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 19).charAt(0)).convertTo(KILOBYTES);
-                BigDecimal percent = new BigDecimal(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 20)).movePointLeft(2);
-                BigDecimal allocation = end.divide(percent, 0, RoundingMode.HALF_EVEN);
+                BigDecimal percent = new BigDecimal(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 20));
+                BigDecimal allocation;
+                if (percent.intValue() > 0) {
+                    allocation = end.divide(percent.movePointLeft(2), 0, RoundingMode.HALF_EVEN);
+                } else {
+                    // estimate
+                    allocation = end.divide(new BigDecimal("5").movePointLeft(3), 0, RoundingMode.HALF_EVEN);
+                }
                 combinedSpace = memory(Integer.toString(allocation.intValue()),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 19).charAt(0)).convertTo(KILOBYTES);
             }

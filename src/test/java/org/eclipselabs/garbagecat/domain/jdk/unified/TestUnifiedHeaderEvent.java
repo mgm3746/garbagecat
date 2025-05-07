@@ -1340,6 +1340,70 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testWarning() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s] ***** WARNING! INCORRECT SYSTEM CONFIGURATION DETECTED! *****";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testWarningLeastMappings() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s] least 331776 mappings (current limit is 65530). Continuing execution with the "
+                + "current";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testWarningLimitCouldLead() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s] limit could lead to a premature OutOfMemoryError being thrown, due to failure to "
+                + "map memory.";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testWarningMaxJavaHeapSize() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s] max Java heap size (184320M). Please adjust /proc/sys/vm/max_map_count to allow for "
+                + "at";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testWarningSystemLimit() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.005s] The system limit on number of memory mappings per process might be too low for the "
+                + "given";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testZ() throws IOException {
         File testFile = TestUtil.getFile("dataset241.txt");
         GcManager gcManager = new GcManager();
