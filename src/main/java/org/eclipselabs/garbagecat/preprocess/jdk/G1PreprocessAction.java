@@ -818,6 +818,15 @@ public class G1PreprocessAction implements PreprocessAction {
             "^  Total heap region code root sets sizes.+$",
             //
             "^After GC RS summary$",
+            // ***** Heap at GC *****
+            "^ garbage-first heap .+$",
+            //
+            "^  region size .+$",
+            //
+            " Metaspace       used " + JdkRegEx.SIZE + ", capacity " + JdkRegEx.SIZE + ", committed " + JdkRegEx.SIZE
+                    + ", reserved " + JdkRegEx.SIZE + "",
+            //
+            "^  class space .+$"
             //
     };
 

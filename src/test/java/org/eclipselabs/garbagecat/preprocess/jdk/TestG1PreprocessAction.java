@@ -88,6 +88,28 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
 
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_CLEANUP.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testCleanupLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset40.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CLEANUP),
+                "Log line not recognized as " + JdkUtil.EventType.G1_CLEANUP.toString() + ".");
+    }
+
     @Test
     void testClearCt() {
         String logLine = "   [Clear CT: 0.1 ms]";
@@ -324,6 +346,30 @@ class TestG1PreprocessAction {
         G1PreprocessAction event = new G1PreprocessAction(null, logLine, null, entangledLogLines, context, null);
         assertEquals("2022-11-02T04:25:44.738+0800: 605031.338: [GC concurrent-root-region-scan-start]",
                 event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testConcurrentLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset44.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
     }
 
     @Test
@@ -719,6 +765,28 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
 
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with G1_EVACUATION_PAUSE trigger.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1EvacuationPauseLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset34.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+    }
+
     @Test
     void testG1ExtRootScanning() throws IOException {
         File testFile = TestUtil.getFile("dataset281.txt");
@@ -807,6 +875,34 @@ class TestG1PreprocessAction {
                 + "2016-10-31T14:09:15.030-0700: 49689.217: [Class Histogram (before full gc):";
         assertTrue(G1PreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_FULL_GC.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1FullGCLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset36.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getGcTriggers().contains(GcTrigger.SYSTEM_GC),
+                GcTrigger.SYSTEM_GC + " trigger not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_FULL_GC_SERIAL),
+                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1.getKey()),
+                Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis not identified.");
+        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
+                Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }
 
     /**
@@ -947,116 +1043,6 @@ class TestG1PreprocessAction {
                 Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
     }
 
-    @Test
-    void testG1MixedPauseMixedG1SummarizeRSetStatsBeforeRsSummary() {
-        String logLine = "2017-06-28T18:24:40.453-0400: 12289.351: [GC pause (G1 Evacuation Pause) (mixed)"
-                + "Before GC RS summary";
-        String nextLogLine = "";
-        Set<String> context = new HashSet<String>();
-        assertTrue(G1PreprocessAction.match(logLine, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-        List<String> entangledLogLines = new ArrayList<String>();
-        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context, null);
-        assertEquals("2017-06-28T18:24:40.453-0400: 12289.351: [GC pause (G1 Evacuation Pause) (mixed)",
-                event.getLogEntry(), "Log line not parsed correctly.");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_CLEANUP.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionCleanupLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset40.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CLEANUP),
-                "Log line not recognized as " + JdkUtil.EventType.G1_CLEANUP.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionConcurrentLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset44.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with G1_EVACUATION_PAUSE trigger.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1EvacuationPauseLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset34.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_FULL_GC.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1FullGCLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset36.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getGcTriggers().contains(GcTrigger.SYSTEM_GC),
-                GcTrigger.SYSTEM_GC + " trigger not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_FULL_GC_SERIAL),
-                "Log line not recognized as " + JdkUtil.EventType.G1_FULL_GC_SERIAL.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_G1.getKey()),
-                Analysis.ERROR_EXPLICIT_GC_SERIAL_G1 + " analysis not identified.");
-        assertFalse(jvmRun.hasAnalysis(Analysis.ERROR_SERIAL_GC_G1.getKey()),
-                Analysis.ERROR_SERIAL_GC_G1 + " analysis incorrectly identified.");
-    }
-
     /**
      * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK.
      * 
@@ -1064,7 +1050,7 @@ class TestG1PreprocessAction {
      * 
      */
     @Test
-    void testG1PreprocessActionG1InitialMarkWithCodeRootLogging() throws IOException {
+    void testG1InitialMarkWithCodeRootLogging() throws IOException {
         File testFile = TestUtil.getFile("dataset43.txt");
         GcManager gcManager = new GcManager();
         URI logFileUri = testFile.toURI();
@@ -1079,404 +1065,18 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
     }
 
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
     @Test
-    void testG1PreprocessActionG1YoungInitialMarkWithG1ErgonomicsLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset49.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungInitialMarkWithTriggerAndG1ErgonomicsLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset53.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
-                Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset32.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertEquals((long) 0, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with TO_SPACE_EXHAUSTED with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseTriggerToSpaceExhaustedWithG1ErgonomicsLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset50.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
-                Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset48.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging2() throws IOException {
-        File testFile = TestUtil.getFile("dataset51.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging3() throws IOException {
-        File testFile = TestUtil.getFile("dataset52.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging4() throws IOException {
-        File testFile = TestUtil.getFile("dataset54.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging5() throws IOException {
-        File testFile = TestUtil.getFile("dataset55.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseWithG1ErgonomicsLogging6() throws IOException {
-        File testFile = TestUtil.getFile("dataset57.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_YOUNG_INITIAL_MARK),
-                JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_CONCURRENT),
-                JdkUtil.EventType.G1_CONCURRENT.toString() + " event not identified.");
-        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_YOUNG_PAUSE),
-                JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + " event not identified.");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with GCLOCKER_INITIATED_GC trigger.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionG1YoungPauseWithGCLockerInitiatedGCLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset35.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertEquals((long) 1, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
-        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_PARALLELISM_INVERTED.getKey()),
-                Analysis.WARN_PARALLELISM_INVERTED + " analysis not identified.");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_MIXED_PAUSE with G1_EVACUATION_PAUSE trigger.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionMixedPauseLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset39.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_MIXED_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_MIXED_PAUSE with no trigger.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionMixedPauseNoTriggerLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset46.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_MIXED_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_REMARK.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionRemarkLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset38.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_REMARK),
-                "Log line not recognized as " + JdkUtil.EventType.G1_REMARK.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with TO_SPACE_EXHAUSTED trigger.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionToSpaceExhaustedLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset45.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
-                Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionYoungConcurrentLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset47.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
-                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
-    }
-
-    /**
-     * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK.
-     * 
-     * @throws IOException
-     * 
-     */
-    @Test
-    void testG1PreprocessActionYoungInitialMarkLogging() throws IOException {
-        File testFile = TestUtil.getFile("dataset37.txt");
-        GcManager gcManager = new GcManager();
-        URI logFileUri = testFile.toURI();
-        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
-        logLines = gcManager.preprocess(logLines);
-        gcManager.store(logLines, false);
-        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
-                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
-        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
-        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_INITIAL_MARK),
-                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+    void testG1MixedPauseMixedG1SummarizeRSetStatsBeforeRsSummary() {
+        String logLine = "2017-06-28T18:24:40.453-0400: 12289.351: [GC pause (G1 Evacuation Pause) (mixed)"
+                + "Before GC RS summary";
+        String nextLogLine = "";
+        Set<String> context = new HashSet<String>();
+        assertTrue(G1PreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        G1PreprocessAction event = new G1PreprocessAction(null, logLine, nextLogLine, entangledLogLines, context, null);
+        assertEquals("2017-06-28T18:24:40.453-0400: 12289.351: [GC pause (G1 Evacuation Pause) (mixed)",
+                event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -1836,6 +1436,52 @@ class TestG1PreprocessAction {
     }
 
     /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungInitialMarkWithG1ErgonomicsLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset49.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_INITIAL_MARK),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungInitialMarkWithTriggerAndG1ErgonomicsLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset53.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_INITIAL_MARK),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
+                Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
+    }
+
+    /**
      * Test preprocessing G1_YOUNG_PAUSE with double trigger and Evacuation Failure details.
      * 
      * @throws IOException
@@ -1857,6 +1503,29 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
                 Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset32.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertEquals((long) 0, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
     }
 
     @Test
@@ -1892,6 +1561,201 @@ class TestG1PreprocessAction {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
                 "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with TO_SPACE_EXHAUSTED with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseTriggerToSpaceExhaustedWithG1ErgonomicsLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset50.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
+                Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseWithG1ErgonomicsLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset48.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseWithG1ErgonomicsLogging2() throws IOException {
+        File testFile = TestUtil.getFile("dataset51.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseWithG1ErgonomicsLogging3() throws IOException {
+        File testFile = TestUtil.getFile("dataset52.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseWithG1ErgonomicsLogging4() throws IOException {
+        File testFile = TestUtil.getFile("dataset54.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseWithG1ErgonomicsLogging5() throws IOException {
+        File testFile = TestUtil.getFile("dataset55.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT with ergonomics.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseWithG1ErgonomicsLogging6() throws IOException {
+        File testFile = TestUtil.getFile("dataset57.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(3, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_YOUNG_INITIAL_MARK),
+                JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_CONCURRENT),
+                JdkUtil.EventType.G1_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.G1_YOUNG_PAUSE),
+                JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + " event not identified.");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with GCLOCKER_INITIATED_GC trigger.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testG1YoungPauseWithGCLockerInitiatedGCLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset35.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertEquals((long) 1, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
+        assertTrue(jvmRun.hasAnalysis(Analysis.WARN_PARALLELISM_INVERTED.getKey()),
+                Analysis.WARN_PARALLELISM_INVERTED + " analysis not identified.");
     }
 
     @Test
@@ -1972,6 +1836,29 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
 
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testHeapAtGc() throws IOException {
+        File testFile = TestUtil.getFile("dataset296.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertEquals((long) 0, jvmRun.getInvertedParallelismCount(), "Inverted parallelism event count not correct.");
+    }
+
     @Test
     void testHumongousReclaim() {
         String logLine = "      [Humongous Reclaim: 0.0 ms]";
@@ -1989,6 +1876,21 @@ class TestG1PreprocessAction {
     @Test
     void testInspected() {
         String logLine = "      [Inspected:           10116]";
+        assertTrue(G1PreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    @Test
+    void testHeapAtGcGarbageFirstHeap() {
+        String logLine = " garbage-first heap   total 16777216K, used 835584K [0x00000003c0800000, "
+                + "0x00000003c1004000, 0x00000007c0800000)";
+        assertTrue(G1PreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    @Test
+    void testHeapAtGcRegionSize() {
+        String logLine = "  region size 8192K, 102 young (835584K), 0 survivors (0K)";
         assertTrue(G1PreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
@@ -2112,6 +2014,50 @@ class TestG1PreprocessAction {
                 + "(to-space exhausted), 0.2466797 secs]";
         assertTrue(G1PreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_MIXED_PAUSE with G1_EVACUATION_PAUSE trigger.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testMixedPauseLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset39.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_MIXED_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_MIXED_PAUSE with no trigger.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testMixedPauseNoTriggerLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset46.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_MIXED_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_MIXED_PAUSE.toString() + ".");
     }
 
     @Test
@@ -2531,6 +2477,28 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
 
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_REMARK.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testRemarkLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset38.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_REMARK),
+                "Log line not recognized as " + JdkUtil.EventType.G1_REMARK.toString() + ".");
+    }
+
     @Test
     void testRemarkPreprocessing() throws IOException {
         File testFile = TestUtil.getFile("dataset263.txt");
@@ -2826,6 +2794,30 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
 
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_PAUSE with TO_SPACE_EXHAUSTED trigger.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testToSpaceExhaustedLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset45.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+        assertTrue(jvmRun.hasAnalysis(Analysis.ERROR_G1_EVACUATION_FAILURE.getKey()),
+                Analysis.ERROR_G1_EVACUATION_FAILURE + " analysis not identified.");
+    }
+
     @Test
     void testTotalExec() {
         String logLine = "   [Total Exec: 2/0.0281081 secs, Idle: 2/9.1631547 secs, Blocked: 2/0.0266213 secs]";
@@ -2865,11 +2857,57 @@ class TestG1PreprocessAction {
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }
 
+    /**
+     * Test <code>G1PreprocessAction</code> for mixed G1_YOUNG_PAUSE and G1_CONCURRENT.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testYoungConcurrentLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset47.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(2, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_CONCURRENT),
+                "Log line not recognized as " + JdkUtil.EventType.G1_CONCURRENT.toString() + ".");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_PAUSE.toString() + ".");
+    }
+
     @Test
     void testYoungInitialMark() {
         String logLine = "2970.268: [GC pause (G1 Evacuation Pause) (young) (initial-mark)";
         assertTrue(G1PreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    /**
+     * Test <code>G1PreprocessAction</code> for G1_YOUNG_INITIAL_MARK.
+     * 
+     * @throws IOException
+     * 
+     */
+    @Test
+    void testYoungInitialMarkLogging() throws IOException {
+        File testFile = TestUtil.getFile("dataset37.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.G1_YOUNG_INITIAL_MARK),
+                "Log line not recognized as " + JdkUtil.EventType.G1_YOUNG_INITIAL_MARK.toString() + ".");
     }
 
     @Test

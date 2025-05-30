@@ -1,0 +1,40 @@
+{Heap before GC invocations=0 (full 0):
+ garbage-first heap   total 16777216K, used 835584K [0x00000003c0800000, 0x00000003c1004000, 0x00000007c0800000)
+  region size 8192K, 102 young (835584K), 0 survivors (0K)
+ Metaspace       used 58089K, capacity 65908K, committed 66048K, reserved 1105920K
+  class space    used 7572K, capacity 9686K, committed 9728K, reserved 1048576K
+2025-05-22T07:13:05.809+0400: 6.501: [GC pause (G1 Evacuation Pause) (young)
+Desired survivor size 54525952 bytes, new threshold 15 (max 15)
+, 0.0497439 secs]
+   [Parallel Time: 25.7 ms, GC Workers: 8]
+      [GC Worker Start (ms): Min: 6501.0, Avg: 6502.1, Max: 6508.0, Diff: 7.0]
+      [Ext Root Scanning (ms): Min: 0.0, Avg: 2.0, Max: 5.4, Diff: 5.3, Sum: 15.7]
+      [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+         [Processed Buffers: Min: 0, Avg: 0.0, Max: 0, Diff: 0, Sum: 0]
+      [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+      [Code Root Scanning (ms): Min: 0.0, Avg: 2.4, Max: 12.9, Diff: 12.9, Sum: 19.5]
+      [Object Copy (ms): Min: 10.1, Avg: 19.6, Max: 22.9, Diff: 12.8, Sum: 157.2]
+      [Termination (ms): Min: 0.0, Avg: 0.4, Max: 0.4, Diff: 0.4, Sum: 2.9]
+         [Termination Attempts: Min: 1, Avg: 146.0, Max: 235, Diff: 234, Sum: 1168]
+      [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.1]
+      [GC Worker Total (ms): Min: 18.6, Avg: 24.4, Max: 25.6, Diff: 7.0, Sum: 195.5]
+      [GC Worker End (ms): Min: 6526.6, Avg: 6526.6, Max: 6526.6, Diff: 0.0]
+   [Code Root Fixup: 0.2 ms]
+   [Code Root Purge: 0.0 ms]
+   [Clear CT: 0.2 ms]
+   [Other: 23.7 ms]
+      [Choose CSet: 0.0 ms]
+      [Ref Proc: 22.7 ms]
+      [Ref Enq: 0.2 ms]
+      [Redirty Cards: 0.1 ms]
+      [Humongous Register: 0.1 ms]
+      [Humongous Reclaim: 0.0 ms]
+      [Free CSet: 0.3 ms]
+   [Eden: 816.0M(816.0M)->0.0B(736.0M) Survivors: 0.0B->80.0M Heap: 816.0M(16.0G)->73.6M(16.0G)]
+Heap after GC invocations=1 (full 0):
+ garbage-first heap   total 16777216K, used 75325K [0x00000003c0800000, 0x00000003c1004000, 0x00000007c0800000)
+  region size 8192K, 10 young (81920K), 10 survivors (81920K)
+ Metaspace       used 58089K, capacity 65908K, committed 66048K, reserved 1105920K
+  class space    used 7572K, capacity 9686K, committed 9728K, reserved 1048576K
+}
+ [Times: user=0.19 sys=0.03, real=0.05 secs]
