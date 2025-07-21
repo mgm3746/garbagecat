@@ -1903,6 +1903,18 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1OtherNegative() {
+        String logLine = "[2.342s] GC(34)   Other: -0.0ms";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
+                null);
+        assertEquals(" Other: -0.0ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testG1PantomRef() {
         String logLine = "[2022-10-09T13:16:49.289+0000][3792.777s][debug][gc,phases,ref     ] GC(9)         "
                 + "PhantomRef (ms):          Min:  0.0, Avg:  0.0, Max:  0.0, Diff:  0.0, Sum:  0.0, Workers: 1";
@@ -1937,6 +1949,13 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
                 context, null);
         assertEquals(" 25M->4M(254M) 3.523ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testG1PauseYoungTriggerCodeCacheGcThreshold() {
+        String logLine = "[1.551s] GC(18) Pause Young (Concurrent Start) (CodeCache GC Threshold)";
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
 
     @Test
@@ -2177,6 +2196,14 @@ class TestUnifiedPreprocessAction {
     @Test
     void testG1UsingWorkersForMarking() {
         String logLine = "[16.121s][info][gc,task       ] GC(974) Using 1 workers of 1 for marking";
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testG1YoungPauseConcurrentStartTriggerCodeCacheGcThreshold() {
+        String logLine = "[1.568s] GC(18) Pause Young (Concurrent Start) (CodeCache GC Threshold) 2008M->1846M(8192M) "
+                + "16.876ms";
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }

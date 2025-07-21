@@ -165,6 +165,15 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
+    void testPreprocessedConcurrentStartTriggerCodeCacheGcThreshold() {
+        String logLine = "[1754.551s][gc,start] GC(18) Pause Young (Concurrent Start) (CodeCache GC Threshold) Other: "
+                + "0.1ms Humongous regions: 5->5 Metaspace: 64685K(66944K)->64685K(66944K) 2008M->1846M(8192M) "
+                + "16.876ms User=0.09s Sys=0.00s Real=0.02s";
+        assertTrue(UnifiedG1YoungPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + ".");
+    }
+
+    @Test
     void testPreprocessedConcurrentStartTriggerMetaGcThreshold() {
         String logLine = "[2020-06-24T18:11:52.676-0700][58671ms][gc,start] GC(44) Pause Young (Concurrent Start) "
                 + "(Metadata GC Threshold) Ext Root Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 "

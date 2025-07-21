@@ -96,9 +96,10 @@ public class UnifiedG1YoungPauseEvent extends G1Collector implements UnifiedLogg
     /**
      * Trigger(s) regular expression.
      */
-    private static final String __TRIGGER = "(" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
-            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|"
-            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")";
+    private static final String __TRIGGER = "(" + GcTrigger.CODECACHE_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
+            + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")";
 
     /**
      * Regular expression defining logging.

@@ -1860,6 +1860,21 @@ class TestG1PreprocessAction {
     }
 
     @Test
+    void testHeapAtGcGarbageFirstHeap() {
+        String logLine = " garbage-first heap   total 16777216K, used 835584K [0x00000003c0800000, "
+                + "0x00000003c1004000, 0x00000007c0800000)";
+        assertTrue(G1PreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    @Test
+    void testHeapAtGcRegionSize() {
+        String logLine = "  region size 8192K, 102 young (835584K), 0 survivors (0K)";
+        assertTrue(G1PreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
+    }
+
+    @Test
     void testHumongousReclaim() {
         String logLine = "      [Humongous Reclaim: 0.0 ms]";
         assertTrue(G1PreprocessAction.match(logLine, null),
@@ -1876,21 +1891,6 @@ class TestG1PreprocessAction {
     @Test
     void testInspected() {
         String logLine = "      [Inspected:           10116]";
-        assertTrue(G1PreprocessAction.match(logLine, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testHeapAtGcGarbageFirstHeap() {
-        String logLine = " garbage-first heap   total 16777216K, used 835584K [0x00000003c0800000, "
-                + "0x00000003c1004000, 0x00000007c0800000)";
-        assertTrue(G1PreprocessAction.match(logLine, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
-    }
-
-    @Test
-    void testHeapAtGcRegionSize() {
-        String logLine = "  region size 8192K, 102 young (835584K), 0 survivors (0K)";
         assertTrue(G1PreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.G1.toString() + ".");
     }

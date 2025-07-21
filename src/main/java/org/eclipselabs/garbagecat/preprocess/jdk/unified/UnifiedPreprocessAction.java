@@ -428,11 +428,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_BEGINNING_YOUNG = "^(" + UnifiedRegEx.DECORATOR
             + ")( Pause Young( \\((Normal|Prepare Mixed|Mixed|Concurrent Start)\\))? \\(("
-            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
-            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|"
-            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|"
-            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
-            + ")\\))$";
+            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.CODECACHE_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
+            + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex() + ")\\))$";
 
     private static final Pattern REGEX_RETAIN_BEGINNING_YOUNG_PATTERN = Pattern.compile(REGEX_RETAIN_BEGINNING_YOUNG);
 
@@ -526,6 +526,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * Regular expression for retained <code>OtherTime</code> data.
      * 
      * [2022-10-09T13:16:49.289+0000][3792.777s][info ][gc,phases ] GC(9) Other: 9569.7ms
+     * 
+     * [2.342s] GC(34) Other: -0.0ms
      */
     private static final String REGEX_RETAIN_MIDDLE_OTHER_TIME = "^" + UnifiedRegEx.DECORATOR + "[ ]{1,}("
             + OtherTime.REGEX + ")$";
@@ -606,11 +608,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      */
     private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^(" + UnifiedRegEx.DECORATOR
             + ")( Pause Young( \\((Normal|Mixed|Prepare Mixed|Concurrent Start)\\))? \\(("
-            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
-            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|"
-            + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|" + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|"
-            + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex() + "|"
-            + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
+            + GcTrigger.ALLOCATION_FAILURE.getRegex() + "|" + GcTrigger.CODECACHE_GC_THRESHOLD.getRegex() + "|"
+            + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|" + GcTrigger.G1_EVACUATION_PAUSE.getRegex() + "|"
+            + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
+            + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
+            + "|" + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
             + ")\\))( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
             + ")$";
 

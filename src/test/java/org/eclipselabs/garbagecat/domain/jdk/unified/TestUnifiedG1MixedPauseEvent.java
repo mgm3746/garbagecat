@@ -189,6 +189,25 @@ class TestUnifiedG1MixedPauseEvent {
     }
 
     @Test
+    void testPreprocessingJdk21() throws IOException {
+        File testFile = TestUtil.getFile("dataset297.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = (UnifiedG1MixedPauseEvent) jvmRun.getFirstBlockingEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (2317), event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
     void testTimestampTime() {
         String logLine = "[2023-08-25T02:15:57.862-0400][gc,start] GC(4) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Other: 0.1ms Humongous regions: 13->13 Metaspace: 3801K->3801K(1056768K) 15M->12M(31M) 1.202ms "

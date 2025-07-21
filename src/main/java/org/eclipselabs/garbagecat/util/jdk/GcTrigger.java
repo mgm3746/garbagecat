@@ -31,6 +31,9 @@ public enum GcTrigger {
     //
     CMS_INITIAL_MARK("CMS Initial Mark"),
 
+    //
+    CODECACHE_GC_THRESHOLD("CodeCache GC Threshold"),
+
     /**
      * <p>
      * CMS concurrent mode failure trigger.
@@ -332,6 +335,8 @@ public enum GcTrigger {
                 return CMS_FINAL_REMARK;
             if (literal.matches(CMS_INITIAL_MARK.regex))
                 return CMS_INITIAL_MARK;
+            if (literal.matches(CODECACHE_GC_THRESHOLD.regex))
+                return CODECACHE_GC_THRESHOLD;
             if (literal.matches(CONCURRENT_MODE_FAILURE.regex))
                 return CONCURRENT_MODE_FAILURE;
             if (literal.matches(CONCURRENT_MODE_INTERRUPTED.regex))
