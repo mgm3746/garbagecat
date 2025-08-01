@@ -167,8 +167,8 @@ public class UnifiedRegEx {
      * [gc,heap ]
      */
     public static final String TAGS = "(\\[((age|alloc|arguments|cds|coops|cpu|cset|ergo|exit|gc|heap|humongous|ihop|"
-            + "init|load|marking|metaspace|mmu|nmethod|phases|plab|ref|reloc|ref|refine|region|remset|safepoint|stats|"
-            + "start|stringtable|stringdedup|tracking|task|time|tlab)[,]{0,1}){1,}[ ]{0,}\\])";
+            + "init|load|marking|metaspace|mmu|nmethod|numa|phases|plab|ref|reloc|ref|refine|region|remset|safepoint|"
+            + "stats|start|stringtable|stringdedup|tracking|task|time|tlab)[,]{0,1}){1,}[ ]{0,}\\])";
 
     /**
      * Logging event with only the time decorator (datestamp).

@@ -127,6 +127,14 @@ class TestUnifiedHeapEvent {
     }
 
     @Test
+    void testG1RemainingFreeRegionsOnEachNumaNode() {
+        String logLine = "[123.766s][info][gc,heap,exit]   remaining free region(s) on each NUMA node: 0=28 1=24 2=26 "
+                + "3=24";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
     void testGarbageFirstHeap() {
         String logLine = "[25.016s][info][gc,heap,exit  ]  garbage-first heap   total 59392K, used 38015K "
                 + "[0x00000000fc000000, 0x0000000100000000)";

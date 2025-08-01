@@ -604,6 +604,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [2022-02-08T07:33:13.183+0000][7731431ms] GC(111) Pause Young (Metadata GC Clear Soft References) 
      * 141M->141M(2147M) 4.151ms
+     * 
+     * [1.480s][info][gc          ] GC(2) Pause Young (Normal) (G1 Evacuation Pause) (Evacuation Failure) 
+     * 11041M->10059M(16384M) 129.424ms
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^(" + UnifiedRegEx.DECORATOR
@@ -613,8 +616,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
             + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
             + "|" + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
-            + ")\\))( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS
-            + ")$";
+            + ")\\)( \\(Evacuation Failure\\))?)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\) " + JdkRegEx.DURATION_MS + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA);
@@ -1029,6 +1032,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                     + "Update Derived Pointers \\(ms\\):|VM Weak|Weak JFR Old Object Samples|WeakReference:).*$",
             // Indented 9 spaces (match only first letter performance optimization)
             "^" + UnifiedRegEx.DECORATOR + "         [BCDFHLPRSTW].*$",
+            // numa
+            "^" + UnifiedRegEx.DECORATOR + " (Placement match ratio|Worker task locality match ratio):.*$",
             // ***** Parallel *****
             "^" + UnifiedRegEx.DECORATOR + " (Adjust Roots|Compaction Phase|Marking Phase|Post Compact|Summary Phase)( "
                     + JdkRegEx.DURATION_MS + ")?$",
@@ -1541,7 +1546,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 if (context.contains(UnifiedLogging.Tag.GC_START.toString())) {
                     // Middle logging
-                    this.logEntry = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6);
+                    this.logEntry = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7);
                     // context.remove(UnifiedLogging.Tag.GC_START.toString());
                     context.remove(PreprocessAction.NEWLINE);
                 } else {
@@ -1557,7 +1562,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                             if (entangledLogLines.size() == 1
                                     && entangledLogLines.get(0).matches(" " + Constants.G1_TO_SPACE_EXHAUSTED)) {
                                 this.logEntry = matcher.group(1) + matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2)
-                                        + entangledLogLines.get(0) + matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6);
+                                        + entangledLogLines.get(0) + matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7);
                                 entangledLogLines.clear();
                             } else {
                                 this.logEntry = matcher.group(0);

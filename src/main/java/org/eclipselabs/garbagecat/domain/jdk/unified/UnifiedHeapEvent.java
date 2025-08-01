@@ -109,7 +109,20 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 6) Shenandoah:
+ * 6) G1 NUMA Support Enabled:
+ * </p>
+ * 
+ * <pre>
+ * [123.766s][info][gc,heap,exit] Heap 
+ * [123.766s][info][gc,heap,exit]  garbage-first heap   total 16777216K, used 13278872K [0x00000003c0000000, 0x00000007c0000000)
+ * [123.766s][info][gc,heap,exit]   region size 32768K, 5 young (163840K), 1 survivors (32768K)
+ * [123.766s][info][gc,heap,exit]   remaining free region(s) on each NUMA node: 0=28 1=24 2=26 3=24 
+ * [123.766s][info][gc,heap,exit]  Metaspace       used 13231K, committed 13632K, reserved 1114112K 
+ * [123.766s][info][gc,heap,exit]   class space    used 1257K, committed 1408K, reserved 1048576K
+ * </pre>
+ * 
+ * <p>
+ * 7) Shenandoah:
  * </p>
  * 
  * <pre>
@@ -129,7 +142,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
- * 7) Z Non-generational:
+ * 8) Z Non-generational:
  * </p>
  * 
  * <pre>
@@ -153,6 +166,8 @@ public class UnifiedHeapEvent implements UnifiedLogging, ThrowAwayEvent {
             //
             "^" + UnifiedRegEx.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,} young \\(" + JdkRegEx.SIZE
                     + "\\), \\d{1,} survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + "   remaining free region\\(s\\) on each NUMA node: 0=\\d{1,}.*$",
             //
             "^" + UnifiedRegEx.DECORATOR + "  - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //

@@ -3067,6 +3067,21 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testPauseYoungInfoConcurrentStartTriggerG1EvacuationPauseEvacuationFailure() {
+        String logLine = "[1.480s][info][gc          ] GC(2) Pause Young (Normal) (G1 Evacuation Pause) "
+                + "(Evacuation Failure) 11041M->10059M(16384M) 129.424ms";
+        String nextLogLine = "[1.480s][info][gc,cpu      ] GC(2) User=3.61s Sys=1.51s Real=0.13s";
+        Set<String> context = new HashSet<String>();
+        context.add(UnifiedLogging.Tag.GC_START.toString());
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context, null);
+        assertEquals(" 11041M->10059M(16384M) 129.424ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testPauseYoungInfoConcurrentStartTriggerG1HumongousAllocationFull() {
         String logLine = "[390354.671s][info][gc] GC(1471) Pause Young (Concurrent Start) (G1 Humongous Allocation) "
                 + "16113M->15932M(16384M) 36.022ms";
@@ -3345,6 +3360,14 @@ class TestUnifiedPreprocessAction {
     @Test
     void testPhaseMoveStart() {
         String logLine = "[4.065s][info][gc,phases,start] GC(2264) Phase 4: Move objects";
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+    }
+
+    @Test
+    void testPlacementMatchRatio() {
+        String logLine = "[1.821s][info][gc,heap,numa] GC(0) Placement match ratio: 89% 8/9 (0: 0% 0/0, 1: 100% 2/2, "
+                + "2: 100% 4/4, 3: 100% 2/2)";
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
@@ -6671,6 +6694,14 @@ class TestUnifiedPreprocessAction {
         UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
                 null);
         assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testWorkerTaskLocalityMatchRatio() {
+        String logLine = "[1.821s][info][gc,heap,numa] GC(0) Worker task locality match ratio: 18% 56/307 (0: 0% 0/0, "
+                + "1: 18% 56/307, 2: 0% 0/0, 3: 0% 0/0";
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
     }
 
     @Test
