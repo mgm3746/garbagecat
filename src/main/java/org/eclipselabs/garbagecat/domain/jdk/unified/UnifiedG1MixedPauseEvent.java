@@ -79,10 +79,10 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
      * Regular expression defining preprocessed logging.
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Young \\(Mixed\\) \\(" + __TRIGGER
-            + "\\) " + UnifiedPreprocessAction.REGEX_G1_EXT_ROOT_SCANNING + "?(" + OtherTime.REGEX
-            + " )?(Humongous regions: \\d{1,}->\\d{1,} )?(Metaspace: " + JdkRegEx.SIZE + "(\\(" + JdkRegEx.SIZE
-            + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) )?" + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "?[ ]*$";
+            + "\\) " + UnifiedPreprocessAction.REGEX_G1_EXT_ROOT_SCANNING + "?(To\\-space exhausted )?("
+            + OtherTime.REGEX + " )?(Humongous regions: \\d{1,}->\\d{1,} )?(Metaspace: " + JdkRegEx.SIZE + "(\\("
+            + JdkRegEx.SIZE + "\\))?->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) )?" + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + TimesData.REGEX_JDK9 + "?[ ]*$";
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
@@ -179,7 +179,7 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30)).intValue();
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 31)).intValue();
             long time = UnifiedUtil.calculateTime(matcher);
             if (!isEndstamp()) {
                 timestamp = time;
@@ -187,36 +187,36 @@ public class UnifiedG1MixedPauseEvent extends G1Collector implements UnifiedLogg
                 timestamp = time - JdkMath.convertMicrosToMillis(eventTime).longValue();
             }
             trigger = GcTrigger.getTrigger(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1));
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 4) != null) {
-                extRootScanningTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5))
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5) != null) {
+                extRootScanningTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6))
                         .intValue();
             } else {
                 extRootScanningTime = G1ExtRootScanningData.NO_DATA;
             }
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5) != null) {
-                otherTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5)).intValue();
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6) != null) {
+                otherTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6)).intValue();
             } else {
                 otherTime = OtherTime.NO_DATA;
             }
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7) != null) {
-                classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10).charAt(0)).convertTo(KILOBYTES);
-                classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 15),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 17).charAt(0)).convertTo(KILOBYTES);
-                classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 18),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 20).charAt(0)).convertTo(KILOBYTES);
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8) != null) {
+                classOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11).charAt(0)).convertTo(KILOBYTES);
+                classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 16),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 18).charAt(0)).convertTo(KILOBYTES);
+                classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 19),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 21).charAt(0)).convertTo(KILOBYTES);
             }
-            combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 21),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 23).charAt(0)).convertTo(KILOBYTES);
-            combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 26).charAt(0)).convertTo(KILOBYTES);
-            combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27),
-                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 29).charAt(0)).convertTo(KILOBYTES);
-            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30)).intValue();
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 31) != null) {
-                timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 32)).intValue();
-                timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 33)).intValue();
-                timeReal = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 34)).intValue();
+            combinedOccupancyInit = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 24).charAt(0)).convertTo(KILOBYTES);
+            combinedOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 25),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 27).charAt(0)).convertTo(KILOBYTES);
+            combinedSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 28),
+                    matcher.group(UnifiedRegEx.DECORATOR_SIZE + 30).charAt(0)).convertTo(KILOBYTES);
+            eventTime = JdkMath.convertMillisToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 31)).intValue();
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 32) != null) {
+                timeUser = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 33)).intValue();
+                timeSys = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 34)).intValue();
+                timeReal = JdkMath.convertSecsToCentis(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 35)).intValue();
             } else {
                 timeUser = TimesData.NO_DATA;
                 timeReal = TimesData.NO_DATA;

@@ -141,7 +141,7 @@ class TestUnifiedG1MixedPauseEvent {
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
-
+    
     @Test
     void testLogLinePreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[2021-10-14T17:52:08.374+0400][info][gc,start      ] GC(2131) Pause Young (Mixed) (GCLocker "
@@ -167,6 +167,17 @@ class TestUnifiedG1MixedPauseEvent {
                 + "User=0.00s Sys=0.00s Real=0.00s";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedG1MixedPauseEvent,
                 JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + " not parsed.");
+    }
+
+    @Test
+    void testPreprocessedTriggerG1EvacuationPause() {
+        String logLine = "[14.074s][info][gc,start      ] GC(159) Pause Young (Mixed) (G1 Evacuation Pause) To-space "
+                + "exhausted Other: 0.4ms Humongous regions: 21->21 Metaspace: 11951K(12672K)->11951K(12672K) "
+                + "15261M->15215M(16384M) 71.163ms User=6.84s Sys=0.06s Real=0.07s";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = new UnifiedG1MixedPauseEvent(logLine);
+        assertEquals(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE, event.getEventType(), "Event type incorrect.");
     }
 
     @Test
