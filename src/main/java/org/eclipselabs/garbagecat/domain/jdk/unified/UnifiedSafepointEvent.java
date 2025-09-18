@@ -124,6 +124,12 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  * [2023-12-12T10:21:02.708+0200][info][safepoint   ] 17U8 Safepoint "Cleanup", Time since last: 1000407638 ns, Reaching safepoint: 18298588 ns, Cleanup: 9032 ns, At safepoint: 461108 ns, Total: 18768728 ns
  * </pre>
  * 
+ * 4) JDK21u8: "Leaving safepoint" added. Reference: https://bugs.openjdk.org/browse/JDK-8350313.
+ * 
+ * <pre>
+ * [2025-08-27T07:33:11.892-0400] Safepoint "G1CollectForAllocation", Time since last: 40895263 ns, Reaching safepoint: 3800 ns, Cleanup: 10482 ns, At safepoint: 4392662 ns, Leaving safepoint: 3432 ns, Total: 4410376 ns
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -149,7 +155,7 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
     private static final String _REGEX_JDK17 = "^" + UnifiedRegEx.DECORATOR + "( (" + UnifiedPreprocessAction.JDK17U8
             + " )?Safepoint \"" + UnifiedSafepoint.triggerRegEx()
             + "\", Time since last: \\d{1,} ns, Reaching safepoint: (\\d{1,}) ns(, Cleanup: (\\d{1,}) ns)?, "
-            + "At safepoint: (\\d{1,}) ns, Total: \\d{1,} ns)[ ]*$";
+            + "At safepoint: (\\d{1,}) ns(, Leaving safepoint: (\\d{1,}) ns)?, Total: \\d{1,} ns)[ ]*$";
 
     /**
      * RegEx pattern for JDK8 and JDK11.

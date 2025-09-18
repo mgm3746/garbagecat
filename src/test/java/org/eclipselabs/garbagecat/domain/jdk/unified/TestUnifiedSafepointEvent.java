@@ -100,6 +100,21 @@ class TestUnifiedSafepointEvent {
     }
 
     @Test
+    void testG1CollectForAllocationJdk21u8() {
+        String logLine = "[0.069s] JDK17U8 Safepoint \"G1CollectForAllocation\", Time since last: 40895263 ns, "
+                + "Reaching safepoint: 3800 ns, Cleanup: 10482 ns, At safepoint: 22046 ns, Leaving safepoint: "
+                + "3432 ns, Total: 4410376 ns";
+        assertTrue(UnifiedSafepointEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + ".");
+        UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
+        assertEquals(Trigger.G1_COLLECT_FOR_ALLOCATION, event.getTrigger(), "Trigger not parsed correctly.");
+        assertEquals(69, event.getTimestamp(), "Time stamp not parsed correctly.");
+        assertEquals(3800, event.getTimeToStopThreads(), "Time to stop threads not parsed correctly.");
+        assertEquals(10482, event.getTimeCleanup(), "Time cleanup not parsed correctly.");
+        assertEquals(22046, event.getTimeThreadsStopped(), "Time threads stopped not parsed correctly.");
+    }
+
+    @Test
     void testG1ConcurrentJdk17() {
         String logLine = "[0.064s][info][safepoint   ] Safepoint \"G1Concurrent\", Time since last: 1666947 ns, "
                 + "Reaching safepoint: 79150 ns, At safepoint: 349999 ns, Total: 429149 ns";
@@ -211,8 +226,8 @@ class TestUnifiedSafepointEvent {
 
     @Test
     void testPauseCleanupJdk17Update8() {
-        String logLine = "[0.069s] Safepoint \"G1PauseCleanup\", Time since last: 399905 ns, Reaching safepoint: "
-                + "63366 ns, Cleanup: 7340 ns, At safepoint: 22046 ns, Total: 92752 ns";
+        String logLine = "[0.069s] JDK17U8 Safepoint \"G1PauseCleanup\", Time since last: 399905 ns, Reaching "
+                + "safepoint: 63366 ns, Cleanup: 7340 ns, At safepoint: 22046 ns, Total: 92752 ns";
         assertTrue(UnifiedSafepointEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + ".");
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
@@ -225,8 +240,8 @@ class TestUnifiedSafepointEvent {
 
     @Test
     void testPauseRemarkJdk17Update8() {
-        String logLine = "[0.069s] Safepoint \"G1PauseRemark\", Time since last: 1333915 ns, Reaching safepoint: "
-                + "64336 ns, Cleanup: 6649 ns, At safepoint: 156813 ns, Total: 227798 ns";
+        String logLine = "[0.069s] JDK17U8 Safepoint \"G1PauseRemark\", Time since last: 1333915 ns, Reaching "
+                + "safepoint: 64336 ns, Cleanup: 6649 ns, At safepoint: 156813 ns, Total: 227798 ns";
         assertTrue(UnifiedSafepointEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + ".");
         UnifiedSafepointEvent event = new UnifiedSafepointEvent(logLine);
