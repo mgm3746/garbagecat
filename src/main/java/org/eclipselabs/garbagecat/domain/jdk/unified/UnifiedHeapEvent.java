@@ -152,6 +152,19 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [2.640s]   class space    used 315K, committed 384K, reserved 1048576K
  * </pre>
  * 
+ * <p>
+ * JDK25
+ * </p>
+ * 
+ * <pre>
+ * [2025-10-16T12:08:35.913+0200] Heap
+ * [2025-10-16T12:08:35.913+0200]  ZHeap           used 11700M, capacity 20480M, max capacity 20480M
+ * [2025-10-16T12:08:35.913+0200]   Cache          8780M (317)
+ * [2025-10-16T12:08:35.913+0200]    size classes  2M (18), 4M (33), 8M (94), 16M (106), 32M (45), 64M (17), 128M (1), 256M (1), 512M (2)
+ * [2025-10-16T12:08:35.913+0200]  Metaspace       used 149746K, committed 150656K, reserved 1179648K
+ * [2025-10-16T12:08:35.913+0200]   class space    used 33681K, committed 34048K, reserved 104857
+ * </pre>
+ * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
@@ -210,7 +223,11 @@ public class UnifiedHeapEvent implements UnifiedLogging, ThrowAwayEvent {
             "^" + UnifiedRegEx.DECORATOR + "  - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$",
             //
             "^" + UnifiedRegEx.DECORATOR + "( [OYy]:)?  ZHeap           used " + JdkRegEx.SIZE + ", capacity "
-                    + JdkRegEx.SIZE + ", max capacity " + JdkRegEx.SIZE + "$"
+                    + JdkRegEx.SIZE + ", max capacity " + JdkRegEx.SIZE + "$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + "   Cache          " + JdkRegEx.SIZE + " \\(\\d{1,}\\)$",
+            //
+            "^" + UnifiedRegEx.DECORATOR + "    size classes  .*$"
             //
 
     };

@@ -233,6 +233,18 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testEncodingRange() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.013s] Encoding Range: [0x0000000014000000 - 0x0000000114000000), (4294967296 bytes)";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testExpandTheHeap() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[0.011s][debug][gc,ergo,heap ] Expand the heap. requested expansion amount: 19327352832B "
@@ -603,6 +615,30 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testKlassIdRange() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.013s] Klass ID Range:  [4 - 1064960) (1064956)";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testKlassRange() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.013s] Klass Range:    [0x0000000014001000 - 0x0000000055000000), (1090514944 bytes)";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testLargePageSupport() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[0.013s][info][gc,init] Large Page Support: Disabled";
@@ -864,6 +900,18 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testNarrowKlassPointerBits() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.013s] Narrow klass pointer bits 22, Max shift 10";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testNumaNodes() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[2023-12-12T08:47:56.693+0200][info][gc,init] NUMA Nodes: 4";
@@ -899,6 +947,18 @@ class TestUnifiedHeaderEvent {
         String logLine = "[0.007s][info][gc,ergo] Pacer for Idle. Initial: 1310K, Alloc Tax Rate: 1.0x";
         assertTrue(UnifiedHeaderEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEADER.toString() + ".");
+    }
+
+    @Test
+    void testPageSizeMedium() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.014s][info][gc,init] Page Size Medium: Range [4M, 32M]";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -978,6 +1038,18 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testProtectionZone() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.013s] Protection zone: [0x0000000014000000 - 0x0000000014001000), (4096 bytes)";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testReferenceProcessing() {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Reference processing: parallel";
         assertTrue(UnifiedHeaderEvent.match(logLine),
@@ -1001,6 +1073,30 @@ class TestUnifiedHeaderEvent {
         String logLine = "[2019-02-05T14:47:31.091-0200][3ms] Regions: 2606 x 512K";
         assertTrue(UnifiedHeaderEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEADER.toString() + ".");
+    }
+
+    @Test
+    void testReservedSpaceSize() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.014s] Reserved Space Size: 320G";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
+    void testReservedSpaceType() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.014s] Reserved Space Type: Contiguous/Unrestricted/Complete";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
     }
 
     @Test
@@ -1191,6 +1287,18 @@ class TestUnifiedHeaderEvent {
         eventTypes.add(EventType.UNIFIED_HEADER);
         assertTrue(UnifiedUtil.isUnifiedLogging(eventTypes),
                 JdkUtil.EventType.UNIFIED_HEADER.toString() + " not indentified as unified.");
+    }
+
+    @Test
+    void testUseCompressedPointers() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.013s] UseCompressedClassPointers 1, UseCompactObjectHeaders 1";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
     }
 
     @Test

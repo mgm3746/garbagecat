@@ -151,11 +151,18 @@ public class UnifiedSafepointEvent implements SafepointEvent, UnifiedLogging {
      * 
      * [1.708s] JDK17U8 Safepoint \"G1CollectForAllocation\", Time since last: 11990384 ns, " + "Reaching safepoint:
      * 2496 ns, Cleanup: 11042 ns, At safepoint: 623787 ns, Total: 637325 ns
+     * 
+     * JDK25:
+     * 
+     * [2025-10-16T12:02:22.955+0200] Safepoint "ZMarkStartYoungAndOld", Time since last: 7325203451 ns, Reaching
+     * safepoint: 35500 ns, At safepoint: 649676 ns, Leaving safepoint: 16271 ns, Total: 701447 ns, Threads: 0 runnable,
+     * 19 total
      */
     private static final String _REGEX_JDK17 = "^" + UnifiedRegEx.DECORATOR + "( (" + UnifiedPreprocessAction.JDK17U8
             + " )?Safepoint \"" + UnifiedSafepoint.triggerRegEx()
             + "\", Time since last: \\d{1,} ns, Reaching safepoint: (\\d{1,}) ns(, Cleanup: (\\d{1,}) ns)?, "
-            + "At safepoint: (\\d{1,}) ns(, Leaving safepoint: (\\d{1,}) ns)?, Total: \\d{1,} ns)[ ]*$";
+            + "At safepoint: (\\d{1,}) ns(, Leaving safepoint: (\\d{1,}) ns)?, Total: \\d{1,} ns(, Threads: \\d{1,} "
+            + "runnable, \\d{1,} total)?)[ ]*$";
 
     /**
      * RegEx pattern for JDK8 and JDK11.

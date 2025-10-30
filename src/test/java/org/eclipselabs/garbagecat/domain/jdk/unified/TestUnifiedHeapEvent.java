@@ -494,6 +494,21 @@ class TestUnifiedHeapEvent {
     }
 
     @Test
+    void testZHeapCache() {
+        String logLine = "[2025-10-16T12:08:35.913+0200]   Cache          8780M (317)";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testZHeapCacheSizeClasses() {
+        String logLine = "[2025-10-16T12:08:35.913+0200]    size classes  2M (18), 4M (33), 8M (94), 16M (106), 32M "
+                + "(45), 64M (17), 128M (1), 256M (1), 512M (2)";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
     void testZHeapGenerationalOld() {
         String logLine = "[66.259s][debug][gc,heap         ] GC(0) O:  ZHeap           used 2228M, capacity 27648M, "
                 + "max capacity 27648M";

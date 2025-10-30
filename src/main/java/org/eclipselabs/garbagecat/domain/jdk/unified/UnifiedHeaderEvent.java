@@ -206,17 +206,19 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "Alignments|Available space on backing filesystem|(Initial|Max|Min) Capacity|CardTable entry size|"
             + "CDS archive\\(s\\) (mapped at|not mapped)|Compressed class space mapped at|Compressed Oops|"
             + "ConcGCThreads|Concurrent( Refinement)? Workers|CPUs|Consider \\-XX:\\+ClassUnloadingWithConcurrentMark|"
-            + "Expand the heap\\.|GC threads|GC Workers|Heap (Initial|Max|Min) Capacity|Heap address|"
+            + "Encoding Range|Expand the heap\\.|GC threads|GC Workers|Heap (Initial|Max|Min) Capacity|Heap address|"
             + "Heap Backing Filesystem|Heap Backing File|Heap [Rr]egion (Count|[Ss]ize)|Heuristics|"
             + "Heuristics ergonomically sets |Humongous [oO]bject [tT]hreshold|Initialize mark stack|"
             + "Initial Refinement Zones|Initialize Shenandoah heap|Initializing The Z Garbage Collector|"
-            + "java_class_path \\(initial\\)|java_command|Large Page Support|Launcher Type|least \\d{1,} mappings|"
-            + "limit could lead to|Mark (closed|open) archive regions in map|Max TLAB size|Medium Page Size|Mode|"
-            + "Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|max Java heap size|"
-            + "Narrow klass base|NUMA Nodes|NUMA Support|Pacer for Idle|ParallelGCThreads|Parallel Workers|Periodic GC|"
-            + "Pre-touch|Reference processing|Regions|Runtime Workers|Safepointing mechanism|Shenandoah GC mode|"
-            + "Shenandoah heuristics|String Deduplication|Target occupancy update|The system limit|TLAB Size Max|"
-            + "Uncommit( Delay)?|Using legacy single-generation mode|VM Arguments)(:)?.*$";
+            + "java_class_path \\(initial\\)|java_command|Klass ID Range|Klass Range|Large Page Support|Launcher Type|"
+            + "least \\d{1,} mappings|limit could lead to|Mark (closed|open) archive regions in map|Max TLAB size|"
+            + "Medium Page Size|Mode|Min heap equals to max heap, disabling ShenandoahUncommit|Minimum heap|"
+            + "max Java heap size|Narrow klass base|Narrow klass pointer bits|NUMA Nodes|NUMA Support|Pacer for Idle|"
+            + "Page Size Medium|ParallelGCThreads|Parallel Workers|Periodic GC|Pre-touch|Protection zone|"
+            + "Reference processing|Regions|Reserved Space Size|Reserved Space Type|Runtime Workers|"
+            + "Safepointing mechanism|Shenandoah GC mode|Shenandoah heuristics|String Deduplication|"
+            + "Target occupancy update|The system limit|TLAB Size Max|Uncommit( Delay)?|UseCompressedClassPointers|"
+            + "Using legacy single-generation mode|VM Arguments)(:)?.*$";
 
     private static Pattern PATTERN = Pattern.compile(_REGEX);
 
