@@ -121,17 +121,19 @@ public class UnifiedShenandoahStatsEvent extends ShenandoahCollector
             // Main headings (1 space)
             "^" + UnifiedRegEx.DECORATOR
                     + " (Concurrent (Cleanup|Class Unloading|Evacuation|Marking|Mark Roots|Precleaning|Reset|"
-                    + "Strong Roots|Thread Roots|Update Refs|Update Thread Roots|Weak References|Weak Roots)|Pacing|"
-                    + "Pause Degenerated GC \\([GN]\\)|Pause Final Mark \\([GN]\\)|Pause Final Update Refs \\([GN]\\)|"
-                    + "Pause Init Mark \\([GN]\\)|Pause Init[ ]{1,2}Update Refs \\([GN]\\))[ ]{1,}\\d{1,} us.*$",
+                    + "Reset After Collect|Strong Roots|Thread Roots|Update Refs|Update Refs Prepare|"
+                    + "Update Thread Roots|Weak References|Weak Roots)|Pacing|Pause Degenerated GC \\([GN]\\)|"
+                    + "Pause Final Mark \\([GN]\\)|Pause Final Update Refs \\([GN]\\)|Pause Init Mark \\([GN]\\)|"
+                    + "Pause Init[ ]{1,2}Update Refs \\([GN]\\))[ ]{1,}\\d{1,} us.*$",
             // Indented 3 spaces
             "^" + UnifiedRegEx.DECORATOR
-                    + "   (Accumulate Stats|Choose Collection Set|Cleanup|CMR: (<total>|(CLDG|Thread|VM Strong) Roots)|"
-                    + "CSR: (<total>|(CLDG|VM Strong) Roots)|CTR: (<total>|Thread Roots)|"
-                    + "CWRF: (<total>|Weak References)|Degen (STW Mark|Update Roots)|Evacuation|Finish (Mark|Queues)|"
-                    + "Initial Evacuation|Make Parsable|Manage (GC\\/TLABs|GCLABs)|Purge Unlinked|Rebuild Free Set|"
-                    + "Rendezvous|Resize TLABs|Retire (GCLABs|TLABs)|Roots|Scan Roots|System Purge|"
-                    + "Trash Collection Set|Update Region States|Unlink Stale|Update (References|Region States|Roots)|"
+                    + "   (Accumulate Stats|Choose Collection Set|Cleanup|CM: (<total>|Parallel Mark)|"
+                    + "CMR: (<total>|(CLDG|Thread|VM Strong) Roots)|CSR: (<total>|(CLDG|VM Strong) Roots)|"
+                    + "CTR: (<total>|Thread Roots)|CWRF: (<total>|Weak References)|Degen (STW Mark|Update Roots)|"
+                    + "Evacuation|Finish (Mark|Queues)|Flush SATB|Initial Evacuation|Make Parsable|"
+                    + "Manage (GC\\/TLABs|GCLABs)|Propagate GC State|Purge Unlinked|Rebuild Free Set|Rendezvous|"
+                    + "Resize TLABs|Retire (GCLABs|TLABs)|Roots|Scan Roots|System Purge|Trash Collection Set|"
+                    + "Update Region States|Unlink Stale|Update (References|Region States|Roots)|"
                     + "Weak References)[ ]{1,}\\d{1,} us.*$",
             // Indented 5 spaces
             "^" + UnifiedRegEx.DECORATOR + "     (CLDG|Cleanup|CMR: (<total>|(CLDG|Code Cache|VM Strong) Roots)|"

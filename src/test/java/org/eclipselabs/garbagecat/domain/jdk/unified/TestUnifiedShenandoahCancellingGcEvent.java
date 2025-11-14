@@ -40,6 +40,13 @@ class TestUnifiedShenandoahCancellingGcEvent {
     }
 
     @Test
+    void testLineJdk25() {
+        String logLine = "[2.465s][info][gc,thread   ] Cancelling GC: Stopping VM";
+        assertTrue(UnifiedShenandoahCancellingGcEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_CANCELLING_GC.toString() + ".");
+    }
+
+    @Test
     void testLineJdk8() {
         String logLine = "Cancelling GC: Stopping VM";
         assertTrue(UnifiedShenandoahCancellingGcEvent.match(logLine),

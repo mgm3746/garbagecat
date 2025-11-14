@@ -1077,8 +1077,7 @@ public class JvmRun {
      * @return The maximum heap space, or 0 if not set.
      */
     public Memory getMaxHeapBytes() {
-        return jvmOptions.getMaxHeapSize() == null ? Memory.ZERO
-                : Memory.fromOptionSize(org.github.joa.util.JdkUtil.getByteOptionValue(jvmOptions.getMaxHeapSize()));
+        return jvmOptions.getHeapMaxSize() <= 0 ? Memory.ZERO : Memory.bytes(jvmOptions.getHeapMaxSize());
     }
 
     public Memory getMaxHeapNonBlocking() {

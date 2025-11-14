@@ -1061,11 +1061,11 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // ***** Safepoint *****
             "^" + UnifiedRegEx.DECORATOR + " Entering safepoint region: (Exit|Halt)$",
             // ***** Shenandoah *****
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} of \\d{1,} workers for cleanup (complete|early)\\.$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahDegeneratedGcEvent}
             // "^" + UnifiedRegEx.DECORATOR + " Pause Degenerated GC \\((Evacuation|Mark|Outside of Cycle|"
             // + "Update Refs)\\)$",
             "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} of \\d{1,} workers for stw degenerated gc$",
-
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahFinalEvacEvent}
             // "^" + UnifiedRegEx.DECORATOR + " Pause Final Evac$",
             "^" + UnifiedRegEx.DECORATOR + " Pacer for Evacuation. Used CSet: " + JdkRegEx.SIZE + ", Free: "
@@ -1076,7 +1076,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // + "\\(unload classes\\)|\\(update refs\\) \\(process weakrefs\\)))?$",
             "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} of \\d{1,} workers for final marking$",
             "^" + UnifiedRegEx.DECORATOR + " Adaptive CSet Selection. Target Free: " + JdkRegEx.SIZE + ", Actual Free: "
-                    + JdkRegEx.SIZE + ", Max CSet: " + JdkRegEx.SIZE + ", Min Garbage: " + JdkRegEx.SIZE,
+                    + JdkRegEx.SIZE + ", Max (CSet|Evacuation): " + JdkRegEx.SIZE + ", Min Garbage: " + JdkRegEx.SIZE,
             // {@link org.eclipselabs.garbagecat.domain.jdk.ShenandoahFinalRootsEvent}
             // "^" + UnifiedRegEx.DECORATOR + " Pause Final Roots$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahFinalUpdateEvent}
@@ -1090,22 +1090,31 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             // + " Pause Init Mark (\\(process weakrefs\\)|\\(process weakrefs\\) \\(unload classes\\)|"
             // + "\\(unload classes\\)|\\(update refs\\) \\(process weakrefs\\))$",
             "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} of \\d{1,} workers for init marking$",
+            "^" + UnifiedRegEx.DECORATOR + " Using \\d{1,} of \\d{1,} workers for reset after collection.$",
             "^" + UnifiedRegEx.DECORATOR + " Pacer for Mark. Expected Live: " + JdkRegEx.SIZE + ", Free: "
                     + JdkRegEx.SIZE + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x$",
             // {@link org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahInitUpdateEvent}
             "^" + UnifiedRegEx.DECORATOR + " Pacer for Update Refs. Used: " + JdkRegEx.SIZE + ", Free: " + JdkRegEx.SIZE
                     + ", Non-Taxable: " + JdkRegEx.SIZE + ", Alloc Tax Rate: (inf|\\d{1,}\\.\\d)x",
             // Concurrent without duration
-            "^" + UnifiedRegEx.DECORATOR + " Concurrent (class unloading|cleanup|evacuation|"
-                    + "marking \\(process weakrefs\\) \\(unload classes\\)|marking roots|marking \\(unload classes\\)|"
-                    + "reset|strong roots|thread roots|uncommit|update references|update thread roots|weak references|"
-                    + "weak roots)$",
+            "^" + UnifiedRegEx.DECORATOR
+                    + " Concurrent (class unloading|cleanup|cleanup \\(unload classes\\)|evacuation|"
+                    + "Init Update Refs \\(unload classes\\)|marking \\(process weakrefs\\) \\(unload classes\\)|"
+                    + "marking roots|marking \\(unload classes\\)|reset|reset \\(unload classes\\)|"
+                    + "reset after collect \\(unload classes\\)|strong roots|thread roots|uncommit|update references|"
+                    + "update thread roots|weak references|weak references \\(unload classes\\)|weak roots|"
+                    + "weak roots \\(unload classes\\))$",
             // Headings with a semicolon
             "^" + UnifiedRegEx.DECORATOR
-                    + " (Bad progress for (external|internal) fragmentation|Cancelling GC|Collectable Garbage|"
-                    + "Discovered  references|Encountered references|Enqueued    references|Evacuation Reserve|"
-                    + "Free headroom|Good progress for (external fragmentation|free space|used space)|"
-                    + "Immediate Garbage|Reference processing): .*$",
+                    + " (At end of GC|Bad progress for (external|internal) fragmentation|Cancelling GC|"
+                    + "Collectable Garbage|Discovered  references|Encountered references|Enqueued    references|"
+                    + "Evacuation Reserve|Free headroom|"
+                    + "Good progress for (external fragmentation|free space|used space)|Immediate Garbage|"
+                    + "Reference processing): .*$",
+            // Misc
+            "^" + UnifiedRegEx.DECORATOR + " At start of update refs, moving " + JdkRegEx.SIZE
+                    + " to Mutator free set from Collector Reserve \\(" + JdkRegEx.SIZE
+                    + "\\) and from Old Collector Reserve \\(" + JdkRegEx.SIZE + "\\)$",
             // ***** Other *****
             // Heap dump without duration
             "^" + UnifiedRegEx.DECORATOR + " Heap Dump \\((after|before) full gc\\)$",
@@ -1121,7 +1130,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             //
             "^" + UnifiedRegEx.DECORATOR
                     + " Using \\d{1,} of \\d{1,} workers for [Cc]oncurrent (evacuation|marking|marking roots|"
-                    + "reference update|preclean|reset|strong root|thread roots|weak references|weak root)$",
+                    + "reference update|preclean|reset|reset \\(unload classes\\)|strong root|thread roots|"
+                    + "weak references|weak root)$",
             // ***** Z *****
             "^" + UnifiedRegEx.DECORATOR
                     + " (Garbage|Major|Minor) Collection \\((Allocation (Rate|Stall)|CodeCache GC Threshold|"

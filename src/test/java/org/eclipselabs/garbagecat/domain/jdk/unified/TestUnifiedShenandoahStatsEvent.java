@@ -41,8 +41,109 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedShenandoahStatsEvent {
 
     @Test
-    void testAccumulateStats() {
+    void test3SpacesAccumulateStats() {
         String logLine = "[2024-04-11T20:17:37.413-0400]   Accumulate Stats                    4 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesCleanup() {
+        String logLine = "[2024-04-12T13:14:26.319-0400]   Cleanup                            36 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesCmParallelMark() {
+        String logLine = "[2025-10-30T12:34:06.464-0400]   CM: Parallel Mark               12046 us, workers (us): "
+                + "4017, 4016, 4013, ---, ---, ---,";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesCmTotal() {
+        String logLine = "[2025-10-30T12:34:06.464-0400]   CM: <total>                     12046 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesDegenStwMark() {
+        String logLine = "[2024-04-12T17:56:00.636-0400]   Degen STW Mark                   7622 us, parallelism: "
+                + "3.45x";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesDegenUpdateRoots() {
+        String logLine = "[2024-04-12T13:14:26.319-0400]   Degen Update Roots                670 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesEvacuation() {
+        String logLine = "[2024-04-12T13:14:26.319-0400]   Evacuation                        720 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesFinishQueues() {
+        String logLine = "[2024-04-11T20:17:37.413-0400]   Finish Queues                      47 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesFlushSatb() {
+        String logLine = "[2025-10-30T12:34:06.464-0400]   Flush SATB                         93 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesInitialEvacuation() {
+        String logLine = "[2024-04-11T20:17:37.413-0400]   Initial Evacuation                801 us, parallelism: "
+                + "1.60x:";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test5SpacesCleanup() {
+        String logLine = "[2024-04-12T13:14:31.849-0400]     Cleanup                        2050 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test5SpacesDsmTotal() {
+        String logLine = "[2024-04-12T17:56:00.636-0400]     DSM: <total>                  26324 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test5SpacesDuTotal() {
+        String logLine = "[2024-04-12T13:14:26.319-0400]     DU: <total>                    1670 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test5SpacesETotal() {
+        String logLine = "[2024-04-11T20:17:37.413-0400]     E: <total>                     1284 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void test7SpacesCuTotal() {
+        String logLine = "[2024-04-12T13:14:31.849-0400]       CU: <total>                  3981 us";
         assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
     }
@@ -51,20 +152,6 @@ class TestUnifiedShenandoahStatsEvent {
     void testAllWorkers() {
         String logLine = "[2024-04-12T17:56:00.636-0400] all workers. Dividing the <total> over the root stage time "
                 + "estimates parallelism.";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testCleanup3Spaces() {
-        String logLine = "[2024-04-12T13:14:26.319-0400]   Cleanup                            36 us";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testCleanup5Spaces() {
-        String logLine = "[2024-04-12T13:14:31.849-0400]     Cleanup                        2050 us";
         assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
     }
@@ -99,58 +186,16 @@ class TestUnifiedShenandoahStatsEvent {
     }
 
     @Test
-    void testCuTotal() {
-        String logLine = "[2024-04-12T13:14:31.849-0400]       CU: <total>                  3981 us";
+    void testConcurrentResetAfterCollect() {
+        String logLine = "[2025-10-30T12:34:06.464-0400] Concurrent Reset After Collect       58 us";
         assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
     }
 
     @Test
-    void testDegenStwMark() {
-        String logLine = "[2024-04-12T17:56:00.636-0400]   Degen STW Mark                   7622 us, parallelism: "
-                + "3.45x";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testDegenUpdateRoots() {
-        String logLine = "[2024-04-12T13:14:26.319-0400]   Degen Update Roots                670 us";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testDsmTotal() {
-        String logLine = "[2024-04-12T17:56:00.636-0400]     DSM: <total>                  26324 us";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testDuTotal() {
-        String logLine = "[2024-04-12T13:14:26.319-0400]     DU: <total>                    1670 us";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testETotal() {
-        String logLine = "[2024-04-11T20:17:37.413-0400]     E: <total>                     1284 us";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testEvacuation() {
-        String logLine = "[2024-04-12T13:14:26.319-0400]   Evacuation                        720 us";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
-    }
-
-    @Test
-    void testFinishQueues() {
-        String logLine = "[2024-04-11T20:17:37.413-0400]   Finish Queues                      47 us";
+    void testConcurrentUpdateRefsPrepare() {
+        String logLine = "[2025-10-30T12:34:06.464-0400] Concurrent Update Refs Prepare       70 us, workers (us): "
+                + "---, ---, ---, ---, ---, ---,";
         assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
     }
@@ -162,14 +207,6 @@ class TestUnifiedShenandoahStatsEvent {
         assertEquals(JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS,
                 JdkUtil.identifyEventType(logLine, null, CollectorFamily.UNKNOWN),
                 JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS + "not identified.");
-    }
-
-    @Test
-    void testInitialEvacuation() {
-        String logLine = "[2024-04-11T20:17:37.413-0400]   Initial Evacuation                801 us, parallelism: "
-                + "1.60x:";
-        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
-                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
     }
 
     @Test
@@ -289,6 +326,13 @@ class TestUnifiedShenandoahStatsEvent {
     @Test
     void testSystemPurge5() {
         String logLine = "[2024-04-12T17:56:00.636-0400]     System Purge                   1366 us";
+        assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
+    }
+
+    @Test
+    void testThreeSpacePropagateGcState() {
+        String logLine = "[2025-10-30T12:34:06.464-0400]   Propagate GC State                  0 us";
         assertTrue(UnifiedShenandoahStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_SHENANDOAH_STATS.toString() + ".");
     }

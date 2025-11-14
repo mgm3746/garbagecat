@@ -41,9 +41,71 @@ import org.junit.jupiter.api.Test;
 class TestUnifiedFooterStatsEvent {
 
     @Test
+    void test3SpacesCmParallelMark() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]   CM: Parallel Mark            =    0.601 s (a =    11553 us) "
+                + "(n =    52) (lvls, us =     8750,    10547,    11133,    12305,    14829)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesCmTotal() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]   CM: <total>                  =    0.601 s (a =    11553 us) "
+                + "(n =    52) (lvls, us =     8750,    10547,    11133,    12305,    14829)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesFlushSatb() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]   Flush SATB                   =    0.004 s (a =       81 us) "
+                + "(n =    52) (lvls, us =       26,       60,       85,       90,      201)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void test3SpacesPropogateGcState() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]   Propagate GC State           =    0.000 s (a =        0 us) "
+                + "(n =    52) (lvls, us =        0,        0,        0,        0,        1)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testAbbreviatedPercent() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]       0 abbreviated (0.00%)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testCausedByCondurrentGc() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]      52 caused by Concurrent GC (100.00%)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
     void testConcurrentMarkRoots() {
         String logLine = "[2022-10-27T22:37:06.695-0400] Concurrent Mark Roots          =    0.041 s (a =      435 us) "
                 + "(n =    94) (lvls, us =      141,      320,      398,      457,     1418)\" (id=153)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentResetAfterCollect() {
+        String logLine = "[2025-10-30T12:34:08.119-0400] Concurrent Reset After Collect =    0.005 s (a =      102 us) "
+                + "(n =    52) (lvls, us =       41,       99,      102,      111,      131)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testConcurrentUpdateRefsPrepare() {
+        String logLine = "[2025-10-30T12:34:08.119-0400] Concurrent Update Refs Prepare =    0.003 s (a =       59 us) "
+                + "(n =    52) (lvls, us =       19,       33,       54,       94,      114)";
         assertTrue(UnifiedFooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
     }
@@ -88,6 +150,34 @@ class TestUnifiedFooterStatsEvent {
     @Test
     void testFromToCountSumData5DigitSum() {
         String logLine = "[103.684s][info][gc,stats     ]       8 ms -      16 ms:         4192       16768 ms";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testGcsCompleted() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]    52 Completed GCs";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testGcsDegenerated() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]     0 Degenerated GCs (0.00%)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testGcsFull() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]     0 Full GCs (0.00%)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testGcsSuccessfulConcurrent() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]    52 Successful Concurrent GCs (100.00%)";
         assertTrue(UnifiedFooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
     }
@@ -149,6 +239,13 @@ class TestUnifiedFooterStatsEvent {
     void testInvisible() {
         String logLine = "[66.558s][info][gc,stats      ]   invisible to the usual profiling tools, but would add up "
                 + "to end-to-end application latency.";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testInvokedExplicitlyPercent() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]       0 invoked explicitly (0.00%)";
         assertTrue(UnifiedFooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
     }
@@ -336,6 +433,21 @@ class TestUnifiedFooterStatsEvent {
     }
 
     @Test
+    void testToAvoidDegeneratedAndFullGcCyclesAbreviated() {
+        String logLine = "[2025-10-30T12:34:08.119-0400] to avoid Degenerated and Full GC cycles. Abbreviated cycles "
+                + "are those which found";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testToAvoidDegeneratedAndFullGcCyclesAbreviatedLine2() {
+        String logLine = "[2025-10-30T12:34:08.119-0400] enough regions with no live objects to skip evacuation.";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
     void testTrashCSet() {
         String logLine = "[103.683s][info][gc,stats     ]   Trash CSet                =     0.00 s (a =        1 us) "
                 + "(n =  3151) (lvls, us =        0,        1,        1,        1,       21)";
@@ -355,6 +467,13 @@ class TestUnifiedFooterStatsEvent {
     void testUpdateRegionStates() {
         String logLine = "[2020-10-26T14:52:27.770-0400]   Update Region States         =    0.003 s (a =        2 us) "
                 + "(n =  1398) (lvls, us =        1,        2,        2,        2,       18)";
+        assertTrue(UnifiedFooterStatsEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
+    }
+
+    @Test
+    void testUpgradedFromDegeneratedGcPercent() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]       0 upgraded from Degenerated GC (0.00%)";
         assertTrue(UnifiedFooterStatsEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_FOOTER_STATS.toString() + ".");
     }

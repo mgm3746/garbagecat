@@ -14,6 +14,7 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
+import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedSafepoint.Trigger;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
 import org.junit.jupiter.api.Test;
@@ -370,6 +372,20 @@ class TestUnifiedSafepointEvent {
                 JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
         assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
                 JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+    }
+
+    @Test
+    void testTriggerLiteralParallelCollectForAllocation() {
+        String triggerLiteral = "ParallelCollectForAllocation";
+        assertNotEquals(UnifiedSafepoint.Trigger.UNKNOWN, UnifiedSafepoint.getTrigger(triggerLiteral),
+                triggerLiteral + " not identified.");
+    }
+
+    @Test
+    void testTriggerLiteralSerialCollectForAllocation() {
+        String triggerLiteral = "SerialCollectForAllocation";
+        assertNotEquals(UnifiedSafepoint.Trigger.UNKNOWN, UnifiedSafepoint.getTrigger(triggerLiteral),
+                triggerLiteral + " not identified.");
     }
 
     @Test

@@ -156,6 +156,12 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * 
  */
 public class UnifiedFooterStatsEvent implements UnifiedLogging, HeaderEvent, ThrowAwayEvent {
+
+    /**
+     * Regular expression for percent with 2 decimal places.
+     */
+    public static final String REGEX_PERCENT = "\\d{1,3}\\.\\d{2}%";
+
     /**
      * Regular expression for the header.
      */
@@ -170,7 +176,7 @@ public class UnifiedFooterStatsEvent implements UnifiedLogging, HeaderEvent, Thr
             "^" + UnifiedRegEx.DECORATOR
                     + "   \"\\(G\\)\" \\(gross\\) pauses include VM time: time to notify and block threads, do the "
                     + "pre-$",
-            //
+            // F
             "^" + UnifiedRegEx.DECORATOR
                     + "         and post-safepoint housekeeping. Use (-XX:\\+PrintSafepointStatistics|"
                     + "-Xlog:safepoint\\+stats) to dissect\\.$",
@@ -212,14 +218,15 @@ public class UnifiedFooterStatsEvent implements UnifiedLogging, HeaderEvent, Thr
             // 1 space
             "^" + UnifiedRegEx.DECORATOR
                     + " (Concurrent (Class Unloading|Cleanup|Evacuation|Mark Roots|Marking|Precleaning|Reset|"
-                    + "Strong Roots|Thread Roots|Uncommit|Update Refs|Update Thread Roots|Weak References|Weak Roots)"
-                    + "|Pacing)[ ]{1,}=.*",
+                    + "Reset After Collect|Strong Roots|Thread Roots|Uncommit|Update Refs|Update Refs Prepare|"
+                    + "Update Thread Roots|Weak References|Weak Roots)|Pacing)[ ]{1,}=.*",
             // 3 spaces
             "^" + UnifiedRegEx.DECORATOR
-                    + "   (Choose Collection Set|Cleanup|Degen STW Mark|Evacuation|Finish Mark|Finish Queues|"
-                    + "Initial Evacuation|Manage GCLABs|Manage GC\\/TLABs|Prepare|Prepare Evacuation|Purge Unlinked|"
-                    + "Rebuild Free Set|Recycle|Rendezvous|Roots|System Purge|Trash Collection Set|Update References|"
-                    + "Update Region States|Unlink Stale|Weak References|Weak Roots)[ ]{1,}=.*$",
+                    + "   (Choose Collection Set|Cleanup|CM: (<total>|Parallel Mark)|Degen STW Mark|Evacuation|"
+                    + "Finish Mark|Finish Queues|Flush SATB|Initial Evacuation|Manage GCLABs|Manage GC\\/TLABs|"
+                    + "Prepare|Prepare Evacuation|Propagate GC State|Purge Unlinked|Rebuild Free Set|Recycle|"
+                    + "Rendezvous|Roots|System Purge|Trash Collection Set|Update References|Update Region States|"
+                    + "Unlink Stale|Weak References|Weak Roots)[ ]{1,}=.*$",
             // 5 spaces
             "^" + UnifiedRegEx.DECORATOR
                     + "     (CLDG|Cleanup|Code Roots|Deallocate Metadata|Process|Enqueue|Exception Caches|"
@@ -237,14 +244,19 @@ public class UnifiedFooterStatsEvent implements UnifiedLogging, HeaderEvent, Thr
             "^" + UnifiedRegEx.DECORATOR
                     + " tune GC heuristics, set more aggressive pacing delay, or lower allocation rate$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " to avoid Degenerated and Full GC cycles.$",
+            "^" + UnifiedRegEx.DECORATOR + " to avoid Degenerated and Full GC cycles.( Abbreviated cycles are those "
+                    + "which found)?$",
+            // Line2 for long form above^^^
+            "^" + UnifiedRegEx.DECORATOR + " enough regions with no live objects to skip evacuation.$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + "[ ]{1,7}\\d{1,7} (successful concurrent|Degenerated|Full|upgraded to Full) GC(s)?$",
+                    + "[ ]{1,7}\\d{1,7} (Completed|Degenerated|Full|[sS]uccessful [cC]oncurrent|upgraded to Full) "
+                    + "GC(s)?( \\(" + REGEX_PERCENT + "\\))?$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "       \\d{1,7} invoked (ex|im)plicitly$",
-            //
-            "^" + UnifiedRegEx.DECORATOR + "       \\d{1,7} caused by allocation failure$",
+            "^" + UnifiedRegEx.DECORATOR
+                    + "[ ]{1,8}\\d{1,8} (abbreviated|caused by allocation failure|caused by Concurrent GC|"
+                    + "invoked explicitly|invoked implicitly|upgraded from Degenerated GC)( \\(" + REGEX_PERCENT
+                    + "\\))?$",
             //
             "^" + UnifiedRegEx.DECORATOR
                     + "         \\d{1,7} happened at (Evacuation|Mark|Outside of Cycle|Update References|Update Refs)$",

@@ -88,16 +88,17 @@ class TestUnifiedHeapEvent {
     }
 
     @Test
-    void testCollectionSet() {
-        String logLine = "[103.682s][info][gc,heap,exit ] Collection set:";
+    void testDefNew() {
+        String logLine = "[32.839s][info][gc,heap,exit   ]  def new generation   total 11456K, used 4604K "
+                + "[0x00000000fc000000, 0x00000000fcc60000, 0x00000000fd550000)";
         assertTrue(UnifiedHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
     }
 
     @Test
-    void testDefNew() {
-        String logLine = "[32.839s][info][gc,heap,exit   ]  def new generation   total 11456K, used 4604K "
-                + "[0x00000000fc000000, 0x00000000fcc60000, 0x00000000fd550000)";
+    void testDefNewJdk25() {
+        String logLine = "[2025-10-30T12:12:08.703-0400]  DefNew     total 1152K, used 594K [0x00000000fc000000, "
+                + "0x00000000fc140000, 0x00000000fd550000)";
         assertTrue(UnifiedHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
     }
@@ -151,6 +152,14 @@ class TestUnifiedHeapEvent {
     }
 
     @Test
+    void testGarbageFirstHeapJdk25() {
+        String logLine = "[1.429s]  garbage-first heap   total reserved 98304K, committed 53248K, used 37940K "
+                + "[0x00000000fa000000, 0x0000000100000000)";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
     void testHeap() {
         String logLine = "[25.016s][info][gc,heap,exit  ] Heap";
         assertTrue(UnifiedHeapEvent.match(logLine),
@@ -195,6 +204,13 @@ class TestUnifiedHeapEvent {
     @Test
     void testMapVanilla() {
         String logLine = "[103.683s][info][gc,heap,exit ]  - map (vanilla): 0x00007fa7ea119f00";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testMapVanilla3Spaces() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]   - map (vanilla): 0x0000000000013e80";
         assertTrue(UnifiedHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
     }
@@ -349,8 +365,22 @@ class TestUnifiedHeapEvent {
     }
 
     @Test
+    void testReservedRegion2Spaces() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]  Reserved region:";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
     void testReservedRegionAddress() {
         String logLine = "[69.946s][info][gc,heap,exit ]  - [0x00000000fc000000, 0x0000000100000000)";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testReservedRegionAddress3Spaces() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]   - [0x00000000fa000000, 0x0000000100000000)";
         assertTrue(UnifiedHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
     }
@@ -377,6 +407,27 @@ class TestUnifiedHeapEvent {
     }
 
     @Test
+    void testShenandoah2Spaces() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]  Shenandoah Heap";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahCollectionSet() {
+        String logLine = "[103.682s][info][gc,heap,exit ] Collection set:";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahCollectionSet2Spaces() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]  Collection set:";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
     void testShenandoahRegions() {
         String logLine = "[69.946s][info][gc,heap,exit ]  256 x 256K regions";
         assertTrue(UnifiedHeapEvent.match(logLine),
@@ -393,6 +444,13 @@ class TestUnifiedHeapEvent {
     @Test
     void testShenandoahSoftMax() {
         String logLine = "[2021-01-25T17:44:28.636-0500]  98304K max, 98304K soft max, 98304K committed, 58219K used";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testShenandoahStatusCancelled2Spaces() {
+        String logLine = "[2025-10-30T12:34:08.119-0400]  Status: cancelled";
         assertTrue(UnifiedHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
     }
@@ -458,6 +516,22 @@ class TestUnifiedHeapEvent {
     void testTenured() {
         String logLine = "[32.839s][info][gc,heap,exit   ]  tenured generation   total 25240K, used 24218K "
                 + "[0x00000000fd550000, 0x00000000fedf6000, 0x0000000100000000)";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testTenuredJdk25() {
+        String logLine = "[2025-10-30T12:12:08.703-0400]  Tenured    total 18036K, used 18016K [0x00000000fd550000, "
+                + "0x00000000fe6ed000, 0x0000000100000000)";
+        assertTrue(UnifiedHeapEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
+    }
+
+    @Test
+    void testTenuredJdk25TheSpace() {
+        String logLine = "[2025-10-30T12:12:08.703-0400]   the  space 18036K,  99% used [0x00000000fd550000, "
+                + "0x00000000fe6e8288, 0x00000000fe6ed000)";
         assertTrue(UnifiedHeapEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_HEAP.toString() + ".");
     }

@@ -50,6 +50,22 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
+ * JDK25
+ * </p>
+ * 
+ * <pre>
+ * [2025-10-30T12:12:08.703-0400] Heap
+ * [2025-10-30T12:12:08.703-0400]  DefNew     total 1152K, used 594K [0x00000000fc000000, 0x00000000fc140000, 0x00000000fd550000)
+ * [2025-10-30T12:12:08.703-0400]   eden space 1024K,  45% used [0x00000000fc000000, 0x00000000fc074910, 0x00000000fc100000)
+ * [2025-10-30T12:12:08.703-0400]   from space 128K, 100% used [0x00000000fc100000, 0x00000000fc120000, 0x00000000fc120000)
+ * [2025-10-30T12:12:08.703-0400]   to   space 128K,   0% used [0x00000000fc120000, 0x00000000fc120000, 0x00000000fc140000)
+ * [2025-10-30T12:12:08.703-0400]  Tenured    total 18036K, used 18016K [0x00000000fd550000, 0x00000000fe6ed000, 0x0000000100000000)
+ * [2025-10-30T12:12:08.703-0400]   the  space 18036K,  99% used [0x00000000fd550000, 0x00000000fe6e8288, 0x00000000fe6ed000)
+ * [2025-10-30T12:12:08.703-0400]  Metaspace       used 3161K, committed 3392K, reserved 1114112K
+ * [2025-10-30T12:12:08.703-0400]   class space    used 203K, committed 320K, reserved 1048576K
+ * </pre>
+ * 
+ * <p>
  * 2) Parallel Serial:
  * </p>
  * 
@@ -107,6 +123,15 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * [25.016s][info][gc,heap,exit  ]  Metaspace       used 11079K, capacity 11287K, committed 11520K, reserved 1060864K
  * [25.016s][info][gc,heap,exit  ]   class space    used 909K, capacity 995K, committed 1024K, reserved 1048576K
  * </pre>
+ * 
+ * <p>
+ * JDK25
+ * </p>
+ *
+ * <p>
+ * [1.429s] garbage-first heap total reserved 98304K, committed 53248K, used 37940K [0x00000000fa000000,
+ * 0x0000000100000000)
+ * </p>
  * 
  * <p>
  * 6) G1 NUMA Support Enabled:
@@ -174,19 +199,20 @@ public class UnifiedHeapEvent implements UnifiedLogging, ThrowAwayEvent {
      */
     private static final String _REGEX[] = {
             //
-            "^" + UnifiedRegEx.DECORATOR + "  garbage-first heap   total " + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE
-                    + " \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
+            "^" + UnifiedRegEx.DECORATOR + "  garbage-first heap   (total " + JdkRegEx.SIZE + "|total reserved "
+                    + JdkRegEx.SIZE + ", committed " + JdkRegEx.SIZE + "), used " + JdkRegEx.SIZE + " \\["
+                    + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + "   region size " + JdkRegEx.SIZE + ", \\d{1,} young \\(" + JdkRegEx.SIZE
                     + "\\), \\d{1,} survivors \\(" + JdkRegEx.SIZE + "\\)[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + "   remaining free region\\(s\\) on each NUMA node: 0=\\d{1,}.*$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  - \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{2,3}- \\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)[ ]*$",
             //
             "^" + UnifiedRegEx.DECORATOR + " Heap$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Shenandoah Heap$",
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,2}Shenandoah Heap$",
             //
             "^" + UnifiedRegEx.DECORATOR + "  " + JdkRegEx.SIZE + " (total|max)(, " + JdkRegEx.SIZE + " soft max)?, "
                     + JdkRegEx.SIZE + " committed, " + JdkRegEx.SIZE + " used$",
@@ -200,27 +226,28 @@ public class UnifiedHeapEvent implements UnifiedLogging, ThrowAwayEvent {
                     + JdkRegEx.SIZE + ")?, committed " + JdkRegEx.SIZE + ", reserved " + JdkRegEx.SIZE + "$",
 
             //
-            "^" + UnifiedRegEx.DECORATOR + "  ((concurrent mark-sweep|def new|par new|tenured) generation)[ ]{1,}total "
+            "^" + UnifiedRegEx.DECORATOR
+                    + "  ((concurrent mark-sweep|def new|DefNew|par new|tenured) generation)[ ]{1,}total "
                     + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS + ", "
                     + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  (ParOldGen|PSOldGen|PSYoungGen)[ ]{1,}total " + JdkRegEx.SIZE + ", used "
-                    + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS
-                    + "\\)$",
+            "^" + UnifiedRegEx.DECORATOR + "  (DefNew|ParOldGen|PSOldGen|PSYoungGen|Tenured)[ ]{1,}total "
+                    + JdkRegEx.SIZE + ", used " + JdkRegEx.SIZE + " " + "\\[" + JdkRegEx.ADDRESS + ", "
+                    + JdkRegEx.ADDRESS + ", " + JdkRegEx.ADDRESS + "\\)$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "   (eden|from|object| the|to  ) space " + JdkRegEx.SIZE
+            "^" + UnifiedRegEx.DECORATOR + "   (eden|from|object| the|the |to  ) space " + JdkRegEx.SIZE
                     + ",[ ]{1,3}\\d{1,3}% used \\[" + JdkRegEx.ADDRESS + ",[ ]{0,1}" + JdkRegEx.ADDRESS + ",[ ]{0,1}"
                     + JdkRegEx.ADDRESS + "(,[ ]{0,1}" + JdkRegEx.ADDRESS + ")?\\)$",
             //
             "^" + UnifiedRegEx.DECORATOR
-                    + " Status:(,{0,1} (cancelled|concurrent weak roots|evacuating|has forwarded objects|marking|"
-                    + "updating refs)){1,}$",
+                    + "[ ]{1,2}Status:(,{0,1} (cancelled|concurrent weak roots|evacuating|has forwarded objects|"
+                    + "marking|updating refs)){1,}$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Reserved region:$",
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,2}Reserved region:$",
             //
-            "^" + UnifiedRegEx.DECORATOR + " Collection set:$",
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{1,2}Collection set:$",
             //
-            "^" + UnifiedRegEx.DECORATOR + "  - map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$",
+            "^" + UnifiedRegEx.DECORATOR + "[ ]{2,3}- map \\((biased|vanilla)\\):[ ]{1,2}" + JdkRegEx.ADDRESS + "$",
             //
             "^" + UnifiedRegEx.DECORATOR + "( [OYy]:)?  ZHeap           used " + JdkRegEx.SIZE + ", capacity "
                     + JdkRegEx.SIZE + ", max capacity " + JdkRegEx.SIZE + "$",

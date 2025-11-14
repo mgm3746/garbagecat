@@ -258,6 +258,20 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testFreeMaxUsed() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.016s][info][gc,free] Free: 93184K, Max: 256K regular, 93184K humongous, "
+                + "Frag: 0% external, 0% internal; Used: 0B, Mutator Free: 364 Collector Reserve: 5120K, Max: 256K; "
+                + "Used: 0B";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
+    @Test
     void testG1() throws IOException {
         File testFile = TestUtil.getFile("dataset239.txt");
         GcManager gcManager = new GcManager();

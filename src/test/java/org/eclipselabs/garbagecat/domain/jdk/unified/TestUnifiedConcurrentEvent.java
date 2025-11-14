@@ -444,6 +444,14 @@ class TestUnifiedConcurrentEvent {
     }
 
     @Test
+    void testShenandoahCleanupUnloadClasses() {
+        String logLine = "[2025-10-30T12:34:06.460-0400] GC(0) Concurrent cleanup (unload classes) 24M->23M(55M) "
+                + "0.020ms";
+        assertTrue(UnifiedConcurrentEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + ".");
+    }
+
+    @Test
     void testShenandoahCleanupWithSizeAndDuration() {
         String logLine = "[0.472s][info][gc] GC(0) Concurrent cleanup 18M->15M(64M) 0.036ms";
         assertTrue(UnifiedConcurrentEvent.match(logLine),

@@ -244,8 +244,7 @@ class TestAnalysis {
         List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
         gcManager.store(logLines, false);
         JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("-XX:MaxHeapSize=45097156608", jvmRun.getJvmOptions().getMaxHeapSize(),
-                "Max heap value not parsed correctly.");
+        assertEquals(45097156608L, jvmRun.getJvmOptions().getHeapMaxSize(), "Max heap value not parsed correctly.");
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LT.getKey()),
                 org.github.joa.util.Analysis.WARN_COMP_OOPS_DISABLED_HEAP_32G_LT + " analysis incorrectly identified.");
         assertFalse(jvmRun.hasAnalysis(org.github.joa.util.Analysis.WARN_COMP_OOPS_ENABLED_HEAP_32G_GTE.getKey()),
@@ -583,7 +582,8 @@ class TestAnalysis {
         gcManager.store(logLines, false);
         String jvmOptions = "-Xmx2g";
         JvmRun jvmRun = gcManager.getJvmRun(jvmOptions, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
-        assertEquals("-Xmx2g", jvmRun.getJvmOptions().getMaxHeapSize(), "Max heap value not parsed correctly.");
+        assertEquals(2L * 1024 * 1024 * 1024, jvmRun.getJvmOptions().getHeapMaxSize(),
+                "Max heap value not parsed correctly.");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_JVM_OPTIONS_OVERRIDE.getKey()),
                 Analysis.WARN_JVM_OPTIONS_OVERRIDE + " analysis not identified.");
     }

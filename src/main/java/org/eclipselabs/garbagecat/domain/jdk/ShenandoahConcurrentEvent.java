@@ -39,6 +39,10 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
  * and metaspace size and occupancy.
  * </p>
  * 
+ * <p>
+ * TODO: Consider overlap with <code>UnifiedConcurrentEvent</code>.
+ * </p>
+ * 
  * <h2>Example Logging</h2>
  * 
  * <p>

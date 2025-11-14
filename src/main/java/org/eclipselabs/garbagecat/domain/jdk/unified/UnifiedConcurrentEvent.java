@@ -172,6 +172,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
  * </pre>
  * 
  * <p>
+ * 2) JDK25:
+ * </p>
+ * 
+ * <pre>
+ * [2025-10-30T12:34:06.507-0400] GC(3) Concurrent Init Update Refs (unload classes) 0.021ms
+ * </pre>
+ * 
+ * <p>
  * ZGC:
  * </p>
  * 
@@ -209,19 +217,21 @@ public class UnifiedConcurrentEvent extends UnknownCollector
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR
             + "( [OYy]:)? (ClassLoaderData|Concurrent (class unloading|Classes Purge|Classes Unlink|cleanup|"
-            + "Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Cycle|evacuation|Mark|Mark Abort|"
-            + "Mark Continue|Mark Cycle|Mark Follow|Mark Free|Mark From Roots|Mark Roots|marking|"
-            + "marking \\(process weakrefs\\)|marking \\(process weakrefs\\) \\(unload classes\\)|"
-            + "marking roots|marking \\(unload classes\\)|marking \\(update refs\\)||"
-            + "marking \\(update refs\\) \\(process weakrefs\\)|Preclean|Preclean SoftReferences|precleaning|"
-            + "Process Non-Strong|Process Non-Strong References|Rebuild Remembered Sets|"
-            + "Rebuild Remembered Sets and Scrub Regions|References Enqueue|References Process|Relocate|"
-            + "Relocate Remset FP|Remap Roots|[Rr]eset|Reset Relocation Set|Scan Root Regions|"
-            + "Select Relocation Set|String Deduplication.*|strong roots|Sweep|thread roots|uncommit|"
-            + "Undo Cycle|update references|update thread roots|weak references|weak roots)|" + "Trigger cleanups)( \\("
-            + JdkRegEx.TIMESTAMP + "s(, " + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE
-            + "\\(" + JdkRegEx.SIZE + "\\))?( " + JdkRegEx.DURATION_MS + ")?" + TimesData.REGEX_JDK9 + "?( Metaspace: "
-            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[ ]*$";
+            + "cleanup \\(unload classes\\)|Cleanup for Next Mark|Clear Claimed Marks|Create Live Data|Cycle|"
+            + "evacuation|Init Update Refs \\(unload classes\\)|Mark|Mark Abort|Mark Continue|Mark Cycle|Mark Follow|"
+            + "Mark Free|Mark From Roots|Mark Roots|marking|marking \\(process weakrefs\\)|"
+            + "marking \\(process weakrefs\\) \\(unload classes\\)|marking roots|marking \\(unload classes\\)|"
+            + "marking \\(update refs\\)||marking \\(update refs\\) \\(process weakrefs\\)|Preclean|"
+            + "Preclean SoftReferences|precleaning|Process Non-Strong|Process Non-Strong References|"
+            + "Rebuild Remembered Sets|Rebuild Remembered Sets and Scrub Regions|References Enqueue|References Process|"
+            + "Relocate|Relocate Remset FP|Remap Roots|[Rr]eset|reset \\(unload classes\\)|"
+            + "reset after collect \\(unload classes\\)|Reset Relocation Set|Scan Root Regions|Select Relocation Set|"
+            + "String Deduplication.*|strong roots|Sweep|thread roots|uncommit|Undo Cycle|update references|"
+            + "update thread roots|weak references|weak references \\(unload classes\\)|weak roots|"
+            + "weak roots \\(unload classes\\))|" + "Trigger cleanups)( \\(" + JdkRegEx.TIMESTAMP + "s(, "
+            + JdkRegEx.TIMESTAMP + "s)?\\))?( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
+            + "\\))?( " + JdkRegEx.DURATION_MS + ")?" + TimesData.REGEX_JDK9 + "?( Metaspace: " + JdkRegEx.SIZE + "\\("
+            + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[ ]*$";
 
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 

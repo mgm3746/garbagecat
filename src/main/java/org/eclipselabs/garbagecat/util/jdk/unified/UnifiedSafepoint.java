@@ -38,17 +38,19 @@ public class UnifiedSafepoint {
         //
         HALT, HANDSHAKE_FALL_BACK, HEAP_DUMPER, IC_BUFFER_FULL, JFR_CHECKPOINT, JFR_OLD_OBJECT, MARK_ACTIVE_N_METHODS,
         //
-        NO_VM_OPERATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC, PRINT_JNI, PRINT_THREADS,
+        NO_VM_OPERATION, PARALLEL_COLLECT_FOR_ALLOCATION, PARALLEL_GC_FAILED_ALLOCATION, PARALLEL_GC_SYSTEM_GC,
         //
-        REDEFINE_CLASSES, REPORT_JAVA_OUT_OF_MEMORY, REVOKE_BIAS, SET_NOTIFY_JVMTI_EVENTS_MODE,
+        PRINT_JNI, PRINT_THREADS, REDEFINE_CLASSES, REPORT_JAVA_OUT_OF_MEMORY, REVOKE_BIAS,
         //
-        SHENANDOAH_DEGENERATED_GC, SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS,
+        SERIAL_COLLECT_FOR_ALLOCATION, SET_NOTIFY_JVMTI_EVENTS_MODE, SHENANDOAH_DEGENERATED_GC,
         //
-        SHENANDOAH_INIT_MARK, SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, X_MARK_END, X_MARK_START,
+        SHENANDOAH_FINAL_MARK_START_EVAC, SHENANDOAH_FINAL_UPDATE_REFS, SHENANDOAH_INIT_MARK,
         //
-        X_RELOCATE_START, Z_MARK_END, Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG,
+        SHENANDOAH_INIT_UPDATE_REFS, THREAD_DUMP, UNKNOWN, X_MARK_END, X_MARK_START, X_RELOCATE_START, Z_MARK_END,
         //
-        Z_MARK_START_YOUNG_AND_OLD, Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG
+        Z_MARK_END_OLD, Z_MARK_END_YOUNG, Z_MARK_START, Z_MARK_START_YOUNG, Z_MARK_START_YOUNG_AND_OLD,
+        //
+        Z_RELOCATE_START, Z_RELOCATE_START_OLD, Z_RELOCATE_START_YOUNG
     };
 
     /**
@@ -325,6 +327,13 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
+     * Parallel young collection.
+     * </p>
+     */
+    public static final String PARALLEL_COLLECT_FOR_ALLOCATION = "ParallelCollectForAllocation";
+
+    /**
+     * <p>
      * Parallel collection.
      * </p>
      */
@@ -382,6 +391,13 @@ public class UnifiedSafepoint {
      * </p>
      */
     public static final String REVOKE_BIAS = "RevokeBias";
+
+    /**
+     * <p>
+     * Serial young collection.
+     * </p>
+     */
+    public static final String SERIAL_COLLECT_FOR_ALLOCATION = "SerialCollectForAllocation";
 
     /**
      * <p>
@@ -596,6 +612,8 @@ public class UnifiedSafepoint {
             return Trigger.MARK_ACTIVE_N_METHODS;
         if (NO_VM_OPERATION.matches(triggerLiteral))
             return Trigger.NO_VM_OPERATION;
+        if (PARALLEL_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
+            return Trigger.PARALLEL_COLLECT_FOR_ALLOCATION;
         if (PARALLEL_GC_FAILED_ALLOCATION.matches(triggerLiteral))
             return Trigger.PARALLEL_GC_FAILED_ALLOCATION;
         if (PARALLEL_GC_SYSTEM_GC.matches(triggerLiteral))
@@ -610,6 +628,8 @@ public class UnifiedSafepoint {
             return Trigger.REPORT_JAVA_OUT_OF_MEMORY;
         if (REVOKE_BIAS.matches(triggerLiteral))
             return Trigger.REVOKE_BIAS;
+        if (SERIAL_COLLECT_FOR_ALLOCATION.matches(triggerLiteral))
+            return Trigger.SERIAL_COLLECT_FOR_ALLOCATION;
         if (SET_NOTIFY_JVMTI_EVENTS_MODE.matches(triggerLiteral))
             return Trigger.SET_NOTIFY_JVMTI_EVENTS_MODE;
         if (SHENANDOAH_DEGENERATED_GC.matches(triggerLiteral))
@@ -763,6 +783,9 @@ public class UnifiedSafepoint {
         case NO_VM_OPERATION:
             triggerLiteral = NO_VM_OPERATION;
             break;
+        case PARALLEL_COLLECT_FOR_ALLOCATION:
+            triggerLiteral = PARALLEL_COLLECT_FOR_ALLOCATION;
+            break;
         case PARALLEL_GC_FAILED_ALLOCATION:
             triggerLiteral = PARALLEL_GC_FAILED_ALLOCATION;
             break;
@@ -783,6 +806,9 @@ public class UnifiedSafepoint {
             break;
         case REVOKE_BIAS:
             triggerLiteral = REVOKE_BIAS;
+            break;
+        case SERIAL_COLLECT_FOR_ALLOCATION:
+            triggerLiteral = SERIAL_COLLECT_FOR_ALLOCATION;
             break;
         case SET_NOTIFY_JVMTI_EVENTS_MODE:
             triggerLiteral = SET_NOTIFY_JVMTI_EVENTS_MODE;
@@ -922,6 +948,8 @@ public class UnifiedSafepoint {
             return Trigger.MARK_ACTIVE_N_METHODS;
         if (Trigger.NO_VM_OPERATION.name().matches(trigger))
             return Trigger.NO_VM_OPERATION;
+        if (Trigger.PARALLEL_COLLECT_FOR_ALLOCATION.name().matches(trigger))
+            return Trigger.PARALLEL_COLLECT_FOR_ALLOCATION;
         if (Trigger.PARALLEL_GC_FAILED_ALLOCATION.name().matches(trigger))
             return Trigger.PARALLEL_GC_FAILED_ALLOCATION;
         if (Trigger.PARALLEL_GC_SYSTEM_GC.name().matches(trigger))
@@ -936,6 +964,8 @@ public class UnifiedSafepoint {
             return Trigger.REPORT_JAVA_OUT_OF_MEMORY;
         if (Trigger.REVOKE_BIAS.name().matches(trigger))
             return Trigger.REVOKE_BIAS;
+        if (Trigger.SERIAL_COLLECT_FOR_ALLOCATION.name().matches(trigger))
+            return Trigger.SERIAL_COLLECT_FOR_ALLOCATION;
         if (Trigger.SET_NOTIFY_JVMTI_EVENTS_MODE.name().matches(trigger))
             return Trigger.SET_NOTIFY_JVMTI_EVENTS_MODE;
         if (Trigger.SHENANDOAH_DEGENERATED_GC.name().matches(trigger))
