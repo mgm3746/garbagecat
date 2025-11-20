@@ -5,7 +5,7 @@
 # Usage: sh ./garbage-maker-jdk25.sh 
 #
 
-JAVA_HOME=~/opt/openjdk/temurin/rhel/25/jdk-25+36
+JAVA_HOME=/usr/lib/jvm/java-25-openjdk
 GARBAGECAT_HOME=../../../target
 GARBAGECAT_VERSION=-5.0.2-SNAPSHOT
 
