@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# 1. Check for existing JAR to prevent re-execution
+JAR_NAME="garbagecat.jar"
+SETTINGS="settings.xml"
+export JAVA_HOME=/usr/lib/jvm/java/
+
+# 1. Check if the JAR already exists
+if [ -f "$JAR_NAME" ]; then
+    echo "Found $JAR_NAME. Executing now..."
+    echo "------------------------------------------"
+    # Execute the JAR
+    java -jar "$JAR_NAME" "$@"
+    
+    # Exit the script after the Java process finishes 
+    # so it doesn't try to run the Maven commands below.
+    exit $? 
+else
+    echo "$JAR_NAME not found. Starting build process..."
+fi
+
+echo "Step 1: Cleaning project..."
+mvn clean || { echo "Clean failed"; exit 1; }
+
+echo "Step 2: Packaging with custom settings..."
+mvn --settings "$SETTINGS" package || { echo "Package failed"; exit 1; }
+
+echo "Step 3: Setting JAVA_HOME and generating Javadoc..."
+mvn --settings "$SETTINGS" javadoc:javadoc || { echo "Javadoc generation failed"; exit 1; }
+
+echo "Step 4: Running forced update and install (ignore failures)..."
+# -U forces check for updated releases/snapshots
+# -fn (fail-never) allows the build to report success even if some projects failed
+mvn -U -fn clean install
+
+cp target/*.jar garbagecat.jar 
+
+echo "All steps completed." 
