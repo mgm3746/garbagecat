@@ -11,7 +11,6 @@ RUN mvn --batch-mode -s /usr/src/app/settings.xml -f /usr/src/app/pom.xml packag
 # Package stage
 FROM docker.io/library/eclipse-temurin:17
 LABEL maintainer="Mike Millson <mmillson@redhat.com>"
-#ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
