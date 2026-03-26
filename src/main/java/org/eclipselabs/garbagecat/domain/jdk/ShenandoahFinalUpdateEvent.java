@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -69,7 +70,6 @@ public class ShenandoahFinalUpdateEvent extends ShenandoahCollector implements B
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long duration;
-
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
@@ -124,6 +124,11 @@ public class ShenandoahFinalUpdateEvent extends ShenandoahCollector implements B
 
     public EventType getEventType() {
         return JdkUtil.EventType.SHENANDOAH_FINAL_UPDATE;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

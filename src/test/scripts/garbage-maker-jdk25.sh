@@ -5,7 +5,8 @@
 # Usage: sh ./garbage-maker-jdk25.sh 
 #
 
-JAVA_HOME=/usr/lib/jvm/java-25-openjdk
+#JAVA_HOME=/etc/alternatives/java_sdk_25
+JAVA_HOME=~/opt/openjdk/temurin/rhel/25/jdk-25+36
 GARBAGECAT_HOME=../../../target
 GARBAGECAT_VERSION=-5.0.2-SNAPSHOT
 
@@ -19,7 +20,9 @@ $JAVA_HOME/bin/java -Xms1m -Xmx64m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOM
 
 $JAVA_HOME/bin/java -Xms1m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-g1.log::filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah.log::filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah-nongen.log::filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+
+$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah-gen.log::filesize=50M -XX:+UseShenandoahGC -XX:ShenandoahGCMode=generational -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
 $JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-z.log::filesize=50M -XX:+UseZGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
@@ -31,7 +34,9 @@ $JAVA_HOME/bin/java -Xms1m -Xmx64m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOM
 
 $JAVA_HOME/bin/java -Xms1m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-g1-uptime.log:uptime:filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah-uptime.log:uptime:filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah-nongen-uptime.log:uptime:filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+
+$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah-gen-uptime.log:uptime:filesize=50M -XX:+UseShenandoahGC -XX:ShenandoahGCMode=generational -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
 $JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-z-uptime.log:uptime:filesize=50M -XX:+UseZGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
@@ -43,7 +48,9 @@ $JAVA_HOME/bin/java -Xms1m -Xmx64m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOM
 
 $JAVA_HOME/bin/java -Xms1m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-g1-time.log:time:filesize=50M -XX:+UseG1GC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
-$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah-time.log:time:filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah-nongen-time.log:time:filesize=50M -XX:+UseShenandoahGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
+
+$JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-shenandoah-gen-time.log:time:filesize=50M -XX:+UseShenandoahGC -XX:ShenandoahGCMode=generational -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
 $JAVA_HOME/bin/java -Xms32m -Xmx96m -Xlog:gc*,safepoint=info:file=$GARBAGECAT_HOME/jdk25-z-time.log:time:filesize=50M -XX:+UseZGC -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -t 50 -o /dev/null ./gc.log
 
@@ -57,7 +64,9 @@ $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-g1.txt $GARBAGECAT_HOME/jdk25-g1.log
 
-$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah.txt $GARBAGECAT_HOME/jdk25-shenandoah.log
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah-nongen.txt $GARBAGECAT_HOME/jdk25-shenandoah-nongen.log
+
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah-gen.txt $GARBAGECAT_HOME/jdk25-shenandoah-gen.log
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-z.txt $GARBAGECAT_HOME/jdk25-z.log
 
@@ -69,7 +78,9 @@ $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-g1-uptime.txt $GARBAGECAT_HOME/jdk25-g1-uptime.log
 
-$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah-uptime.txt $GARBAGECAT_HOME/jdk25-shenandoah-uptime.log
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah-nongen-uptime.txt $GARBAGECAT_HOME/jdk25-shenandoah-nongen-uptime.log
+
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah-gen-uptime.txt $GARBAGECAT_HOME/jdk25-shenandoah-gen-uptime.log
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-z-uptime.txt $GARBAGECAT_HOME/jdk25-z-uptime.log
 
@@ -81,6 +92,8 @@ $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-g1-time.txt $GARBAGECAT_HOME/jdk25-g1-time.log
 
-$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah-time.txt $GARBAGECAT_HOME/jdk25-shenandoah-time.log
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah-nongen-time.txt $GARBAGECAT_HOME/jdk25-shenandoah-nongen-time.log
+
+$JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-shenandoah-gen-time.txt $GARBAGECAT_HOME/jdk25-shenandoah-gen-time.log
 
 $JAVA_HOME/bin/java -jar $GARBAGECAT_HOME/garbagecat$GARBAGECAT_VERSION.jar -p -t 50 -o $GARBAGECAT_HOME/jdk25-z-time.txt $GARBAGECAT_HOME/jdk25-z-time.log

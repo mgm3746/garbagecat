@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -65,11 +66,11 @@ public class UnifiedShenandoahFinalRootsEvent extends ShenandoahCollector
      * The elapsed clock time for the GC event in microseconds (rounded).
      */
     private long eventTime;
+
     /**
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
-
     /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
@@ -117,6 +118,11 @@ public class UnifiedShenandoahFinalRootsEvent extends ShenandoahCollector
 
     public EventType getEventType() {
         return JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_ROOTS;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

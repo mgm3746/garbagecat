@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -71,6 +72,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  */
 public class UnifiedShenandoahFinalMarkEvent extends ShenandoahCollector
         implements UnifiedLogging, BlockingEvent, ParallelEvent {
+
     /**
      * Regular expressions defining the logging.
      */
@@ -101,6 +103,7 @@ public class UnifiedShenandoahFinalMarkEvent extends ShenandoahCollector
      * The log entry for the event. Can be used for debugging purposes.
      */
     private String logEntry;
+
     /**
      * The time when the GC event started in milliseconds after JVM startup.
      */
@@ -148,6 +151,11 @@ public class UnifiedShenandoahFinalMarkEvent extends ShenandoahCollector
 
     public EventType getEventType() {
         return JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_MARK;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

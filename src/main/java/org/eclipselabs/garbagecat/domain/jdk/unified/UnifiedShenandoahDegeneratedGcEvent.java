@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -212,6 +213,11 @@ public class UnifiedShenandoahDegeneratedGcEvent extends ShenandoahCollector
 
     public EventType getEventType() {
         return JdkUtil.EventType.UNIFIED_SHENANDOAH_DEGENERATED_GC;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -45,12 +46,12 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  */
 public class UnifiedShenandoahFinalEvacEvent extends ShenandoahCollector
         implements UnifiedLogging, BlockingEvent, ParallelEvent {
+
     /**
      * Regular expressions defining the logging.
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Final Evac " + JdkRegEx.DURATION_MS
             + "[ ]*$";
-
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
@@ -121,6 +122,11 @@ public class UnifiedShenandoahFinalEvacEvent extends ShenandoahCollector
 
     public EventType getEventType() {
         return JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_EVAC;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

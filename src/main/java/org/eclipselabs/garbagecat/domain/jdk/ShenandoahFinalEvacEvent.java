@@ -21,6 +21,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkMath;
 import org.eclipselabs.garbagecat.util.jdk.JdkRegEx;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -120,6 +121,11 @@ public class ShenandoahFinalEvacEvent extends ShenandoahCollector implements Blo
 
     public EventType getEventType() {
         return JdkUtil.EventType.SHENANDOAH_FINAL_EVAC;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

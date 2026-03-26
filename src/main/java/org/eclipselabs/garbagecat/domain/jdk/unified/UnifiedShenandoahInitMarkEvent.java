@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -77,6 +78,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  */
 public class UnifiedShenandoahInitMarkEvent extends ShenandoahCollector
         implements UnifiedLogging, BlockingEvent, ParallelEvent {
+
     /**
      * Regular expressions defining the logging.
      */
@@ -84,7 +86,6 @@ public class UnifiedShenandoahInitMarkEvent extends ShenandoahCollector
             + " Pause Init Mark( (\\(process weakrefs\\)|\\(process weakrefs\\) \\(unload classes\\)|"
             + "\\(unload classes\\)|\\(update refs\\)|\\(update refs\\) \\(process weakrefs\\)))? "
             + JdkRegEx.DURATION_MS + "[ ]*$";
-
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
@@ -155,6 +156,11 @@ public class UnifiedShenandoahInitMarkEvent extends ShenandoahCollector
 
     public EventType getEventType() {
         return JdkUtil.EventType.UNIFIED_SHENANDOAH_INIT_MARK;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

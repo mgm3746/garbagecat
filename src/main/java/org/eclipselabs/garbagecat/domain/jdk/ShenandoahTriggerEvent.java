@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -42,11 +43,11 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
  * 
  */
 public class ShenandoahTriggerEvent extends ShenandoahCollector implements ThrowAwayEvent {
+
     /**
      * Regular expressions defining the logging.
      */
     private static final String _REGEX = "^Trigger: .*$";
-
     public static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
@@ -77,6 +78,11 @@ public class ShenandoahTriggerEvent extends ShenandoahCollector implements Throw
 
     public EventType getEventType() {
         return JdkUtil.EventType.SHENANDOAH_TRIGGER;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

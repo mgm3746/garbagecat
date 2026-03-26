@@ -19,6 +19,7 @@ import org.eclipselabs.garbagecat.domain.jdk.ShenandoahCollector;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -96,6 +97,11 @@ public class UnifiedShenandoahTriggerEvent extends ShenandoahCollector implement
 
     public EventType getEventType() {
         return JdkUtil.EventType.UNIFIED_SHENANDOAH_TRIGGER;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

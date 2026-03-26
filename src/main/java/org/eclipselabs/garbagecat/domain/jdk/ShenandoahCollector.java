@@ -12,18 +12,12 @@
  *********************************************************************************************************************/
 package org.eclipselabs.garbagecat.domain.jdk;
 
-import org.github.joa.domain.GarbageCollector;
-
 /**
  * Shenandoah collector.
  * 
  * @author <a href="mailto:mmillson@redhat.com">Mike Millson</a>
  * 
  */
-public class ShenandoahCollector extends GcEvent {
+public abstract class ShenandoahCollector extends GcEvent {
 
-    @Override
-    public GarbageCollector getGarbageCollector() {
-        return GarbageCollector.SHENANDOAH;
-    }
 }

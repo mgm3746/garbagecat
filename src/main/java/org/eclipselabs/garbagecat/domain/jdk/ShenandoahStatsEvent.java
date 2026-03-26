@@ -20,6 +20,7 @@ import org.eclipselabs.garbagecat.domain.HeaderEvent;
 import org.eclipselabs.garbagecat.domain.ThrowAwayEvent;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -67,6 +68,7 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements HeaderE
      */
     public static final String _REGEX_HEADER = "^All times are wall-clock times, except per-root-class counters, that "
             + "are sum over$";
+
     /**
      * Regular expression defining standard logging.
      */
@@ -101,7 +103,6 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements HeaderE
             //
     };
     private static final List<Pattern> REGEX_PATTERN_LIST = new ArrayList<>(REGEX.length);
-
     static {
         for (String regex : REGEX) {
             REGEX_PATTERN_LIST.add(Pattern.compile(regex));
@@ -144,6 +145,11 @@ public class ShenandoahStatsEvent extends ShenandoahCollector implements HeaderE
 
     public EventType getEventType() {
         return JdkUtil.EventType.SHENANDOAH_STATS;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

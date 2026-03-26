@@ -24,6 +24,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -49,6 +50,7 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  */
 public class UnifiedShenandoahFinalUpdateRefsEvent extends ShenandoahCollector
         implements UnifiedLogging, BlockingEvent, ParallelEvent {
+
     /**
      * Regular expressions defining the logging.
      */
@@ -125,6 +127,11 @@ public class UnifiedShenandoahFinalUpdateRefsEvent extends ShenandoahCollector
 
     public EventType getEventType() {
         return JdkUtil.EventType.UNIFIED_SHENANDOAH_FINAL_UPDATE_REFS;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {

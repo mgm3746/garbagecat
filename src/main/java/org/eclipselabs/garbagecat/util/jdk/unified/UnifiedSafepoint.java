@@ -258,7 +258,7 @@ public class UnifiedSafepoint {
 
     /**
      * <p>
-     * JVMTI methods to get stack trace information in native code for a list of threads.
+     * JVMTI method to get stack trace information in native code for a list of threads.
      * </p>
      */
     public static final String GET_THREAD_LIST_STACK_TRACES = "GetThreadListStackTraces";

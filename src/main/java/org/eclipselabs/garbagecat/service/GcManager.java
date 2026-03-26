@@ -788,7 +788,8 @@ public class GcManager {
                                 jvmDao.addAnalysis(Analysis.ERROR_EXPLICIT_GC_SERIAL_CMS);
                             }
                             break;
-                        case SHENANDOAH:
+                        case SHENANDOAH_GENERATIONAL:
+                        case SHENANDOAH_NON_GENERATIONAL:
                             break;
                         case UNKNOWN:
                             if (!jvmDao.getAnalysis().contains(Analysis.WARN_EXPLICIT_GC_UNKNOWN)) {

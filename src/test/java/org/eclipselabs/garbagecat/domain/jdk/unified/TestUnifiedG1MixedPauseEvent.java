@@ -141,7 +141,7 @@ class TestUnifiedG1MixedPauseEvent {
         assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
     }
-    
+
     @Test
     void testLogLinePreprocessedTriggerGcLockerInitiatedGc() {
         String logLine = "[2021-10-14T17:52:08.374+0400][info][gc,start      ] GC(2131) Pause Young (Mixed) (GCLocker "

@@ -30,6 +30,7 @@ import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
+import org.github.joa.domain.GarbageCollector;
 
 /**
  * <p>
@@ -67,13 +68,13 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedUtil;
  */
 public class UnifiedShenandoahFullGcEvent extends ShenandoahCollector
         implements UnifiedLogging, BlockingEvent, ParallelEvent, CombinedData, ClassData {
+
     /**
      * Regular expressions defining the logging.
      */
     private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " Pause Full " + JdkRegEx.SIZE + "->"
             + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\), " + JdkRegEx.DURATION_MS + "( Metaspace: " + JdkRegEx.SIZE
             + "\\(" + JdkRegEx.SIZE + "\\)->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\))?[ ]*$";
-
     private static final Pattern PATTERN = Pattern.compile(_REGEX);
 
     /**
@@ -212,6 +213,11 @@ public class UnifiedShenandoahFullGcEvent extends ShenandoahCollector
 
     public EventType getEventType() {
         return JdkUtil.EventType.UNIFIED_SHENANDOAH_FULL_GC;
+    }
+
+    @Override
+    public GarbageCollector getGarbageCollector() {
+        return GarbageCollector.SHENANDOAH_NON_GENERATIONAL;
     }
 
     public String getLogEntry() {
