@@ -952,9 +952,12 @@ public class GcManager {
 
                 // 15) Inverted parallelism
                 if (event instanceof ParallelEvent && event instanceof TimesData) {
-                    if (((TimesData) event).getTimeUser() != TimesData.NO_DATA
+                    // Do not make comparisons with no data or "0" (user + sys > 0 AND real > 0)
+                    if ((((TimesData) event).getTimeUser() != TimesData.NO_DATA
                             && ((TimesData) event).getTimeSys() != TimesData.NO_DATA
-                            && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
+                            && ((TimesData) event).getTimeReal() != TimesData.NO_DATA)
+                            && (((((TimesData) event).getTimeUser() > 0) || ((TimesData) event).getTimeSys() > 0)
+                                    && ((TimesData) event).getTimeReal() > 0)) {
                         jvmDao.setParallelCount(jvmDao.getParallelCount() + 1);
                         if (JdkMath.isInvertedParallelism(((TimesData) event).getParallelism())) {
                             jvmDao.setInvertedParallelismCount(jvmDao.getInvertedParallelismCount() + 1);
@@ -1032,9 +1035,12 @@ public class GcManager {
 
                 // 21) Inverted serialism
                 if (event instanceof SerialCollection && event instanceof TimesData) {
-                    if (((TimesData) event).getTimeUser() != TimesData.NO_DATA
+                    // Do not make comparisons with no data or "0" (user + sys > 0 AND real > 0)
+                    if ((((TimesData) event).getTimeUser() != TimesData.NO_DATA
                             && ((TimesData) event).getTimeSys() != TimesData.NO_DATA
-                            && ((TimesData) event).getTimeReal() != TimesData.NO_DATA) {
+                            && ((TimesData) event).getTimeReal() != TimesData.NO_DATA)
+                            && (((((TimesData) event).getTimeUser() > 0) || ((TimesData) event).getTimeSys() > 0)
+                                    && ((TimesData) event).getTimeReal() > 0)) {
                         jvmDao.setSerialCount(jvmDao.getSerialCount() + 1);
                         // Inverted serialism: Ignore real vs (user + sys) < .1 secs
                         if (((TimesData) event).getTimeUser() > 0
