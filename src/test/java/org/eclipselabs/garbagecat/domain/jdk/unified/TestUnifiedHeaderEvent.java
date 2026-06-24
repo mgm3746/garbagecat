@@ -105,6 +105,20 @@ class TestUnifiedHeaderEvent {
                 JdkUtil.EventType.GC_INFO + " not identified.");
     }
 
+    @Test
+    void testCardSetContainerConfiguration() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.206s][debug][gc,remset] Card Set container configuration: InlinePtr #cards 4 size 8 "
+                + "Array Of Cards #cards 64 size 144 Howl #buckets 8 coarsen threshold 14745 Howl Bitmap #cards 2048 "
+                + "size 272 coarsen threshold 1843 Card regions per heap region 1 cards per card region 16384";
+        assertEquals(JdkUtil.EventType.UNIFIED_HEADER,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.UNIFIED_HEADER + " not identified.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+    }
+
     /**
      * Added in JDK18.
      */
