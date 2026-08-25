@@ -182,9 +182,9 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
             + "Shenandoah|The Z Garbage Collector)";
 
     /**
-     * Regular expression for JDK version information.
+     * Regular expression for jvm_args information.
      */
-    private static final String __REGEX_VERSION = "Version: " + UnifiedRegEx.RELEASE_STRING + " \\(release\\)";
+    private static final String __REGEX_JVM_ARGS = "jvm_args:[ ]{0,1}(.*)";
 
     /**
      * Regular expression for memory information.
@@ -192,9 +192,9 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
     private static final String __REGEX_MEMORY = "Memory: (" + JdkRegEx.SIZE + ")";
 
     /**
-     * Regular expression for jvm_args information.
+     * Regular expression for JDK version information.
      */
-    private static final String __REGEX_JVM_ARGS = "jvm_args:[ ]{0,1}(.*)";
+    private static final String __REGEX_VERSION = "Version: " + UnifiedRegEx.RELEASE_STRING + " \\(release\\)";
 
     /**
      * Regular expressions defining the logging.

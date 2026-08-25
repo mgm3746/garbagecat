@@ -213,11 +213,6 @@ public class JvmRun {
     private Memory maxClassSpaceAfterGcNonBlocking;
 
     /**
-     * Used for tracking max heap after GC outside of <code>BlockingEvent</code>s.
-     */
-    private Memory maxHeapAfterGcNonBlocking;
-
-    /**
      * Used for tracking max perm space or metaspace outside of <code>BlockingEvent</code>s.
      */
     private Memory maxClassSpaceNonBlocking;
@@ -233,9 +228,24 @@ public class JvmRun {
     private Memory maxClassSpaceOccupancyNonBlocking;
 
     /**
+     * Maximum heap size.
+     */
+    private Memory maxHeap;
+
+    /**
      * Maximum heap after gc.
      */
     private Memory maxHeapAfterGc;
+
+    /**
+     * Used for tracking max heap after GC outside of <code>BlockingEvent</code>s.
+     */
+    private Memory maxHeapAfterGcNonBlocking;
+
+    /**
+     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
+     */
+    private Memory maxHeapNonBlocking;
 
     /**
      * Maximum heap occupancy.
@@ -248,24 +258,9 @@ public class JvmRun {
     private Memory maxHeapOccupancyNonBlocking;
 
     /**
-     * Maximum heap size.
-     */
-    private Memory maxHeap;
-
-    /**
-     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
-     */
-    private Memory maxHeapNonBlocking;
-
-    /**
      * Maximum old space size.
      */
     private Memory maxOldSpace;
-
-    /**
-     * Safepoint metrics.
-     */
-    private List<Map.Entry<Trigger, LongSummaryStatistics>> safepointMetrics;
 
     /**
      * Maximum young space size.
@@ -316,6 +311,11 @@ public class JvmRun {
      * <code>SafepointEvent</code>s where throughput does not meet the throughput goal.
      */
     private List<String> safepointBottlenecks;
+
+    /**
+     * Safepoint metrics.
+     */
+    private List<Map.Entry<Trigger, LongSummaryStatistics>> safepointMetrics;
 
     /**
      * Number of <code>SerialCollection</code> events.

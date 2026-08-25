@@ -60,11 +60,6 @@ import org.github.joa.domain.JvmContext;
 public class JvmDao {
 
     /**
-     * Used for sorting logging events.
-     */
-    private static final Comparator<LogEvent> COMPARE_BY_TIMESTAMP = comparing(LogEvent::getTimestamp);
-
-    /**
      * Used for sorting safepoint statistics by total time, in reverse order.
      */
     private static final Comparator<Map.Entry<Trigger, LongSummaryStatistics>> COMPARE_BY_SUM =
@@ -76,6 +71,11 @@ public class JvmDao {
                     return Long.valueOf(right.getValue().getSum()).compareTo(Long.valueOf(left.getValue().getSum()));
                 }
             };
+
+    /**
+     * Used for sorting logging events.
+     */
+    private static final Comparator<LogEvent> COMPARE_BY_TIMESTAMP = comparing(LogEvent::getTimestamp);
 
     private static Memory add(Memory m1, Memory m2) {
         return m1 == null ? nullSafe(m2) : m1.plus(nullSafe(m2));
@@ -162,6 +162,11 @@ public class JvmDao {
     private Date logFileDate;
 
     /**
+     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
+     */
+    private int maxClassSpaceAfterGcNonBlocking;
+
+    /**
      * Used for tracking max perm space or metaspace outside of <code>BlockingEvent</code>s.
      */
     private int maxClassSpaceNonBlocking;
@@ -172,16 +177,6 @@ public class JvmDao {
     private int maxClassSpaceOccupancyNonBlocking;
 
     /**
-     * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
-     */
-    private int maxHeapOccupancyNonBlocking;
-
-    /**
-     * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
-     */
-    private int maxHeapNonBlocking;
-
-    /**
      * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
      */
     private int maxHeapAfterGcNonBlocking;
@@ -189,7 +184,12 @@ public class JvmDao {
     /**
      * Used for tracking max heap space outside of <code>BlockingEvent</code>s.
      */
-    private int maxClassSpaceAfterGcNonBlocking;
+    private int maxHeapNonBlocking;
+
+    /**
+     * Used for tracking max heap occupancy outside of <code>BlockingEvent</code>s.
+     */
+    private int maxHeapOccupancyNonBlocking;
 
     /**
      * JVM memory information.

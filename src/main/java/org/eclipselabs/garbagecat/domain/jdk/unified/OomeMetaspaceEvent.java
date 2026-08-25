@@ -51,13 +51,13 @@ public class OomeMetaspaceEvent implements UnifiedLogging, HeaderEvent, ThrowAwa
     /**
      * Regular expression for the header.
      */
-    public static final String _REGEX_HEADER = UnifiedRegEx.DECORATOR
+    public static final String __REGEX_HEADER = UnifiedRegEx.DECORATOR
             + "[ ]+Metaspace \\((class|data)\\) allocation failed for size \\d{1,}";
 
     /**
      * Regular expression defining the logging.
      */
-    private static final String _REGEX = "^(" + _REGEX_HEADER + "|" + UnifiedRegEx.BLANK_LINE + "|"
+    private static final String _REGEX = "^(" + __REGEX_HEADER + "|" + UnifiedRegEx.BLANK_LINE + "|"
             + UnifiedRegEx.DECORATOR
             + "[ ]+(- (commit_granule_bytes|commit_granule_words|enlarge_chunks_in_place|handle_deallocations|"
             + "new_chunks_are_fully_committed|uncommit_free_chunks|use_allocation_guard|"
@@ -121,7 +121,7 @@ public class OomeMetaspaceEvent implements UnifiedLogging, HeaderEvent, ThrowAwa
     public boolean isHeader() {
         boolean isHeader = false;
         if (this.logEntry != null) {
-            isHeader = logEntry.matches(_REGEX_HEADER);
+            isHeader = logEntry.matches(__REGEX_HEADER);
         }
         return isHeader;
     }

@@ -158,14 +158,14 @@ import org.eclipselabs.garbagecat.util.jdk.unified.UnifiedRegEx;
 public class UnifiedFooterStatsEvent implements UnifiedLogging, HeaderEvent, ThrowAwayEvent {
 
     /**
-     * Regular expression for percent with 2 decimal places.
-     */
-    public static final String REGEX_PERCENT = "\\d{1,3}\\.\\d{2}%";
-
-    /**
      * Regular expression for the header.
      */
     public static final String _REGEX_HEADER = "^" + UnifiedRegEx.DECORATOR + " GC STATISTICS:$";
+
+    /**
+     * Regular expression for percent with 2 decimal places.
+     */
+    public static final String _REGEX_PERCENT = "\\d{1,3}\\.\\d{2}%";
     /**
      * Regular expression defining standard logging.
      */
@@ -251,11 +251,11 @@ public class UnifiedFooterStatsEvent implements UnifiedLogging, HeaderEvent, Thr
             //
             "^" + UnifiedRegEx.DECORATOR
                     + "[ ]{1,7}\\d{1,7} (Completed|Degenerated|Full|[sS]uccessful [cC]oncurrent|upgraded to Full) "
-                    + "GC(s)?( \\(" + REGEX_PERCENT + "\\))?$",
+                    + "GC(s)?( \\(" + _REGEX_PERCENT + "\\))?$",
             //
             "^" + UnifiedRegEx.DECORATOR
                     + "[ ]{1,8}\\d{1,8} (abbreviated|caused by allocation failure|caused by Concurrent GC|"
-                    + "invoked explicitly|invoked implicitly|upgraded from Degenerated GC)( \\(" + REGEX_PERCENT
+                    + "invoked explicitly|invoked implicitly|upgraded from Degenerated GC)( \\(" + _REGEX_PERCENT
                     + "\\))?$",
             //
             "^" + UnifiedRegEx.DECORATOR

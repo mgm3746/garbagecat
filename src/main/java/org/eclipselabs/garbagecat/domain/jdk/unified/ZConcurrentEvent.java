@@ -68,20 +68,20 @@ public class ZConcurrentEvent extends UnknownCollector implements UnifiedLogging
     /**
      * Regular expression metaspace collection.
      */
-    private static final String _REGEX_METASPACE = "([OYy]: )?Metaspace: " + JdkRegEx.SIZE + " used, " + JdkRegEx.SIZE
-            + " committed, " + JdkRegEx.SIZE + " reserved";
-
-    /**
-     * Regular expression metaspace collection.
-     */
-    private static final String _REGEX_HEAP = "(Garbage|Major|Minor) Collection \\((Allocation Rate|"
+    private static final String __REGEX_HEAP = "(Garbage|Major|Minor) Collection \\((Allocation Rate|"
             + "Allocation Stall|CodeCache GC Threshold|High Usage|Metadata GC Threshold|Proactive|Warmup)\\) "
             + JdkRegEx.SIZE + "\\(\\d{1,3}%\\)->" + JdkRegEx.SIZE + "\\((\\d{1,3})%\\)( (\\d{0,}[\\.\\,]\\d{3})s)?";
 
     /**
+     * Regular expression metaspace collection.
+     */
+    private static final String __REGEX_METASPACE = "([OYy]: )?Metaspace: " + JdkRegEx.SIZE + " used, " + JdkRegEx.SIZE
+            + " committed, " + JdkRegEx.SIZE + " reserved";
+
+    /**
      * Regular expressions defining the logging.
      */
-    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " (" + _REGEX_METASPACE + "|" + _REGEX_HEAP
+    private static final String _REGEX = "^" + UnifiedRegEx.DECORATOR + " (" + __REGEX_METASPACE + "|" + __REGEX_HEAP
             + ")[ ]*$";
 
     private static Pattern PATTERN = Pattern.compile(_REGEX);
@@ -108,11 +108,6 @@ public class ZConcurrentEvent extends UnknownCollector implements UnifiedLogging
     private Memory classOccupancyInit;
 
     /**
-     * The elapsed clock time for the event in microseconds (rounded).
-     */
-    private long eventTime;
-
-    /**
      * Space allocated to permanent generation or metaspace.
      */
     private Memory classSpace;
@@ -131,6 +126,11 @@ public class ZConcurrentEvent extends UnknownCollector implements UnifiedLogging
      * Combined available space.
      */
     private Memory combinedSpace;
+
+    /**
+     * The elapsed clock time for the event in microseconds (rounded).
+     */
+    private long eventTime;
 
     /**
      * The log entry for the event. Can be used for debugging purposes.
@@ -152,14 +152,14 @@ public class ZConcurrentEvent extends UnknownCollector implements UnifiedLogging
         this.logEntry = logEntry;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1).matches(_REGEX_METASPACE)) {
+            if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1).matches(__REGEX_METASPACE)) {
                 timestamp = UnifiedUtil.calculateTime(matcher);
                 classOccupancyInit = Memory.ZERO;
                 classOccupancyEnd = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 3),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 5).charAt(0)).convertTo(KILOBYTES);
                 classSpace = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 6),
                         matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8).charAt(0)).convertTo(KILOBYTES);
-            } else if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1).matches(_REGEX_HEAP)) {
+            } else if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 1).matches(__REGEX_HEAP)) {
                 if (matcher.group(UnifiedRegEx.DECORATOR_SIZE + 21) != null) {
                     eventTime = JdkMath.convertSecsToMicros(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 22)).intValue();
                 }
