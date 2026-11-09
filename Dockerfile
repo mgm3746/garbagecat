@@ -1,5 +1,10 @@
 # Build stage
 FROM docker.io/library/maven:3.8.5-openjdk-17-slim AS build
+# Convert build args to environment variables
+ARG GITHUB_ACTOR
+ARG GITHUB_TOKEN
+ENV GITHUB_ACTOR=$GITHUB_ACTOR
+ENV GITHUB_TOKEN=$GITHUB_TOKEN
 COPY src /usr/src/app/src
 COPY pom.xml /usr/src/app
 COPY settings.xml /usr/src/app
