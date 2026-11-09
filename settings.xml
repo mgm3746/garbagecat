@@ -6,8 +6,8 @@
 	<servers>
 		<server>
 			<id>github</id>
-			<username>mgm3746</username>
-			<password>&#103;&#104;&#112;&#95;&#101;&#53;&#111;&#120;&#105;&#55;&#56;&#115;&#55;&#118;&#72;&#78;&#99;&#120;&#87;&#65;&#65;&#97;&#112;&#50;&#71;&#79;&#72;&#51;&#74;&#101;&#48;&#115;&#101;&#115;&#50;&#104;&#69;&#122;&#76;&#120;</password>
+			<username>${env.GITHUB_ACTOR}</username>
+			<password>${env.GITHUB_TOKEN}</password>
 		</server>
 	</servers>
 </settings>
