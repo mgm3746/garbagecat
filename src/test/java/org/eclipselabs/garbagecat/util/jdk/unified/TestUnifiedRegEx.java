@@ -155,6 +155,18 @@ class TestUnifiedRegEx {
     }
 
     @Test
+    void testReleaseStringJdk21() {
+        String release = "21.0.11+10-LTS";
+        assertTrue(release.matches(UnifiedRegEx.RELEASE_STRING), "Release string " + release + " not recognized.");
+    }
+
+    @Test
+    void testReleaseStringJdk25() {
+        String release = "25.0.4.1+8-LTS";
+        assertTrue(release.matches(UnifiedRegEx.RELEASE_STRING), "Release string " + release + " not recognized.");
+    }
+
+    @Test
     void testTagsGc() {
         String id = "[gc          ]";
         assertTrue(id.matches(UnifiedRegEx.TAGS), "'" + id + "' not recognized as a valid tag.");

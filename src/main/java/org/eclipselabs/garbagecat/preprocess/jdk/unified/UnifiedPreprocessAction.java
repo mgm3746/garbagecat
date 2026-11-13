@@ -618,6 +618,9 @@ public class UnifiedPreprocessAction implements PreprocessAction {
      * 
      * [1.480s][info][gc          ] GC(2) Pause Young (Normal) (G1 Evacuation Pause) (Evacuation Failure) 
      * 11041M->10059M(16384M) 129.424ms
+     * 
+     * [16.210s][info][gc             ] GC(123) Pause Young (Mixed) (G1 Evacuation Pause) (Evacuation Failure: 
+     * Allocation) 1023M->869M(1024M) 10.266ms
      * </pre>
      */
     private static final String REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA = "^(" + UnifiedRegEx.DECORATOR
@@ -627,8 +630,8 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             + GcTrigger.GCLOCKER_INITIATED_GC.getRegex() + "|" + GcTrigger.G1_HUMONGOUS_ALLOCATION.getRegex() + "|"
             + GcTrigger.HEAP_DUMP_INITIATED_GC.getRegex() + "|" + GcTrigger.METADATE_GC_CLEAR_SOFT_REFERENCES.getRegex()
             + "|" + GcTrigger.G1_PREVENTIVE_COLLECTION.getRegex() + "|" + GcTrigger.METADATA_GC_THRESHOLD.getRegex()
-            + ")\\)( \\(Evacuation Failure\\))?)( " + JdkRegEx.SIZE + "->" + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE
-            + "\\) " + JdkRegEx.DURATION_MS + ")$";
+            + ")\\)( \\(Evacuation Failure(: (Allocation|Allocation / Pinned|Pinned))?\\))?)( " + JdkRegEx.SIZE + "->"
+            + JdkRegEx.SIZE + "\\(" + JdkRegEx.SIZE + "\\) " + JdkRegEx.DURATION_MS + ")$";
 
     private static final Pattern REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA_PATTERN = Pattern
             .compile(REGEX_RETAIN_MIDDLE_PAUSE_YOUNG_DATA);
@@ -1629,7 +1632,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
             if (matcher.matches()) {
                 if (context.contains(UnifiedLogging.Tag.GC_START.toString())) {
                     // Middle logging
-                    this.logEntry = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7);
+                    this.logEntry = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9);
                     // context.remove(UnifiedLogging.Tag.GC_START.toString());
                     context.remove(PreprocessAction.NEWLINE);
                 } else {
@@ -1645,7 +1648,7 @@ public class UnifiedPreprocessAction implements PreprocessAction {
                             if (entangledLogLines.size() == 1
                                     && entangledLogLines.get(0).matches(" " + Constants.G1_TO_SPACE_EXHAUSTED)) {
                                 this.logEntry = matcher.group(1) + matcher.group(UnifiedRegEx.DECORATOR_SIZE + 2)
-                                        + entangledLogLines.get(0) + matcher.group(UnifiedRegEx.DECORATOR_SIZE + 7);
+                                        + entangledLogLines.get(0) + matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9);
                                 entangledLogLines.clear();
                             } else {
                                 this.logEntry = matcher.group(0);

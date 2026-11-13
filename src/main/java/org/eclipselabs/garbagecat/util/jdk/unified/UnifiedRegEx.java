@@ -148,9 +148,10 @@ public class UnifiedRegEx {
      * 17.0.1+12-LTS
      * 21+35-2513
      * 21.0.1+12-LTS
+     * 25.0.4.1+8-LTS
      * </pre>
      */
-    public static final String RELEASE_STRING = "((9|[12]\\d)(\\.\\d\\.(\\d{1,}))?\\+\\d{1,}(-.+)?)";
+    public static final String RELEASE_STRING = "((9|[12]\\d)(\\.\\d\\.(\\d{1,}))?(\\.\\d{1,})?\\+\\d{1,}(-.+)?)";
 
     /**
      * Regular expression for a `gc,start` event. Used to determine if a timestamp is when the event started or ended.

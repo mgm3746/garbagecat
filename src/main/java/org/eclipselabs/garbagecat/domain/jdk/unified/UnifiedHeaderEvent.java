@@ -376,7 +376,7 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
         String jvmArgs = null;
         Matcher matcher = PATTERN.matcher(logEntry);
         if (matcher.find()) {
-            jvmArgs = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 8);
+            jvmArgs = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9);
         }
         return jvmArgs;
     }
@@ -393,8 +393,8 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
         if (isMemory()) {
             Matcher matcher = PATTERN.matcher(logEntry);
             if (matcher.find()) {
-                memory = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10),
-                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 12).charAt(0));
+                memory = memory(matcher.group(UnifiedRegEx.DECORATOR_SIZE + 11),
+                        matcher.group(UnifiedRegEx.DECORATOR_SIZE + 13).charAt(0));
             }
         }
         return memory;
@@ -414,7 +414,7 @@ public class UnifiedHeaderEvent implements LogEvent, UnifiedLogging {
         if (isMemory()) {
             Matcher matcher = PATTERN.matcher(logEntry);
             if (matcher.find()) {
-                memory = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 9);
+                memory = matcher.group(UnifiedRegEx.DECORATOR_SIZE + 10);
             }
         }
         return memory;

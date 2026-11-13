@@ -1976,6 +1976,51 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testG1MixedPauseInfoEvacuationFailureAllocation() {
+        String logLine = "[16.210s][info][gc             ] GC(123) Pause Young (Mixed) (G1 Evacuation Pause) "
+                + "(Evacuation Failure: Allocation) 1023M->869M(1024M) 10.266ms";
+        String nextLogLine = "[16.210s][info][gc,cpu         ] GC(123) User=0.02s Sys=0.00s Real=0.01s";
+        Set<String> context = new HashSet<String>();
+        context.add(UnifiedLogging.Tag.GC_START.toString());
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context, null);
+        assertEquals(" 1023M->869M(1024M) 10.266ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testG1MixedPauseInfoEvacuationFailureAllocationPinned() {
+        String logLine = "[13.706s][info][gc             ] GC(2771) Pause Young (Prepare Mixed) (G1 Evacuation Pause) "
+                + "(Evacuation Failure: Allocation / Pinned) 1023M->683M(1024M) 10.328ms";
+        String nextLogLine = "[13.706s][info][gc,cpu         ] GC(2771) User=0.02s Sys=0.00s Real=0.01s";
+        Set<String> context = new HashSet<String>();
+        context.add(UnifiedLogging.Tag.GC_START.toString());
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context, null);
+        assertEquals(" 1023M->683M(1024M) 10.328ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testG1MixedPauseInfoEvacuationFailurePinned() {
+        String logLine = "[19.271s][info][gc             ] GC(2684) Pause Young (Mixed) (G1 Humongous Allocation) "
+                + "(Evacuation Failure: Pinned) 933M->422M(1024M) 5.114ms";
+        String nextLogLine = "[19.271s][info][gc,cpu         ] GC(2684) User=0.01s Sys=0.00s Real=0.00s";
+        Set<String> context = new HashSet<String>();
+        context.add(UnifiedLogging.Tag.GC_START.toString());
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, nextLogLine, entangledLogLines,
+                context, null);
+        assertEquals(" 933M->422M(1024M) 5.114ms", event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testG1MmuTargetViolated() {
         String logLine = "[2020-06-24T18:11:22.155-0700][28150ms] GC(24) MMU target violated: 201.0ms "
                 + "(200.0ms/201.0ms)";

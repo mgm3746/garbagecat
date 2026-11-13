@@ -1464,6 +1464,22 @@ class TestUnifiedHeaderEvent {
     }
 
     @Test
+    void testVersionJdk25() {
+        UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
+        String logLine = "[0.004s][info][gc,init] Version: 25.0.4.1+8-LTS (release)";
+        assertTrue(JdkUtil.parseLogLine(logLine, priorLogEvent, CollectorFamily.UNKNOWN) instanceof UnifiedHeaderEvent,
+                JdkUtil.EventType.UNIFIED_HEADER.toString() + " not parsed.");
+        assertNotEquals(JdkUtil.EventType.GC_INFO,
+                JdkUtil.identifyEventType(logLine, priorLogEvent, CollectorFamily.UNKNOWN),
+                JdkUtil.EventType.GC_INFO + " not identified.");
+        UnifiedHeaderEvent event = new UnifiedHeaderEvent(logLine);
+        assertTrue(event.isVersion(), "Version information not identified.");
+        assertEquals(25, event.getJdkVersionMajor(), "JDK major version not correct.");
+        assertEquals(4, event.getJdkVersionMinor(), "JDK minor version not correct.");
+        assertEquals("25.0.4.1+8-LTS", event.getJdkReleaseString(), "JDK release string not correct.");
+    }
+
+    @Test
     void testVmArguments() {
         UnifiedHeaderEvent priorLogEvent = new UnifiedHeaderEvent("");
         String logLine = "[0.005s][info][arguments] VM Arguments:";

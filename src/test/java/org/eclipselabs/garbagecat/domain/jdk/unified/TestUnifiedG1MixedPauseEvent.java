@@ -116,6 +116,15 @@ class TestUnifiedG1MixedPauseEvent {
     }
 
     @Test
+    void testLogLinePreprocessedJdk25() {
+        String logLine = "[12.002s][info][gc,start       ] GC(12) Pause Young (Mixed) (G1 Humongous Allocation) "
+                + "Other: 0.06ms Humongous regions: 278->191 Metaspace: 134450K(135872K)->134450K(135872K) "
+                + "960M->471M(1024M) 5.605ms User=0.01s Sys=0.00s Real=0.00s";
+        assertTrue(UnifiedG1MixedPauseEvent.match(logLine),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+    }
+
+    @Test
     void testLogLinePreprocessedNoOther() {
         String logLine = "[0.147s][info][gc,start    ] GC(13) Pause Young (Mixed) (G1 Evacuation Pause) "
                 + "Humongous regions: 0->0 Metaspace: 1240K(1344K)->1240K(1344K) 11M->10M(50M) 1.753ms "
