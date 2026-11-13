@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1FullGcEvent;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.Memory;
@@ -308,6 +309,9 @@ class TestAnalysis {
                 "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + ".");
         assertTrue(jvmRun.hasAnalysis(Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC.getKey()),
                 Analysis.WARN_EXPLICIT_GC_DIAGNOSTIC + " analysis not identified.");
+        UnifiedG1FullGcEvent event = (UnifiedG1FullGcEvent) jvmRun.getFirstBlockingEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (411066724), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

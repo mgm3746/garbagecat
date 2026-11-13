@@ -91,6 +91,27 @@ class TestUnifiedG1YoungPauseEvent {
     }
 
     @Test
+    void testJdk21U11() throws IOException {
+        File testFile = TestUtil.getFile("dataset299.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_MIXED_PAUSE.toString() + ".");
+        UnifiedG1MixedPauseEvent event = (UnifiedG1MixedPauseEvent) jvmRun.getFirstBlockingEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (1090), event.getTimestamp(), "Time stamp not parsed correctly.");
+    }
+
+    @Test
     void testParseLogLine() {
         String logLine = "[15.086s][info][gc,start     ] GC(1192) Pause Young (Normal) (G1 Evacuation Pause) Ext Root "
                 + "Scanning (ms): 1.6 Other: 0.1ms Humongous regions: 13->13 Metaspace: 3771K->3771K(1056768K) "

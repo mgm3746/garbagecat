@@ -282,7 +282,9 @@ public class UnifiedG1CleanupEvent extends G1Collector
     }
 
     public boolean isEndstamp() {
-        boolean isEndStamp = false;
+        // default assumes gc,start not logged (e.g. not preprocessed)
+        boolean isEndStamp = true;
+        isEndStamp = !logEntry.matches(UnifiedRegEx.TAG_GC_START);
         return isEndStamp;
     }
 }

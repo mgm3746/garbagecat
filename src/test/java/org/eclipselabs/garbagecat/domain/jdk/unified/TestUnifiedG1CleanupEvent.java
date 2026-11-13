@@ -14,11 +14,21 @@ package org.eclipselabs.garbagecat.domain.jdk.unified;
 
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipselabs.garbagecat.TestUtil;
+import org.eclipselabs.garbagecat.domain.JvmRun;
+import org.eclipselabs.garbagecat.service.GcManager;
+import org.eclipselabs.garbagecat.util.Constants;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.CollectorFamily;
 import org.eclipselabs.garbagecat.util.jdk.JdkUtil.EventType;
@@ -107,6 +117,27 @@ class TestUnifiedG1CleanupEvent {
         String logLine = "[15.101s][info][gc] GC(1099) Pause Cleanup 30M->30M(44M) 0.058ms";
         assertTrue(JdkUtil.parseLogLine(logLine, null, CollectorFamily.UNKNOWN) instanceof UnifiedG1CleanupEvent,
                 JdkUtil.EventType.UNIFIED_G1_CLEANUP.toString() + " not parsed.");
+    }
+
+    @Test
+    void testPreparsingJdk21U11() throws IOException {
+        File testFile = TestUtil.getFile("dataset300.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertTrue(jvmRun.getEventTypes().contains(JdkUtil.EventType.UNIFIED_G1_CLEANUP),
+                "Log line not recognized as " + JdkUtil.EventType.UNIFIED_G1_CLEANUP.toString() + ".");
+        UnifiedG1CleanupEvent event = (UnifiedG1CleanupEvent) jvmRun.getFirstBlockingEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (1773), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test

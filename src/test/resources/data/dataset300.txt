@@ -1,0 +1,6 @@
+[1.773s][info ][gc,start      ] GC(74) Pause Cleanup
+[1.773s][debug][gc,phases     ] GC(74) Update Remembered Set Tracking After Rebuild 0.031ms
+[1.774s][debug][gc,ergo,cset  ] GC(74) Pruned 30 regions out of 35, leaving 62155080 bytes waste (allowed 483183820)
+[1.774s][debug][gc,phases     ] GC(74) Finalize Concurrent Mark Cleanup 0.270ms
+[1.774s][info ][gc            ] GC(74) Pause Cleanup 1895M->1895M(9216M) 0.448ms
+[1.774s][info ][gc,cpu        ] GC(74) User=0.00s Sys=0.00s Real=0.00s

@@ -32,6 +32,8 @@ import java.util.Set;
 import org.eclipselabs.garbagecat.TestUtil;
 import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.domain.LogEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1CleanupEvent;
+import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedG1YoungPauseEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedLogging;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedSerialOldEvent;
 import org.eclipselabs.garbagecat.domain.jdk.unified.UnifiedShenandoahDegeneratedGcEvent;
@@ -694,6 +696,18 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testConcurrentCleanupForNextMark() {
+        String logLine = "[2022-06-06T08:27:46.360-0500] GC(98825) Concurrent Cleanup for Next Mark";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
+                null);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testConcurrentClearClaimedMarks() {
         String logLine = "[2021-03-13T03:37:44.312+0530][79857380ms] GC(8652) Concurrent Clear Claimed Marks";
         Set<String> context = new HashSet<String>();
@@ -744,6 +758,18 @@ class TestUnifiedPreprocessAction {
     @Test
     void testConcurrentMarkAbort() {
         String logLine = "[2021-03-13T03:37:46.439+0530][79859507ms] GC(8652) Concurrent Mark Abort";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
+                null);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testConcurrentMarkCycleNoDuration() {
+        String logLine = "[12.645s][info ][gc            ] GC(19) Concurrent Mark Cycle";
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -825,6 +851,18 @@ class TestUnifiedPreprocessAction {
     @Test
     void testConcurrentPreclean() {
         String logLine = "[0.083s][info][gc] GC(1) Concurrent Preclean";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
+                null);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
+    void testConcurrentRebuildRememberedSets() {
+        String logLine = "[2022-06-06T08:27:46.004-0500] GC(98825) Concurrent Rebuild Remembered Sets";
         Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
                 "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
@@ -1057,6 +1095,9 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_HEADER),
                 JdkUtil.EventType.UNIFIED_HEADER.toString() + " event not identified.");
+        UnifiedG1YoungPauseEvent event = (UnifiedG1YoungPauseEvent) jvmRun.getFirstBlockingEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (833), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -2186,6 +2227,28 @@ class TestUnifiedPreprocessAction {
                 JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_FULL_GC_PARALLEL),
                 JdkUtil.EventType.UNIFIED_G1_FULL_GC_PARALLEL.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
+                JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
+                JdkUtil.EventType.UNIFIED_SAFEPOINT.toString() + " event not identified.");
+    }
+
+    @Test
+    void testG1RemarkJdk21u11() throws IOException {
+        File testFile = TestUtil.getFile("dataset298.txt");
+        GcManager gcManager = new GcManager();
+        URI logFileUri = testFile.toURI();
+        List<String> logLines = Files.readAllLines(Paths.get(logFileUri));
+        logLines = gcManager.preprocess(logLines);
+        gcManager.store(logLines, false);
+        JvmRun jvmRun = gcManager.getJvmRun(null, Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD);
+        assertFalse(jvmRun.getEventTypes().contains(EventType.UNKNOWN),
+                JdkUtil.EventType.UNKNOWN.toString() + " event identified.");
+        assertEquals(4, jvmRun.getEventTypes().size(), "Event type count not correct.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_YOUNG_PAUSE),
+                JdkUtil.EventType.UNIFIED_G1_YOUNG_PAUSE.toString() + " event not identified.");
+        assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_REMARK),
+                JdkUtil.EventType.UNIFIED_REMARK.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_CONCURRENT),
                 JdkUtil.EventType.UNIFIED_CONCURRENT.toString() + " event not identified.");
         assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_SAFEPOINT),
@@ -3710,6 +3773,19 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
+    void testPrediction() {
+        String logLine = "[1.370s][9648][debug][gc,ergo,cset  ] GC(82) Prediction 21.372ms for region 124 does not fit "
+                + "remaining time: 2.771ms.";
+        Set<String> context = new HashSet<String>();
+        assertTrue(UnifiedPreprocessAction.match(logLine, null),
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
+                null);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
+    }
+
+    @Test
     void testPreEvacuatePrepare() {
         String logLine = "[3.880s][debug][gc,phases        ] GC(0)     Pre Evacuate Prepare: 0.04ms";
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
@@ -3796,6 +3872,9 @@ class TestUnifiedPreprocessAction {
         assertEquals(1, jvmRun.getEventTypes().size(), "Event type count not correct.");
         assertTrue(jvmRun.getEventTypes().contains(EventType.UNIFIED_G1_CLEANUP),
                 JdkUtil.EventType.UNIFIED_G1_CLEANUP.toString() + " event not identified.");
+        UnifiedG1CleanupEvent event = (UnifiedG1CleanupEvent) jvmRun.getFirstBlockingEvent();
+        assertFalse(event.isEndstamp(), "Event time incorrectly identified as endstamp.");
+        assertEquals((long) (16081), event.getTimestamp(), "Time stamp not parsed correctly.");
     }
 
     @Test
@@ -4268,13 +4347,6 @@ class TestUnifiedPreprocessAction {
     }
 
     @Test
-    void testRemark() {
-        String logLine = "[16.051s][info][gc,start     ] GC(969) Pause Remark";
-        assertTrue(UnifiedPreprocessAction.match(logLine, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
-    }
-
-    @Test
     void testRemark6Spaces() {
         String logLine = "[16.175s][info][gc,start      ] GC(974) Pause Remark";
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
@@ -4285,7 +4357,14 @@ class TestUnifiedPreprocessAction {
     void testRemarkWithDuration() {
         String logLine = "[0.055s][info][gc           ] GC(1) Pause Remark 0M->0M(2M) 0.332ms";
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        Set<String> context = new HashSet<String>();
+        context.add(UnifiedLogging.Tag.GC_START.toString());
+        context.add(UnifiedPreprocessAction.TOKEN_BEGINNING_OF_UNIFIED_G1_REMARK);
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
+                null);
+        assertEquals(" 0M->0M(2M) 0.332ms", event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -4423,8 +4502,13 @@ class TestUnifiedPreprocessAction {
     void testRunningG1() {
         String logLine = "[2022-10-09T13:16:49.287+0000][3792.776s][debug][gc,ergo           ] GC(9) Running G1 Clear "
                 + "Card Table Task using 4 workers for 4 units of work for 446 regions.";
+        Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
+                null);
+        assertNull(event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
@@ -6656,9 +6740,14 @@ class TestUnifiedPreprocessAction {
 
     @Test
     void testStartG1MixedPause() {
-        String logLine = "[16.629s][info][gc,start      ] GC(1355) Pause Young (Mixed) (G1 Evacuation Pause)";
+        String logLine = "[1.090s][info ][gc,start      ] GC(76) Pause Young (Mixed) (G1 Evacuation Pause)";
+        Set<String> context = new HashSet<String>();
         assertTrue(UnifiedPreprocessAction.match(logLine, null),
-                "Log line not recognized as " + JdkUtil.PreprocessActionType.UNIFIED.toString() + ".");
+                "Log line not recognized as " + PreprocessActionType.UNIFIED.toString() + ".");
+        List<String> entangledLogLines = new ArrayList<String>();
+        UnifiedPreprocessAction event = new UnifiedPreprocessAction(null, logLine, null, entangledLogLines, context,
+                null);
+        assertEquals(logLine, event.getLogEntry(), "Log line not parsed correctly.");
     }
 
     @Test
