@@ -6,8 +6,8 @@
 # Usage: sh ./test-all.sh
 #
 
-GARBAGECAT_HOME=~/workspace/garbagecat/target
-GARBAGECAT_VERSION=-5.0.1-SNAPSHOT
+GARBAGECAT_HOME=../../../target
+GARBAGECAT_VERSION=-5.0.2-SNAPSHOT
 
 ##### JDK11 #####
 

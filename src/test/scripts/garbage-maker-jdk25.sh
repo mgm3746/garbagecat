@@ -5,8 +5,16 @@
 # Usage: sh ./garbage-maker-jdk25.sh 
 #
 
-#JAVA_HOME=/etc/alternatives/java_sdk_25
-JAVA_HOME=~/opt/openjdk/temurin/rhel/25/jdk-25+36
+# JAVA_HOME must be set. For example:
+# export JAVA_HOME="/path/to/java/install/dir"
+
+if [[ -z "${JAVA_HOME}" ]]; then
+  echo "Error: JAVA_HOME not set." >&2
+  exit 1
+fi
+
+echo "JAVA_HOME: ${JAVA_HOME}"
+
 GARBAGECAT_HOME=../../../target
 GARBAGECAT_VERSION=-5.0.2-SNAPSHOT
 
